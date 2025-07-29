@@ -6,7 +6,6 @@ import { ToastComponent } from './shared/shared.module';
   selector: 'app-root',
   imports: [RouterOutlet, ToastComponent],
   templateUrl: './app.html',
-  styleUrl: './app.css',
 })
 export class App {
   protected readonly title = signal('angular-app');

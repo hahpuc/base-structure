@@ -3,11 +3,11 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "angular-app": {
+    "metronic-tailwind-angular": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "standalone": false
+          "style": "scss"
         }
       },
       "root": "",
@@ -17,8 +17,14 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "outputPath": "dist/metronic-tailwind-angular",
+            "index": "src/index.html",
             "browser": "src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
             "assets": [
               {
                 "glob": "**/*",
@@ -26,7 +32,16 @@
               }
             ],
             "styles": [
-              "src/styles.css"
+              "src/tailwind.css",
+              "src/styles.scss",
+              "src/assets/vendors/apexcharts/apexcharts.css",
+              "src/assets/vendors/keenicons/styles.bundle.css",
+              "src/assets/css/styles.css"
+            ],
+            "scripts": [
+              "src/assets/js/core.bundle.js",
+              "src/assets/vendors/ktui/ktui.min.js",
+              "src/assets/vendors/apexcharts/apexcharts.min.js"
             ]
           },
           "configurations": {
@@ -57,10 +72,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "angular-app:build:production"
+              "buildTarget": "metronic-tailwind-angular:build:production"
             },
             "development": {
-              "buildTarget": "angular-app:build:development"
+              "buildTarget": "metronic-tailwind-angular:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -71,7 +86,12 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
             "tsConfig": "tsconfig.spec.json",
+            "inlineStyleLanguage": "scss",
             "assets": [
               {
                 "glob": "**/*",
@@ -79,14 +99,41 @@
               }
             ],
             "styles": [
-              "src/styles.css"
-            ]
+              "src/styles.scss"
+            ],
+            "scripts": []
           }
         }
       }
     }
   },
   "cli": {
-    "analytics": "844865c2-31f5-4802-97dd-f60792a180ed"
+    "analytics": false
+  },
+  "schematics": {
+    "@schematics/angular:component": {
+      "type": "component"
+    },
+    "@schematics/angular:directive": {
+      "type": "directive"
+    },
+    "@schematics/angular:service": {
+      "type": "service"
+    },
+    "@schematics/angular:guard": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:interceptor": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:module": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:pipe": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:resolver": {
+      "typeSeparator": "."
+    }
   }
 }
