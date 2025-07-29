@@ -86,10 +86,10 @@ export const USER_ROLES = {
 
 // Notification Types
 export const NOTIFICATION_TYPES = {
-  SUCCESS: 'success',
-  ERROR: 'error',
-  WARNING: 'warning',
-  INFO: 'info',
+  success: 'success',
+  destructive: 'destructive',
+  warning: 'warning',
+  info: 'info',
 } as const;
 
 // Animation Durations (in milliseconds)

@@ -45,7 +45,7 @@ export class ToastService {
 
   success(title: string, message: string, duration?: number): void {
     this.show({
-      type: 'SUCCESS',
+      type: 'success',
       title,
       message,
       duration,
@@ -54,7 +54,7 @@ export class ToastService {
 
   error(title: string, message: string, duration?: number): void {
     this.show({
-      type: 'ERROR',
+      type: 'destructive',
       title,
       message,
       duration: duration || 5000, // Errors stay longer
@@ -63,7 +63,7 @@ export class ToastService {
 
   warning(title: string, message: string, duration?: number): void {
     this.show({
-      type: 'WARNING',
+      type: 'warning',
       title,
       message,
       duration,
@@ -72,7 +72,7 @@ export class ToastService {
 
   info(title: string, message: string, duration?: number): void {
     this.show({
-      type: 'INFO',
+      type: 'info',
       title,
       message,
       duration,
