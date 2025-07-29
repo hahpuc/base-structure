@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { SharedModule } from '../../../../shared/shared.module';
 
 @Component({
   selector: 'app-profile',
-  standalone: true,
-  imports: [SharedModule],
+  standalone: false,
   templateUrl: './profile.component.html',
 })
 export class ProfileComponent implements OnInit {

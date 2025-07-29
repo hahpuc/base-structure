@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { SharedModule, ToastService } from '../../../../shared/shared.module';
+import { ToastService } from '../../../../shared/shared.module';
 
 @Component({
   selector: 'app-settings',
-  standalone: true,
-  imports: [SharedModule],
+  standalone: false,
   templateUrl: './settings.component.html',
 })
 export class SettingsComponent implements OnInit {

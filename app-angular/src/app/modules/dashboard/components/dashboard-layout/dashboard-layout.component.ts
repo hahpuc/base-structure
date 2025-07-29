@@ -1,11 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { SharedModule } from '../../../../shared/shared.module';
 
 @Component({
   selector: 'app-dashboard-layout',
-  standalone: true,
-  imports: [SharedModule],
+  standalone: false,
   templateUrl: './dashboard-layout.component.html',
 })
 export class DashboardLayoutComponent {

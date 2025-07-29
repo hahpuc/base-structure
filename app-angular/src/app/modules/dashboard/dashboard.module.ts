@@ -9,14 +9,15 @@ import { SettingsComponent } from './components/settings/settings.component';
 import { dashboardRoutes } from './dashboard.routes';
 
 @NgModule({
-  imports: [
-    SharedModule, // This provides CommonModule, FormsModule, ReactiveFormsModule, etc.
-    RouterModule.forChild(dashboardRoutes),
-    // Import standalone components
+  declarations: [
     DashboardLayoutComponent,
     DashboardHomeComponent,
     ProfileComponent,
     SettingsComponent,
+  ],
+  imports: [
+    SharedModule, // This provides CommonModule, FormsModule, ReactiveFormsModule, etc.
+    RouterModule.forChild(dashboardRoutes),
   ],
   exports: [
     DashboardLayoutComponent,

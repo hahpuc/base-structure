@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { SharedModule } from '../../../../shared/shared.module';
 
 @Component({
   selector: 'app-dashboard-home',
-  standalone: true,
-  imports: [SharedModule],
+  standalone: false,
   templateUrl: './dashboard-home.component.html',
 })
 export class DashboardHomeComponent implements OnInit {

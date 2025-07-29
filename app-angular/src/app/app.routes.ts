@@ -9,13 +9,13 @@ export const routes: Routes = [
   {
     path: 'auth',
     loadChildren: () =>
-      import('./modules/auth/auth.routes').then((m) => m.authRoutes),
+      import('./modules/auth/auth.module').then((m) => m.AuthModule),
   },
   {
     path: 'dashboard',
     loadChildren: () =>
-      import('./modules/dashboard/dashboard.routes').then(
-        (m) => m.dashboardRoutes
+      import('./modules/dashboard/dashboard.module').then(
+        (m) => m.DashboardModule
       ),
   },
   {

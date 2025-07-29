@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { SharedModule, ToastService } from '../../../../shared/shared.module';
+import { ToastService } from '../../../../shared/shared.module';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
-  imports: [SharedModule],
+  standalone: false,
   templateUrl: './login.component.html',
 })
 export class LoginComponent implements OnInit {

@@ -8,14 +8,8 @@ import { AuthLayoutComponent } from './components/auth-layout/auth-layout.compon
 import { authRoutes } from './auth.routes';
 
 @NgModule({
-  imports: [
-    SharedModule, // This provides CommonModule, FormsModule, ReactiveFormsModule, etc.
-    RouterModule.forChild(authRoutes),
-    // Import standalone components
-    LoginComponent,
-    RegisterComponent,
-    AuthLayoutComponent,
-  ],
+  declarations: [LoginComponent, RegisterComponent, AuthLayoutComponent],
+  imports: [SharedModule, RouterModule.forChild(authRoutes)],
   exports: [LoginComponent, RegisterComponent, AuthLayoutComponent],
 })
 export class AuthModule {}
