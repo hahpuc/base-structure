@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'sidebar-menu',
-
   standalone: false,
   templateUrl: './sidebar-menu.component.html',
 })

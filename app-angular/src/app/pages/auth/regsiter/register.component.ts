@@ -67,7 +67,7 @@ export class RegisterComponent implements OnInit {
           'Account created successfully! Please login.'
         );
         // Navigate to login on successful registration
-        this.router.navigate(['/auth/login']);
+        this.router.navigate(['/login']);
       }, 1500);
     } else {
       this.markFormGroupTouched();
@@ -117,6 +117,6 @@ export class RegisterComponent implements OnInit {
   }
 
   navigateToLogin(): void {
-    this.router.navigate(['/auth/login']);
+    this.router.navigate(['/login']);
   }
 }

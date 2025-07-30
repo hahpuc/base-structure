@@ -8,6 +8,11 @@ import { MainLayoutComponent } from './shared/layouts/main-layout/main-layout.co
 const routes: Routes = [
   {
     path: '',
+    redirectTo: '/dashboard',
+    pathMatch: 'full',
+  },
+  {
+    path: '',
     component: MainLayoutComponent,
     canActivateChild: [AuthGuard, PermissionGuard],
     children: [

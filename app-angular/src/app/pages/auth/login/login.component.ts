@@ -1,3 +1,4 @@
+import { AuthService } from '@/app/shared/services/auth.service';
 import { ToastService } from '@/app/shared/services/toast.service';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -17,7 +18,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -46,10 +48,23 @@ export class LoginComponent implements OnInit {
       // Simulate API call
       setTimeout(() => {
         this.isLoading = false;
-        // Show success message
-        this.toastService.success('Login Successful', 'Welcome back!');
-        // Navigate to dashboard on successful login
-        this.router.navigate(['/dashboard']);
+
+        this.authService.login(loginData.email, loginData.password).subscribe(
+          (success) => {
+            if (success) {
+              this.router.navigate(['/dashboard']);
+            } else {
+              this.errorMessage =
+                'Login failed. Please check your credentials.';
+              this.toastService.error('Login Failed', this.errorMessage);
+            }
+          },
+          (error) => {
+            this.isLoading = false;
+            this.errorMessage = 'Login failed. Please try again later.';
+            this.toastService.error('Login Failed', this.errorMessage);
+          }
+        );
       }, 1500);
     } else {
       this.markFormGroupTouched();
@@ -83,7 +98,7 @@ export class LoginComponent implements OnInit {
   }
 
   navigateToSignUp(): void {
-    this.router.navigate(['/auth/register']);
+    this.router.navigate(['/register']);
   }
 
   private markFormGroupTouched(): void {

@@ -22,6 +22,6 @@ export class MainLayoutComponent {
 
   logout(): void {
     // Implement logout logic here
-    this.router.navigate(['/auth/login']);
+    this.router.navigate(['/login']);
   }
 }

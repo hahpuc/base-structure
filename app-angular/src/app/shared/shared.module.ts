@@ -40,12 +40,14 @@ import { MainLayoutComponent } from './layouts/main-layout/main-layout.component
 import { SidebarMenuComponent } from './layouts/sidebar-menu/sidebar-menu.component';
 
 import { ToastComponent } from './components/toast/toast.component';
+import { BreadcrumbComponent } from './layouts/breadcrumb/breadcrumb.component';
 
 const layouts = [
   BlankLayoutComponent,
   AuthLayoutComponent,
   MainLayoutComponent,
   SidebarMenuComponent,
+  BreadcrumbComponent,
 ];
 
 const components = [ToastComponent];

@@ -29,7 +29,7 @@ export class DashboardLayoutComponent {
 
   logout(): void {
     // Implement logout logic here
-    this.router.navigate(['/auth/login']);
+    this.router.navigate(['/login']);
   }
 
   isActiveRoute(path: string): boolean {
