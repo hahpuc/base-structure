@@ -33,7 +33,7 @@ export class SidebarMenuComponent implements OnInit {
           children: [
             {
               label: 'Default',
-              path: '/public-profile/profiles/default',
+              path: '/profile',
               icon: '',
             },
             {
@@ -363,6 +363,8 @@ export class SidebarMenuComponent implements OnInit {
   ngOnInit(): void {}
 
   isActiveRoute(path: string): boolean {
+    console.log('Checking active route:', this.router.url, 'against', path);
+
     return this.router.url === path;
   }
 

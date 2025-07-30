@@ -23,6 +23,12 @@ const routes: Routes = [
             (x) => x.DashboardModule
           ),
       },
+      {
+        path: 'profile',
+        loadChildren: () =>
+          import('@pages/profile/profile.module').then((x) => x.ProfileModule),
+        data: { title: 'Profile' },
+      },
     ],
   },
   {
