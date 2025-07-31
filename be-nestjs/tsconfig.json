@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "resolveJsonModule": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "target": "es2022",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@modules/*": [
+        "src/modules/*"
+      ],
+      "@configs/*": [
+        "src/configs/*"
+      ],
+      "@repositories/*": [
+        "src/repositories/*"
+      ],
+      "@common/*": [
+        "src/common/*"
+      ],
+      "@auth/*": [
+        "src/auth/*"
+      ],
+      "@app/*": [
+        "src/app/*"
+      ]
+    }
+  }
+}

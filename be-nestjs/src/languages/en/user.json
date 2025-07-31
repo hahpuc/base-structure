@@ -1,0 +1,6 @@
+{
+    "NOT_FOUND": "User not found!",
+    "NOT_ALLOW": "Access denied!",
+    "EMAIL_IN_USED": "Email in use!",
+    "USERNAME_IN_USED": "Username in use!"
+}
