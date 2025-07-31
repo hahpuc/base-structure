@@ -16,6 +16,24 @@ export type LoginResponse = {
   refreshTokenExpiresAt: Date | string;
 };
 
+export type ChangePassword = {
+  new_password: string;
+  current_password: string;
+};
+
+export type ForgotRequest = {
+  email: string;
+};
+
+export type VerifyRequest = {
+  token: string;
+};
+
+export type ResetPasswordRequest = {
+  password: string;
+  token: string;
+};
+
 export type TokenPayload = {
   exp: number;
   permissions?: string[];

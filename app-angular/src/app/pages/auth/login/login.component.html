@@ -1,133 +1,97 @@
 <div
   class="flex items-center justify-center grow bg-center bg-no-repeat page-bg min-h-screen w-full"
 >
-  <div class="kt-card max-w-[370px] w-full">
-    <form
-      [formGroup]="loginForm"
-      (ngSubmit)="onSubmit()"
-      class="kt-card-content flex flex-col gap-5 p-10"
-      id="sign_in_form"
-    >
-      <div class="text-center mb-2.5">
-        <h3 class="text-lg font-medium text-mono leading-none mb-2.5">
-          Sign in
-        </h3>
-        <div class="flex items-center justify-center font-medium">
-          <span class="text-sm text-secondary-foreground me-1.5">
-            Need an account?
-          </span>
-          <a class="text-sm link cursor-pointer" (click)="navigateToSignUp()">
-            Sign up
-          </a>
-        </div>
-      </div>
-      <div class="grid grid-cols-2 gap-2.5">
-        <button
-          type="button"
-          class="kt-btn kt-btn-outline justify-center"
-          (click)="onGoogleLogin()"
-        >
-          <img
-            alt=""
-            class="size-3.5 shrink-0"
-            src="assets/media/brand-logos/google.svg"
-          />
-          Use Google
-        </button>
-        <button
-          type="button"
-          class="kt-btn kt-btn-outline justify-center"
-          (click)="onAppleLogin()"
-        >
-          <img
-            alt=""
-            class="size-3.5 shrink-0"
-            src="assets/media/brand-logos/apple-black.svg"
-          />
-          Use Apple
-        </button>
-      </div>
-      <div class="flex items-center gap-2">
-        <span class="border-t border-border w-full"> </span>
-        <span class="text-xs text-muted-foreground font-medium uppercase">
-          Or
+  <div class="kt-card max-w-[370px] w-full px-5 py-10">
+    <div class="text-center mb-6">
+      <h1 class="font-medium text-mono leading-none mb-2.5 text-2xl">Login</h1>
+      <div class="flex items-center justify-center font-medium">
+        <span class="text-sm text-secondary-foreground me-1.5">
+          Enter your credentials to gain access.
         </span>
-        <span class="border-t border-border w-full"> </span>
       </div>
-      <div class="flex flex-col gap-1">
-        <label class="kt-form-label font-normal text-mono"> Email </label>
-        <input
-          formControlName="email"
-          class="kt-input"
-          [class.is-invalid]="isFieldInvalid('email')"
-          [class.is-valid]="isFieldValid('email')"
-          placeholder="email@email.com"
-          type="email"
-          autocomplete="email"
-        />
-        <div *ngIf="isFieldInvalid('email')" class="text-red-500 text-sm mt-1">
-          {{ getFieldError("email") }}
-        </div>
-      </div>
-      <div class="flex flex-col gap-1">
-        <div class="flex items-center justify-between gap-1">
-          <label class="kt-form-label font-normal text-mono"> Password </label>
-          <a
-            class="text-sm kt-link shrink-0 cursor-pointer"
-            (click)="onForgotPassword()"
-          >
-            Forgot Password?
-          </a>
-        </div>
-        <div class="kt-input" data-kt-toggle-password="true">
-          <input
-            formControlName="password"
-            [class.is-invalid]="isFieldInvalid('password')"
-            [class.is-valid]="isFieldValid('password')"
-            placeholder="Enter Password"
-            [type]="showPassword ? 'text' : 'password'"
-            autocomplete="current-password"
-          />
-          <!-- Eye to show/hide password -->
-          <button
-            type="button"
-            class="kt-btn kt-btn-sm kt-btn-ghost kt-btn-icon bg-transparent! -me-1.5"
-            (click)="togglePasswordVisibility()"
-          >
-            <span [class.hidden]="showPassword">
-              <i class="ki-filled ki-eye text-muted-foreground"> </i>
-            </span>
-            <span [class.hidden]="!showPassword">
-              <i class="ki-filled ki-eye-slash text-muted-foreground"> </i>
-            </span>
-          </button>
-        </div>
-        <div
-          *ngIf="isFieldInvalid('password')"
-          class="text-red-500 text-sm mt-1"
+    </div>
+    <form
+      nz-form
+      [formGroup]="validateForm"
+      autocomplete="off"
+      nzLayout="vertical"
+      class="login-form"
+      (ngSubmit)="login()"
+    >
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="userName">Username</nz-form-label>
+        <nz-form-control
+          [nzErrorTip]="!validateForm.value.username ? nzErrorRequire : ''"
         >
-          {{ getFieldError("password") }}
+          <nz-input-group [nzPrefix]="prefixUser">
+            <input
+              type="text"
+              nz-input
+              formControlName="username"
+              placeholder="Username"
+              autocomplete="off"
+              required
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item class="relative">
+        <nz-form-label nzRequired nzFor="password">Password</nz-form-label>
+        <nz-form-control
+          [nzErrorTip]="!validateForm.value.password ? nzErrorRequire : ''"
+        >
+          <nz-input-group [nzPrefix]="prefixLock" [nzSuffix]="suffixVisible">
+            <input
+              [type]="isVisiblePassword ? 'text' : 'password'"
+              nz-input
+              formControlName="password"
+              placeholder="Password"
+              name="password"
+              required
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+
+      <div
+        *ngIf="validateForm.invalid && errorMsg"
+        class="ant-form-item-explain mb-5"
+      >
+        <div class="ant-form-item-explain-error">
+          {{ errorMsg }}
         </div>
       </div>
-      <label class="kt-label">
-        <input
-          formControlName="rememberMe"
-          class="kt-checkbox kt-checkbox-sm"
-          type="checkbox"
-        />
-        <span class="kt-checkbox-label"> Remember me </span>
-      </label>
-      <button
-        type="submit"
-        class="kt-btn kt-btn-primary flex justify-center grow"
-        [disabled]="isLoading"
-      >
-        <span
-          *ngIf="isLoading"
-          class="spinner-border spinner-border-sm me-2"
-        ></span>
-        {{ isLoading ? "Signing In..." : "Sign In" }}
-      </button>
+
+      <nz-form-item>
+        <nz-form-control>
+          <div class="flex items-center justify-between">
+            <label
+              class="text-[13px] text-muted"
+              nz-checkbox
+              [(ngModel)]="rememberMe"
+              [ngModelOptions]="{ standalone: true }"
+            >
+              Remember login information.
+            </label>
+            <button nz-button class="login-form-button" [nzType]="'primary'">
+              Login
+            </button>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
     </form>
+    <ng-template #prefixUser><i nz-icon nzType="user"></i></ng-template>
+    <ng-template #prefixLock><i nz-icon nzType="lock"></i></ng-template>
+    <ng-template #suffixVisible>
+      <i
+        tabindex="0"
+        nz-icon
+        [nzType]="isVisiblePassword ? 'eye-invisible' : 'eye'"
+        (click)="isVisiblePassword = !isVisiblePassword"
+      ></i>
+    </ng-template>
+    <div>
+      <a [routerLink]="['/forgot-password']">Forgot password?</a>
+    </div>
   </div>
 </div>

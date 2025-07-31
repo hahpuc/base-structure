@@ -8,7 +8,7 @@ export const AuthGuard: CanActivateFn = () => {
 
   console.log('AuthGuard: Checking authentication status');
 
-  if (authService.isAuthenticated()) {
+  if (authService.isLoggedIn()) {
     return true;
   } else {
     router.navigate(['/login']);

@@ -1,153 +1,96 @@
-import { AuthService } from '@/app/shared/services/auth.service';
-import { ToastService } from '@/app/shared/services/toast.service';
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { AppBaseComponent } from '@/app/shared/app.base.component';
+import { Dictionary } from '@/app/shared/types/base';
+import { diffFromNow } from '@/app/shared/utils/date';
+import { Component, Injector, OnInit } from '@angular/core';
+import { FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
   standalone: false,
   templateUrl: './login.component.html',
 })
-export class LoginComponent implements OnInit {
-  loginForm!: FormGroup;
-  isLoading = false;
-  errorMessage = '';
-  showPassword = false;
+export class LoginComponent extends AppBaseComponent implements OnInit {
+  validateForm!: FormGroup;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private router: Router,
-    private toastService: ToastService,
-    private authService: AuthService
-  ) {}
+  isVisiblePassword = false;
+  rememberMe = false;
+
+  private _errorMsg?: string;
+  private _lockedMsg?: string;
+  private _intervalId?: number;
+
+  get errorMsg(): string | undefined {
+    return `${this._errorMsg || ''} ${this._lockedMsg || ''}`?.trim();
+  }
+
+  get returnUrl(): string {
+    return this.getQueryParam('return_url') || '/';
+  }
+
+  constructor(injector: Injector, private fb: NonNullableFormBuilder) {
+    super(injector);
+
+    this.validateForm = this.fb.group({
+      username: ['', [Validators.required]],
+      password: ['', [Validators.required]],
+    });
+  }
 
   ngOnInit(): void {
-    this.initializeForm();
-  }
+    if (this.isLoggedIn) {
+      this.redirect('/dashboard');
+    }
 
-  private initializeForm(): void {
-    this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      rememberMe: [false],
+    this.validateForm.statusChanges.subscribe((status) => {
+      if (status === 'VALID' && this._errorMsg) {
+        this._errorMsg = undefined;
+      }
     });
   }
 
-  onSubmit(): void {
-    if (this.loginForm.valid) {
-      this.isLoading = true;
-      this.errorMessage = '';
-
-      const loginData = {
-        email: this.loginForm.get('email')?.value,
-        password: this.loginForm.get('password')?.value,
-        rememberMe: this.loginForm.get('rememberMe')?.value,
-      };
-
-      // Simulate API call
-      setTimeout(() => {
-        this.isLoading = false;
-
-        this.authService.login(loginData.email, loginData.password).subscribe(
-          (success) => {
-            if (success) {
-              this.router.navigate(['/dashboard']);
-            } else {
-              this.errorMessage =
-                'Login failed. Please check your credentials.';
-              this.toastService.error('Login Failed', this.errorMessage);
-            }
-          },
-          (error) => {
-            this.isLoading = false;
-            this.errorMessage = 'Login failed. Please try again later.';
-            this.toastService.error('Login Failed', this.errorMessage);
+  login() {
+    if (this.validateForm.valid) {
+      this.authService.login(this.validateForm.value).subscribe({
+        next: (result) => {
+          if (this.rememberMe) {
+            localStorage.setItem('remember_me', 'true');
           }
-        );
-      }, 1500);
+          this.authService.setTokenStorage(result);
+
+          if (result.user.is_change_password) {
+            localStorage.setItem('is_change_password', 'true');
+            return this.redirect('/change-password');
+          }
+
+          this.redirect('/');
+        },
+        error: (error: { message: string; data?: Dictionary }) => {
+          this.validateForm.reset();
+
+          if (error?.data?.['locked_end']) {
+            this.updateCountdown(error?.data?.['locked_end']);
+            this._intervalId = window.setInterval(() => {
+              this.updateCountdown(error?.data?.['locked_end']);
+            }, 1000);
+          }
+
+          this._errorMsg = error.message;
+        },
+      });
     } else {
-      this.markFormGroupTouched();
-      this.showValidationErrors();
+      this.validateFormGroup(this.validateForm);
     }
   }
 
-  togglePasswordVisibility(): void {
-    this.showPassword = !this.showPassword;
-  }
+  updateCountdown(lockedEnd: string): void {
+    const timeDiff = diffFromNow(lockedEnd);
 
-  onGoogleLogin(): void {
-    // Implement Google OAuth login
-    console.log('Google login clicked');
-    this.toastService.info('Google Login', 'Google OAuth not implemented yet');
-  }
-
-  onAppleLogin(): void {
-    // Implement Apple OAuth login
-    console.log('Apple login clicked');
-    this.toastService.info('Apple Login', 'Apple OAuth not implemented yet');
-  }
-
-  onForgotPassword(): void {
-    // Navigate to forgot password page or show modal
-    console.log('Forgot password clicked');
-    this.toastService.info(
-      'Forgot Password',
-      'Forgot password functionality not implemented yet'
-    );
-  }
-
-  navigateToSignUp(): void {
-    this.router.navigate(['/register']);
-  }
-
-  private markFormGroupTouched(): void {
-    Object.keys(this.loginForm.controls).forEach((key) => {
-      this.loginForm.get(key)?.markAsTouched();
-    });
-  }
-
-  private showValidationErrors(): void {
-    const emailError = this.getFieldError('email');
-    const passwordError = this.getFieldError('password');
-
-    if (emailError) {
-      this.toastService.error('Validation Error', emailError);
-    } else if (passwordError) {
-      this.toastService.error('Validation Error', passwordError);
+    if (timeDiff) {
+      this._lockedMsg = `Please try again later ${timeDiff}.`;
     } else {
-      this.toastService.error(
-        'Validation Error',
-        'Please check your input fields.'
-      );
+      this._errorMsg = undefined;
+      this._lockedMsg = undefined;
+      clearInterval(this._intervalId);
     }
-  }
-
-  getFieldError(fieldName: string): string {
-    const field = this.loginForm.get(fieldName);
-    if (field?.errors && field.touched) {
-      if (field.errors['required']) {
-        return `${
-          fieldName.charAt(0).toUpperCase() + fieldName.slice(1)
-        } is required`;
-      }
-      if (field.errors['email']) {
-        return 'Please enter a valid email address';
-      }
-      if (field.errors['minlength']) {
-        return `Password must be at least ${field.errors['minlength'].requiredLength} characters`;
-      }
-    }
-    return '';
-  }
-
-  isFieldInvalid(fieldName: string): boolean {
-    const field = this.loginForm.get(fieldName);
-    return !!(field?.invalid && field?.touched);
-  }
-
-  isFieldValid(fieldName: string): boolean {
-    const field = this.loginForm.get(fieldName);
-    return !!(field?.valid && field?.touched);
   }
 }
