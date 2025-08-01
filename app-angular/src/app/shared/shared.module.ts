@@ -34,11 +34,12 @@ import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 
 import { ThrottleClickDirective } from './directives/throttle-click.directive';
 
-import { BlankLayoutComponent } from './layouts/blank-layout/blank-layout.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
+import { BlankLayoutComponent } from './layouts/blank-layout/blank-layout.component';
 import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
 import { SidebarMenuComponent } from './layouts/sidebar-menu/sidebar-menu.component';
 
+import { ProgressBarComponent } from './components/progress-bar/progress-bar.component';
 import { ToastComponent } from './components/toast/toast.component';
 import { BreadcrumbComponent } from './layouts/breadcrumb/breadcrumb.component';
 
@@ -50,7 +51,7 @@ const layouts = [
   BreadcrumbComponent,
 ];
 
-const components = [ToastComponent];
+const components = [ToastComponent, ProgressBarComponent];
 
 const directives = [ThrottleClickDirective];
 

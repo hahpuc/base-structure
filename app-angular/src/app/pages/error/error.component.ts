@@ -33,4 +33,8 @@ export class ErrorComponent implements OnInit {
         this.errorCode = '404';
     }
   }
+
+  goHome(): void {
+    window.location.href = '/';
+  }
 }
