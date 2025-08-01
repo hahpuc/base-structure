@@ -1,5 +1,5 @@
 import { EStatus } from '@app/constant/app.enum';
-import { BaseUUIDEntity } from '@common/database/entities/base-uuid.entity';
+import { BaseUUIDEntity } from '@common/base/repositories/entities/base-uuid.entity';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { Column, Entity, OneToMany, OneToOne } from 'typeorm';

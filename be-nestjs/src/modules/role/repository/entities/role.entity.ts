@@ -1,4 +1,4 @@
-import { BaseEntity } from '@common/database/entities/base.entity';
+import { BaseEntity } from '@common/base/repositories/entities/base.entity';
 import { PermissionRole } from '@modules/permission/repository/entities/permission-role.entity';
 import { UserRole } from '@modules/user/repository/entities/user-role.entity';
 import { ApiProperty } from '@nestjs/swagger';

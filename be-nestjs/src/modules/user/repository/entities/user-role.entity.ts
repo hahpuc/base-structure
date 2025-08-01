@@ -1,4 +1,4 @@
-import { BaseEntity } from '@common/database/entities/base.entity';
+import { BaseEntity } from '@common/base/repositories/entities/base.entity';
 import { Role } from '@modules/role/repository/entities/role.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Entity, JoinColumn, ManyToOne } from 'typeorm';

@@ -1,5 +1,5 @@
 import { EStatus } from '@app/constant/app.enum';
-import { BaseEntity } from '@common/database/entities/base.entity';
+import { BaseEntity } from '@common/base/repositories/entities/base.entity';
 import { Column, Entity } from 'typeorm';
 
 @Entity()

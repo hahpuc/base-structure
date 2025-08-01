@@ -1,4 +1,4 @@
-import { BaseDateEntity } from '@common/database/entities/base-date.entity';
+import { BaseDateEntity } from '@common/base/repositories/entities/base-date.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 
