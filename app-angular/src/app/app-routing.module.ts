@@ -29,6 +29,12 @@ const routes: Routes = [
           import('@pages/profile/profile.module').then((x) => x.ProfileModule),
         data: { title: 'Profile' },
       },
+      {
+        path: 'role',
+        loadChildren: () =>
+          import('@pages/role/role.module').then((x) => x.RoleModule),
+        data: { title: 'User Management' },
+      },
     ],
   },
   {
