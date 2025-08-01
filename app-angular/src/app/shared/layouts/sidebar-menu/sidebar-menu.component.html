@@ -1,5 +1,5 @@
 <div
-  class="flex items-stretch grow shrink-0 justify-center my-5"
+  class="flex items-stretch grow shrink-0 justify-center mb-5"
   id="sidebar_menu"
 >
   <div
@@ -57,7 +57,7 @@
         <i class="ki-filled" [class]="item.icon"></i>
       </span>
       <span
-        class="kt-menu-title text-sm text-foreground font-medium kt-menu-item-here:text-mono kt-menu-item-active:text-mono kt-menu-link-hover:text-mono"
+        class="kt-menu-title text-sm text-secondary-foreground font-medium kt-menu-item-here:text-mono kt-menu-item-active:text-mono kt-menu-link-hover:text-mono"
       >
         {{ item.label }}
       </span>
@@ -87,9 +87,8 @@
         <i class="ki-filled" [class]="item.icon"></i>
       </span>
       <span
-        class="kt-menu-title text-sm text-foreground kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono"
+        class="kt-menu-title text-sm text-secondary-foreground kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono"
         [class.font-medium]="level === 0"
-        [class.text-secondary-foreground]="level === 0"
       >
         {{ item.label }}
       </span>

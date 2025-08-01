@@ -1,0 +1,209 @@
+/* Custom Ant Design Theme Overrides */
+
+/* Unified Color System - Bridge Metronic and Ant Design */
+:root {
+    /* Use Metronic's primary color as the base */
+    --unified-primary: #1379F0;
+    --unified-primary-hover: #0f6ad6;
+    --unified-primary-active: #0d5bc2;
+
+    /* Map to both Ant Design and Metronic variables */
+    --ant-primary-color: var(--unified-primary);
+    --ant-primary-color-hover: var(--unified-primary-hover);
+    --ant-primary-color-active: var(--unified-primary-active);
+    --ant-primary-1: #eff8ff;
+    --ant-primary-2: #dbeafe;
+    --ant-primary-3: #bfdbfe;
+    --ant-primary-6: var(--unified-primary);
+    --ant-primary-7: var(--unified-primary-hover);
+
+    /* Override Metronic variables if needed */
+    --primary: var(--unified-primary);
+    --primary-foreground: oklch(1 0 0);
+}
+
+/* Button Overrides */
+.ant-btn-primary {
+    background-color: var(--ant-primary-color) !important;
+    border-color: var(--ant-primary-color) !important;
+    border-radius: 0.5rem !important;
+    height: 36px;
+
+    &:hover,
+    &:focus {
+        background-color: var(--ant-primary-color-hover) !important;
+        border-color: var(--ant-primary-color-hover) !important;
+    }
+
+    &:active {
+        background-color: var(--ant-primary-color-active) !important;
+        border-color: var(--ant-primary-color-active) !important;
+    }
+}
+
+/* Input Overrides */
+.ant-input-affix-wrapper,
+.ant-picker {
+    border-radius: 0.5rem !important;
+
+    --tw-shadow: 0 1px 2px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.05));
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+    min-height: 36px;
+
+    &:focus,
+    &.ant-input-affix-wrapper-focused,
+    &.ant-picker-focused {
+        border-color: var(--ant-primary-color) !important;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2) !important;
+    }
+}
+
+/* Select Overrides */
+.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+    border-radius: 0.5rem !important;
+    border: 1px solid #d1d5db !important;
+}
+
+.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input) .ant-select-selector {
+    border-color: var(--ant-primary-color) !important;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2) !important;
+}
+
+/* Card Overrides */
+.ant-card {
+    border-radius: 0.5rem !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
+
+    .ant-card-head {
+        border-bottom: 1px solid #e5e7eb !important;
+        padding: 1rem 1.5rem !important;
+
+        .ant-card-head-title {
+            font-weight: 600 !important;
+            color: #1f2937 !important;
+        }
+    }
+
+    .ant-card-body {
+        padding: 1.5rem !important;
+    }
+}
+
+/* Table Overrides */
+.ant-table {
+    .ant-table-thead>tr>th {
+        background-color: #f9fafb !important;
+        border-bottom: 2px solid #e5e7eb !important;
+        font-weight: 600 !important;
+        color: #374151 !important;
+        padding: 1rem !important;
+    }
+
+    .ant-table-tbody>tr>td {
+        border-bottom: 1px solid #f3f4f6 !important;
+        padding: 0.75rem 1rem !important;
+    }
+
+    .ant-table-tbody>tr:hover>td {
+        background-color: #f8fafc !important;
+    }
+}
+
+/* Modal Overrides */
+.ant-modal {
+    .ant-modal-content {
+        border-radius: 0.5rem !important;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .ant-modal-header {
+        border-bottom: 1px solid #e5e7eb !important;
+        padding: 1.5rem 1.5rem 1rem !important;
+
+        .ant-modal-title {
+            font-weight: 600 !important;
+            color: #1f2937 !important;
+        }
+    }
+
+    .ant-modal-body {
+        padding: 1.5rem !important;
+    }
+
+    .ant-modal-footer {
+        border-top: 1px solid #e5e7eb !important;
+        padding: 1rem 1.5rem 1.5rem !important;
+    }
+}
+
+/* Message/Notification Overrides */
+.ant-message {
+    .ant-message-notice-content {
+        border-radius: 0.5rem !important;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+    }
+}
+
+.ant-notification {
+    .ant-notification-notice {
+        border-radius: 0.5rem !important;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+    }
+}
+
+/* Dropdown Overrides */
+.ant-dropdown {
+    .ant-dropdown-menu {
+        border-radius: 0.5rem !important;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+        border: 1px solid #e5e7eb !important;
+
+        .ant-dropdown-menu-item {
+            &:hover {
+                background-color: #f8fafc !important;
+            }
+
+            &.ant-dropdown-menu-item-selected {
+                background-color: #eff6ff !important;
+                color: var(--ant-primary-color) !important;
+            }
+        }
+    }
+}
+
+/* Switch Overrides */
+.ant-switch {
+    &.ant-switch-checked {
+        background-color: var(--ant-primary-color) !important;
+    }
+}
+
+/* Checkbox & Radio Overrides */
+.ant-checkbox-checked .ant-checkbox-inner,
+.ant-radio-checked .ant-radio-inner {
+    background-color: var(--ant-primary-color) !important;
+    border-color: var(--ant-primary-color) !important;
+}
+
+/* Progress Overrides */
+.ant-progress-bg {
+    background-color: var(--ant-primary-color) !important;
+}
+
+/* Badge Overrides */
+.ant-badge-count {
+    background-color: var(--ant-primary-color) !important;
+}
+
+/* Tag Overrides */
+.ant-tag {
+    border-radius: 0.5rem !important;
+    border: 1px solid #e5e7eb !important;
+
+    &.ant-tag-blue {
+        background-color: #eff6ff !important;
+        border-color: #bfdbfe !important;
+        color: var(--ant-primary-color) !important;
+    }
+}

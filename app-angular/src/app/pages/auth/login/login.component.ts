@@ -1,4 +1,5 @@
 import { AppBaseComponent } from '@/app/shared/app.base.component';
+import { ToastService } from '@/app/shared/services/toast.service';
 import { Dictionary } from '@/app/shared/types/base';
 import { diffFromNow } from '@/app/shared/utils/date';
 import { Component, Injector, OnInit } from '@angular/core';
@@ -27,7 +28,11 @@ export class LoginComponent extends AppBaseComponent implements OnInit {
     return this.getQueryParam('return_url') || '/';
   }
 
-  constructor(injector: Injector, private fb: NonNullableFormBuilder) {
+  constructor(
+    injector: Injector,
+    private fb: NonNullableFormBuilder,
+    private toastService: ToastService
+  ) {
     super(injector);
 
     this.validateForm = this.fb.group({
@@ -67,6 +72,8 @@ export class LoginComponent extends AppBaseComponent implements OnInit {
         error: (error: { message: string; data?: Dictionary }) => {
           this.validateForm.reset();
 
+          console.log(error);
+
           if (error?.data?.['locked_end']) {
             this.updateCountdown(error?.data?.['locked_end']);
             this._intervalId = window.setInterval(() => {
@@ -75,9 +82,16 @@ export class LoginComponent extends AppBaseComponent implements OnInit {
           }
 
           this._errorMsg = error.message;
+
+          this.toastService.error(
+            'error',
+            this._errorMsg || 'An error occurred while logging in.',
+            5000
+          );
         },
       });
     } else {
+      this.toastService.error('error', 'Please fill in all required fields.');
       this.validateFormGroup(this.validateForm);
     }
   }

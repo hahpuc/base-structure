@@ -22,20 +22,25 @@ export class SidebarMenuComponent implements OnInit {
       icon: 'ki-home-3',
     },
     {
-      label: 'Public Profile',
+      label: 'User Management',
+      icon: 'ki-users',
+      isAccordion: true,
+      children: [
+        { label: 'Role', path: '/role', icon: '' },
+        { label: 'User', path: '/user', icon: '' },
+      ],
+    },
+    {
+      label: 'Account Management',
       icon: 'ki-profile-circle',
       isAccordion: true,
       children: [
+        { label: 'Default', path: '/profile', icon: '' },
         {
           label: 'Profiles',
           icon: '',
           isAccordion: true,
           children: [
-            {
-              label: 'Default',
-              path: '/profile',
-              icon: '',
-            },
             {
               label: 'Creator',
               path: '/public-profile/profiles/creator',
@@ -282,56 +287,7 @@ export class SidebarMenuComponent implements OnInit {
         { label: 'Activity', path: '/account/activity', icon: '' },
       ],
     },
-    {
-      label: 'Network',
-      icon: 'ki-users',
-      isAccordion: true,
-      children: [
-        { label: 'Get Started', path: '/network/get-started', icon: '' },
-        {
-          label: 'User Cards',
-          icon: '',
-          isAccordion: true,
-          children: [
-            {
-              label: 'Mini Cards',
-              path: '/network/user-cards/mini-cards',
-              icon: '',
-            },
-            {
-              label: 'Team Crew',
-              path: '/network/user-cards/team-crew',
-              icon: '',
-            },
-            { label: 'Author', path: '/network/user-cards/author', icon: '' },
-            { label: 'NFT', path: '/network/user-cards/nft', icon: '' },
-            { label: 'Social', path: '/network/user-cards/social', icon: '' },
-          ],
-        },
-        {
-          label: 'User Table',
-          icon: '',
-          isAccordion: true,
-          children: [
-            {
-              label: 'Team Crew',
-              path: '/network/user-table/team-crew',
-              icon: '',
-            },
-            {
-              label: 'App Roster',
-              path: '/network/user-table/app-roster',
-              icon: '',
-            },
-            {
-              label: 'Market Authors',
-              path: '/network/user-table/market-authors',
-              icon: '',
-            },
-          ],
-        },
-      ],
-    },
+
     {
       label: 'Authentication',
       icon: 'ki-security-user',
