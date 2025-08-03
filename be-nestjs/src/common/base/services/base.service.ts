@@ -91,7 +91,7 @@ export abstract class BaseService<
       'getList' in this.repository &&
       typeof this.repository.getList === 'function'
     ) {
-      [data, count] = await (this.repository as any).getList(params);
+      [data, count] = await this.repository.getList(params);
     } else {
       // Fallback to basic pagination
       const take = params.limit || 10;
