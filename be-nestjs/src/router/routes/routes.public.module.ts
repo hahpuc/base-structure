@@ -1,3 +1,6 @@
+import { ProvincePublicController } from '@modules/location/controllers/province.public.controller';
+import { WardPublicController } from '@modules/location/controllers/ward.public.controller';
+import { LocationModule } from '@modules/location/location.module';
 import { PermissionModule } from '@modules/permission/permission.module';
 import { SystemPublicController } from '@modules/system/controllers/system.public.controller';
 import { SystemModule } from '@modules/system/system.module';
@@ -12,9 +15,17 @@ import { HealthPublicController } from 'src/health/controllers/health.public.con
     HealthPublicController,
     SystemPublicController,
     UserPublicController,
+    ProvincePublicController,
+    WardPublicController,
   ],
   providers: [],
   exports: [],
-  imports: [TerminusModule, SystemModule, UserModule, PermissionModule],
+  imports: [
+    TerminusModule,
+    SystemModule,
+    UserModule,
+    PermissionModule,
+    LocationModule,
+  ],
 })
 export class RoutesPublicModule {}

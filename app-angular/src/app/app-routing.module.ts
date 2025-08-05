@@ -35,6 +35,18 @@ const routes: Routes = [
           import('@pages/role/role.module').then((x) => x.RoleModule),
         data: { title: 'User Management' },
       },
+      {
+        path: 'province',
+        loadChildren: () =>
+          import('@pages/location/province/province.module').then(
+            (x) => x.ProvinceModule
+          ),
+      },
+      {
+        path: 'ward',
+        loadChildren: () =>
+          import('@pages/location/ward/ward.module').then((x) => x.WardModule),
+      },
     ],
   },
   {

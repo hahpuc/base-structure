@@ -10,6 +10,7 @@ import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
@@ -28,6 +29,7 @@ import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
@@ -40,8 +42,11 @@ import { MainLayoutComponent } from './layouts/main-layout/main-layout.component
 import { SidebarMenuComponent } from './layouts/sidebar-menu/sidebar-menu.component';
 
 import { ProgressBarComponent } from './components/progress-bar/progress-bar.component';
+
 import { ToastComponent } from './components/toast/toast.component';
 import { BreadcrumbComponent } from './layouts/breadcrumb/breadcrumb.component';
+import { TableComponent } from './components/table/table.component';
+import { TableFilterComponent } from './components/table-filter/table-filter.component';
 
 const layouts = [
   BlankLayoutComponent,
@@ -51,7 +56,12 @@ const layouts = [
   BreadcrumbComponent,
 ];
 
-const components = [ToastComponent, ProgressBarComponent];
+const components = [
+  ToastComponent,
+  ProgressBarComponent,
+  TableComponent,
+  TableFilterComponent,
+];
 
 const directives = [ThrottleClickDirective];
 
@@ -62,8 +72,6 @@ const antD = [
   NzBreadCrumbModule,
   NzButtonModule,
   NzMenuModule,
-  NzIconModule,
-
   NzIconModule,
   NzDropDownModule,
   NzAvatarModule,
@@ -84,6 +92,8 @@ const antD = [
   NzSpaceModule,
   NzUploadModule,
   NzGridModule,
+  NzCollapseModule,
+  NzTagModule,
 ];
 @NgModule({
   declarations: [...layouts, ...components, ...directives, ...pipes],

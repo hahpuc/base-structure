@@ -115,176 +115,12 @@ export class SidebarMenuComponent implements OnInit {
       ],
     },
     {
-      label: 'My Account',
+      label: 'Location Management',
       icon: 'ki-setting-2',
       isAccordion: true,
       children: [
-        {
-          label: 'Account Home',
-          icon: '',
-          isAccordion: true,
-          children: [
-            {
-              label: 'Get Started',
-              path: '/account/home/get-started',
-              icon: '',
-            },
-            {
-              label: 'User Profile',
-              path: '/account/home/user-profile',
-              icon: '',
-            },
-            {
-              label: 'Company Profile',
-              path: '/account/home/company-profile',
-              icon: '',
-            },
-            {
-              label: 'Settings - With Sidebar',
-              path: '/account/home/settings-sidebar',
-              icon: '',
-            },
-            {
-              label: 'Settings - Enterprise',
-              path: '/account/home/settings-enterprise',
-              icon: '',
-            },
-            {
-              label: 'Settings - Plain',
-              path: '/account/home/settings-plain',
-              icon: '',
-            },
-            {
-              label: 'Settings - Modal',
-              path: '/account/home/settings-modal',
-              icon: '',
-            },
-          ],
-        },
-        {
-          label: 'Billing',
-          icon: '',
-          isAccordion: true,
-          children: [
-            {
-              label: 'Billing - Basic',
-              path: '/account/billing/basic',
-              icon: '',
-            },
-            {
-              label: 'Billing - Enterprise',
-              path: '/account/billing/enterprise',
-              icon: '',
-            },
-            { label: 'Plans', path: '/account/billing/plans', icon: '' },
-            {
-              label: 'Billing History',
-              path: '/account/billing/history',
-              icon: '',
-            },
-          ],
-        },
-        {
-          label: 'Security',
-          icon: '',
-          isAccordion: true,
-          children: [
-            {
-              label: 'Get Started',
-              path: '/account/security/get-started',
-              icon: '',
-            },
-            {
-              label: 'Security Overview',
-              path: '/account/security/overview',
-              icon: '',
-            },
-            {
-              label: 'Allowed IP Addresses',
-              path: '/account/security/allowed-ip-addresses',
-              icon: '',
-            },
-            {
-              label: 'Privacy Settings',
-              path: '/account/security/privacy-settings',
-              icon: '',
-            },
-            {
-              label: 'Device Management',
-              path: '/account/security/device-management',
-              icon: '',
-            },
-            {
-              label: 'Backup & Recovery',
-              path: '/account/security/backup-and-recovery',
-              icon: '',
-            },
-            {
-              label: 'Current Sessions',
-              path: '/account/security/current-sessions',
-              icon: '',
-            },
-            {
-              label: 'Security Log',
-              path: '/account/security/security-log',
-              icon: '',
-            },
-          ],
-        },
-        {
-          label: 'Members & Roles',
-          icon: '',
-          isAccordion: true,
-          children: [
-            {
-              label: 'Teams Starter',
-              path: '/account/members/team-starter',
-              icon: '',
-            },
-            { label: 'Teams', path: '/account/members/teams', icon: '' },
-            {
-              label: 'Team Info',
-              path: '/account/members/team-info',
-              icon: '',
-            },
-            {
-              label: 'Members Starter',
-              path: '/account/members/members-starter',
-              icon: '',
-            },
-            {
-              label: 'Team Members',
-              path: '/account/members/team-members',
-              icon: '',
-            },
-            {
-              label: 'Import Members',
-              path: '/account/members/import-members',
-              icon: '',
-            },
-            { label: 'Roles', path: '/account/members/roles', icon: '' },
-            {
-              label: 'Permissions - Toggler',
-              path: '/account/members/permissions-toggle',
-              icon: '',
-            },
-            {
-              label: 'Permissions - Check',
-              path: '/account/members/permissions-check',
-              icon: '',
-            },
-          ],
-        },
-        { label: 'Integrations', path: '/account/integrations', icon: '' },
-        { label: 'Notifications', path: '/account/notifications', icon: '' },
-        { label: 'API Keys', path: '/account/api-keys', icon: '' },
-        { label: 'Appearance', path: '/account/appearance', icon: '' },
-        {
-          label: 'Invite a Friend',
-          path: '/account/invite-a-friend',
-          icon: '',
-        },
-        { label: 'Activity', path: '/account/activity', icon: '' },
+        { label: 'Province', path: '/province', icon: '' },
+        { label: 'Ward', path: '/ward', icon: '' },
       ],
     },
 
@@ -319,8 +155,6 @@ export class SidebarMenuComponent implements OnInit {
   ngOnInit(): void {}
 
   isActiveRoute(path: string): boolean {
-    console.log('Checking active route:', this.router.url, 'against', path);
-
     return this.router.url === path;
   }
 

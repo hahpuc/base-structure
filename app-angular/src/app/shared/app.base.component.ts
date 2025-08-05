@@ -86,6 +86,94 @@ export abstract class AppBaseComponent {
     return this.activeRoute.snapshot.queryParamMap.getAll(param) as T[];
   }
 
+  // Helper method to get all query parameters as an object
+  protected getAllQueryParams(): Dictionary {
+    return { ...this.activeRoute.snapshot.queryParams };
+  }
+
+  // Helper method specifically for table components to parse query params
+  protected getTableStateFromUrl(): {
+    page?: number;
+    pageSize?: number;
+    filters: Dictionary;
+    sort?: string;
+  } {
+    const params = this.getAllQueryParams();
+    const state: any = { filters: {} };
+
+    Object.keys(params).forEach((key) => {
+      const value = params[key];
+
+      if (key === 'page') {
+        state.page = parseInt(value, 10) || 1;
+      } else if (key === 'limit' || key === 'pageSize') {
+        // Support both 'limit' (backend) and 'pageSize' (frontend) for flexibility
+        state.pageSize = parseInt(value, 10);
+      } else if (key === 'sort' || key === 'sorting') {
+        // Support both 'sort' and 'sorting' for flexibility
+        state.sort = value;
+      } else if (
+        !['page', 'limit', 'pageSize', 'sort', 'sorting'].includes(key)
+      ) {
+        // Filter parameter (assuming it's a filter if not a known pagination param)
+        state.filters[key] = value;
+      }
+    });
+
+    return state;
+  }
+
+  // Helper method for table components to update query parameters
+  protected updateTableQueryParams(
+    params: Dictionary,
+    replaceUrl: boolean = true
+  ): void {
+    const prefixedParams: Dictionary = {};
+    const currentParams = this.getAllQueryParams();
+
+    // Keep non-table params
+    Object.keys(currentParams).forEach((key) => {
+      const isTableParam = [
+        'page',
+        'limit',
+        'pageSize',
+        'sort',
+        'sorting',
+      ].includes(key);
+
+      if (!isTableParam) {
+        prefixedParams[key] = currentParams[key];
+      }
+    });
+
+    // Add new table params
+    Object.keys(params).forEach((key) => {
+      const value = params[key];
+      if (value !== null && value !== undefined && value !== '') {
+        let paramKey = key;
+
+        // Convert pageSize to limit for backend compatibility
+        if (key === 'pageSize') {
+          paramKey = 'limit';
+        }
+        // Convert sort to sorting for backend compatibility
+        if (key === 'sort') {
+          paramKey = 'sorting';
+        }
+
+        prefixedParams[paramKey] = value;
+      }
+    });
+
+    this.router
+      .navigate([], {
+        relativeTo: this.activeRoute,
+        queryParams: prefixedParams,
+        replaceUrl: replaceUrl, // Don't add to history by default
+      })
+      .then();
+  }
+
   protected compareObject(a: Dictionary, b: Dictionary): boolean {
     const keysToCompare = Object.keys({ ...a, ...b }).filter(
       (key) =>

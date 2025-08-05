@@ -1,3 +1,6 @@
+import { ProvinceAdminController } from '@modules/location/controllers/province.admin.controller';
+import { WardAdminController } from '@modules/location/controllers/ward.admin.controller';
+import { LocationModule } from '@modules/location/location.module';
 import { LogAdminController } from '@modules/log/controllers/log.admin.controller';
 import { LogModule } from '@modules/log/log.module';
 import { PermissionAdminController } from '@modules/permission/controllers/permission.admin.controller';
@@ -17,9 +20,18 @@ import { Module } from '@nestjs/common';
     SystemAdminController,
     UserAdminController,
     LogAdminController,
+    ProvinceAdminController,
+    WardAdminController,
   ],
   providers: [],
   exports: [],
-  imports: [RoleModule, PermissionModule, UserModule, SystemModule, LogModule],
+  imports: [
+    RoleModule,
+    PermissionModule,
+    UserModule,
+    SystemModule,
+    LogModule,
+    LocationModule,
+  ],
 })
 export class RoutesAdminModule {}

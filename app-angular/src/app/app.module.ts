@@ -7,6 +7,12 @@ import { AppComponent } from './app.component';
 import { httpCustomInterceptor } from './shared/http-interceptor/http-custom-interceptor';
 import { SharedModule } from './shared/shared.module';
 
+import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n';
+import { registerLocaleData } from '@angular/common';
+import en from '@angular/common/locales/en';
+
+registerLocaleData(en);
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -15,7 +21,10 @@ import { SharedModule } from './shared/shared.module';
     AppRoutingModule,
     SharedModule,
   ],
-  providers: [provideHttpClient(withInterceptors([httpCustomInterceptor]))],
+  providers: [
+    provideHttpClient(withInterceptors([httpCustomInterceptor])),
+    { provide: NZ_I18N, useValue: en_US },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -1,0 +1,76 @@
+<div class="table-filter" *ngIf="filters && filters.length > 0">
+  <nz-collapse nzGhost>
+    <nz-collapse-panel nzHeader="Filters" nzKey="1">
+      <form [formGroup]="filterForm" (ngSubmit)="onFilter()">
+        <div class="row">
+          <div class="col-md-3" *ngFor="let filter of filters">
+            <nz-form-item>
+              <nz-form-label>{{ filter.label }}</nz-form-label>
+              <nz-form-control>
+                <!-- Text Input -->
+                <input
+                  *ngIf="filter.type === 'text'"
+                  nz-input
+                  [formControlName]="filter.name"
+                  [placeholder]="filter.label"
+                />
+
+                <!-- Number Input -->
+                <nz-input-number
+                  *ngIf="filter.type === 'number'"
+                  [formControlName]="filter.name"
+                  [nzPlaceHolder]="filter.label"
+                  style="width: 100%"
+                ></nz-input-number>
+
+                <!-- Date Picker -->
+                <nz-date-picker
+                  *ngIf="filter.type === 'date'"
+                  [formControlName]="filter.name"
+                  [nzPlaceHolder]="filter.label"
+                  style="width: 100%"
+                ></nz-date-picker>
+
+                <!-- Select Dropdown -->
+                <nz-select
+                  *ngIf="filter.type === 'select'"
+                  [formControlName]="filter.name"
+                  [nzPlaceHolder]="filter.label"
+                  nzAllowClear
+                  [nzLoading]="isLoadingOptions[filter.name]"
+                  style="width: 100%"
+                >
+                  <nz-option
+                    *ngFor="let option of filterOptions[filter.name]"
+                    [nzLabel]="option.label"
+                    [nzValue]="option.value"
+                  ></nz-option>
+                </nz-select>
+
+                <div *ngIf="filter.note" class="form-note">
+                  <small class="text-muted">{{ filter.note }}</small>
+                </div>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+
+        <div class="filter-actions mt-3">
+          <button
+            nz-button
+            nzType="primary"
+            type="submit"
+            [nzLoading]="isLoading"
+          >
+            <i nz-icon nzType="search"></i>
+            Search
+          </button>
+          <button nz-button type="button" (click)="onClear()" class="ml-2">
+            <i nz-icon nzType="clear"></i>
+            Clear
+          </button>
+        </div>
+      </form>
+    </nz-collapse-panel>
+  </nz-collapse>
+</div>

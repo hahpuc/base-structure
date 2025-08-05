@@ -1,0 +1,70 @@
+<div class="ft-table-container">
+  <!-- Table Title -->
+  <div class="table-header" *ngIf="option?.title">
+    <h4 class="table-title">{{ option.title }}</h4>
+  </div>
+
+  <!-- Table Filter -->
+  <ft-table-filter
+    *ngIf="option?.filterable && option.filters && option.filters.length > 0"
+    [filters]="option.filters!"
+    (filterChange)="onFilterChange($event)"
+    (clearFilter)="onClearFilter()"
+  ></ft-table-filter>
+
+  <!-- Basic Ant Design Table -->
+  <nz-table
+    #basicTable
+    [nzData]="tableData"
+    [nzLoading]="loading"
+    [nzPageSize]="pageSize"
+    [nzShowSizeChanger]="true"
+    [nzTotal]="total"
+    [nzPageIndex]="currentPage"
+    [nzPageSizeOptions]="pageSizeOptions"
+    (nzPageIndexChange)="onPageChange($event)"
+    (nzPageSizeChange)="onPageSizeChange($event)"
+    nzShowPagination
+    nzBordered
+    [nzFrontPagination]="false"
+  >
+    <thead>
+      <tr>
+        <th *ngFor="let column of option?.columns">
+          {{ column.title }}
+        </th>
+        <th
+          *ngIf="option?.actions && option.actions && option.actions.length > 0"
+        >
+          Actions
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td *ngFor="let column of option?.columns">
+          {{ getColumnValue(data, column) }}
+        </td>
+        <td
+          *ngIf="option?.actions && option.actions && option.actions.length > 0"
+        >
+          <button
+            *ngFor="let action of option.actions"
+            nz-button
+            nzSize="small"
+            nzType="default"
+            [title]="action.label"
+            (click)="onActionClick(data, action)"
+            class="mr-1"
+          >
+            <i [class]="action.iconClass" *ngIf="action.iconClass">
+              <nz-icon nzType="delete-column" nzTheme="outline" />
+            </i>
+            <span *ngIf="!action.iconClass">{{ action.label }}</span>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
