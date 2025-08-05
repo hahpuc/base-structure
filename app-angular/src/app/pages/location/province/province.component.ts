@@ -42,21 +42,33 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
     ],
     columns: [
       {
+        title: '#',
+        name: '',
+        type: 'custom-render',
+        customRender: (row) => {
+          return `<span class="text-blue-500 font-semibold">Province #${row.id}</span>`;
+        },
+      },
+      {
         title: 'ID',
         name: 'id',
         type: 'number',
-        sortable: true,
       },
       {
         title: 'Name',
         name: 'name',
+        type: 'text',
         sortable: true,
       },
       {
         title: 'Created Date',
         name: 'created_at',
         type: 'date',
-        sortable: true,
+      },
+      {
+        title: 'Updated Date',
+        name: 'updated_at',
+        type: 'datetime',
       },
       {
         title: 'Status',

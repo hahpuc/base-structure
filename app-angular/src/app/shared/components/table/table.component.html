@@ -1,8 +1,8 @@
 <div class="ft-table-container">
   <!-- Table Title -->
-  <div class="table-header" *ngIf="option?.title">
+  <!-- <div class="table-header" *ngIf="option?.title">
     <h4 class="table-title">{{ option.title }}</h4>
-  </div>
+  </div> -->
 
   <!-- Table Filter -->
   <ft-table-filter
@@ -28,9 +28,16 @@
     nzBordered
     [nzFrontPagination]="false"
   >
+    <!-- Table Header -->
     <thead>
       <tr>
-        <th *ngFor="let column of option?.columns">
+        <th
+          *ngFor="let column of option?.columns"
+          [nzShowSort]="column.sortable"
+          [nzSortFn]="getSortFn(column)"
+          [nzSortOrder]="getSortDirection(column)"
+          (nzSortOrderChange)="onSortChange(column, $event)"
+        >
           {{ column.title }}
         </th>
         <th
@@ -41,10 +48,134 @@
       </tr>
     </thead>
 
+    <!-- Table Body -->
     <tbody>
       <tr *ngFor="let data of basicTable.data">
         <td *ngFor="let column of option?.columns">
-          {{ getColumnValue(data, column) }}
+          <ng-container [ngSwitch]="getColumnType(column)">
+            <!-- Text Type -->
+            <span *ngSwitchCase="'text'">
+              {{ getColumnValue(data, column) }}
+            </span>
+
+            <!-- Number Type -->
+            <span *ngSwitchCase="'number'">
+              {{ getColumnValue(data, column) | number }}
+            </span>
+
+            <!-- Date Type -->
+            <span *ngSwitchCase="'date'">
+              {{ getColumnValue(data, column) | date : "dd/MM/yyyy" }}
+            </span>
+
+            <!-- DateTime Type -->
+            <span *ngSwitchCase="'datetime'">
+              {{ getColumnValue(data, column) | date : "dd/MM/yyyy HH:mm" }}
+            </span>
+
+            <!-- Time Type -->
+            <span *ngSwitchCase="'time'">
+              {{ getColumnValue(data, column) | date : "HH:mm" }}
+            </span>
+
+            <!-- Boolean Type -->
+            <span *ngSwitchCase="'boolean'">
+              <nz-tag
+                [nzColor]="getColumnValue(data, column) ? 'green' : 'red'"
+              >
+                {{ getColumnValue(data, column) ? "Yes" : "No" }}
+              </nz-tag>
+            </span>
+
+            <!-- Status Type (Switch) -->
+            <span *ngSwitchCase="'status'">
+              <nz-switch
+                [ngModel]="getColumnValue(data, column)"
+                [nzDisabled]="isColumnDisabled(data, column)"
+                (ngModelChange)="onStatusChange(data, column, $event)"
+                [nzCheckedChildren]="checkedTemplate"
+                [nzUnCheckedChildren]="unCheckedTemplate"
+              >
+              </nz-switch>
+
+              <ng-template #checkedTemplate
+                ><nz-icon nzType="check"
+              /></ng-template>
+              <ng-template #unCheckedTemplate
+                ><nz-icon nzType="close"
+              /></ng-template>
+            </span>
+
+            <!-- Switch Type -->
+            <span *ngSwitchCase="'switch'">
+              <nz-switch
+                [ngModel]="getColumnValue(data, column)"
+                [nzDisabled]="isColumnDisabled(data, column)"
+                (ngModelChange)="onStatusChange(data, column, $event)"
+              >
+              </nz-switch>
+            </span>
+
+            <!-- Percent Type -->
+            <span *ngSwitchCase="'percent'">
+              {{ getColumnValue(data, column) | percent }}
+            </span>
+
+            <!-- Image Type -->
+            <span *ngSwitchCase="'image'">
+              <img
+                [src]="getColumnValue(data, column)"
+                [alt]="column.title"
+                style="width: 50px; height: 50px; object-fit: cover"
+                *ngIf="getColumnValue(data, column)"
+              />
+              <span *ngIf="!getColumnValue(data, column)">No Image</span>
+            </span>
+
+            <!-- Long Text Type -->
+            <span
+              *ngSwitchCase="'long-text'"
+              [title]="getColumnValue(data, column)"
+            >
+              {{ truncateText(getColumnValue(data, column), 50) }}
+            </span>
+
+            <!-- Button Type -->
+            <span *ngSwitchCase="'button'">
+              <button
+                nz-button
+                nzType="primary"
+                nzSize="small"
+                [disabled]="isColumnDisabled(data, column)"
+                (click)="onColumnClick(data, column)"
+              >
+                {{ column.title }}
+              </button>
+            </span>
+
+            <!-- Custom Render Type -->
+            <span
+              *ngSwitchCase="'custom-render'"
+              [innerHTML]="getCustomRender(data, column)"
+            >
+            </span>
+
+            <!-- Template Type -->
+            <ng-container *ngSwitchCase="'template'">
+              <ng-container
+                *ngTemplateOutlet="
+                  getColumnTemplate(column);
+                  context: { $implicit: data, column: column }
+                "
+              >
+              </ng-container>
+            </ng-container>
+
+            <!-- Default case (fallback to text) -->
+            <span *ngSwitchDefault>
+              {{ getColumnValue(data, column) }}
+            </span>
+          </ng-container>
         </td>
         <td
           *ngIf="option?.actions && option.actions && option.actions.length > 0"

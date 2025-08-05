@@ -71,7 +71,7 @@ export class WardAdminController {
     return await this.service.import(body);
   }
 
-  @Put('/toggle/status/:id')
+  @Put('/toggle/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @Auth({ permissions: 'ward_manage_update' })
   async toggleStatus(@Param('id') id: number): Promise<void> {

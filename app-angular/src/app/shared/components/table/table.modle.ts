@@ -28,6 +28,7 @@ export declare type TableColumnType =
   | 'long-text'
   | 'switch'
   | 'button'
+  | 'custom-render'
   | TemplateRef<any>;
 
 export declare type TableColumnFilterType =

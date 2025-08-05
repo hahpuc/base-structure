@@ -20,7 +20,6 @@ import {
   standalone: false,
   selector: 'ft-table',
   templateUrl: './table.component.html',
-  styleUrls: ['./table.component.scss'],
 })
 export class TableComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() option!: TableOption;
@@ -47,12 +46,12 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
     return this.activatedRoute.snapshot.queryParamMap.get(param);
   }
 
+  // MARK: Initialization
   ngOnInit() {
     this.initializeTable();
   }
 
   ngAfterViewInit() {
-    // Initialize table state from query parameters
     this.initializeFromQueryParams();
   }
 
@@ -145,7 +144,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
     this.loadData();
   }
 
-  // Pagination handlers
+  // MARK: Pagination handlers
   onPageChange(page: number) {
     this.currentPage = page;
     this.updateQueryParams();
@@ -159,7 +158,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
     this.loadData();
   }
 
-  // Filter handlers
+  // MARK: Filter handlers
   onFilterChange(filters: any) {
     this.currentFilters = filters;
     this.currentPage = 1;
@@ -193,16 +192,70 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
     });
   }
 
-  // Sorting
-  getSortFn(columnName: string) {
+  // MARK: Sorting
+  onSort(column: TableColumn) {
+    if (!column.sortable) return;
+
+    const columnName = column.name;
+    let newSort = '';
+
+    if (this.currentSort === `${columnName} asc`) {
+      newSort = `${columnName} desc`;
+    } else if (this.currentSort === `${columnName} desc`) {
+      newSort = '';
+    } else {
+      newSort = `${columnName} asc`;
+    }
+
+    this.currentSort = newSort;
+    this.currentPage = 1;
+    this.updateQueryParams();
+    this.loadData();
+  }
+
+  getSortDirection(column: TableColumn): 'ascend' | 'descend' | null {
+    if (!column.sortable || !this.currentSort) return null;
+
+    const columnName = column.name;
+    if (this.currentSort === `${columnName} asc`) {
+      return 'ascend';
+    } else if (this.currentSort === `${columnName} desc`) {
+      return 'descend';
+    }
+    return null;
+  }
+
+  getSortFn(column: TableColumn) {
+    if (!column.sortable) return null;
+
     return (a: any, b: any) => {
-      const aValue = this.getNestedValue(a, columnName);
-      const bValue = this.getNestedValue(b, columnName);
+      const aValue = this.getNestedValue(a, column.name);
+      const bValue = this.getNestedValue(b, column.name);
 
       if (aValue < bValue) return -1;
       if (aValue > bValue) return 1;
       return 0;
     };
+  }
+
+  onSortChange(column: TableColumn, sortOrder: string | null) {
+    if (!column.sortable) return;
+
+    const columnName = column.name;
+    let newSort = '';
+
+    if (sortOrder === 'ascend') {
+      newSort = `${columnName} asc`;
+    } else if (sortOrder === 'descend') {
+      newSort = `${columnName} desc`;
+    } else {
+      newSort = '';
+    }
+
+    this.currentSort = newSort;
+    this.currentPage = 1;
+    this.updateQueryParams();
+    this.loadData();
   }
 
   // Selection methods
@@ -231,16 +284,45 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
     return this.tableData.filter((item) => this.mapOfCheckedId[item.id]);
   }
 
-  // Column methods
+  // MARK: Column methods
   getColumnType(column: TableColumn): string {
     if (column.customRender) {
-      return 'custom';
+      return 'custom-render';
+    }
+    // Check if column.type is a TemplateRef
+    if (
+      column.type &&
+      typeof column.type === 'object' &&
+      'createEmbeddedView' in column.type
+    ) {
+      return 'template';
     }
     return (column.type as string) || 'text';
   }
 
+  getColumnTemplate(column: TableColumn): any {
+    if (
+      column.type &&
+      typeof column.type === 'object' &&
+      'createEmbeddedView' in column.type
+    ) {
+      return column.type;
+    }
+    return null;
+  }
+
   getColumnValue(row: any, column: TableColumn): any {
-    return this.getNestedValue(row, column.name);
+    const value = this.getNestedValue(row, column.name);
+
+    // For status and switch types, convert numeric values to boolean
+    if (
+      (column.type === 'status' || column.type === 'switch') &&
+      typeof value === 'number'
+    ) {
+      return value === 1;
+    }
+
+    return value;
   }
 
   getCustomRender(row: any, column: TableColumn): string {
@@ -265,15 +347,14 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
 
   onStatusChange(row: any, column: TableColumn, newValue: boolean) {
     // Update the row data
-    this.setNestedValue(row, column.name, newValue);
+    this.setNestedValue(row, column.name, newValue ? 1 : 0);
 
-    // Call the click handler if exists
     if (column.click) {
       column.click(row);
     }
   }
 
-  // Action methods
+  // MARK: Action methods
   getVisibleActions(row: any): TableAction[] {
     console.log('Get Actions = ', this.option.actions);
 
@@ -330,6 +411,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   // MARK: Static Data Utils
+
   private _loadStaticData() {
     if (Array.isArray(this.option.data)) {
       // Static data - apply client-side pagination

@@ -69,9 +69,9 @@ export class ProvinceAdminController {
     return await this.provinceService.export(param);
   }
 
-  @Put('/toggle/status/:id')
+  @Put('/toggle/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Auth({ permissions: 'province_manage_update' })
+  // @Auth({ permissions: 'province_manage_update' })
   async toggleStatus(@Param('id') id: number): Promise<void> {
     await this.provinceService.toggleStatus(id);
   }
