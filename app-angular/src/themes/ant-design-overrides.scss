@@ -27,7 +27,7 @@
     background-color: var(--ant-primary-color) !important;
     border-color: var(--ant-primary-color) !important;
     border-radius: 0.5rem !important;
-    height: 36px;
+    height: calc(var(--spacing) * 8.5);
 
     &:hover,
     &:focus {
@@ -48,7 +48,7 @@
 
     --tw-shadow: 0 1px 2px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.05));
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    min-height: 36px;
+    min-height: calc(var(--spacing) * 8.5);
 
     &:focus,
     &.ant-input-affix-wrapper-focused,

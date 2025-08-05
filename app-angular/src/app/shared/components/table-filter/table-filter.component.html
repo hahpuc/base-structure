@@ -1,11 +1,110 @@
 <div class="table-filter" *ngIf="filters && filters.length > 0">
-  <nz-collapse nzGhost>
-    <nz-collapse-panel nzHeader="Filters" nzKey="1">
-      <form [formGroup]="filterForm" (ngSubmit)="onFilter()">
-        <div class="row">
-          <div class="col-md-3" *ngFor="let filter of filters">
+  <!-- Filter Input -->
+  <div class="flex items-center gap-3 w-full">
+    <div class="kt-input w-full">
+      <i class="ki-filled ki-magnifier"> </i>
+      <input placeholder="" type="text" />
+      <span class="kt-badge kt-badge-outline -me-1.5"> ⌘ K </span>
+    </div>
+    <!--Filter-->
+    <button
+      nz-button
+      nzType="primary"
+      class="kt-dropdown-toggle kt-btn kt-btn-primary"
+      data-kt-drawer-toggle="#drawers_shop_filter"
+    >
+      <i class="ki-filled ki-filter"> </i>
+      Filter
+    </button>
+  </div>
+
+  <!-- UI for the filter drawer in right side -->
+  <div
+    class="hidden kt-drawer kt-drawer-end card flex-col max-w-[90%] w-[320px] top-5 bottom-5 end-5 rounded-xl border border-border"
+    data-kt-drawer="true"
+    data-kt-drawer-container="body"
+    id="drawers_shop_filter"
+    data-kt-drawer-initialized="true"
+    style="z-index: 100"
+    role="dialog"
+    aria-modal="true"
+    tabindex="-1"
+  >
+    <form [formGroup]="filterForm" (ngSubmit)="onFilter()">
+      <div class="kt-card-header ps-5 pr-2">
+        <h3 class="kt-card-title">Filter</h3>
+        <button
+          class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost shrink-0"
+          data-kt-drawer-dismiss="true"
+        >
+          <i class="ki-filled ki-cross text-base"> </i>
+        </button>
+      </div>
+      <div class="kt-card-content px-0 pt-3.5 kt-scrollable-y-auto">
+        <!-- <div class="flex items-center gap-1 px-5 mb-3">
+          <span class="text-sm font-medium text-mono"> Status </span>
+          <span
+            class="cursor-pointer"
+            data-kt-tooltip="true"
+            data-kt-tooltip-container="body"
+            data-kt-tooltip-initialized="true"
+          >
+            <i class="ki-filled ki-information-2 text-muted-foreground"> </i>
+            <span class="kt-tooltip" data-kt-tooltip-content="true">
+              Specify product status.
+            </span>
+          </span>
+        </div>
+        <div class="px-5">
+          <div class="kt-toggle-group flex">
+            <label class="kt-btn">
+              All
+              <input name="filter-date-range" type="radio" value="all" />
+            </label>
+            <label class="kt-btn">
+              Sale
+              <input
+                checked=""
+                name="filter-date-range"
+                type="radio"
+                value="sale"
+              />
+            </label>
+            <label class="kt-btn">
+              New
+              <input name="filter-date-range" type="radio" value="new" />
+            </label>
+            <label class="kt-btn">
+              Trend
+              <input name="filter-date-range" type="radio" value="trend" />
+            </label>
+          </div>
+        </div>
+        <div class="border-b border-border mb-4 mt-5"></div>
+        <div class="flex flex-col gap-2.5 px-5">
+          <span class="text-sm font-medium text-mono"> Price </span>
+          <div class="kt-input-group">
+            <span class="kt-input-addon kt-input-addon-icon">
+              <i class="ki-filled ki-dollar"> </i>
+            </span>
+            <input class="kt-input" placeholder="" type="text" value="60" />
+          </div>
+          <div class="kt-input-group">
+            <span class="kt-input-addon kt-input-addon-icon">
+              <i class="ki-filled ki-dollar"> </i>
+            </span>
+            <input class="kt-input" placeholder="" type="text" value="170" />
+          </div>
+        </div>
+        <div class="border-b border-border mb-4 mt-5"></div> -->
+
+        <div class="flex flex-col px-5">
+          <div *ngFor="let filter of filters">
+            <span class="text-sm font-medium text-mono">
+              {{ filter.label }}
+            </span>
+
             <nz-form-item>
-              <nz-form-label>{{ filter.label }}</nz-form-label>
               <nz-form-control>
                 <!-- Text Input -->
                 <input
@@ -54,23 +153,30 @@
             </nz-form-item>
           </div>
         </div>
+      </div>
 
-        <div class="filter-actions mt-3">
-          <button
-            nz-button
-            nzType="primary"
-            type="submit"
-            [nzLoading]="isLoading"
-          >
-            <i nz-icon nzType="search"></i>
-            Search
-          </button>
-          <button nz-button type="button" (click)="onClear()" class="ml-2">
-            <i nz-icon nzType="clear"></i>
-            Clear
-          </button>
-        </div>
-      </form>
-    </nz-collapse-panel>
-  </nz-collapse>
+      <div class="kt-card-footer grid grid-cols-2 gap-2.5">
+        <button
+          nz-button
+          nzType="primary"
+          type="submit"
+          [nzLoading]="isLoading"
+        >
+          <i nz-icon nzType="search"></i>
+          Search
+        </button>
+        <button nz-button type="button" (click)="onClear()" class="ml-2">
+          <i nz-icon nzType="clear"></i>
+          Clear
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- UI Backdrop blur content effect -->
+  <div
+    data-kt-drawer-backdrop="true"
+    style="z-index: 99"
+    class="kt-drawer-backdrop hidden"
+  ></div>
 </div>
