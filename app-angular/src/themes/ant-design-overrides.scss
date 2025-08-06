@@ -23,6 +23,12 @@
 }
 
 /* Button Overrides */
+.ant-btn {
+    border-radius: 0.5rem !important;
+    height: calc(var(--spacing) * 8.5);
+
+}
+
 .ant-btn-primary {
     background-color: var(--ant-primary-color) !important;
     border-color: var(--ant-primary-color) !important;
@@ -42,6 +48,19 @@
 }
 
 /* Input Overrides */
+
+.ant-input {
+    border-radius: 0.5rem !important;
+    // border: 1px solid #d1d5db !important;
+    // box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+    min-height: calc(var(--spacing) * 8);
+
+    // &:focus {
+    //     border-color: var(--ant-primary-color) !important;
+    //     box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2) !important;
+    // }
+}
+
 .ant-input-affix-wrapper,
 .ant-picker {
     border-radius: 0.5rem !important;

@@ -1,0 +1,291 @@
+/* Table Component Styles */
+.ft-table-container {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Hide Ant Design measurement row to prevent spacing issues */
+::ng-deep .ant-table tr.ant-table-measure-now {
+    display: none !important;
+    height: 0 !important;
+    visibility: hidden !important;
+}
+
+/* Hide any row with nz-table-measure-row attribute */
+::ng-deep .ant-table tr[nz-table-measure-row] {
+    display: none !important;
+    height: 0 !important;
+    visibility: hidden !important;
+}
+
+/* Alternative approach - ensure measurement row has no height */
+::ng-deep .ant-table .nz-disable-td {
+    height: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    line-height: 0 !important;
+    max-height: 0 !important;
+}
+
+/* Ensure no spacing between thead and tbody */
+::ng-deep .ant-table thead {
+    border-spacing: 0;
+}
+
+::ng-deep .ant-table tbody {
+    border-spacing: 0;
+}
+
+/* Remove any potential spacing in table structure */
+::ng-deep .ant-table table {
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+/* Force remove any spacing caused by measurement elements */
+::ng-deep .ant-table .ant-table-tbody>tr[nz-table-measure-row],
+::ng-deep .ant-table .ant-table-tbody>tr.ant-table-measure-now {
+    position: absolute !important;
+    left: -9999px !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+/* Ensure table body follows header directly */
+::ng-deep .ant-table .ant-table-tbody {
+    border-top: none !important;
+}
+
+/* Responsive table container */
+.table-responsive-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    /* Smooth scrolling on iOS and other browsers */
+
+    /* Improve scroll momentum and smoothness */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    will-change: scroll-position;
+
+    /* Mobile specific styles */
+    @media (max-width: 768px) {
+        margin: 0 -16px;
+        /* Extend to screen edges on mobile */
+        padding: 0 16px;
+        max-width: calc(100vw - 32px);
+
+        /* Enhanced mobile scrolling */
+        scrollbar-width: thin;
+        scrollbar-color: #c1c1c1 #f1f1f1;
+    }
+
+    /* Small mobile devices */
+    @media (max-width: 480px) {
+        margin: 0 -12px;
+        padding: 0 12px;
+        max-width: calc(100vw - 24px);
+    }
+}
+
+/* Ant Design table overrides */
+::ng-deep .ant-table {
+    /* Ensure minimum width for horizontal scroll */
+    min-width: 800px;
+
+    /* Disable Ant Design's internal horizontal scrolling */
+    .ant-table-content {
+        overflow-x: visible !important;
+        overflow-y: visible !important;
+    }
+
+    .ant-table-body {
+        overflow-x: visible !important;
+        overflow-y: visible !important;
+    }
+
+    /* Ensure table container doesn't scroll */
+    .ant-table-container {
+        overflow: visible !important;
+    }
+
+    /* Remove any scroll behavior from table wrapper */
+    .ant-table-wrapper {
+        overflow: visible !important;
+    }
+
+    @media (max-width: 768px) {
+        font-size: 14px;
+
+        .ant-table-thead>tr>th {
+            padding: 8px 4px;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .ant-table-tbody>tr>td {
+            padding: 8px 4px;
+            font-size: 13px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        font-size: 12px;
+
+        .ant-table-thead>tr>th {
+            padding: 6px 3px;
+            font-size: 12px;
+        }
+
+        .ant-table-tbody>tr>td {
+            padding: 6px 3px;
+            font-size: 12px;
+        }
+    }
+}
+
+/* Fixed columns styling */
+::ng-deep .ant-table-fixed-left,
+::ng-deep .ant-table-fixed-right {
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    z-index: 2;
+}
+
+::ng-deep .ant-table-fixed-left {
+    left: 0;
+}
+
+::ng-deep .ant-table-fixed-right {
+    right: 0;
+}
+
+/* Mobile optimizations for fixed columns */
+@media (max-width: 768px) {
+
+    ::ng-deep .ant-table-fixed-left,
+    ::ng-deep .ant-table-fixed-right {
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
+    }
+}
+
+/* Table pagination responsive */
+::ng-deep .ant-table-pagination {
+    @media (max-width: 768px) {
+        .ant-pagination-options {
+            display: none;
+        }
+
+        .ant-pagination-item,
+        .ant-pagination-prev,
+        .ant-pagination-next {
+            min-width: 32px;
+            height: 32px;
+            line-height: 30px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .ant-pagination-item:not(.ant-pagination-item-active) {
+            display: none;
+        }
+
+        .ant-pagination-item,
+        .ant-pagination-prev,
+        .ant-pagination-next {
+            min-width: 28px;
+            height: 28px;
+            line-height: 26px;
+            font-size: 12px;
+        }
+    }
+}
+
+/* Status switches and buttons mobile optimization */
+::ng-deep .ant-switch {
+    @media (max-width: 480px) {
+        min-width: 36px;
+        height: 18px;
+
+        .ant-switch-inner {
+            font-size: 10px;
+        }
+    }
+}
+
+::ng-deep .ant-btn-sm {
+    @media (max-width: 480px) {
+        padding: 0 6px;
+        font-size: 11px;
+        height: 24px;
+        line-height: 22px;
+    }
+}
+
+/* Table loading overlay */
+::ng-deep .ant-spin-nested-loading {
+    .ant-spin-container {
+        @media (max-width: 768px) {
+            min-height: 300px;
+        }
+    }
+}
+
+/* Table scroll wrapper - no scrolling, just container */
+.table-scroll-wrapper {
+    width: 100%;
+    overflow: visible;
+    /* Let parent container handle scrolling */
+}
+
+/* Custom scrollbar for better UX */
+.table-responsive-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-responsive-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.table-responsive-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.table-responsive-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+@media (max-width: 768px) {
+    .table-responsive-container::-webkit-scrollbar {
+        height: 6px;
+    }
+}
+
+// Pagination container styling
+.table-pagination-container {
+    padding: 16px 0;
+    background: white;
+    border-top: 1px solid #f0f0f0;
+
+    .table-pagination {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
+    .pagination-total {
+        color: #666;
+        font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+        padding: 12px 0;
+
+        .table-pagination {
+            justify-content: center;
+        }
+    }
+}

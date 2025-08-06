@@ -60,6 +60,7 @@ export type TableColumn<T = any> = {
   sortable?: boolean;
   filterable?: boolean;
   width?: string;
+  fixed?: 'left' | 'right';
   customRender?: (row: T) => string;
   click?: TableClickHandler<T>;
   visible?: TableActionVisible<T>;

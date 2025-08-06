@@ -1,10 +1,9 @@
 <div class="table-filter" *ngIf="filters && filters.length > 0">
   <!-- Filter Input -->
   <div class="flex items-center gap-3 w-full">
-    <div class="kt-input w-full">
+    <div class="kt-input max-w-[350px]">
       <i class="ki-filled ki-magnifier"> </i>
-      <input placeholder="" type="text" />
-      <span class="kt-badge kt-badge-outline -me-1.5"> ⌘ K </span>
+      <input placeholder="Search..." type="text" />
     </div>
     <!--Filter-->
     <button
@@ -165,10 +164,7 @@
           <i nz-icon nzType="search"></i>
           Search
         </button>
-        <button nz-button type="button" (click)="onClear()" class="ml-2">
-          <i nz-icon nzType="clear"></i>
-          Clear
-        </button>
+        <button nz-button nzType="default" (click)="onClear()">Clear</button>
       </div>
     </form>
   </div>

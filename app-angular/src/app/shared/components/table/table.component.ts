@@ -20,6 +20,7 @@ import {
   standalone: false,
   selector: 'ft-table',
   templateUrl: './table.component.html',
+  styleUrls: ['./table.component.scss'],
 })
 export class TableComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() option!: TableOption;
@@ -356,8 +357,6 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
 
   // MARK: Action methods
   getVisibleActions(row: any): TableAction[] {
-    console.log('Get Actions = ', this.option.actions);
-
     if (!this.option.actions) return [];
 
     return this.option.actions.filter((action) => {
@@ -484,5 +483,91 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
         return aValue < bValue ? 1 : -1;
       }
     });
+  }
+
+  // MARK: Table width and responsive methods
+  getTableScrollX(): { x?: string | null; y?: string | null } {
+    if (!this.option?.columns) {
+      return { x: null, y: null };
+    }
+
+    // Calculate total width from columns that have width specified
+    let totalWidth = 0;
+    let hasFixedWidths = false;
+
+    this.option.columns.forEach((column) => {
+      if (column.width) {
+        hasFixedWidths = true;
+        // Extract numeric value from width (e.g., "120px" -> 120)
+        const numericWidth = parseInt(column.width.replace(/\D/g, ''), 10);
+        totalWidth += numericWidth || 100; // Default to 100px if can't parse
+      } else {
+        totalWidth += 150; // Default width for columns without specified width
+      }
+    });
+
+    // Add width for actions column if exists
+    if (this.option?.actions && this.option.actions.length > 0) {
+      totalWidth += 120;
+    }
+
+    // Only return scroll config if the table width exceeds a reasonable threshold
+    // This helps prevent unnecessary measurement rows
+    const calculatedWidth = Math.max(totalWidth, 800);
+
+    // Only enable horizontal scroll if we have fixed widths or many columns
+    if (hasFixedWidths || this.option.columns.length > 4) {
+      return { x: `${calculatedWidth}px`, y: null };
+    }
+
+    // Return minimal scroll config to prevent measurement row creation
+    return { x: null, y: null };
+  }
+
+  // Alternative method for scenarios where scroll measurement causes issues
+  shouldEnableScroll(): boolean {
+    if (!this.option?.columns) return false;
+
+    // Enable scroll only if we have fixed columns or specific width requirements
+    return (
+      this.option.columns.some((col) => col.fixed || col.width) ||
+      this.option.columns.length > 5
+    );
+  }
+
+  // TrackBy functions for performance optimization
+  trackByColumn(index: number, column: TableColumn): any {
+    return column.name || index;
+  }
+
+  trackByData(index: number, data: any): any {
+    return data.id || index;
+  }
+
+  // MARK: PERMISSIONS
+  // Method to check if a column should be visible based on permissions
+  isColumnVisible(column: TableColumn): boolean {
+    if (column.permission) {
+      // You can implement permission checking logic here
+      // For now, return true (show all columns)
+      return true;
+    }
+    return true;
+  }
+
+  // Method to check if an action should be visible based on permissions and visibility function
+  isActionVisible(action: TableAction, row: any): boolean {
+    // Check permission first
+    if (action.permission) {
+      // You can implement permission checking logic here
+      // For now, return true (show all actions)
+    }
+
+    // Check visibility function
+    if (action.visible) {
+      return action.visible(row);
+    }
+
+    return true;
   }
 }

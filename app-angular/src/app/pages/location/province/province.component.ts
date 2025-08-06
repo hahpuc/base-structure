@@ -45,35 +45,41 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
         title: '#',
         name: '',
         type: 'custom-render',
+        width: '80px',
         customRender: (row) => {
-          return `<span class="text-blue-500 font-semibold">Province #${row.id}</span>`;
+          return `<span class="text-blue-500 font-semibold">#${row.id}</span>`;
         },
       },
       {
         title: 'ID',
         name: 'id',
         type: 'number',
+        width: '100px',
       },
       {
         title: 'Name',
         name: 'name',
         type: 'text',
         sortable: true,
+        width: '200px',
       },
       {
         title: 'Created Date',
         name: 'created_at',
         type: 'date',
+        width: '150px',
       },
       {
         title: 'Updated Date',
         name: 'updated_at',
         type: 'datetime',
+        width: '180px',
       },
       {
         title: 'Status',
         name: 'status',
         type: 'status',
+        width: '120px',
         click: (row) => {
           this.provinceService.toggleStatus(+row.id).subscribe(() => {
             this.ftTable.refresh();
@@ -81,6 +87,37 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
           });
         },
       },
+    ],
+    actions: [
+      {
+        label: 'Edit',
+        iconClass: 'edit',
+        color: 'primary',
+        handler: (row) => {
+          this.editProvince(row);
+        },
+        visible: (row) => true,
+        permission: 'province.edit',
+      },
+      // {
+      //   label: 'Delete',
+      //   iconClass: 'ki-filled ki-trash',
+      //   color: 'danger',
+      //   handler: (row) => {
+      //     this.deleteProvince(row);
+      //   },
+      //   visible: (row) => true,
+      //   permission: 'province.delete',
+      // },
+      // {
+      //   label: 'View Details',
+      //   iconClass: 'ki-filled ki-eye',
+      //   color: 'secondary',
+      //   handler: (row) => {
+      //     this.viewProvince(row);
+      //   },
+      //   visible: (row) => true,
+      // },
     ],
   };
 
@@ -93,7 +130,43 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  // Action handlers
+  editProvince(province: ProvinceDto): void {
+    console.log('Edit province:', province);
+    // Navigate to edit page or open modal
+    this.showInfoMessage(`Edit province: ${province.name}`);
+  }
+
+  deleteProvince(province: ProvinceDto): void {
+    console.log('Delete province:', province);
+    // Show confirmation dialog and delete
+    this.showWarningMessage(`Delete province: ${province.name}`);
+  }
+
+  viewProvince(province: ProvinceDto): void {
+    console.log('View province details:', province);
+    // Navigate to detail page or open modal
+    this.showInfoMessage(`View province details: ${province.name}`);
+  }
+
+  // Private message methods
   private showSuccessMessage(message: string) {
     this.msgService.success(message);
+  }
+
+  private showInfoMessage(message: string) {
+    this.msgService.info(message);
+  }
+
+  private showWarningMessage(message: string) {
+    this.msgService.warning(message);
+  }
+
+  private showConfirm(title: string, content: string, onOk: () => void) {
+    // You can implement a modal confirmation here
+    // For now, just use window.confirm
+    if (confirm(`${title}: ${content}`)) {
+      onOk();
+    }
   }
 }
