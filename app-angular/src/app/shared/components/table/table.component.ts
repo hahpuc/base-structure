@@ -88,11 +88,36 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
 
     // Get filter parameters
     const filters: any = {};
+
+    // Handle search text parameter (filter)
+    const searchTextParam = this.getQueryParam('filter');
+    if (searchTextParam !== null && searchTextParam !== '') {
+      filters['filter'] = searchTextParam;
+    }
+
     if (this.option.filters) {
       this.option.filters.forEach((filter) => {
         const filterValue = this.getQueryParam(filter.name);
         if (filterValue !== null && filterValue !== '') {
-          filters[filter.name] = filterValue;
+          let convertedValue: any = filterValue;
+
+          // Convert to proper type based on filter type and options
+          if (filter.type === 'select' && Array.isArray(filter.options)) {
+            // Find matching option to get the correct type
+            const matchingOption = filter.options.find(
+              (option) => option.value.toString() === filterValue.toString()
+            );
+            if (matchingOption) {
+              convertedValue = matchingOption.value;
+            }
+          } else if (filter.type === 'number') {
+            const numValue = Number(filterValue);
+            if (!isNaN(numValue)) {
+              convertedValue = numValue;
+            }
+          }
+
+          filters[filter.name] = convertedValue;
         }
       });
     }
@@ -410,7 +435,6 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   // MARK: Static Data Utils
-
   private _loadStaticData() {
     if (Array.isArray(this.option.data)) {
       // Static data - apply client-side pagination
@@ -485,7 +509,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
     });
   }
 
-  // MARK: Table width and responsive methods
+  // MARK: Responsive Helper
   getTableScrollX(): { x?: string | null; y?: string | null } {
     if (!this.option?.columns) {
       return { x: null, y: null };

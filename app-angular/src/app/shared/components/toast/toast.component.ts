@@ -31,8 +31,8 @@ export class ToastComponent implements OnDestroy {
     const KTToast = (window as any).KTToast;
 
     (KTToast as any).show({
-      message: `${toast.message}`,
-      variant: toast.type,
+      message: `${toast?.message ?? ''}`,
+      variant: toast?.type || 'info', // 'info' | 'success' | 'warning' | 'destructive'
       duration: toast.duration || 3000,
       appearance: 'solid', // 'solid' | 'outline' | 'light'
     });

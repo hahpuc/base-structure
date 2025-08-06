@@ -1,34 +1,17 @@
-.table-filter {
-    margin-bottom: 16px;
-}
-
-.filter-actions {
-    padding-top: 16px;
-    border-top: 1px solid #f0f0f0;
-}
-
-.ml-2 {
-    margin-left: 8px;
-}
-
 .form-note {
-    margin-top: 4px;
-
     .text-muted {
-        color: #999;
-        font-size: 12px;
+        color: #6b7280;
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
     }
 }
 
-r {
-    margin-bottom: 16px;
+.filter-tag-remove:hover {
+    background-color: #dbeafe;
+    color: #1e40af;
 }
 
-.filter-actions {
-    padding-top: 16px;
-    border-top: 1px solid #f0f0f0;
-}
-
-.ml-2 {
-    margin-left: 8px;
+.clear-search-btn:hover {
+    background-color: #f3f4f6;
+    color: #4b5563;
 }

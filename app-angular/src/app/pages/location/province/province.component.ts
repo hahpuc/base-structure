@@ -25,12 +25,6 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
     },
     filters: [
       {
-        type: 'text',
-        name: 'filter',
-        label: 'Name',
-        note: 'Search by name',
-      },
-      {
         type: 'select',
         name: 'status',
         label: 'Status',
@@ -79,7 +73,7 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
         title: 'Status',
         name: 'status',
         type: 'status',
-        width: '120px',
+        width: '80px',
         click: (row) => {
           this.provinceService.toggleStatus(+row.id).subscribe(() => {
             this.ftTable.refresh();
@@ -135,6 +129,12 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
     console.log('Edit province:', province);
     // Navigate to edit page or open modal
     this.showInfoMessage(`Edit province: ${province.name}`);
+
+    this.toastService.warning(
+      'Edit Province',
+      `You are editing province: ${province.name}`,
+      3000
+    );
   }
 
   deleteProvince(province: ProvinceDto): void {

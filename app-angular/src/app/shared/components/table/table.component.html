@@ -8,6 +8,7 @@
   <ft-table-filter
     *ngIf="option?.filterable && option.filters && option.filters.length > 0"
     [filters]="option.filters!"
+    [initialFilterValues]="currentFilters"
     (filterChange)="onFilterChange($event)"
     (clearFilter)="onClearFilter()"
   ></ft-table-filter>

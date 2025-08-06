@@ -28,11 +28,7 @@ export class LoginComponent extends AppBaseComponent implements OnInit {
     return this.getQueryParam('return_url') || '/';
   }
 
-  constructor(
-    injector: Injector,
-    private fb: NonNullableFormBuilder,
-    private toastService: ToastService
-  ) {
+  constructor(injector: Injector, private fb: NonNullableFormBuilder) {
     super(injector);
 
     this.validateForm = this.fb.group({

@@ -155,7 +155,8 @@ export class SidebarMenuComponent implements OnInit {
   ngOnInit(): void {}
 
   isActiveRoute(path: string): boolean {
-    return this.router.url === path;
+    const currentPath = this.router.url.split('?')[0];
+    return currentPath === path;
   }
 
   isParentActive(item: MenuItem): boolean {

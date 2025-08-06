@@ -17,12 +17,14 @@ import { DisabledTimeConfig } from 'ng-zorro-antd/date-picker';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { Dictionary } from './types/base';
 import { AuthService } from './services/auth.service';
+import { ToastService } from './services/toast.service';
 
 export abstract class AppBaseComponent {
   protected readonly router: Router;
   protected readonly activeRoute: ActivatedRoute;
   protected readonly authService: AuthService;
   protected readonly msgService: NzMessageService;
+  protected readonly toastService: ToastService;
   // protected readonly permissionService: PermissionService;
 
   protected isValidating = false;
@@ -40,6 +42,7 @@ export abstract class AppBaseComponent {
     this.authService = injector.get(AuthService);
     // this.permissionService = injector.get(PermissionService);
     this.msgService = injector.get(NzMessageService);
+    this.toastService = injector.get(ToastService);
   }
 
   protected redirect(url: string, params: Params = {}, isRelative = true) {

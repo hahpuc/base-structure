@@ -1,20 +1,79 @@
-<div class="table-filter" *ngIf="filters && filters.length > 0">
-  <!-- Filter Input -->
-  <div class="flex items-center gap-3 w-full">
-    <div class="kt-input max-w-[350px]">
-      <i class="ki-filled ki-magnifier"> </i>
-      <input placeholder="Search..." type="text" />
+<div class="table-filter mb-4" *ngIf="filters && filters.length > 0">
+  <div class="flex flex-col lg:flex-row lg:items-center gap-3 w-full">
+    <div class="flex items-center gap-3 w-full lg:w-auto">
+      <!-- Filter Input Text -->
+      <div class="kt-input flex-1 lg:flex-none lg:w-[250px] relative">
+        <i class="ki-filled ki-magnifier"> </i>
+        <input
+          placeholder="Search..."
+          type="text"
+          [(ngModel)]="searchText"
+          (ngModelChange)="onSearchTextChange()"
+        />
+        <!-- Clear search icon -->
+        <button
+          *ngIf="searchText && searchText.trim()"
+          (click)="clearSearchText()"
+          class="clear-search-btn absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer p-1 bg-transparent border-none rounded-full flex items-center justify-center"
+          type="button"
+        >
+          <i class="ki-filled ki-cross text-sm"></i>
+        </button>
+      </div>
+
+      <!--Filter Drawer Toggle Button Icon-->
+      <a
+        class="kt-btn kt-btn-outline relative flex-shrink-0"
+        [class.kt-btn-primary]="hasActiveFilters()"
+        [class.bg-blue-600]="hasActiveFilters()"
+        [class.border-blue-600]="hasActiveFilters()"
+        [class.text-white]="hasActiveFilters()"
+        data-kt-drawer-toggle="#drawers_shop_filter"
+      >
+        <i class="ki-filled ki-filter"></i>
+        <!-- Active filter indicator -->
+        <span
+          *ngIf="hasActiveFilters()"
+          class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full text-xs min-w-[16px] h-4 flex items-center justify-content-center px-1 font-medium"
+        >
+          {{ activeFilters.length }}
+        </span>
+      </a>
     </div>
-    <!--Filter-->
-    <button
-      nz-button
-      nzType="primary"
-      class="kt-dropdown-toggle kt-btn kt-btn-primary"
-      data-kt-drawer-toggle="#drawers_shop_filter"
+
+    <!-- Active Filters Display -->
+    <div
+      *ngIf="hasActiveFilters()"
+      class="flex flex-wrap items-center gap-2 flex-1"
     >
-      <i class="ki-filled ki-filter"> </i>
-      Filter
-    </button>
+      <span class="text-sm font-medium text-gray-600 hidden lg:inline"
+        >Active filters:</span
+      >
+      <div class="flex flex-wrap items-center gap-2">
+        <div
+          *ngFor="let activeFilter of activeFilters"
+          class="inline-flex items-center gap-1 bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full border border-blue-200"
+        >
+          <span class="font-semibold">{{ activeFilter.filter.label }}:</span>
+          <span>{{ activeFilter.displayValue }}</span>
+          <button
+            (click)="removeActiveFilter(activeFilter)"
+            class="filter-tag-remove ml-1 text-blue-600 cursor-pointer p-0 bg-transparent border-none rounded-full w-4 h-4 flex items-center justify-center"
+            type="button"
+          >
+            <i class="ki-filled ki-cross text-xs"></i>
+          </button>
+        </div>
+
+        <button
+          type="button"
+          (click)="onClear()"
+          class="kt-btn kt-btn-icon kt-btn-outline rounded-full w-[32px] h-[32px] flex items-center justify-center"
+        >
+          <i class="ki-outline ki-trash text-red-600"></i>
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- UI for the filter drawer in right side -->
@@ -29,81 +88,54 @@
     aria-modal="true"
     tabindex="-1"
   >
-    <form [formGroup]="filterForm" (ngSubmit)="onFilter()">
+    <form
+      [formGroup]="filterForm"
+      (ngSubmit)="onFilter()"
+      class="flex flex-col h-full"
+    >
       <div class="kt-card-header ps-5 pr-2">
         <h3 class="kt-card-title">Filter</h3>
         <button
           class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost shrink-0"
           data-kt-drawer-dismiss="true"
         >
-          <i class="ki-filled ki-cross text-base"> </i>
+          <i class="ki-filled ki-cross text-base"></i>
         </button>
       </div>
       <div class="kt-card-content px-0 pt-3.5 kt-scrollable-y-auto">
-        <!-- <div class="flex items-center gap-1 px-5 mb-3">
-          <span class="text-sm font-medium text-mono"> Status </span>
-          <span
-            class="cursor-pointer"
-            data-kt-tooltip="true"
-            data-kt-tooltip-container="body"
-            data-kt-tooltip-initialized="true"
-          >
-            <i class="ki-filled ki-information-2 text-muted-foreground"> </i>
-            <span class="kt-tooltip" data-kt-tooltip-content="true">
-              Specify product status.
-            </span>
-          </span>
-        </div>
-        <div class="px-5">
-          <div class="kt-toggle-group flex">
-            <label class="kt-btn">
-              All
-              <input name="filter-date-range" type="radio" value="all" />
-            </label>
-            <label class="kt-btn">
-              Sale
-              <input
-                checked=""
-                name="filter-date-range"
-                type="radio"
-                value="sale"
-              />
-            </label>
-            <label class="kt-btn">
-              New
-              <input name="filter-date-range" type="radio" value="new" />
-            </label>
-            <label class="kt-btn">
-              Trend
-              <input name="filter-date-range" type="radio" value="trend" />
-            </label>
-          </div>
-        </div>
-        <div class="border-b border-border mb-4 mt-5"></div>
-        <div class="flex flex-col gap-2.5 px-5">
-          <span class="text-sm font-medium text-mono"> Price </span>
-          <div class="kt-input-group">
-            <span class="kt-input-addon kt-input-addon-icon">
-              <i class="ki-filled ki-dollar"> </i>
-            </span>
-            <input class="kt-input" placeholder="" type="text" value="60" />
-          </div>
-          <div class="kt-input-group">
-            <span class="kt-input-addon kt-input-addon-icon">
-              <i class="ki-filled ki-dollar"> </i>
-            </span>
-            <input class="kt-input" placeholder="" type="text" value="170" />
-          </div>
-        </div>
-        <div class="border-b border-border mb-4 mt-5"></div> -->
+        <!-- Search input in drawer (synced with main search) -->
 
-        <div class="flex flex-col px-5">
-          <div *ngFor="let filter of filters">
-            <span class="text-sm font-medium text-mono">
+        <div class="px-5 mb-4">
+          <span class="text-sm font-medium text-gray-700"> Search </span>
+          <div class="kt-input relative">
+            <i class="ki-filled ki-magnifier"></i>
+            <input
+              placeholder="Search..."
+              type="text"
+              [(ngModel)]="searchText"
+              (ngModelChange)="onSearchTextChange()"
+              [ngModelOptions]="{ standalone: true }"
+            />
+            <!-- Clear search icon -->
+            <button
+              *ngIf="searchText && searchText.trim()"
+              (click)="clearSearchText()"
+              class="clear-search-btn absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer p-1 bg-transparent border-none rounded-full flex items-center justify-center"
+              type="button"
+            >
+              <i class="ki-filled ki-cross text-sm"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Item Filters -->
+        <div class="flex flex-col px-5 space-y-4">
+          <div *ngFor="let filter of filters" class="space-y-2">
+            <span class="text-sm font-medium text-gray-700">
               {{ filter.label }}
             </span>
 
-            <nz-form-item>
+            <nz-form-item class="mb-0">
               <nz-form-control>
                 <!-- Text Input -->
                 <input
@@ -137,6 +169,7 @@
                   nzAllowClear
                   [nzLoading]="isLoadingOptions[filter.name]"
                   style="width: 100%"
+                  [compareWith]="compareSelectValues"
                 >
                   <nz-option
                     *ngFor="let option of filterOptions[filter.name]"
@@ -160,9 +193,9 @@
           nzType="primary"
           type="submit"
           [nzLoading]="isLoading"
+          class="flex items-center justify-center gap-2"
         >
-          <i nz-icon nzType="search"></i>
-          Search
+          Apply
         </button>
         <button nz-button nzType="default" (click)="onClear()">Clear</button>
       </div>

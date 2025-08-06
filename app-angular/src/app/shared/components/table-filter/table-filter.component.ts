@@ -1,4 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  OnChanges,
+  SimpleChanges,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable, debounceTime, distinctUntilChanged } from 'rxjs';
 import { TableFilter, SelectOption } from '../table/table.modle';
@@ -9,8 +18,9 @@ import { TableFilter, SelectOption } from '../table/table.modle';
   templateUrl: './table-filter.component.html',
   styleUrls: ['./table-filter.component.scss'],
 })
-export class TableFilterComponent implements OnInit {
+export class TableFilterComponent implements OnInit, OnChanges {
   @Input() filters: TableFilter[] = [];
+  @Input() initialFilterValues: any = {};
   @Output() filterChange = new EventEmitter<any>();
   @Output() clearFilter = new EventEmitter<void>();
 
@@ -19,26 +29,126 @@ export class TableFilterComponent implements OnInit {
   isLoadingOptions: { [key: string]: boolean } = {};
   isLoading = false;
 
-  constructor(private fb: FormBuilder) {
+  searchText = '';
+  activeFilters: Array<{
+    filter: TableFilter;
+    value: any;
+    displayValue: string;
+  }> = [];
+
+  constructor(private fb: FormBuilder, private cdr: ChangeDetectorRef) {
     this.filterForm = this.fb.group({});
   }
 
+  // MARK: Life Circle
   ngOnInit() {
     this.initializeForm();
+    this.initializeSearchText();
     this.loadFilterOptions();
     this.setupFormChanges();
+
+    setTimeout(() => {
+      this.setInitialValuesAfterOptionsLoad();
+      this.updateActiveFilters();
+      if (this.hasInitialValues() || this.searchText.trim()) {
+        // Also check if searchText has value
+        this.onFilter();
+      }
+    }, 200);
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (
+      changes['initialFilterValues'] &&
+      !changes['initialFilterValues'].firstChange
+    ) {
+      this.updateFormWithInitialValues();
+      this.initializeSearchText(); // Also update search text when initial values change
+      this.updateActiveFilters();
+    }
+  }
+
+  // MARK: Init & Load Data
+  private hasInitialValues(): boolean {
+    return (
+      this.initialFilterValues &&
+      Object.keys(this.initialFilterValues).some(
+        (key) =>
+          this.initialFilterValues[key] !== null &&
+          this.initialFilterValues[key] !== undefined &&
+          this.initialFilterValues[key] !== ''
+      )
+    );
   }
 
   private initializeForm() {
     const formControls: { [key: string]: any } = {};
 
     this.filters.forEach((filter) => {
-      formControls[filter.name] = [null];
+      let initialValue = this.initialFilterValues[filter.name] || null;
+
+      // Convert string values to proper types for select filters
+      if (
+        initialValue !== null &&
+        filter.type === 'select' &&
+        Array.isArray(filter.options)
+      ) {
+        // Find the matching option to get the correct type
+        const matchingOption = filter.options.find(
+          (option) => option.value.toString() === initialValue.toString()
+        );
+        if (matchingOption) {
+          initialValue = matchingOption.value;
+        }
+      }
+
+      formControls[filter.name] = [initialValue];
       this.isLoadingOptions[filter.name] = false;
       this.filterOptions[filter.name] = [];
     });
 
     this.filterForm = this.fb.group(formControls);
+  }
+
+  private updateFormWithInitialValues() {
+    if (this.filterForm && this.initialFilterValues) {
+      Object.keys(this.initialFilterValues).forEach((key) => {
+        const control = this.filterForm.get(key);
+        if (control) {
+          let value = this.initialFilterValues[key];
+
+          // Convert string values to proper types for select filters
+          const filter = this.filters.find((f) => f.name === key);
+          if (
+            filter &&
+            value !== null &&
+            filter.type === 'select' &&
+            Array.isArray(filter.options)
+          ) {
+            const matchingOption = filter.options.find(
+              (option) => option.value.toString() === value.toString()
+            );
+            if (matchingOption) {
+              value = matchingOption.value;
+            }
+          }
+
+          control.setValue(value, { emitEvent: false });
+        }
+      });
+    }
+  }
+
+  private setInitialValuesAfterOptionsLoad() {
+    this.updateFormWithInitialValues();
+  }
+
+  private initializeSearchText() {
+    // Initialize search text from initialFilterValues if 'filter' parameter exists
+    if (this.initialFilterValues && this.initialFilterValues['filter']) {
+      this.searchText = this.initialFilterValues['filter'];
+      this.cdr.detectChanges(); // Trigger change detection
+    }
   }
 
   private setupFormChanges() {
@@ -63,8 +173,9 @@ export class TableFilterComponent implements OnInit {
 
     // Auto-submit form on changes with debounce
     this.filterForm.valueChanges
-      .pipe(debounceTime(300), distinctUntilChanged())
+      .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe(() => {
+        this.updateActiveFilters();
         this.onFilter();
       });
   }
@@ -115,9 +226,15 @@ export class TableFilterComponent implements OnInit {
     }
   }
 
+  // MARK: Filter functions
   onFilter() {
     const formValue = this.filterForm.value;
     const filterParams: any = {};
+
+    // Include search text if available
+    if (this.searchText && this.searchText.trim()) {
+      filterParams.filter = this.searchText.trim();
+    }
 
     Object.keys(formValue).forEach((key) => {
       if (
@@ -134,9 +251,100 @@ export class TableFilterComponent implements OnInit {
 
   onClear() {
     this.filterForm.reset();
+    this.searchText = '';
+    this.activeFilters = [];
 
     // Emit empty filter object to clear all filter parameters from URL
     this.filterChange.emit({});
     this.clearFilter.emit();
   }
+
+  onSearchTextChange() {
+    // Debounce search text changes
+    setTimeout(() => {
+      this.updateActiveFilters();
+      this.onFilter();
+    }, 300);
+  }
+
+  clearSearchText() {
+    this.searchText = '';
+    this.updateActiveFilters();
+    this.onFilter();
+  }
+
+  updateActiveFilters() {
+    this.activeFilters = [];
+    const formValue = this.filterForm.value;
+
+    // Add search text to active filters if present
+    if (this.searchText && this.searchText.trim()) {
+      this.activeFilters.push({
+        filter: {
+          name: 'filter',
+          label: 'Search',
+          type: 'text',
+        } as TableFilter,
+        value: this.searchText,
+        displayValue: this.searchText,
+      });
+    }
+
+    // Add form filters to active filters
+    this.filters.forEach((filter) => {
+      const value = formValue[filter.name];
+      if (value !== null && value !== undefined && value !== '') {
+        let displayValue = value.toString();
+
+        // For select filters, get the display label
+        if (filter.type === 'select' && this.filterOptions[filter.name]) {
+          const option = this.filterOptions[filter.name].find((opt) =>
+            this.compareSelectValues(opt.value, value)
+          );
+          if (option) {
+            displayValue = option.label;
+          }
+        }
+
+        // Format date values
+        if (filter.type === 'date' && value instanceof Date) {
+          displayValue = value.toLocaleDateString();
+        }
+
+        this.activeFilters.push({
+          filter,
+          value,
+          displayValue,
+        });
+      }
+    });
+  }
+
+  removeActiveFilter(filterToRemove: {
+    filter: TableFilter;
+    value: any;
+    displayValue: string;
+  }) {
+    if (filterToRemove.filter.name === 'filter') {
+      this.clearSearchText();
+    } else {
+      const control = this.filterForm.get(filterToRemove.filter.name);
+      if (control) {
+        control.setValue(null);
+      }
+    }
+  }
+
+  hasActiveFilters(): boolean {
+    return this.activeFilters.length > 0;
+  }
+
+  // MARK: Utils
+  // Compare function for select values to ensure proper selection
+  compareSelectValues = (o1: any, o2: any): boolean => {
+    if (o1 === null || o2 === null || o1 === undefined || o2 === undefined) {
+      return o1 === o2;
+    }
+    return o1.toString() === o2.toString();
+  };
 }
