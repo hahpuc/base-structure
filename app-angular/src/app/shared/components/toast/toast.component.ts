@@ -33,7 +33,7 @@ export class ToastComponent implements OnDestroy {
     (KTToast as any).show({
       message: `${toast?.message ?? ''}`,
       variant: toast?.type || 'info', // 'info' | 'success' | 'warning' | 'destructive'
-      duration: toast.duration || 3000,
+      duration: toast?.duration || 3000,
       appearance: 'solid', // 'solid' | 'outline' | 'light'
     });
   }

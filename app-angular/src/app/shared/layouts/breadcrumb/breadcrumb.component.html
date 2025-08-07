@@ -2,17 +2,20 @@
   <div class="flex flex-col flex-wrap gap-1">
     <h1 class="font-medium text-lg text-mono"></h1>
     <div class="flex items-center gap-1 text-sm font-normal">
-      <nz-breadcrumb-item *ngFor="let breadcrumb of breadcrumbs">
+      @for (breadcrumb of breadcrumbs; track breadcrumb) {
+      <nz-breadcrumb-item>
+        @if (breadcrumb.url) {
         <a
           class="text-secondary-foreground hover:text-primary"
-          *ngIf="breadcrumb.url"
           [routerLink]="breadcrumb.url"
         >
           {{ breadcrumb.label }}
         </a>
-
-        <span *ngIf="!breadcrumb.url">{{ breadcrumb.label }}</span>
+        } @else {
+        <span>{{ breadcrumb.label }}</span>
+        }
       </nz-breadcrumb-item>
+      }
     </div>
   </div>
 </nz-breadcrumb>

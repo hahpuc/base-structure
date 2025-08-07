@@ -48,6 +48,7 @@ import { ToastComponent } from './components/toast/toast.component';
 import { BreadcrumbComponent } from './layouts/breadcrumb/breadcrumb.component';
 import { TableComponent } from './components/table/table.component';
 import { TableFilterComponent } from './components/table-filter/table-filter.component';
+import { HeaderComponent } from './layouts/header/header.component';
 
 const layouts = [
   BlankLayoutComponent,
@@ -62,6 +63,7 @@ const components = [
   ProgressBarComponent,
   TableComponent,
   TableFilterComponent,
+  HeaderComponent,
 ];
 
 const directives = [ThrottleClickDirective];

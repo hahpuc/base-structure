@@ -1,4 +1,5 @@
-<div class="table-filter mb-4" *ngIf="filters && filters.length > 0">
+@if (filters && filters.length > 0) {
+<div class="table-filter mb-4">
   <div class="flex flex-col lg:flex-row lg:items-center gap-3 w-full">
     <div class="flex items-center gap-3 w-full lg:w-auto">
       <!-- Filter Input Text -->
@@ -11,14 +12,15 @@
           (ngModelChange)="onSearchTextChange()"
         />
         <!-- Clear search icon -->
+        @if (searchText && searchText.trim()) {
         <button
-          *ngIf="searchText && searchText.trim()"
           (click)="clearSearchText()"
           class="clear-search-btn absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer p-1 bg-transparent border-none rounded-full flex items-center justify-center"
           type="button"
         >
           <i class="ki-filled ki-cross text-sm"></i>
         </button>
+        }
       </div>
 
       <!--Filter Drawer Toggle Button Icon-->
@@ -32,26 +34,25 @@
       >
         <i class="ki-filled ki-filter"></i>
         <!-- Active filter indicator -->
+        @if (hasActiveFilters()) {
         <span
-          *ngIf="hasActiveFilters()"
           class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full text-xs min-w-[16px] h-4 flex items-center justify-content-center px-1 font-medium"
         >
           {{ activeFilters.length }}
         </span>
+        }
       </a>
     </div>
 
     <!-- Active Filters Display -->
-    <div
-      *ngIf="hasActiveFilters()"
-      class="flex flex-wrap items-center gap-2 flex-1"
-    >
+    @if (hasActiveFilters()) {
+    <div class="flex flex-wrap items-center gap-2 flex-1">
       <span class="text-sm font-medium text-gray-600 hidden lg:inline"
         >Active filters:</span
       >
       <div class="flex flex-wrap items-center gap-2">
+        @for (activeFilter of activeFilters; track activeFilter) {
         <div
-          *ngFor="let activeFilter of activeFilters"
           class="inline-flex items-center gap-1 bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full border border-blue-200"
         >
           <span class="font-semibold">{{ activeFilter.filter.label }}:</span>
@@ -64,6 +65,7 @@
             <i class="ki-filled ki-cross text-xs"></i>
           </button>
         </div>
+        }
 
         <button
           type="button"
@@ -74,6 +76,7 @@
         </button>
       </div>
     </div>
+    }
   </div>
 
   <!-- UI for the filter drawer in right side -->
@@ -117,20 +120,22 @@
               [ngModelOptions]="{ standalone: true }"
             />
             <!-- Clear search icon -->
+            @if (searchText && searchText.trim()) {
             <button
-              *ngIf="searchText && searchText.trim()"
               (click)="clearSearchText()"
               class="clear-search-btn absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer p-1 bg-transparent border-none rounded-full flex items-center justify-center"
               type="button"
             >
               <i class="ki-filled ki-cross text-sm"></i>
             </button>
+            }
           </div>
         </div>
 
         <!-- Item Filters -->
         <div class="flex flex-col px-5 space-y-4">
-          <div *ngFor="let filter of filters" class="space-y-2">
+          @for (filter of filters; track filter) {
+          <div class="space-y-2">
             <span class="text-sm font-medium text-gray-700">
               {{ filter.label }}
             </span>
@@ -138,32 +143,35 @@
             <nz-form-item class="mb-0">
               <nz-form-control>
                 <!-- Text Input -->
+                @if (filter.type === 'text') {
                 <input
-                  *ngIf="filter.type === 'text'"
                   nz-input
                   [formControlName]="filter.name"
                   [placeholder]="filter.label"
                 />
+                }
 
                 <!-- Number Input -->
+                @if (filter.type === 'number') {
                 <nz-input-number
-                  *ngIf="filter.type === 'number'"
                   [formControlName]="filter.name"
                   [nzPlaceHolder]="filter.label"
                   style="width: 100%"
                 ></nz-input-number>
+                }
 
                 <!-- Date Picker -->
+                @if (filter.type === 'date') {
                 <nz-date-picker
-                  *ngIf="filter.type === 'date'"
                   [formControlName]="filter.name"
                   [nzPlaceHolder]="filter.label"
                   style="width: 100%"
                 ></nz-date-picker>
+                }
 
                 <!-- Select Dropdown -->
+                @if (filter.type === 'select') {
                 <nz-select
-                  *ngIf="filter.type === 'select'"
                   [formControlName]="filter.name"
                   [nzPlaceHolder]="filter.label"
                   nzAllowClear
@@ -171,19 +179,22 @@
                   style="width: 100%"
                   [compareWith]="compareSelectValues"
                 >
+                  @for (option of filterOptions[filter.name]; track option) {
                   <nz-option
-                    *ngFor="let option of filterOptions[filter.name]"
                     [nzLabel]="option.label"
                     [nzValue]="option.value"
                   ></nz-option>
+                  }
                 </nz-select>
-
-                <div *ngIf="filter.note" class="form-note">
+                } @if (filter.note) {
+                <div class="form-note">
                   <small class="text-muted">{{ filter.note }}</small>
                 </div>
+                }
               </nz-form-control>
             </nz-form-item>
           </div>
+          }
         </div>
       </div>
 
@@ -209,3 +220,4 @@
     class="kt-drawer-backdrop hidden"
   ></div>
 </div>
+}
