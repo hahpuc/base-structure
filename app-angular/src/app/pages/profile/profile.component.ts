@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
   standalone: false,
   templateUrl: './profile.component.html',
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent {
   user = {
     firstName: 'Long',
     lastName: 'Nguyen',
@@ -23,10 +23,6 @@ export class ProfileComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit(): void {
-    // Initialize component
-  }
-
   toggleEdit(): void {
     this.isEditing = !this.isEditing;
   }
@@ -42,12 +38,12 @@ export class ProfileComponent implements OnInit {
     // Reset form or reload user data
   }
 
-  onAvatarChange(event: any): void {
-    const file = event.target.files[0];
+  onAvatarChange(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.user.avatar = e.target.result;
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        this.user.avatar = e.target?.result as string;
       };
       reader.readAsDataURL(file);
     }

@@ -3,12 +3,8 @@ import { Injectable } from '@angular/core';
 
 import { environment } from '@/environments/environment';
 
-import {
-  CreateProvince,
-  EditProvince,
-  ProvinceDto,
-  QueryProvince,
-} from '../types/province';
+import { CreateProvince, EditProvince, ProvinceDto, QueryProvince } from '../types/province';
+
 import { AppBaseService } from './app-base.service';
 
 @Injectable({

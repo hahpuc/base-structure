@@ -1,19 +1,15 @@
 import { isPlatformBrowser } from '@angular/common';
-import {
-  HttpErrorResponse,
-  HttpInterceptorFn,
-  HttpRequest,
-} from '@angular/common/http';
+import { HttpErrorResponse, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
 import { PLATFORM_ID, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '@services/auth.service';
-import { ProgressBarService } from '@shared/services/progress-bar.service';
-import { Dictionary } from '@shared/types/base';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { throwError } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 
 import { environment } from '@/environments/environment';
+import { AuthService } from '@services/auth.service';
+import { ProgressBarService } from '@shared/services/progress-bar.service';
+import { Dictionary } from '@shared/types/base';
 
 export const httpCustomInterceptor: HttpInterceptorFn = (request, next) => {
   const progressBarService = inject(ProgressBarService);
@@ -24,9 +20,7 @@ export const httpCustomInterceptor: HttpInterceptorFn = (request, next) => {
 
   // Helper functions
   const getAccessToken = (): string | null => {
-    return typeof localStorage !== 'undefined'
-      ? localStorage.getItem('access_token')
-      : null;
+    return typeof localStorage !== 'undefined' ? localStorage.getItem('access_token') : null;
   };
 
   const addHeader = (req: HttpRequest<unknown>): HttpRequest<unknown> => {
@@ -45,17 +39,14 @@ export const httpCustomInterceptor: HttpInterceptorFn = (request, next) => {
 
     if (req.body && !req.url.includes('/api/v1/auth/')) {
       modifiedRequest = modifiedRequest.clone({
-        body: handleRequestBody(req.body),
+        body: handleRequestBody(req.body as Dictionary),
       });
     }
 
     const accessToken = getAccessToken();
     if (accessToken && !req.url.endsWith('/auth/refresh')) {
       modifiedRequest = modifiedRequest.clone({
-        headers: modifiedRequest.headers.set(
-          'Authorization',
-          `Bearer ${accessToken}`
-        ),
+        headers: modifiedRequest.headers.set('Authorization', `Bearer ${accessToken}`),
       });
     }
 
@@ -75,25 +66,30 @@ export const httpCustomInterceptor: HttpInterceptorFn = (request, next) => {
       }
 
       if (typeof v === 'object') {
-        body[k] = handleRequestBody(v);
+        body[k] = handleRequestBody(v as Dictionary);
       }
     });
 
     return body;
   };
 
-  const handleError = (error: any): void => {
+  const handleError = (error: {
+    error?: { message?: string };
+    message?: string;
+    statusCode?: number;
+    url?: string;
+    errorCode?: string;
+  }): void => {
     const errorMessage = error?.error?.message || error.message;
     const statusCode = error?.statusCode;
-    const url: string = error?.url;
+    const url: string | undefined = error?.url;
 
     if (statusCode === 404) {
       router.navigate(['/error/404']).then();
     } else if (statusCode === 401 && !url?.endsWith('/auth/verify')) {
       if (
-        ['ACCOUNT_LOCK', 'ACCOUNT_INACTIVE', 'UNAUTHORIZED'].includes(
-          error?.errorCode
-        )
+        error?.errorCode &&
+        ['ACCOUNT_LOCK', 'ACCOUNT_INACTIVE', 'UNAUTHORIZED'].includes(error.errorCode)
       ) {
         authService.removeTokenStorage();
         router.navigate(['/login']).then();
@@ -103,7 +99,7 @@ export const httpCustomInterceptor: HttpInterceptorFn = (request, next) => {
     } else if (statusCode === 500) {
       router.navigate(['/error/500']).then();
     } else {
-      messageService.error(errorMessage);
+      messageService.error(errorMessage || 'An error occurred');
     }
   };
 
@@ -112,18 +108,11 @@ export const httpCustomInterceptor: HttpInterceptorFn = (request, next) => {
 
   // Handle token refresh logic (simplified for functional interceptor)
   const accessToken = getAccessToken();
-  const expiresAt =
-    typeof localStorage !== 'undefined'
-      ? localStorage.getItem('expires_at')
-      : null;
+  const expiresAt = typeof localStorage !== 'undefined' ? localStorage.getItem('expires_at') : null;
   const refreshToken =
-    typeof localStorage !== 'undefined'
-      ? localStorage.getItem('refresh_token')
-      : null;
+    typeof localStorage !== 'undefined' ? localStorage.getItem('refresh_token') : null;
   const refreshTokenExpiresAt =
-    typeof localStorage !== 'undefined'
-      ? localStorage.getItem('refresh_token_expires_at')
-      : null;
+    typeof localStorage !== 'undefined' ? localStorage.getItem('refresh_token_expires_at') : null;
 
   if (
     !request.url.endsWith('/auth/token') &&
@@ -132,11 +121,7 @@ export const httpCustomInterceptor: HttpInterceptorFn = (request, next) => {
     expiresAt
   ) {
     const expiresTime = parseInt(expiresAt, 0);
-    if (
-      expiresTime < new Date().getTime() &&
-      refreshToken &&
-      refreshTokenExpiresAt
-    ) {
+    if (expiresTime < new Date().getTime() && refreshToken && refreshTokenExpiresAt) {
       const refreshTokenExpiresTime = parseInt(refreshTokenExpiresAt, 0);
       if (refreshTokenExpiresTime < new Date().getTime()) {
         authService.removeTokenStorage();
@@ -154,7 +139,7 @@ export const httpCustomInterceptor: HttpInterceptorFn = (request, next) => {
     }),
     catchError((error: HttpErrorResponse) => {
       if (error.error instanceof Blob) {
-        error.error.text().then((data) => {
+        error.error.text().then(data => {
           handleError(JSON.parse(data));
         });
       } else {

@@ -27,13 +27,7 @@ export class HeaderService {
   }
 }
 
-declare type HeaderButtonType =
-  | 'light'
-  | 'primary'
-  | 'success'
-  | 'info'
-  | 'warning'
-  | 'danger';
+declare type HeaderButtonType = 'light' | 'primary' | 'success' | 'info' | 'warning' | 'danger';
 
 export interface HeaderButton {
   title: string | (() => string);

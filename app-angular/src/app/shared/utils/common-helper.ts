@@ -1,8 +1,8 @@
 import { HttpParams } from '@angular/common/http';
-import { Dictionary } from '@shared/types/base';
 import dayjs from 'dayjs';
 
 import { environment } from '@/environments/environment';
+import { Dictionary } from '@shared/types/base';
 
 export const getUrlParams = (params: Dictionary): string => {
   const queryParams = [];
@@ -13,14 +13,10 @@ export const getUrlParams = (params: Dictionary): string => {
       if (isEmpty(value)) continue;
       if (Array.isArray(value)) {
         value.forEach(val => {
-          queryParams.push(
-            `${encodeURIComponent(key)}[]=${encodeURIComponent(val)}`
-          );
+          queryParams.push(`${encodeURIComponent(key)}[]=${encodeURIComponent(val)}`);
         });
       } else {
-        queryParams.push(
-          `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-        );
+        queryParams.push(`${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`);
       }
     }
   }
@@ -33,9 +29,7 @@ export const getNumber = (value: string): number | undefined => {
 };
 
 export const isEmpty = (value: unknown): boolean => {
-  return (
-    value == null || (typeof value === 'string' && value.trim().length === 0)
-  );
+  return value == null || (typeof value === 'string' && value.trim().length === 0);
 };
 
 export const getBodyUrlencoded = (data: { [key: string]: string | number }) => {
@@ -46,10 +40,7 @@ export const getBodyUrlencoded = (data: { [key: string]: string | number }) => {
   return body;
 };
 
-export const downloadFile = (
-  data: Blob | Uint8Array | string,
-  name: string
-) => {
+export const downloadFile = (data: Blob | Uint8Array | string, name: string) => {
   const downloadLink = document.createElement('a');
   if (typeof data === 'string') {
     downloadLink.href = `${environment.media.publishUrl}/${data}`;

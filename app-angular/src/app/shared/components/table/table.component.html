@@ -6,12 +6,12 @@
 
   <!-- Table Filter -->
   @if (option.filterable && option.filters && option.filters.length > 0) {
-  <ft-table-filter
-    [filters]="option.filters!"
-    [initialFilterValues]="currentFilters"
-    (filterChange)="onFilterChange($event)"
-    (clearFilter)="onClearFilter()"
-  ></ft-table-filter>
+    <app-table-filter
+      [filters]="option.filters!"
+      [initialFilterValues]="currentFilters"
+      (filterChange)="onFilterChange($event)"
+      (clearFilter)="onClearFilter()"
+    ></app-table-filter>
   }
 
   <!-- Responsive Table Container -->
@@ -37,23 +37,22 @@
         <!-- Table Header -->
         <thead>
           <tr>
-            @if ((option.actions ?? []) && option.actions &&
-            option.actions.length > 0) {
-            <th nzWidth="100px" nzLeft></th>
-            } @for (column of option.columns; track
-            trackByColumn($index,column)) {
-            <th
-              [nzShowSort]="column.sortable"
-              [nzSortFn]="getSortFn(column)"
-              [nzSortOrder]="getSortDirection(column)"
-              (nzSortOrderChange)="onSortChange(column, $event)"
-              [nzWidth]="column.width || '200px'"
-              [nzLeft]="column.fixed === 'left'"
-              [nzRight]="column.fixed === 'right'"
-              [hidden]="!isColumnVisible(column)"
-            >
-              {{ column.title }}
-            </th>
+            @if ((option.actions ?? []) && option.actions && option.actions.length > 0) {
+              <th nzWidth="100px" nzLeft></th>
+            }
+            @for (column of option.columns; track trackByColumn($index, column)) {
+              <th
+                [nzShowSort]="column.sortable"
+                [nzSortFn]="getSortFn(column)"
+                [nzSortOrder]="getSortDirection(column)"
+                (nzSortOrderChange)="onSortChange(column, $event)"
+                [nzWidth]="column.width || '200px'"
+                [nzLeft]="column.fixed === 'left'"
+                [nzRight]="column.fixed === 'right'"
+                [hidden]="!isColumnVisible(column)"
+              >
+                {{ column.title }}
+              </th>
             }
           </tr>
         </thead>
@@ -61,182 +60,170 @@
         <!-- Table Body -->
         <tbody>
           @for (data of basicTable.data; track trackByData($index, data)) {
-          <tr>
-            @if (option.actions && option.actions.length > 0) {
-            <td nzLeft>
-              @for (action of option.actions; track action) {
-              <button
-                [title]="action.label"
-                (click)="onActionClick(data, action)"
-                class="ant-btn-action mr-1 w-[36px] h-[36px] rounded-[36px] flex items-center justify-center bg-blue-50 text-blue-600 hover:bg-blue-200"
-                [hidden]="!isActionVisible(action, data)"
-              >
-                @if (action.iconClass) {
-                <nz-icon
-                  [nzType]="action.iconClass"
-                  nzTheme="outline"
-                  class="icon-action"
-                />
-                }
-              </button>
+            <tr>
+              @if (option.actions && option.actions.length > 0) {
+                <td nzLeft>
+                  @for (action of option.actions; track action) {
+                    <button
+                      [title]="action.label"
+                      (click)="onActionClick(data, action)"
+                      class="ant-btn-action mr-1 w-[36px] h-[36px] rounded-[36px] flex items-center justify-center bg-blue-50 text-blue-600 hover:bg-blue-200"
+                      [hidden]="!isActionVisible(action, data)"
+                    >
+                      @if (action.iconClass) {
+                        <nz-icon [nzType]="action.iconClass" nzTheme="outline" class="icon-action" />
+                      }
+                    </button>
+                  }
+                </td>
               }
-            </td>
-            } @for (column of option.columns; track trackByColumn($index,
-            column)) {
-            <td
-              [nzLeft]="column.fixed === 'left'"
-              [nzRight]="column.fixed === 'right'"
-              [hidden]="!isColumnVisible(column)"
-            >
-              @switch (getColumnType(column)) {
-              <!-- Text Type -->
-              @case ('text') {
-              <span>
-                {{ getColumnValue(data, column) }}
-              </span>
-              }
-
-              <!-- Number Type -->
-              @case ('number') {
-              <span>
-                {{ getColumnValue(data, column) | number }}
-              </span>
-              }
-
-              <!-- Date Type -->
-              @case ('date') {
-              <span>
-                {{ getColumnValue(data, column) | date : "dd/MM/yyyy" }}
-              </span>
-              }
-
-              <!-- DateTime Type -->
-              @case ('datetime') {
-              <span>
-                {{ getColumnValue(data, column) | date : "dd/MM/yyyy HH:mm" }}
-              </span>
-              }
-
-              <!-- Time Type -->
-              @case ('time') {
-              <span>
-                {{ getColumnValue(data, column) | date : "HH:mm" }}
-              </span>
-              }
-
-              <!-- Boolean Type -->
-              @case ('boolean') {
-              <span>
-                <nz-tag
-                  [nzColor]="getColumnValue(data, column) ? 'green' : 'red'"
+              @for (column of option.columns; track trackByColumn($index, column)) {
+                <td
+                  [nzLeft]="column.fixed === 'left'"
+                  [nzRight]="column.fixed === 'right'"
+                  [hidden]="!isColumnVisible(column)"
                 >
-                  {{ getColumnValue(data, column) ? "Yes" : "No" }}
-                </nz-tag>
-              </span>
+                  @switch (getColumnType(column)) {
+                    <!-- Text Type -->
+                    @case ('text') {
+                      <span>
+                        {{ getColumnValue(data, column) }}
+                      </span>
+                    }
+
+                    <!-- Number Type -->
+                    @case ('number') {
+                      <span>
+                        {{ getColumnValue(data, column) | number }}
+                      </span>
+                    }
+
+                    <!-- Date Type -->
+                    @case ('date') {
+                      <span>
+                        {{ getColumnValue(data, column) | date: 'dd/MM/yyyy' }}
+                      </span>
+                    }
+
+                    <!-- DateTime Type -->
+                    @case ('datetime') {
+                      <span>
+                        {{ getColumnValue(data, column) | date: 'dd/MM/yyyy HH:mm' }}
+                      </span>
+                    }
+
+                    <!-- Time Type -->
+                    @case ('time') {
+                      <span>
+                        {{ getColumnValue(data, column) | date: 'HH:mm' }}
+                      </span>
+                    }
+
+                    <!-- Boolean Type -->
+                    @case ('boolean') {
+                      <span>
+                        <nz-tag [nzColor]="getColumnValue(data, column) ? 'green' : 'red'">
+                          {{ getColumnValue(data, column) ? 'Yes' : 'No' }}
+                        </nz-tag>
+                      </span>
+                    }
+
+                    <!-- Status Type (Switch) -->
+                    @case ('status') {
+                      <span>
+                        <nz-switch
+                          [ngModel]="getColumnValue(data, column)"
+                          [nzDisabled]="isColumnDisabled(data, column)"
+                          (ngModelChange)="onStatusChange(data, column, $event)"
+                          [nzCheckedChildren]="checkedTemplate"
+                          [nzUnCheckedChildren]="unCheckedTemplate"
+                        >
+                        </nz-switch>
+
+                        <ng-template #checkedTemplate><nz-icon nzType="check" /></ng-template>
+                        <ng-template #unCheckedTemplate><nz-icon nzType="close" /></ng-template>
+                      </span>
+                    }
+
+                    <!-- Switch Type -->
+                    @case ('switch') {
+                      <span>
+                        <nz-switch
+                          [ngModel]="getColumnValue(data, column)"
+                          [nzDisabled]="isColumnDisabled(data, column)"
+                          (ngModelChange)="onStatusChange(data, column, $event)"
+                        >
+                        </nz-switch>
+                      </span>
+                    }
+
+                    <!-- Percent Type -->
+                    @case ('percent') {
+                      <span>
+                        {{ getColumnValue(data, column) | percent }}
+                      </span>
+                    }
+
+                    <!-- Image Type -->
+                    @case ('image') {
+                      <span>
+                        @if (getColumnValue(data, column)) {
+                          <img
+                            [src]="getColumnValue(data, column)"
+                            [alt]="column.title"
+                            style="width: 50px; height: 50px; object-fit: cover"
+                          />
+                        } @else {
+                          <span>No Image</span>
+                        }
+                      </span>
+                    }
+
+                    <!-- Long Text Type -->
+                    @case ('long-text') {
+                      <span [title]="getColumnValue(data, column)">
+                        {{ truncateText(getColumnValue(data, column), 50) }}
+                      </span>
+                    }
+
+                    <!-- Button Type -->
+                    @case ('button') {
+                      <span>
+                        <button
+                          nz-button
+                          nzType="primary"
+                          nzSize="small"
+                          [disabled]="isColumnDisabled(data, column)"
+                          (click)="onColumnClick(data, column)"
+                        >
+                          {{ column.title }}
+                        </button>
+                      </span>
+                    }
+
+                    <!-- Custom Render Type -->
+                    @case ('custom-render') {
+                      <span [innerHTML]="getCustomRender(data, column)"> </span>
+                    }
+
+                    <!-- Template Type -->
+                    @case ('template') {
+                      <ng-container
+                        *ngTemplateOutlet="getColumnTemplate(column); context: { $implicit: data, column: column }"
+                      >
+                      </ng-container>
+                    }
+
+                    <!-- Default case (fallback to text) -->
+                    @default {
+                      <span>
+                        {{ getColumnValue(data, column) }}
+                      </span>
+                    }
+                  }
+                </td>
               }
-
-              <!-- Status Type (Switch) -->
-              @case ('status') {
-              <span>
-                <nz-switch
-                  [ngModel]="getColumnValue(data, column)"
-                  [nzDisabled]="isColumnDisabled(data, column)"
-                  (ngModelChange)="onStatusChange(data, column, $event)"
-                  [nzCheckedChildren]="checkedTemplate"
-                  [nzUnCheckedChildren]="unCheckedTemplate"
-                >
-                </nz-switch>
-
-                <ng-template #checkedTemplate
-                  ><nz-icon nzType="check"
-                /></ng-template>
-                <ng-template #unCheckedTemplate
-                  ><nz-icon nzType="close"
-                /></ng-template>
-              </span>
-              }
-
-              <!-- Switch Type -->
-              @case ('switch') {
-              <span>
-                <nz-switch
-                  [ngModel]="getColumnValue(data, column)"
-                  [nzDisabled]="isColumnDisabled(data, column)"
-                  (ngModelChange)="onStatusChange(data, column, $event)"
-                >
-                </nz-switch>
-              </span>
-              }
-
-              <!-- Percent Type -->
-              @case ('percent') {
-              <span>
-                {{ getColumnValue(data, column) | percent }}
-              </span>
-              }
-
-              <!-- Image Type -->
-              @case ('image') {
-              <span>
-                @if (getColumnValue(data, column)) {
-                <img
-                  [src]="getColumnValue(data, column)"
-                  [alt]="column.title"
-                  style="width: 50px; height: 50px; object-fit: cover"
-                />
-                } @else {
-                <span>No Image</span>
-                }
-              </span>
-              }
-
-              <!-- Long Text Type -->
-              @case ('long-text') {
-              <span [title]="getColumnValue(data, column)">
-                {{ truncateText(getColumnValue(data, column), 50) }}
-              </span>
-              }
-
-              <!-- Button Type -->
-              @case ('button') {
-              <span>
-                <button
-                  nz-button
-                  nzType="primary"
-                  nzSize="small"
-                  [disabled]="isColumnDisabled(data, column)"
-                  (click)="onColumnClick(data, column)"
-                >
-                  {{ column.title }}
-                </button>
-              </span>
-              }
-
-              <!-- Custom Render Type -->
-              @case ('custom-render') {
-              <span [innerHTML]="getCustomRender(data, column)"> </span>
-              }
-
-              <!-- Template Type -->
-              @case ('template') {
-              <ng-container
-                *ngTemplateOutlet="
-                  getColumnTemplate(column);
-                  context: { $implicit: data, column: column }
-                "
-              >
-              </ng-container>
-              }
-
-              <!-- Default case (fallback to text) -->
-              @default {
-              <span>
-                {{ getColumnValue(data, column) }}
-              </span>
-              } }
-            </td>
-            }
-          </tr>
+            </tr>
           }
         </tbody>
       </nz-table>
@@ -259,9 +246,7 @@
     ></nz-pagination>
 
     <ng-template #totalTemplate let-total let-range="range">
-      <span class="pagination-total">
-        {{ range[0] }}-{{ range[1] }} of {{ total }} items
-      </span>
+      <span class="pagination-total"> {{ range[0] }}-{{ range[1] }} of {{ total }} items </span>
     </ng-template>
   </div>
 </div>

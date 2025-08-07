@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+
 import { AuthGuard } from './shared/guards/auth.guard';
 import { PermissionGuard } from './shared/guards/permission.guard';
 import { AuthLayoutComponent } from './shared/layouts/auth-layout/auth-layout.component';
@@ -19,33 +20,26 @@ const routes: Routes = [
       {
         path: 'dashboard',
         loadChildren: () =>
-          import('@pages/dashboard/dashboard.module').then(
-            (x) => x.DashboardModule
-          ),
+          import('@pages/dashboard/dashboard.module').then(x => x.DashboardModule),
       },
       {
         path: 'profile',
-        loadChildren: () =>
-          import('@pages/profile/profile.module').then((x) => x.ProfileModule),
+        loadChildren: () => import('@pages/profile/profile.module').then(x => x.ProfileModule),
         data: { title: 'Profile' },
       },
       {
         path: 'role',
-        loadChildren: () =>
-          import('@pages/role/role.module').then((x) => x.RoleModule),
+        loadChildren: () => import('@pages/role/role.module').then(x => x.RoleModule),
         data: { title: 'User Management' },
       },
       {
         path: 'province',
         loadChildren: () =>
-          import('@pages/location/province/province.module').then(
-            (x) => x.ProvinceModule
-          ),
+          import('@pages/location/province/province.module').then(x => x.ProvinceModule),
       },
       {
         path: 'ward',
-        loadChildren: () =>
-          import('@pages/location/ward/ward.module').then((x) => x.WardModule),
+        loadChildren: () => import('@pages/location/ward/ward.module').then(x => x.WardModule),
       },
     ],
   },
@@ -55,13 +49,11 @@ const routes: Routes = [
     children: [
       {
         path: 'error',
-        loadChildren: () =>
-          import('@pages/error/error.module').then((x) => x.ErrorModule),
+        loadChildren: () => import('@pages/error/error.module').then(x => x.ErrorModule),
       },
       {
         path: '',
-        loadChildren: () =>
-          import('./pages/auth/auth.module').then((m) => m.AuthModule),
+        loadChildren: () => import('./pages/auth/auth.module').then(m => m.AuthModule),
       },
     ],
   },

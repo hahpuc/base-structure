@@ -1,9 +1,9 @@
-import { AppBaseComponent } from '@/app/shared/app.base.component';
-import { ToastService } from '@/app/shared/services/toast.service';
-import { Dictionary } from '@/app/shared/types/base';
-import { diffFromNow } from '@/app/shared/utils/date';
 import { Component, Injector, OnInit } from '@angular/core';
 import { FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
+
+import { AppBaseComponent } from '@/app/shared/app.base.component';
+import { Dictionary } from '@/app/shared/types/base';
+import { diffFromNow } from '@/app/shared/utils/date';
 
 @Component({
   selector: 'app-login',
@@ -28,10 +28,10 @@ export class LoginComponent extends AppBaseComponent implements OnInit {
     return this.getQueryParam('return_url') || '/';
   }
 
-  constructor(injector: Injector, private fb: NonNullableFormBuilder) {
+  constructor(injector: Injector, fb: NonNullableFormBuilder) {
     super(injector);
 
-    this.validateForm = this.fb.group({
+    this.validateForm = fb.group({
       username: ['', [Validators.required]],
       password: ['', [Validators.required]],
     });
@@ -42,7 +42,7 @@ export class LoginComponent extends AppBaseComponent implements OnInit {
       this.redirect('/dashboard');
     }
 
-    this.validateForm.statusChanges.subscribe((status) => {
+    this.validateForm.statusChanges.subscribe(status => {
       if (status === 'VALID' && this._errorMsg) {
         this._errorMsg = undefined;
       }
@@ -52,7 +52,7 @@ export class LoginComponent extends AppBaseComponent implements OnInit {
   login() {
     if (this.validateForm.valid) {
       this.authService.login(this.validateForm.value).subscribe({
-        next: (result) => {
+        next: result => {
           if (this.rememberMe) {
             localStorage.setItem('remember_me', 'true');
           }
@@ -68,12 +68,11 @@ export class LoginComponent extends AppBaseComponent implements OnInit {
         error: (error: { message: string; data?: Dictionary }) => {
           this.validateForm.reset();
 
-          console.log(error);
-
           if (error?.data?.['locked_end']) {
-            this.updateCountdown(error?.data?.['locked_end']);
+            const lockedEnd = error.data['locked_end'] as string;
+            this.updateCountdown(lockedEnd);
             this._intervalId = window.setInterval(() => {
-              this.updateCountdown(error?.data?.['locked_end']);
+              this.updateCountdown(lockedEnd);
             }, 1000);
           }
 

@@ -1,11 +1,10 @@
+import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+
 import { AppBaseComponent } from '@/app/shared/app.base.component';
 import { TableComponent } from '@/app/shared/components/table/table.component';
 import { TableOption } from '@/app/shared/components/table/table.modle';
-import {
-  ExampleData,
-  ExampleDataService,
-} from '@/app/shared/services/example-data.service';
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { ExampleData, ExampleDataService } from '@/app/shared/services/example-data.service';
+import { QueryRole } from '@/app/shared/types/role';
 
 @Component({
   standalone: false,
@@ -21,7 +20,7 @@ export class RoleComponent extends AppBaseComponent {
     selectable: true,
     pageSize: 5,
     pageSizeOptions: [5, 10, 20, 50],
-    data: (input: any) => {
+    data: (input: QueryRole) => {
       input.sorting ||= 'createdAt desc';
       return this.exampleDataService.getByPaged(input);
     },
@@ -51,7 +50,7 @@ export class RoleComponent extends AppBaseComponent {
         title: 'Status',
         name: 'status',
         type: 'status',
-        click: (row) => {
+        click: row => {
           this.exampleDataService.toggleStatus(row.id).subscribe(() => {
             this.ftTable.refresh();
             this.showSuccessMessage('Status updated successfully');
@@ -64,13 +63,13 @@ export class RoleComponent extends AppBaseComponent {
         label: 'Edit',
         iconClass: 'bi bi-pencil-fill',
         color: 'primary',
-        handler: (row) => this.editItem(row),
+        handler: row => this.editItem(row),
       },
       {
         label: 'Delete',
         iconClass: 'bi bi-trash-fill',
         color: 'danger',
-        handler: (row) => this.deleteItem(row),
+        handler: row => this.deleteItem(row),
       },
     ],
     filters: [
@@ -144,16 +143,12 @@ export class RoleComponent extends AppBaseComponent {
       `Are you sure you want to delete ${selectedItems.length} items?`,
       () => {
         // Delete each selected item
-        const deletePromises = selectedItems.map((item) =>
-          this.exampleDataService.delete(item.id)
-        );
+        const deletePromises = selectedItems.map(item => this.exampleDataService.delete(item.id));
 
         // Wait for all deletions to complete
         Promise.all(deletePromises).then(() => {
           this.ftTable.refresh();
-          this.showSuccessMessage(
-            `${selectedItems.length} items deleted successfully`
-          );
+          this.showSuccessMessage(`${selectedItems.length} items deleted successfully`);
         });
       }
     );

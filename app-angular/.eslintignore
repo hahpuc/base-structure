@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+coverage/
+.angular/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Assets and static files
+src/assets/js/
+src/assets/vendors/
+
+# Generated files
+**/*.d.ts
+
+# Log files
+*.log
+logs/
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,7 +1,9 @@
-import { SharedModule } from '@/app/shared/shared.module';
 import { NgModule } from '@angular/core';
-import { RoleComponent } from './role.component';
+
+import { SharedModule } from '@/app/shared/shared.module';
+
 import { RoleRoutingModule } from './role-routing.module';
+import { RoleComponent } from './role.component';
 
 @NgModule({
   declarations: [RoleComponent],

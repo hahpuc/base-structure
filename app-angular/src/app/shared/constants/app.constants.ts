@@ -53,6 +53,7 @@ export const APP_CONSTANTS = {
   // Patterns
   PATTERNS: {
     EMAIL: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+    // eslint-disable-next-line no-useless-escape
     PHONE: /^\+?[\d\s\-\(\)]{10,}$/,
     PASSWORD: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{6,}$/,
   },

@@ -10,11 +10,12 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable, debounceTime, distinctUntilChanged } from 'rxjs';
+
 import { TableFilter, SelectOption } from '../table/table.modle';
 
 @Component({
   standalone: false,
-  selector: 'ft-table-filter',
+  selector: 'app-table-filter',
   templateUrl: './table-filter.component.html',
   styleUrls: ['./table-filter.component.scss'],
 })
@@ -36,7 +37,10 @@ export class TableFilterComponent implements OnInit, OnChanges {
     displayValue: string;
   }> = [];
 
-  constructor(private fb: FormBuilder, private cdr: ChangeDetectorRef) {
+  constructor(
+    private fb: FormBuilder,
+    private cdr: ChangeDetectorRef
+  ) {
     this.filterForm = this.fb.group({});
   }
 
@@ -58,10 +62,7 @@ export class TableFilterComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (
-      changes['initialFilterValues'] &&
-      !changes['initialFilterValues'].firstChange
-    ) {
+    if (changes['initialFilterValues'] && !changes['initialFilterValues'].firstChange) {
       this.updateFormWithInitialValues();
       this.initializeSearchText(); // Also update search text when initial values change
       this.updateActiveFilters();
@@ -73,7 +74,7 @@ export class TableFilterComponent implements OnInit, OnChanges {
     return (
       this.initialFilterValues &&
       Object.keys(this.initialFilterValues).some(
-        (key) =>
+        key =>
           this.initialFilterValues[key] !== null &&
           this.initialFilterValues[key] !== undefined &&
           this.initialFilterValues[key] !== ''
@@ -84,18 +85,14 @@ export class TableFilterComponent implements OnInit, OnChanges {
   private initializeForm() {
     const formControls: { [key: string]: any } = {};
 
-    this.filters.forEach((filter) => {
+    this.filters.forEach(filter => {
       let initialValue = this.initialFilterValues[filter.name] || null;
 
       // Convert string values to proper types for select filters
-      if (
-        initialValue !== null &&
-        filter.type === 'select' &&
-        Array.isArray(filter.options)
-      ) {
+      if (initialValue !== null && filter.type === 'select' && Array.isArray(filter.options)) {
         // Find the matching option to get the correct type
         const matchingOption = filter.options.find(
-          (option) => option.value.toString() === initialValue.toString()
+          option => option.value.toString() === initialValue.toString()
         );
         if (matchingOption) {
           initialValue = matchingOption.value;
@@ -112,13 +109,13 @@ export class TableFilterComponent implements OnInit, OnChanges {
 
   private updateFormWithInitialValues() {
     if (this.filterForm && this.initialFilterValues) {
-      Object.keys(this.initialFilterValues).forEach((key) => {
+      Object.keys(this.initialFilterValues).forEach(key => {
         const control = this.filterForm.get(key);
         if (control) {
           let value = this.initialFilterValues[key];
 
           // Convert string values to proper types for select filters
-          const filter = this.filters.find((f) => f.name === key);
+          const filter = this.filters.find(f => f.name === key);
           if (
             filter &&
             value !== null &&
@@ -126,7 +123,7 @@ export class TableFilterComponent implements OnInit, OnChanges {
             Array.isArray(filter.options)
           ) {
             const matchingOption = filter.options.find(
-              (option) => option.value.toString() === value.toString()
+              option => option.value.toString() === value.toString()
             );
             if (matchingOption) {
               value = matchingOption.value;
@@ -145,7 +142,7 @@ export class TableFilterComponent implements OnInit, OnChanges {
 
   private initializeSearchText() {
     // Initialize search text from initialFilterValues if 'filter' parameter exists
-    if (this.initialFilterValues && this.initialFilterValues['filter']) {
+    if (this.initialFilterValues?.['filter']) {
       this.searchText = this.initialFilterValues['filter'];
       this.cdr.detectChanges(); // Trigger change detection
     }
@@ -153,13 +150,13 @@ export class TableFilterComponent implements OnInit, OnChanges {
 
   private setupFormChanges() {
     // Setup parent-child relationships for dependent filters
-    this.filters.forEach((filter) => {
+    this.filters.forEach(filter => {
       if (filter.parent) {
         const parentControl = this.filterForm.get(filter.parent.filterName);
         const childControl = this.filterForm.get(filter.name);
 
         if (parentControl && childControl) {
-          parentControl.valueChanges.subscribe((parentValue) => {
+          parentControl.valueChanges.subscribe(parentValue => {
             childControl.setValue(null);
             if (parentValue) {
               this.loadDependentOptions(filter, parentValue);
@@ -172,16 +169,14 @@ export class TableFilterComponent implements OnInit, OnChanges {
     });
 
     // Auto-submit form on changes with debounce
-    this.filterForm.valueChanges
-      .pipe(debounceTime(500), distinctUntilChanged())
-      .subscribe(() => {
-        this.updateActiveFilters();
-        this.onFilter();
-      });
+    this.filterForm.valueChanges.pipe(debounceTime(500), distinctUntilChanged()).subscribe(() => {
+      this.updateActiveFilters();
+      this.onFilter();
+    });
   }
 
   private loadFilterOptions() {
-    this.filters.forEach((filter) => {
+    this.filters.forEach(filter => {
       if (filter.type === 'select' && filter.options && !filter.parent) {
         this.loadOptionsForFilter(filter);
       }
@@ -194,7 +189,7 @@ export class TableFilterComponent implements OnInit, OnChanges {
     } else if (typeof filter.options === 'function') {
       this.isLoadingOptions[filter.name] = true;
       (filter.options({}) as Observable<SelectOption[]>).subscribe({
-        next: (options) => {
+        next: options => {
           this.filterOptions[filter.name] = options;
           this.isLoadingOptions[filter.name] = false;
         },
@@ -206,16 +201,12 @@ export class TableFilterComponent implements OnInit, OnChanges {
   }
 
   private loadDependentOptions(filter: TableFilter, parentValue: any) {
-    if (
-      filter.type === 'select' &&
-      filter.options &&
-      typeof filter.options === 'function'
-    ) {
+    if (filter.type === 'select' && filter.options && typeof filter.options === 'function') {
       this.isLoadingOptions[filter.name] = true;
       const params = { [filter.parent!.filterName]: parentValue };
 
       (filter.options(params) as Observable<SelectOption[]>).subscribe({
-        next: (options) => {
+        next: options => {
           this.filterOptions[filter.name] = options;
           this.isLoadingOptions[filter.name] = false;
         },
@@ -232,16 +223,12 @@ export class TableFilterComponent implements OnInit, OnChanges {
     const filterParams: any = {};
 
     // Include search text if available
-    if (this.searchText && this.searchText.trim()) {
+    if (this.searchText?.trim()) {
       filterParams.filter = this.searchText.trim();
     }
 
-    Object.keys(formValue).forEach((key) => {
-      if (
-        formValue[key] !== null &&
-        formValue[key] !== undefined &&
-        formValue[key] !== ''
-      ) {
+    Object.keys(formValue).forEach(key => {
+      if (formValue[key] !== null && formValue[key] !== undefined && formValue[key] !== '') {
         filterParams[key] = formValue[key];
       }
     });
@@ -278,7 +265,7 @@ export class TableFilterComponent implements OnInit, OnChanges {
     const formValue = this.filterForm.value;
 
     // Add search text to active filters if present
-    if (this.searchText && this.searchText.trim()) {
+    if (this.searchText?.trim()) {
       this.activeFilters.push({
         filter: {
           name: 'filter',
@@ -291,14 +278,14 @@ export class TableFilterComponent implements OnInit, OnChanges {
     }
 
     // Add form filters to active filters
-    this.filters.forEach((filter) => {
+    this.filters.forEach(filter => {
       const value = formValue[filter.name];
       if (value !== null && value !== undefined && value !== '') {
         let displayValue = value.toString();
 
         // For select filters, get the display label
         if (filter.type === 'select' && this.filterOptions[filter.name]) {
-          const option = this.filterOptions[filter.name].find((opt) =>
+          const option = this.filterOptions[filter.name].find(opt =>
             this.compareSelectValues(opt.value, value)
           );
           if (option) {
@@ -320,11 +307,7 @@ export class TableFilterComponent implements OnInit, OnChanges {
     });
   }
 
-  removeActiveFilter(filterToRemove: {
-    filter: TableFilter;
-    value: any;
-    displayValue: string;
-  }) {
+  removeActiveFilter(filterToRemove: { filter: TableFilter; value: any; displayValue: string }) {
     if (filterToRemove.filter.name === 'filter') {
       this.clearSearchText();
     } else {

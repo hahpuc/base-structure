@@ -1,7 +1,4 @@
-<div
-  class="flex items-stretch grow shrink-0 justify-center mb-5"
-  id="sidebar_menu"
->
+<div class="flex items-stretch grow shrink-0 justify-center mb-5" id="sidebar_menu">
   <div
     class="kt-scrollable-y-auto grow"
     data-kt-scrollable="true"
@@ -12,11 +9,7 @@
   >
     <!-- Primary Menu -->
     <div class="mb-5">
-      <h3
-        class="text-sm text-muted-foreground uppercase ps-5 inline-block mb-3"
-      >
-        Pages
-      </h3>
+      <h3 class="text-sm text-muted-foreground uppercase ps-5 inline-block mb-3">Pages</h3>
       <div
         class="kt-menu flex flex-col w-full gap-1.5 px-3.5"
         data-kt-menu="true"
@@ -24,14 +17,9 @@
         id="sidebar_primary_menu"
       >
         <!-- Loop through all menu items -->
-        <ng-container *ngFor="let item of menuItems">
-          <ng-container
-            *ngTemplateOutlet="
-              menuItemTemplate;
-              context: { $implicit: item, level: 0 }
-            "
-          ></ng-container>
-        </ng-container>
+        @for (item of menuItems; track item) {
+          <ng-container *ngTemplateOutlet="menuItemTemplate; context: { $implicit: item, level: 0 }"></ng-container>
+        }
       </div>
     </div>
     <!-- End of Primary Menu -->
@@ -41,83 +29,77 @@
 <!-- Menu Item Template -->
 <ng-template #menuItemTemplate let-item let-level="level">
   <!-- Simple Menu Item (No Children) -->
-  <div
-    class="kt-menu-item"
-    [class.active]="isActiveRoute(item.path || '')"
-    *ngIf="!item.isAccordion && item.path"
-  >
-    <a
-      class="kt-menu-link gap-2.5 py-2 px-2.5 rounded-md kt-menu-item-active:bg-accent/60 kt-menu-link-hover:bg-accent/60 !menu-item-here:bg-transparent"
-      [routerLink]="item.path"
-    >
-      <span
-        class="kt-menu-icon items-start text-lg text-secondary-foreground kt-menu-item-active:text-mono kt-menu-item-here:text-mono"
-        *ngIf="level === 0 && item.icon"
+  @if (!item.isAccordion && item.path) {
+    <div class="kt-menu-item" [class.active]="isActiveRoute(item.path || '')">
+      <a
+        class="kt-menu-link gap-2.5 py-2 px-2.5 rounded-md kt-menu-item-active:bg-accent/60 kt-menu-link-hover:bg-accent/60 !menu-item-here:bg-transparent"
+        [routerLink]="item.path"
       >
-        <i class="ki-filled" [class]="item.icon"></i>
-      </span>
-      <span
-        class="kt-menu-title text-sm text-secondary-foreground font-medium kt-menu-item-here:text-mono kt-menu-item-active:text-mono kt-menu-link-hover:text-mono"
-      >
-        {{ item.label }}
-      </span>
-    </a>
-  </div>
+        @if (level === 0 && item.icon) {
+          <span
+            class="kt-menu-icon items-start text-lg text-secondary-foreground kt-menu-item-active:text-mono kt-menu-item-here:text-mono"
+          >
+            <i [class]="'ki-filled ' + item.icon"></i>
+          </span>
+        }
+        <span
+          class="kt-menu-title text-sm text-secondary-foreground font-medium kt-menu-item-here:text-mono kt-menu-item-active:text-mono kt-menu-link-hover:text-mono"
+        >
+          {{ item.label }}
+        </span>
+      </a>
+    </div>
+  }
 
   <!-- Accordion Menu Item (Has Children) -->
-  <div
-    class="kt-menu-item"
-    [class.here]="isParentActive(item)"
-    [class.show]="isParentActive(item)"
-    data-kt-menu-item-toggle="accordion"
-    data-kt-menu-item-trigger="click"
-    *ngIf="item.isAccordion && item.children"
-  >
-    <!-- Accordion Header -->
+  @if (item.isAccordion && item.children) {
     <div
-      class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent !menu-item-here:bg-transparent"
-      [class.gap-2.5]="level === 0"
-      [class.kt-menu-item-hover:bg-transparent]="level === 0"
-      [class.kt-menu-item-here:bg-transparent]="level === 0"
+      class="kt-menu-item"
+      [class.here]="isParentActive(item)"
+      [class.show]="isParentActive(item)"
+      data-kt-menu-item-toggle="accordion"
+      data-kt-menu-item-trigger="click"
     >
-      <span
-        class="kt-menu-icon items-start text-muted-foreground text-lg kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono"
-        *ngIf="level === 0 && item.icon"
+      <!-- Accordion Header -->
+      <div
+        class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent !menu-item-here:bg-transparent"
+        [class.gap-2.5]="level === 0"
+        [class.kt-menu-item-hover:bg-transparent]="level === 0"
+        [class.kt-menu-item-here:bg-transparent]="level === 0"
       >
-        <i class="ki-filled" [class]="item.icon"></i>
-      </span>
-      <span
-        class="kt-menu-title text-sm text-secondary-foreground kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono"
-        [class.font-medium]="level === 0"
-      >
-        {{ item.label }}
-      </span>
-      <span
-        class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-muted-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground"
-      >
-        <span class="inline-flex kt-menu-item-show:hidden">
-          <i class="ki-filled ki-down text-xs"></i>
+        @if (level === 0 && item.icon) {
+          <span
+            class="kt-menu-icon items-start text-muted-foreground text-lg kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono"
+          >
+            <i [class]="'ki-filled ' + item.icon"></i>
+          </span>
+        }
+        <span
+          class="kt-menu-title text-sm text-secondary-foreground kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono"
+          [class.font-medium]="level === 0"
+        >
+          {{ item.label }}
         </span>
-        <span class="hidden kt-menu-item-show:inline-flex">
-          <i class="ki-filled ki-up text-xs"></i>
+        <span
+          class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-muted-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground"
+        >
+          <span class="inline-flex kt-menu-item-show:hidden">
+            <i class="ki-filled ki-down text-xs"></i>
+          </span>
+          <span class="hidden kt-menu-item-show:inline-flex">
+            <i class="ki-filled ki-up text-xs"></i>
+          </span>
         </span>
-      </span>
-    </div>
+      </div>
 
-    <!-- Accordion Content with dynamic template -->
-    <div
-      class="kt-menu-accordion gap-px"
-      [class.ps-7]="level === 0"
-      [class.ps-2.5]="level > 0"
-    >
-      <ng-container *ngFor="let childItem of item.children">
-        <ng-container
-          *ngTemplateOutlet="
-            menuItemTemplate;
-            context: { $implicit: childItem, level: level + 1 }
-          "
-        ></ng-container>
-      </ng-container>
+      <!-- Accordion Content with dynamic template -->
+      <div class="kt-menu-accordion gap-px" [class.ps-7]="level === 0" [class.ps-2.5]="level > 0">
+        @for (childItem of item.children; track childItem) {
+          <ng-container
+            *ngTemplateOutlet="menuItemTemplate; context: { $implicit: childItem, level: level + 1 }"
+          ></ng-container>
+        }
+      </div>
     </div>
-  </div>
+  }
 </ng-template>

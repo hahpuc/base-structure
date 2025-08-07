@@ -9,19 +9,11 @@
       id="header"
     >
       <!-- Container -->
-      <div
-        class="kt-container-fixed flex items-center justify-between flex-wrap gap-3"
-      >
+      <div class="kt-container-fixed flex items-center justify-between flex-wrap gap-3">
         <a href="#">
-          <img
-            class="size-[34px]"
-            src="assets/media/app/apple-touch-icon.png"
-          />
+          <img class="size-[34px]" src="assets/media/app/apple-touch-icon.png" />
         </a>
-        <button
-          class="kt-btn kt-btn-icon kt-btn-dim hover:text-white -me-2"
-          (click)="toggleSidebar()"
-        >
+        <button class="kt-btn kt-btn-icon kt-btn-dim hover:text-white -me-2" (click)="toggleSidebar()">
           <i class="ki-filled ki-menu"></i>
         </button>
       </div>
@@ -42,19 +34,12 @@
         <div class="flex flex-col gap-2.5" id="sidebar_header">
           <div class="flex items-center gap-2.5 px-3.5 h-[60px]">
             <a href="#">
-              <img
-                class="size-[34px]"
-                src="assets/media/app/apple-touch-icon.png"
-              />
+              <img class="size-[34px]" src="assets/media/app/apple-touch-icon.png" />
             </a>
             <div class="kt-menu kt-menu-default grow">
               <div class="kt-menu-item grow">
-                <div
-                  class="kt-menu-label cursor-pointer text-mono font-medium grow justify-between"
-                >
-                  <span class="text-lg font-medium text-inverse grow"
-                    >LongNguyen</span
-                  >
+                <div class="kt-menu-label cursor-pointer text-mono font-medium grow justify-between">
+                  <span class="text-lg font-medium text-inverse grow">LongNguyen</span>
                 </div>
               </div>
             </div>
@@ -64,15 +49,12 @@
 
         <!-- Sidebar Menu Component -->
         <div class="h-full">
-          <sidebar-menu></sidebar-menu>
+          <app-sidebar-menu></app-sidebar-menu>
         </div>
         <!-- End of Sidebar Menu Component -->
 
         <!-- Sidebar Footer -->
-        <div
-          class="flex flex-center justify-between shrink-0 ps-4 pe-3.5 mb-3.5"
-          id="sidebar_footer"
-        >
+        <div class="flex flex-center justify-between shrink-0 ps-4 pe-3.5 mb-3.5" id="sidebar_footer">
           <!-- User -->
           <div class="cursor-pointer shrink-0">
             <img
@@ -84,9 +66,7 @@
           <!-- End of User -->
           <div class="flex items-center gap-1.5">
             <!-- Notifications -->
-            <button
-              class="kt-btn kt-btn-ghost kt-btn-icon size-8 hover:bg-background hover:[&_i]:text-primary"
-            >
+            <button class="kt-btn kt-btn-ghost kt-btn-icon size-8 hover:bg-background hover:[&_i]:text-primary">
               <i class="ki-filled ki-notification-status text-lg"></i>
             </button>
             <!-- Logout -->
@@ -103,16 +83,14 @@
       <!-- End of Sidebar -->
 
       <!-- Main -->
-      <div
-        class="flex flex-col grow lg:rounded-l-xl bg-background border border-input lg:ms-(--sidebar-width)"
-      >
+      <div class="flex flex-col grow lg:rounded-l-xl bg-background border border-input lg:ms-(--sidebar-width)">
         <div
           class="flex flex-col grow kt-scrollable-y-auto lg:[--kt-scrollbar-width:auto] pt-5"
           id="scrollable_content"
         >
           <main class="grow" role="content">
             <!-- Toolbar -->
-            <ft-header />
+            <app-header />
             <!-- End of Toolbar -->
 
             <!-- Container -->
@@ -126,18 +104,12 @@
           <footer class="footer">
             <!-- Container -->
             <div class="kt-container-fixed">
-              <div
-                class="flex flex-col md:flex-row justify-center md:justify-between items-center gap-3 py-5"
-              >
+              <div class="flex flex-col md:flex-row justify-center md:justify-between items-center gap-3 py-5">
                 <div class="flex order-2 md:order-1 gap-2 font-normal text-sm">
                   <span class="text-muted-foreground">2025©</span>
-                  <a class="text-secondary-foreground hover:text-primary"
-                    >Long Nguyen.</a
-                  >
+                  <a class="text-secondary-foreground hover:text-primary">Long Nguyen.</a>
                 </div>
-                <nav
-                  class="flex order-1 md:order-2 gap-4 font-normal text-sm text-secondary-foreground"
-                >
+                <nav class="flex order-1 md:order-2 gap-4 font-normal text-sm text-secondary-foreground">
                   <a class="hover:text-primary" href="#">Docs</a>
                   <a class="hover:text-primary" href="#">Purchase</a>
                   <a class="hover:text-primary" href="#">FAQ</a>
@@ -163,8 +135,6 @@
     class="fixed inset-0 z-19 lg:hidden transition-opacity duration-300 ease-in-out"
     (click)="toggleSidebar()"
   >
-    <div
-      class="sidebar-overlay fixed inset-0 bg-black opacity-60 transition-opacity duration-300"
-    ></div>
+    <div class="sidebar-overlay fixed inset-0 bg-black opacity-60 transition-opacity duration-300"></div>
   </div>
 </div>

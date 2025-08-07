@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
+
 import { ToastMessage, ToastService } from '../../services/toast.service';
 
 @Component({
@@ -12,7 +14,7 @@ export class ToastComponent implements OnDestroy {
   private subscription: Subscription;
 
   constructor(private toastService: ToastService) {
-    this.subscription = this.toastService.getToasts().subscribe((toasts) => {
+    this.subscription = this.toastService.getToasts().subscribe(toasts => {
       this._showToastMessage(toasts[toasts.length - 1]);
     });
   }

@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+
 import { ListPaginate } from '@shared/types/base';
 import { getUrlParams } from '@utils/common-helper';
-import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AppBaseService<
@@ -10,7 +11,7 @@ export class AppBaseService<
   TEntityDto,
   TCreateEntityDto,
   TEditEntityDto,
-  TQueryEntityDto
+  TQueryEntityDto,
 > {
   protected readonly apiUrl: string;
   constructor(
@@ -21,14 +22,10 @@ export class AppBaseService<
     this.apiUrl = prefix + '/' + serviceName;
   }
 
-  getByPaged(
-    params = {} as TQueryEntityDto
-  ): Observable<ListPaginate<TEntityDto>> {
+  getByPaged(params = {} as TQueryEntityDto): Observable<ListPaginate<TEntityDto>> {
     return this.httpClient.get<ListPaginate<TEntityDto>>(
       `${this.apiUrl}` +
-        getUrlParams(
-          params as { [key: string]: string | string[] | number | boolean }
-        )
+        getUrlParams(params as { [key: string]: string | string[] | number | boolean })
     );
   }
 

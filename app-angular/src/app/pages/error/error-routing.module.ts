@@ -5,7 +5,7 @@ import { ErrorComponent } from './error.component';
 
 const routes: Routes = [
   {
-    matcher: (url) => {
+    matcher: url => {
       if (url.length === 1 && url[0].path.match(/^[45]0[0-4]$/g)) {
         return {
           consumed: url,

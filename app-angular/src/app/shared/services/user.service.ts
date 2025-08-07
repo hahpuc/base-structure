@@ -1,25 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-
-import {
-  ChangePassword,
-  CreateUser,
-  EditUser,
-  QueryUser,
-  UserDto,
-} from '@shared/types/user';
 import { Observable } from 'rxjs';
+
+import { ChangePassword, CreateUser, EditUser, QueryUser, UserDto } from '@shared/types/user';
 import { environment } from 'src/environments/environment';
+
 import { AppBaseService } from './app-base.service';
 
 @Injectable({ providedIn: 'root' })
-export class UserService extends AppBaseService<
-  string,
-  UserDto,
-  CreateUser,
-  EditUser,
-  QueryUser
-> {
+export class UserService extends AppBaseService<string, UserDto, CreateUser, EditUser, QueryUser> {
   userSimpleProfile: { name: string; role: string } = { name: '', role: '' };
   constructor(httpClient: HttpClient) {
     super(httpClient, environment.apis.default.apiPrefix, 'users');

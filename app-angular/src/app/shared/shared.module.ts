@@ -3,8 +3,6 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-
-//ant design
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -33,22 +31,18 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 
-import { SafeHtmlPipe } from './pipes/safe-html.pipe';
-
-import { ThrottleClickDirective } from './directives/throttle-click.directive';
-
-import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
-import { BlankLayoutComponent } from './layouts/blank-layout/blank-layout.component';
-import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
-import { SidebarMenuComponent } from './layouts/sidebar-menu/sidebar-menu.component';
-
 import { ProgressBarComponent } from './components/progress-bar/progress-bar.component';
-
-import { ToastComponent } from './components/toast/toast.component';
-import { BreadcrumbComponent } from './layouts/breadcrumb/breadcrumb.component';
 import { TableComponent } from './components/table/table.component';
 import { TableFilterComponent } from './components/table-filter/table-filter.component';
+import { ToastComponent } from './components/toast/toast.component';
+import { ThrottleClickDirective } from './directives/throttle-click.directive';
+import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
+import { BlankLayoutComponent } from './layouts/blank-layout/blank-layout.component';
+import { BreadcrumbComponent } from './layouts/breadcrumb/breadcrumb.component';
 import { HeaderComponent } from './layouts/header/header.component';
+import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
+import { SidebarMenuComponent } from './layouts/sidebar-menu/sidebar-menu.component';
+import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 
 const layouts = [
   BlankLayoutComponent,

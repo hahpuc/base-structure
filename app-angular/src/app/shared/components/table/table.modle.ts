@@ -1,19 +1,13 @@
-import { Observable } from 'rxjs';
-import { ListPaginate } from '../../types/base';
 import { TemplateRef } from '@angular/core';
+import { Observable } from 'rxjs';
 
-export declare type TableDataType<T> =
-  | ((input: any) => Observable<ListPaginate<T>>)
-  | T[];
+import { BaseQuery, ListPaginate } from '../../types/base';
+
+export declare type TableDataType<T> = ((input: BaseQuery) => Observable<ListPaginate<T>>) | T[];
 export declare type TableClickHandler<T> = (row: T) => void;
 export declare type TableActionVisible<T> = (row: T) => boolean;
 export declare type TableColumnDisable<T> = (row: T) => boolean;
-export declare type TableActionColor =
-  | 'primary'
-  | 'danger'
-  | 'success'
-  | 'warning'
-  | 'secondary';
+export declare type TableActionColor = 'primary' | 'danger' | 'success' | 'warning' | 'secondary';
 
 export declare type TableColumnType =
   | 'text'
@@ -31,11 +25,7 @@ export declare type TableColumnType =
   | 'custom-render'
   | TemplateRef<any>;
 
-export declare type TableColumnFilterType =
-  | 'text'
-  | 'select'
-  | 'date'
-  | 'number';
+export declare type TableColumnFilterType = 'text' | 'select' | 'date' | 'number';
 
 export type SelectOption = {
   label: string;

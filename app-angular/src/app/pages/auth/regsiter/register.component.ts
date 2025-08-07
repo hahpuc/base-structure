@@ -1,7 +1,8 @@
-import { ToastService } from '@/app/shared/services/toast.service';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+
+import { ToastService } from '@/app/shared/services/toast.service';
 
 @Component({
   selector: 'app-register',
@@ -14,7 +15,7 @@ export class RegisterComponent implements OnInit {
   errorMessage = '';
 
   constructor(
-    private formBuilder: FormBuilder,
+    private fb: FormBuilder,
     private router: Router,
     private toastService: ToastService
   ) {}
@@ -24,7 +25,7 @@ export class RegisterComponent implements OnInit {
   }
 
   private initializeForm(): void {
-    this.registerForm = this.formBuilder.group(
+    this.registerForm = this.fb.group(
       {
         firstName: ['', [Validators.required, Validators.minLength(2)]],
         lastName: ['', [Validators.required, Validators.minLength(2)]],
@@ -40,11 +41,7 @@ export class RegisterComponent implements OnInit {
     const password = form.get('password');
     const confirmPassword = form.get('confirmPassword');
 
-    if (
-      password &&
-      confirmPassword &&
-      password.value !== confirmPassword.value
-    ) {
+    if (password && confirmPassword && password.value !== confirmPassword.value) {
       confirmPassword.setErrors({ passwordMismatch: true });
     } else if (confirmPassword?.errors?.['passwordMismatch']) {
       confirmPassword.setErrors(null);
@@ -71,15 +68,12 @@ export class RegisterComponent implements OnInit {
       }, 1500);
     } else {
       this.markFormGroupTouched();
-      this.toastService.error(
-        'Validation Error',
-        'Please check your input fields.'
-      );
+      this.toastService.error('Validation Error', 'Please check your input fields.');
     }
   }
 
   private markFormGroupTouched(): void {
-    Object.keys(this.registerForm.controls).forEach((key) => {
+    Object.keys(this.registerForm.controls).forEach(key => {
       this.registerForm.get(key)?.markAsTouched();
     });
   }

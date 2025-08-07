@@ -1,6 +1,7 @@
 {
   "name": "metronic-tailwind-angular",
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -10,12 +11,16 @@
     "build:staging": "ng build --configuration=staging",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint:fix": "ng lint --fix",
-    "lint": "ng lint"
+    "lint": "npx eslint \"src/**/*.{ts,html}\"",
+    "lint:fix": "npx eslint \"src/**/*.{ts,html}\" --fix",
+    "lint:check": "npx eslint \"src/**/*.{ts,html}\" --max-warnings 0",
+    "format": "npx prettier --write \"src/**/*.{ts,html,scss,css,json}\"",
+    "format:check": "npx prettier --check \"src/**/*.{ts,html,scss,css,json}\""
   },
   "private": true,
   "dependencies": {
     "@angular/animations": "^20.1.0",
+    "@angular/cdk": "^20.1.5",
     "@angular/common": "^20.1.0",
     "@angular/compiler": "^20.1.0",
     "@angular/core": "^20.1.0",
@@ -36,9 +41,16 @@
     "@angular/build": "^20.1.0",
     "@angular/cli": "^20.1.0",
     "@angular/compiler-cli": "^20.1.0",
+    "@eslint/js": "^9.32.0",
     "@tailwindcss/postcss": "^4.1.11",
     "@types/jasmine": "~5.1.0",
+    "angular-eslint": "^20.1.1",
     "autoprefixer": "^10.4.21",
+    "eslint": "^9.32.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-prettier": "^5.5.4",
     "jasmine-core": "~5.6.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
@@ -46,7 +58,9 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "postcss": "^8.5.3",
+    "prettier": "^3.6.2",
     "tailwindcss": "^4.1.11",
-    "typescript": "~5.8.3"
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.39.0"
   }
 }

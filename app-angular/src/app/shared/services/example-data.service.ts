@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { delay, map } from 'rxjs/operators';
+import { delay } from 'rxjs/operators';
+
 import { ListPaginate } from '../types/base';
 
 export interface ExampleData {
@@ -232,21 +233,17 @@ export class ExampleDataService {
 
     // Apply filters
     if (params.name) {
-      filteredData = filteredData.filter((item) =>
+      filteredData = filteredData.filter(item =>
         item.name.toLowerCase().includes(params.name.toLowerCase())
       );
     }
 
     if (params.category) {
-      filteredData = filteredData.filter(
-        (item) => item.category === params.category
-      );
+      filteredData = filteredData.filter(item => item.category === params.category);
     }
 
     if (params.status !== undefined && params.status !== null) {
-      filteredData = filteredData.filter(
-        (item) => item.status === params.status
-      );
+      filteredData = filteredData.filter(item => item.status === params.status);
     }
 
     // Apply sorting
@@ -281,7 +278,7 @@ export class ExampleDataService {
   }
 
   toggleStatus(id: string): Observable<void> {
-    const item = this.mockData.find((d) => d.id === id);
+    const item = this.mockData.find(d => d.id === id);
     if (item) {
       item.status = !item.status;
     }
@@ -289,7 +286,7 @@ export class ExampleDataService {
   }
 
   delete(id: string): Observable<void> {
-    const index = this.mockData.findIndex((d) => d.id === id);
+    const index = this.mockData.findIndex(d => d.id === id);
     if (index > -1) {
       this.mockData.splice(index, 1);
     }

@@ -1,7 +1,9 @@
-import { SharedModule } from '@/app/shared/shared.module';
 import { NgModule } from '@angular/core';
-import { ProvinceComponent } from './province.component';
+
+import { SharedModule } from '@/app/shared/shared.module';
+
 import { ProvinceRoutingModule } from './province-routing.module';
+import { ProvinceComponent } from './province.component';
 
 @NgModule({
   declarations: [ProvinceComponent],

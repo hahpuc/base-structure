@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 export interface MenuItem {
@@ -10,11 +10,11 @@ export interface MenuItem {
 }
 
 @Component({
-  selector: 'sidebar-menu',
+  selector: 'app-sidebar-menu',
   standalone: false,
   templateUrl: './sidebar-menu.component.html',
 })
-export class SidebarMenuComponent implements OnInit {
+export class SidebarMenuComponent {
   menuItems: MenuItem[] = [
     {
       label: 'Overview',
@@ -152,8 +152,6 @@ export class SidebarMenuComponent implements OnInit {
 
   constructor(private router: Router) {}
 
-  ngOnInit(): void {}
-
   isActiveRoute(path: string): boolean {
     const currentPath = this.router.url.split('?')[0];
     return currentPath === path;
@@ -164,7 +162,7 @@ export class SidebarMenuComponent implements OnInit {
       return true;
     }
     if (item.children) {
-      return item.children.some((child) => this.isParentActive(child));
+      return item.children.some(child => this.isParentActive(child));
     }
     return false;
   }

@@ -1,15 +1,16 @@
+import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+
 import { AppBaseComponent } from '@/app/shared/app.base.component';
 import { TableComponent } from '@/app/shared/components/table/table.component';
 import { TableOption } from '@/app/shared/components/table/table.modle';
 import { ProvinceService } from '@/app/shared/services/province.service';
-import { ProvinceDto } from '@/app/shared/types/province';
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { ProvinceDto, QueryProvince } from '@/app/shared/types/province';
 
 @Component({
   standalone: false,
   templateUrl: './province.component.html',
 })
-export class ProvinceComponent extends AppBaseComponent implements OnInit {
+export class ProvinceComponent extends AppBaseComponent {
   @ViewChild('ftTable') ftTable!: TableComponent;
 
   tableOptions: TableOption<ProvinceDto> = {
@@ -19,8 +20,7 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
     selectable: true,
     pageSize: 10,
     pageSizeOptions: [10, 20, 50, 100],
-    data: (input: any) => {
-      input.sorting = input.sorting;
+    data: (input: QueryProvince) => {
       return this.provinceService.getByPaged(input);
     },
     filters: [
@@ -40,7 +40,7 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
         name: '',
         type: 'custom-render',
         width: '80px',
-        customRender: (row) => {
+        customRender: row => {
           return `<span class="text-blue-500 font-semibold">#${row.id}</span>`;
         },
       },
@@ -74,7 +74,7 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
         name: 'status',
         type: 'status',
         width: '80px',
-        click: (row) => {
+        click: row => {
           this.provinceService.toggleStatus(+row.id).subscribe(() => {
             this.ftTable.refresh();
             this.showSuccessMessage('Status updated successfully');
@@ -87,10 +87,10 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
         label: 'Edit',
         iconClass: 'edit',
         color: 'primary',
-        handler: (row) => {
+        handler: row => {
           this.editProvince(row);
         },
-        visible: (row) => true,
+        visible: () => true,
         permission: 'province.edit',
       },
       // {
@@ -122,29 +122,20 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
     super(injector);
   }
 
-  ngOnInit(): void {}
-
   // Action handlers
   editProvince(province: ProvinceDto): void {
-    console.log('Edit province:', province);
     // Navigate to edit page or open modal
     this.showInfoMessage(`Edit province: ${province.name}`);
 
-    this.toastService.warning(
-      'Edit Province',
-      `You are editing province: ${province.name}`,
-      3000
-    );
+    this.toastService.warning('Edit Province', `You are editing province: ${province.name}`, 3000);
   }
 
   deleteProvince(province: ProvinceDto): void {
-    console.log('Delete province:', province);
     // Show confirmation dialog and delete
     this.showWarningMessage(`Delete province: ${province.name}`);
   }
 
   viewProvince(province: ProvinceDto): void {
-    console.log('View province details:', province);
     // Navigate to detail page or open modal
     this.showInfoMessage(`View province details: ${province.name}`);
   }

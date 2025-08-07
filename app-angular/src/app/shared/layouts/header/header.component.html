@@ -1,17 +1,15 @@
 <div class="pb-5">
   <!-- Container -->
-  <div
-    class="kt-container-fixed flex items-center justify-between flex-wrap gap-3"
-  >
-    <breadcrumb />
+  <div class="kt-container-fixed flex items-center justify-between flex-wrap gap-3">
+    <app-breadcrumb />
     <div class="flex items-center flex-wrap gap-1.5 lg:gap-2.5">
       @for (button of buttons; track button) {
-      <a [class]="'kt-btn kt-btn-outline'" (click)="(button.click)">
-        @if (button.icon) {
-        <i [class]="button.icon"></i>
-        }
-        {{ button.title }}
-      </a>
+        <a [class]="'kt-btn kt-btn-outline'" (click)="(button.click)">
+          @if (button.icon) {
+            <i [class]="button.icon"></i>
+          }
+          {{ button.title }}
+        </a>
       }
 
       <!-- <a class="kt-btn kt-btn-outline">

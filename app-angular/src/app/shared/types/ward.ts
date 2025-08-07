@@ -1,4 +1,5 @@
 import { EStatus } from '../constants/enum';
+
 import { BaseModel, BaseQuery } from './base';
 import { ProvinceDto } from './province';
 

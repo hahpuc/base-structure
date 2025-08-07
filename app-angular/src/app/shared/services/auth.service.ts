@@ -1,5 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import dayjs from 'dayjs';
+import { jwtDecode } from 'jwt-decode';
+import { Observable } from 'rxjs';
+
 import {
   ChangePassword,
   ForgotRequest,
@@ -9,17 +13,13 @@ import {
   TokenPayload,
   VerifyRequest,
 } from '@shared/types/auth';
-import dayjs from 'dayjs';
-import { jwtDecode } from 'jwt-decode';
-import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   protected readonly apiUrlAuth: string;
   constructor(private readonly httpClient: HttpClient) {
-    this.apiUrlAuth =
-      environment.apis.auth.url + environment.apis.auth.apiPrefix;
+    this.apiUrlAuth = environment.apis.auth.url + environment.apis.auth.apiPrefix;
   }
 
   login(input: LoginRequest): Observable<LoginResponse> {
@@ -29,13 +29,9 @@ export class AuthService {
     const headers = new HttpHeaders({
       'Content-Type': 'application/x-www-form-urlencoded',
     });
-    return this.httpClient.post<LoginResponse>(
-      this.apiUrlAuth + '/auth/token',
-      body,
-      {
-        headers,
-      }
-    );
+    return this.httpClient.post<LoginResponse>(this.apiUrlAuth + '/auth/token', body, {
+      headers,
+    });
   }
 
   logout(): Observable<null> {
@@ -48,20 +44,13 @@ export class AuthService {
       'Content-Type': 'application/x-www-form-urlencoded',
       Authorization: `Bearer ${refreshToken}`,
     });
-    return this.httpClient.post<LoginResponse>(
-      this.apiUrlAuth + '/auth/refresh',
-      null,
-      {
-        headers,
-      }
-    );
+    return this.httpClient.post<LoginResponse>(this.apiUrlAuth + '/auth/refresh', null, {
+      headers,
+    });
   }
 
   changePassword(body: ChangePassword): Observable<void> {
-    return this.httpClient.post<void>(
-      this.apiUrlAuth + '/auth/change-password',
-      body
-    );
+    return this.httpClient.post<void>(this.apiUrlAuth + '/auth/change-password', body);
   }
 
   forgot(input: ForgotRequest) {
@@ -73,20 +62,14 @@ export class AuthService {
   }
 
   resetPassword(input: ResetPasswordRequest) {
-    return this.httpClient.post(
-      this.apiUrlAuth + `/auth/reset-password`,
-      input
-    );
+    return this.httpClient.post(this.apiUrlAuth + `/auth/reset-password`, input);
   }
 
   setTokenStorage(data: LoginResponse) {
     localStorage.setItem('access_token', data.accessToken);
     localStorage.setItem('refresh_token', data.refreshToken);
     localStorage.setItem('user_id', data.user.id);
-    localStorage.setItem(
-      'expires_at',
-      new Date(data.accessTokenExpiresAt).getTime().toString()
-    );
+    localStorage.setItem('expires_at', new Date(data.accessTokenExpiresAt).getTime().toString());
     localStorage.setItem(
       'refresh_token_expires_at',
       new Date(data.refreshTokenExpiresAt).getTime().toString()
@@ -124,9 +107,6 @@ export class AuthService {
   }
 
   checkAccount(body: { username: string; password: string }): Observable<void> {
-    return this.httpClient.post<void>(
-      `${this.apiUrlAuth}/auth/check-accounts`,
-      body
-    );
+    return this.httpClient.post<void>(`${this.apiUrlAuth}/auth/check-accounts`, body);
   }
 }

@@ -1,13 +1,9 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
+
 import { ProgressBarService } from '@shared/services/progress-bar.service';
 
-export type ProgressBarTheme =
-  | 'primary'
-  | 'success'
-  | 'warning'
-  | 'danger'
-  | 'info';
+export type ProgressBarTheme = 'primary' | 'success' | 'warning' | 'danger' | 'info';
 
 @Component({
   selector: 'app-progress-bar',
@@ -26,7 +22,7 @@ export class ProgressBarComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscription.add(
-      this.progressBarService.isLoading$.subscribe((loading) => {
+      this.progressBarService.isLoading$.subscribe(loading => {
         this.isLoading = loading;
       })
     );

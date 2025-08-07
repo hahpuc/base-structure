@@ -1,24 +1,14 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-  AfterViewInit,
-} from '@angular/core';
-import { Observable } from 'rxjs';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs';
+
 import { ListPaginate } from '../../types/base';
-import {
-  TableAction,
-  TableActionColor,
-  TableColumn,
-  TableOption,
-} from './table.modle';
+
+import { TableAction, TableActionColor, TableColumn, TableOption } from './table.modle';
 
 @Component({
   standalone: false,
-  selector: 'ft-table',
+  selector: 'app-table',
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss'],
 })
@@ -41,7 +31,10 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
   currentFilters: any = {};
   currentSort: string = '';
 
-  constructor(private activatedRoute: ActivatedRoute, private router: Router) {}
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private router: Router
+  ) {}
 
   protected getQueryParam(param: string): string | null {
     return this.activatedRoute.snapshot.queryParamMap.get(param);
@@ -96,7 +89,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
     }
 
     if (this.option.filters) {
-      this.option.filters.forEach((filter) => {
+      this.option.filters.forEach(filter => {
         const filterValue = this.getQueryParam(filter.name);
         if (filterValue !== null && filterValue !== '') {
           let convertedValue: any = filterValue;
@@ -105,7 +98,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
           if (filter.type === 'select' && Array.isArray(filter.options)) {
             // Find matching option to get the correct type
             const matchingOption = filter.options.find(
-              (option) => option.value.toString() === filterValue.toString()
+              option => option.value.toString() === filterValue.toString()
             );
             if (matchingOption) {
               convertedValue = matchingOption.value;
@@ -154,7 +147,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
 
     // Get Dynamic data from API
     (this.option.data(params) as Observable<ListPaginate<any>>).subscribe({
-      next: (response) => {
+      next: response => {
         this.tableData = response.data;
         this.total = response.total_records;
         this.loading = false;
@@ -286,7 +279,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
 
   // Selection methods
   onAllChecked(checked: boolean) {
-    this.tableData.forEach((item) => {
+    this.tableData.forEach(item => {
       this.mapOfCheckedId[item.id] = checked;
     });
     this.updateSelection();
@@ -298,16 +291,13 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   private updateSelection() {
-    const checkedCount = this.tableData.filter(
-      (item) => this.mapOfCheckedId[item.id]
-    ).length;
+    const checkedCount = this.tableData.filter(item => this.mapOfCheckedId[item.id]).length;
     this.allChecked = checkedCount === this.tableData.length;
-    this.indeterminate =
-      checkedCount > 0 && checkedCount < this.tableData.length;
+    this.indeterminate = checkedCount > 0 && checkedCount < this.tableData.length;
   }
 
   getSelectedItems() {
-    return this.tableData.filter((item) => this.mapOfCheckedId[item.id]);
+    return this.tableData.filter(item => this.mapOfCheckedId[item.id]);
   }
 
   // MARK: Column methods
@@ -316,22 +306,14 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
       return 'custom-render';
     }
     // Check if column.type is a TemplateRef
-    if (
-      column.type &&
-      typeof column.type === 'object' &&
-      'createEmbeddedView' in column.type
-    ) {
+    if (column.type && typeof column.type === 'object' && 'createEmbeddedView' in column.type) {
       return 'template';
     }
     return (column.type as string) || 'text';
   }
 
   getColumnTemplate(column: TableColumn): any {
-    if (
-      column.type &&
-      typeof column.type === 'object' &&
-      'createEmbeddedView' in column.type
-    ) {
+    if (column.type && typeof column.type === 'object' && 'createEmbeddedView' in column.type) {
       return column.type;
     }
     return null;
@@ -341,10 +323,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
     const value = this.getNestedValue(row, column.name);
 
     // For status and switch types, convert numeric values to boolean
-    if (
-      (column.type === 'status' || column.type === 'switch') &&
-      typeof value === 'number'
-    ) {
+    if ((column.type === 'status' || column.type === 'switch') && typeof value === 'number') {
       return value === 1;
     }
 
@@ -384,7 +363,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
   getVisibleActions(row: any): TableAction[] {
     if (!this.option.actions) return [];
 
-    return this.option.actions.filter((action) => {
+    return this.option.actions.filter(action => {
       if (action.visible) {
         return action.visible(row);
       }
@@ -398,9 +377,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
     }
   }
 
-  getActionType(
-    color?: TableActionColor
-  ): 'primary' | 'default' | 'dashed' | 'link' | 'text' {
+  getActionType(color?: TableActionColor): 'primary' | 'default' | 'dashed' | 'link' | 'text' {
     switch (color) {
       case 'primary':
         return 'primary';
@@ -424,7 +401,10 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
 
   private setNestedValue(obj: any, path: string, value: any): void {
     const keys = path.split('.');
-    const lastKey = keys.pop()!;
+    const lastKey = keys.pop();
+
+    if (!lastKey) return;
+
     const target = keys.reduce((current, key) => current[key], obj);
     target[lastKey] = value;
   }
@@ -442,18 +422,12 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
 
       // Apply filters for static data if needed
       if (Object.keys(this.currentFilters).length > 0) {
-        filteredData = this._applyFiltersToStaticData(
-          filteredData,
-          this.currentFilters
-        );
+        filteredData = this._applyFiltersToStaticData(filteredData, this.currentFilters);
       }
 
       // Apply sorting for static data if needed
       if (this.currentSort) {
-        filteredData = this._applySortingToStaticData(
-          filteredData,
-          this.currentSort
-        );
+        filteredData = this._applySortingToStaticData(filteredData, this.currentSort);
       }
 
       this.total = filteredData.length;
@@ -468,24 +442,17 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   private _applyFiltersToStaticData(data: any[], filters: any): any[] {
-    return data.filter((item) => {
-      return Object.keys(filters).every((key) => {
+    return data.filter(item => {
+      return Object.keys(filters).every(key => {
         const filterValue = filters[key];
         const itemValue = this.getNestedValue(item, key);
 
-        if (
-          filterValue === null ||
-          filterValue === undefined ||
-          filterValue === ''
-        ) {
+        if (filterValue === null || filterValue === undefined || filterValue === '') {
           return true;
         }
 
         if (typeof filterValue === 'string') {
-          return itemValue
-            ?.toString()
-            .toLowerCase()
-            .includes(filterValue.toLowerCase());
+          return itemValue?.toString().toLowerCase().includes(filterValue.toLowerCase());
         }
 
         return itemValue === filterValue;
@@ -519,7 +486,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
     let totalWidth = 0;
     let hasFixedWidths = false;
 
-    this.option.columns.forEach((column) => {
+    this.option.columns.forEach(column => {
       if (column.width) {
         hasFixedWidths = true;
         // Extract numeric value from width (e.g., "120px" -> 120)
@@ -554,8 +521,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
 
     // Enable scroll only if we have fixed columns or specific width requirements
     return (
-      this.option.columns.some((col) => col.fixed || col.width) ||
-      this.option.columns.length > 5
+      this.option.columns.some(col => col.fixed || col.width) || this.option.columns.length > 5
     );
   }
 

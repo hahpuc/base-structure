@@ -1,126 +1,13 @@
 @if (filters && filters.length > 0) {
-<div class="table-filter mb-4">
-  <div class="flex flex-col lg:flex-row lg:items-center gap-3 w-full">
-    <div class="flex items-center gap-3 w-full lg:w-auto">
-      <!-- Filter Input Text -->
-      <div class="kt-input flex-1 lg:flex-none lg:w-[250px] relative">
-        <i class="ki-filled ki-magnifier"> </i>
-        <input
-          placeholder="Search..."
-          type="text"
-          [(ngModel)]="searchText"
-          (ngModelChange)="onSearchTextChange()"
-        />
-        <!-- Clear search icon -->
-        @if (searchText && searchText.trim()) {
-        <button
-          (click)="clearSearchText()"
-          class="clear-search-btn absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer p-1 bg-transparent border-none rounded-full flex items-center justify-center"
-          type="button"
-        >
-          <i class="ki-filled ki-cross text-sm"></i>
-        </button>
-        }
-      </div>
-
-      <!--Filter Drawer Toggle Button Icon-->
-      <a
-        class="kt-btn kt-btn-outline relative flex-shrink-0"
-        [class.kt-btn-primary]="hasActiveFilters()"
-        [class.bg-blue-600]="hasActiveFilters()"
-        [class.border-blue-600]="hasActiveFilters()"
-        [class.text-white]="hasActiveFilters()"
-        data-kt-drawer-toggle="#drawers_shop_filter"
-      >
-        <i class="ki-filled ki-filter"></i>
-        <!-- Active filter indicator -->
-        @if (hasActiveFilters()) {
-        <span
-          class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full text-xs min-w-[16px] h-4 flex items-center justify-content-center px-1 font-medium"
-        >
-          {{ activeFilters.length }}
-        </span>
-        }
-      </a>
-    </div>
-
-    <!-- Active Filters Display -->
-    @if (hasActiveFilters()) {
-    <div class="flex flex-wrap items-center gap-2 flex-1">
-      <span class="text-sm font-medium text-gray-600 hidden lg:inline"
-        >Active filters:</span
-      >
-      <div class="flex flex-wrap items-center gap-2">
-        @for (activeFilter of activeFilters; track activeFilter) {
-        <div
-          class="inline-flex items-center gap-1 bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full border border-blue-200"
-        >
-          <span class="font-semibold">{{ activeFilter.filter.label }}:</span>
-          <span>{{ activeFilter.displayValue }}</span>
-          <button
-            (click)="removeActiveFilter(activeFilter)"
-            class="filter-tag-remove ml-1 text-blue-600 cursor-pointer p-0 bg-transparent border-none rounded-full w-4 h-4 flex items-center justify-center"
-            type="button"
-          >
-            <i class="ki-filled ki-cross text-xs"></i>
-          </button>
-        </div>
-        }
-
-        <button
-          type="button"
-          (click)="onClear()"
-          class="kt-btn kt-btn-icon kt-btn-outline rounded-full w-[32px] h-[32px] flex items-center justify-center"
-        >
-          <i class="ki-outline ki-trash text-red-600"></i>
-        </button>
-      </div>
-    </div>
-    }
-  </div>
-
-  <!-- UI for the filter drawer in right side -->
-  <div
-    class="hidden kt-drawer kt-drawer-end card flex-col max-w-[90%] w-[320px] top-5 bottom-5 end-5 rounded-xl border border-border"
-    data-kt-drawer="true"
-    data-kt-drawer-container="body"
-    id="drawers_shop_filter"
-    data-kt-drawer-initialized="true"
-    style="z-index: 100"
-    role="dialog"
-    aria-modal="true"
-    tabindex="-1"
-  >
-    <form
-      [formGroup]="filterForm"
-      (ngSubmit)="onFilter()"
-      class="flex flex-col h-full"
-    >
-      <div class="kt-card-header ps-5 pr-2">
-        <h3 class="kt-card-title">Filter</h3>
-        <button
-          class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost shrink-0"
-          data-kt-drawer-dismiss="true"
-        >
-          <i class="ki-filled ki-cross text-base"></i>
-        </button>
-      </div>
-      <div class="kt-card-content px-0 pt-3.5 kt-scrollable-y-auto">
-        <!-- Search input in drawer (synced with main search) -->
-
-        <div class="px-5 mb-4">
-          <span class="text-sm font-medium text-gray-700"> Search </span>
-          <div class="kt-input relative">
-            <i class="ki-filled ki-magnifier"></i>
-            <input
-              placeholder="Search..."
-              type="text"
-              [(ngModel)]="searchText"
-              (ngModelChange)="onSearchTextChange()"
-              [ngModelOptions]="{ standalone: true }"
-            />
-            <!-- Clear search icon -->
-            @if (searchText && searchText.trim()) {
+  <div class="table-filter mb-4">
+    <div class="flex flex-col lg:flex-row lg:items-center gap-3 w-full">
+      <div class="flex items-center gap-3 w-full lg:w-auto">
+        <!-- Filter Input Text -->
+        <div class="kt-input flex-1 lg:flex-none lg:w-[250px] relative">
+          <i class="ki-filled ki-magnifier"> </i>
+          <input placeholder="Search..." type="text" [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" />
+          <!-- Clear search icon -->
+          @if (searchText && searchText.trim()) {
             <button
               (click)="clearSearchText()"
               class="clear-search-btn absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer p-1 bg-transparent border-none rounded-full flex items-center justify-center"
@@ -128,96 +15,185 @@
             >
               <i class="ki-filled ki-cross text-sm"></i>
             </button>
+          }
+        </div>
+
+        <!--Filter Drawer Toggle Button Icon-->
+        <a
+          class="kt-btn kt-btn-outline relative flex-shrink-0"
+          [class.kt-btn-primary]="hasActiveFilters()"
+          [class.bg-blue-600]="hasActiveFilters()"
+          [class.border-blue-600]="hasActiveFilters()"
+          [class.text-white]="hasActiveFilters()"
+          data-kt-drawer-toggle="#drawers_shop_filter"
+        >
+          <i class="ki-filled ki-filter"></i>
+          <!-- Active filter indicator -->
+          @if (hasActiveFilters()) {
+            <span
+              class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full text-xs min-w-[16px] h-4 flex items-center justify-content-center px-1 font-medium"
+            >
+              {{ activeFilters.length }}
+            </span>
+          }
+        </a>
+      </div>
+
+      <!-- Active Filters Display -->
+      @if (hasActiveFilters()) {
+        <div class="flex flex-wrap items-center gap-2 flex-1">
+          <span class="text-sm font-medium text-gray-600 hidden lg:inline">Active filters:</span>
+          <div class="flex flex-wrap items-center gap-2">
+            @for (activeFilter of activeFilters; track activeFilter) {
+              <div
+                class="inline-flex items-center gap-1 bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full border border-blue-200"
+              >
+                <span class="font-semibold">{{ activeFilter.filter.label }}:</span>
+                <span>{{ activeFilter.displayValue }}</span>
+                <button
+                  (click)="removeActiveFilter(activeFilter)"
+                  class="filter-tag-remove ml-1 text-blue-600 cursor-pointer p-0 bg-transparent border-none rounded-full w-4 h-4 flex items-center justify-center"
+                  type="button"
+                >
+                  <i class="ki-filled ki-cross text-xs"></i>
+                </button>
+              </div>
+            }
+
+            <button
+              type="button"
+              (click)="onClear()"
+              class="kt-btn kt-btn-icon kt-btn-outline rounded-full w-[32px] h-[32px] flex items-center justify-center"
+            >
+              <i class="ki-outline ki-trash text-red-600"></i>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- UI for the filter drawer in right side -->
+    <div
+      class="hidden kt-drawer kt-drawer-end card flex-col max-w-[90%] w-[320px] top-5 bottom-5 end-5 rounded-xl border border-border"
+      data-kt-drawer="true"
+      data-kt-drawer-container="body"
+      id="drawers_shop_filter"
+      data-kt-drawer-initialized="true"
+      style="z-index: 100"
+      role="dialog"
+      aria-modal="true"
+      tabindex="-1"
+    >
+      <form [formGroup]="filterForm" (ngSubmit)="onFilter()" class="flex flex-col h-full">
+        <div class="kt-card-header ps-5 pr-2">
+          <h3 class="kt-card-title">Filter</h3>
+          <button class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost shrink-0" data-kt-drawer-dismiss="true">
+            <i class="ki-filled ki-cross text-base"></i>
+          </button>
+        </div>
+        <div class="kt-card-content px-0 pt-3.5 kt-scrollable-y-auto">
+          <!-- Search input in drawer (synced with main search) -->
+
+          <div class="px-5 mb-4">
+            <span class="text-sm font-medium text-gray-700"> Search </span>
+            <div class="kt-input relative">
+              <i class="ki-filled ki-magnifier"></i>
+              <input
+                placeholder="Search..."
+                type="text"
+                [(ngModel)]="searchText"
+                (ngModelChange)="onSearchTextChange()"
+                [ngModelOptions]="{ standalone: true }"
+              />
+              <!-- Clear search icon -->
+              @if (searchText && searchText.trim()) {
+                <button
+                  (click)="clearSearchText()"
+                  class="clear-search-btn absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer p-1 bg-transparent border-none rounded-full flex items-center justify-center"
+                  type="button"
+                >
+                  <i class="ki-filled ki-cross text-sm"></i>
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Item Filters -->
+          <div class="flex flex-col px-5 space-y-4">
+            @for (filter of filters; track filter) {
+              <div class="space-y-2">
+                <span class="text-sm font-medium text-gray-700">
+                  {{ filter.label }}
+                </span>
+
+                <nz-form-item class="mb-0">
+                  <nz-form-control>
+                    <!-- Text Input -->
+                    @if (filter.type === 'text') {
+                      <input nz-input [formControlName]="filter.name" [placeholder]="filter.label" />
+                    }
+
+                    <!-- Number Input -->
+                    @if (filter.type === 'number') {
+                      <nz-input-number
+                        [formControlName]="filter.name"
+                        [nzPlaceHolder]="filter.label"
+                        style="width: 100%"
+                      ></nz-input-number>
+                    }
+
+                    <!-- Date Picker -->
+                    @if (filter.type === 'date') {
+                      <nz-date-picker
+                        [formControlName]="filter.name"
+                        [nzPlaceHolder]="filter.label"
+                        style="width: 100%"
+                      ></nz-date-picker>
+                    }
+
+                    <!-- Select Dropdown -->
+                    @if (filter.type === 'select') {
+                      <nz-select
+                        [formControlName]="filter.name"
+                        [nzPlaceHolder]="filter.label"
+                        nzAllowClear
+                        [nzLoading]="isLoadingOptions[filter.name]"
+                        style="width: 100%"
+                        [compareWith]="compareSelectValues"
+                      >
+                        @for (option of filterOptions[filter.name]; track option) {
+                          <nz-option [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+                        }
+                      </nz-select>
+                    }
+                    @if (filter.note) {
+                      <div class="form-note">
+                        <small class="text-muted">{{ filter.note }}</small>
+                      </div>
+                    }
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
             }
           </div>
         </div>
 
-        <!-- Item Filters -->
-        <div class="flex flex-col px-5 space-y-4">
-          @for (filter of filters; track filter) {
-          <div class="space-y-2">
-            <span class="text-sm font-medium text-gray-700">
-              {{ filter.label }}
-            </span>
-
-            <nz-form-item class="mb-0">
-              <nz-form-control>
-                <!-- Text Input -->
-                @if (filter.type === 'text') {
-                <input
-                  nz-input
-                  [formControlName]="filter.name"
-                  [placeholder]="filter.label"
-                />
-                }
-
-                <!-- Number Input -->
-                @if (filter.type === 'number') {
-                <nz-input-number
-                  [formControlName]="filter.name"
-                  [nzPlaceHolder]="filter.label"
-                  style="width: 100%"
-                ></nz-input-number>
-                }
-
-                <!-- Date Picker -->
-                @if (filter.type === 'date') {
-                <nz-date-picker
-                  [formControlName]="filter.name"
-                  [nzPlaceHolder]="filter.label"
-                  style="width: 100%"
-                ></nz-date-picker>
-                }
-
-                <!-- Select Dropdown -->
-                @if (filter.type === 'select') {
-                <nz-select
-                  [formControlName]="filter.name"
-                  [nzPlaceHolder]="filter.label"
-                  nzAllowClear
-                  [nzLoading]="isLoadingOptions[filter.name]"
-                  style="width: 100%"
-                  [compareWith]="compareSelectValues"
-                >
-                  @for (option of filterOptions[filter.name]; track option) {
-                  <nz-option
-                    [nzLabel]="option.label"
-                    [nzValue]="option.value"
-                  ></nz-option>
-                  }
-                </nz-select>
-                } @if (filter.note) {
-                <div class="form-note">
-                  <small class="text-muted">{{ filter.note }}</small>
-                </div>
-                }
-              </nz-form-control>
-            </nz-form-item>
-          </div>
-          }
+        <div class="kt-card-footer grid grid-cols-2 gap-2.5">
+          <button
+            nz-button
+            nzType="primary"
+            type="submit"
+            [nzLoading]="isLoading"
+            class="flex items-center justify-center gap-2"
+          >
+            Apply
+          </button>
+          <button nz-button nzType="default" (click)="onClear()">Clear</button>
         </div>
-      </div>
+      </form>
+    </div>
 
-      <div class="kt-card-footer grid grid-cols-2 gap-2.5">
-        <button
-          nz-button
-          nzType="primary"
-          type="submit"
-          [nzLoading]="isLoading"
-          class="flex items-center justify-center gap-2"
-        >
-          Apply
-        </button>
-        <button nz-button nzType="default" (click)="onClear()">Clear</button>
-      </div>
-    </form>
+    <!-- UI Backdrop blur content effect -->
+    <div data-kt-drawer-backdrop="true" style="z-index: 99" class="kt-drawer-backdrop hidden"></div>
   </div>
-
-  <!-- UI Backdrop blur content effect -->
-  <div
-    data-kt-drawer-backdrop="true"
-    style="z-index: 99"
-    class="kt-drawer-backdrop hidden"
-  ></div>
-</div>
 }

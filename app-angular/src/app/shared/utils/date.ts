@@ -1,13 +1,11 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import utc from 'dayjs/plugin/utc';
+
 dayjs.extend(utc);
 dayjs.extend(duration);
 
-export const formatDate = (
-  date: string | Date | undefined,
-  format = 'DD/MM/YYYY'
-) => {
+export const formatDate = (date: string | Date | undefined, format = 'DD/MM/YYYY') => {
   if (!date) {
     return '';
   }

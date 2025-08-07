@@ -1,12 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router, Scroll } from '@angular/router';
+import { distinctUntilChanged, filter, Subscription } from 'rxjs';
 
 import { BreadCrumb } from '@shared/types/breadCrumb';
-import { distinctUntilChanged, filter, Subscription } from 'rxjs';
+
 import { dynamicBreadCrumb } from '../../constants/breadcrumb';
 
 @Component({
-  selector: 'breadcrumb',
+  selector: 'app-breadcrumb',
   standalone: false,
   templateUrl: './breadcrumb.component.html',
 })
@@ -15,16 +16,18 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
 
   breadcrumbs: BreadCrumb[] = [];
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute) {}
+  constructor(
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) {}
 
   ngOnInit() {
     this.breadcrumbs$ = this.router.events
       .pipe(
-        filter((event) => {
+        filter(event => {
           return (
             event instanceof NavigationEnd ||
-            (event instanceof Scroll &&
-              event?.routerEvent instanceof NavigationEnd)
+            (event instanceof Scroll && event?.routerEvent instanceof NavigationEnd)
           );
         }),
         distinctUntilChanged()
@@ -43,13 +46,9 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
     url = '',
     breadcrumbs: BreadCrumb[] = []
   ): BreadCrumb[] {
-    let label =
-      route.routeConfig && route.routeConfig.data
-        ? route.routeConfig.data['title']
-        : '';
+    let label = route.routeConfig?.data ? route.routeConfig.data['title'] : '';
 
-    let path =
-      route.routeConfig && route.routeConfig.data ? route.routeConfig.path : '';
+    let path = route.routeConfig?.data ? route.routeConfig.path : '';
 
     const lastRoutePart = path?.split('/').pop() ?? '';
 
@@ -59,9 +58,8 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
       const paramName = lastRoutePart?.split(':')[1];
       path = path?.replace(lastRoutePart, route.snapshot.params[paramName]);
       label =
-        dynamicBreadCrumb[
-          route.snapshot.params[paramName] as keyof typeof dynamicBreadCrumb
-        ] ?? route.snapshot.params[paramName];
+        dynamicBreadCrumb[route.snapshot.params[paramName] as keyof typeof dynamicBreadCrumb] ??
+        route.snapshot.params[paramName];
     }
 
     const nextUrl = path ? `${url}/${path}` : url;
@@ -71,9 +69,7 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
       url: nextUrl,
     };
 
-    const newBreadcrumbs = breadcrumb.label
-      ? [...breadcrumbs, breadcrumb]
-      : [...breadcrumbs];
+    const newBreadcrumbs = breadcrumb.label ? [...breadcrumbs, breadcrumb] : [...breadcrumbs];
     if (route.firstChild) {
       return this._buildBreadCrumb(route.firstChild, nextUrl, newBreadcrumbs);
     }

@@ -1,23 +1,15 @@
-import { environment } from '@/environments/environment';
 import { Injector } from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormControl,
-  FormGroup,
-} from '@angular/forms';
-import {
-  ActivatedRoute,
-  NavigationExtras,
-  Params,
-  Router,
-} from '@angular/router';
+import { AbstractControl, FormArray, FormControl, FormGroup } from '@angular/forms';
+import { ActivatedRoute, NavigationExtras, Params, Router } from '@angular/router';
 import dayjs from 'dayjs';
 import { DisabledTimeConfig } from 'ng-zorro-antd/date-picker';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { Dictionary } from './types/base';
+
+import { environment } from '@/environments/environment';
+
 import { AuthService } from './services/auth.service';
 import { ToastService } from './services/toast.service';
+import { Dictionary } from './types/base';
 
 export abstract class AppBaseComponent {
   protected readonly router: Router;
@@ -54,11 +46,7 @@ export abstract class AppBaseComponent {
     this.router.navigate([url], navigationExtras).then();
   }
 
-  protected redirectOpenNewTab(
-    url: string,
-    params: Params = {},
-    isRelative = true
-  ) {
+  protected redirectOpenNewTab(url: string, params: Params = {}, isRelative = true) {
     const urlTree = this.router.createUrlTree([url], {
       relativeTo: isRelative ? this.activeRoute : null,
       queryParams: params,
@@ -94,107 +82,21 @@ export abstract class AppBaseComponent {
     return { ...this.activeRoute.snapshot.queryParams };
   }
 
-  // Helper method specifically for table components to parse query params
-  protected getTableStateFromUrl(): {
-    page?: number;
-    pageSize?: number;
-    filters: Dictionary;
-    sort?: string;
-  } {
-    const params = this.getAllQueryParams();
-    const state: any = { filters: {} };
-
-    Object.keys(params).forEach((key) => {
-      const value = params[key];
-
-      if (key === 'page') {
-        state.page = parseInt(value, 10) || 1;
-      } else if (key === 'limit' || key === 'pageSize') {
-        // Support both 'limit' (backend) and 'pageSize' (frontend) for flexibility
-        state.pageSize = parseInt(value, 10);
-      } else if (key === 'sort' || key === 'sorting') {
-        // Support both 'sort' and 'sorting' for flexibility
-        state.sort = value;
-      } else if (
-        !['page', 'limit', 'pageSize', 'sort', 'sorting'].includes(key)
-      ) {
-        // Filter parameter (assuming it's a filter if not a known pagination param)
-        state.filters[key] = value;
-      }
-    });
-
-    return state;
-  }
-
-  // Helper method for table components to update query parameters
-  protected updateTableQueryParams(
-    params: Dictionary,
-    replaceUrl: boolean = true
-  ): void {
-    const prefixedParams: Dictionary = {};
-    const currentParams = this.getAllQueryParams();
-
-    // Keep non-table params
-    Object.keys(currentParams).forEach((key) => {
-      const isTableParam = [
-        'page',
-        'limit',
-        'pageSize',
-        'sort',
-        'sorting',
-      ].includes(key);
-
-      if (!isTableParam) {
-        prefixedParams[key] = currentParams[key];
-      }
-    });
-
-    // Add new table params
-    Object.keys(params).forEach((key) => {
-      const value = params[key];
-      if (value !== null && value !== undefined && value !== '') {
-        let paramKey = key;
-
-        // Convert pageSize to limit for backend compatibility
-        if (key === 'pageSize') {
-          paramKey = 'limit';
-        }
-        // Convert sort to sorting for backend compatibility
-        if (key === 'sort') {
-          paramKey = 'sorting';
-        }
-
-        prefixedParams[paramKey] = value;
-      }
-    });
-
-    this.router
-      .navigate([], {
-        relativeTo: this.activeRoute,
-        queryParams: prefixedParams,
-        replaceUrl: replaceUrl, // Don't add to history by default
-      })
-      .then();
-  }
-
   protected compareObject(a: Dictionary, b: Dictionary): boolean {
     const keysToCompare = Object.keys({ ...a, ...b }).filter(
-      (key) =>
-        ![null, undefined].includes(a[key]) ||
-        ![null, undefined].includes(b[key])
+      key =>
+        ![null, undefined].includes(a[key] as null | undefined) ||
+        ![null, undefined].includes(b[key] as null | undefined)
     );
 
-    return keysToCompare.every((key) => a[key] == b[key]);
+    return keysToCompare.every(key => a[key] == b[key]);
   }
 
   protected isFieldError(field: FormControl): boolean {
     return field.invalid && (field.dirty || field.touched);
   }
 
-  protected formControlCompareWith(
-    otherControlName: string,
-    isEqual?: boolean
-  ) {
+  protected formControlCompareWith(otherControlName: string, isEqual?: boolean) {
     return (control: AbstractControl): { [key: string]: boolean } | null => {
       if (!control.parent) {
         return null;
@@ -203,9 +105,7 @@ export abstract class AppBaseComponent {
       const otherControl = control.parent.get(otherControlName);
       const otherValue = otherControl?.value;
 
-      const isMismatch = isEqual
-        ? thisValue === otherValue
-        : thisValue !== otherValue;
+      const isMismatch = isEqual ? thisValue === otherValue : thisValue !== otherValue;
 
       if (isMismatch) {
         return { confirm: true, error: true };
@@ -271,9 +171,7 @@ export abstract class AppBaseComponent {
         isLessThan
           ? dayjs(date).isBefore(compareDayjs, 'day')
           : dayjs(date).isAfter(compareDayjs, 'day'),
-      nzDisabledTime: (
-        current: Date | Date[]
-      ): DisabledTimeConfig | undefined => {
+      nzDisabledTime: (current: Date | Date[]): DisabledTimeConfig | undefined => {
         if (!current || Array.isArray(current)) {
           return undefined;
         }
@@ -283,9 +181,7 @@ export abstract class AppBaseComponent {
         if (disableDisturb && isInDisturbRange(currentDayjs.hour())) {
           return {
             nzDisabledHours: () =>
-              Array.from({ length: 24 }, (_, i) => i).filter((hour) =>
-                isInDisturbRange(hour)
-              ),
+              Array.from({ length: 24 }, (_, i) => i).filter(hour => isInDisturbRange(hour)),
             nzDisabledMinutes: () => Array.from({ length: 60 }, (_, i) => i),
             nzDisabledSeconds: () => Array.from({ length: 60 }, (_, i) => i),
           };
@@ -294,28 +190,21 @@ export abstract class AppBaseComponent {
         if (currentDayjs.isSame(compareDayjs, 'day')) {
           return {
             nzDisabledHours: () =>
-              Array.from({ length: 24 }, (_, i) => i).filter((hour) =>
+              Array.from({ length: 24 }, (_, i) => i).filter(hour =>
                 isLessThan
-                  ? hour < compareDayjs.hour() ||
-                    (disableDisturb && isInDisturbRange(hour))
-                  : hour > compareDayjs.hour() ||
-                    (disableDisturb && isInDisturbRange(hour))
+                  ? hour < compareDayjs.hour() || (disableDisturb && isInDisturbRange(hour))
+                  : hour > compareDayjs.hour() || (disableDisturb && isInDisturbRange(hour))
               ),
             nzDisabledMinutes: (selectedHour: number) =>
               selectedHour === compareDayjs.hour()
-                ? Array.from({ length: 60 }, (_, i) => i).filter((min) =>
-                    isLessThan
-                      ? min < compareDayjs.minute()
-                      : min > compareDayjs.minute()
+                ? Array.from({ length: 60 }, (_, i) => i).filter(min =>
+                    isLessThan ? min < compareDayjs.minute() : min > compareDayjs.minute()
                   )
                 : [],
             nzDisabledSeconds: (selectedHour: number, selectedMinute: number) =>
-              selectedHour === compareDayjs.hour() &&
-              selectedMinute === compareDayjs.minute()
-                ? Array.from({ length: 60 }, (_, i) => i).filter((sec) =>
-                    isLessThan
-                      ? sec < compareDayjs.second()
-                      : sec > compareDayjs.second()
+              selectedHour === compareDayjs.hour() && selectedMinute === compareDayjs.minute()
+                ? Array.from({ length: 60 }, (_, i) => i).filter(sec =>
+                    isLessThan ? sec < compareDayjs.second() : sec > compareDayjs.second()
                   )
                 : [],
           };
@@ -330,15 +219,13 @@ export abstract class AppBaseComponent {
     compareTime: Date = new Date(),
     disableDisturb: boolean = false,
     disturbTimeRange: [number, number] = [22, 6]
-  ) =>
-    this.disabledDateTime(compareTime, true, disableDisturb, disturbTimeRange);
+  ) => this.disabledDateTime(compareTime, true, disableDisturb, disturbTimeRange);
 
   protected disabledDateTimeMoreThan = (
     compareTime: Date = new Date(),
     disableDisturb: boolean = false,
     disturbTimeRange: [number, number] = [22, 6]
-  ) =>
-    this.disabledDateTime(compareTime, false, disableDisturb, disturbTimeRange);
+  ) => this.disabledDateTime(compareTime, false, disableDisturb, disturbTimeRange);
 
   protected getFileUrl(key: string): string {
     if (key.startsWith('http')) {
@@ -361,7 +248,7 @@ export abstract class AppBaseComponent {
       isParam: 'Invalid parameter format',
     };
 
-    if (control && control.errors) {
+    if (control?.errors) {
       for (const [key, message] of Object.entries(errorMessages)) {
         if (control.errors[key]) {
           if (key === 'minlength' || key === 'maxlength') {
@@ -402,9 +289,7 @@ export abstract class AppBaseComponent {
 
     const paramMatches = value.match(/<([^>]+)>/g);
     if (paramMatches) {
-      return paramMatches.every((match) =>
-        /^[a-z][a-zA-Z0-9_]*$/.test(match.slice(1, -1))
-      );
+      return paramMatches.every(match => /^[a-z][a-zA-Z0-9_]*$/.test(match.slice(1, -1)));
     }
 
     return true;

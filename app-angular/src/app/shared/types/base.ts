@@ -20,5 +20,5 @@ export type ListPaginate<T> = {
 };
 
 export type Dictionary = {
-  [key: string]: any;
+  [key: string]: unknown;
 };

@@ -18,8 +18,7 @@ export class ErrorComponent implements OnInit {
       case '401':
       case '403':
         this.errorStatus = '403';
-        this.errorSubtitle =
-          'Sorry, you are not authorized to access this page.';
+        this.errorSubtitle = 'Sorry, you are not authorized to access this page.';
         break;
       case '500':
         this.errorStatus = '500';
