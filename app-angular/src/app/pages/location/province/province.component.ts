@@ -2,7 +2,7 @@ import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 
 import { AppBaseComponent } from '@/app/shared/app.base.component';
 import { TableComponent } from '@/app/shared/components/table/table.component';
-import { TableOption } from '@/app/shared/components/table/table.modle';
+import { TableOption } from '@/app/shared/components/table/table.model';
 import { ProvinceService } from '@/app/shared/services/province.service';
 import { ProvinceDto, QueryProvince } from '@/app/shared/types/province';
 

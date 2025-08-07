@@ -1,7 +1,24 @@
 import { TemplateRef } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { BaseQuery, ListPaginate } from '../../types/base';
+import { BaseQuery, Dictionary, ListPaginate } from '../../types/base';
+import { TableFilter } from '../table-filter/table-filter.model';
+
+// Type definitions for table component
+export type TableRowData = {
+  id: string | number;
+  [key: string]: unknown;
+};
+
+export type FilterParams = Dictionary & {
+  filter?: string;
+};
+
+export type TableQueryParams = BaseQuery & FilterParams;
+
+export type CheckedIdMap = {
+  [key: string]: boolean;
+};
 
 export declare type TableDataType<T> = ((input: BaseQuery) => Observable<ListPaginate<T>>) | T[];
 export declare type TableClickHandler<T> = (row: T) => void;
@@ -23,27 +40,9 @@ export declare type TableColumnType =
   | 'switch'
   | 'button'
   | 'custom-render'
-  | TemplateRef<any>;
+  | TemplateRef<unknown>;
 
-export declare type TableColumnFilterType = 'text' | 'select' | 'date' | 'number';
-
-export type SelectOption = {
-  label: string;
-  value: any;
-};
-
-export type TableFilter = {
-  type: TableColumnFilterType;
-  name: string;
-  label: string;
-  options?: SelectOption[] | ((input: any) => Observable<SelectOption[]>);
-  note?: string;
-  parent?: {
-    filterName: string;
-  };
-};
-
-export type TableColumn<T = any> = {
+export type TableColumn<T = TableRowData> = {
   title: string;
   name: string;
   type?: TableColumnType;
@@ -58,7 +57,7 @@ export type TableColumn<T = any> = {
   permission?: string;
 };
 
-export type TableAction<T = any> = {
+export type TableAction<T = TableRowData> = {
   label: string;
   iconClass?: string;
   color?: TableActionColor;
@@ -67,7 +66,7 @@ export type TableAction<T = any> = {
   permission?: string;
 };
 
-export type TableOption<T = any> = {
+export type TableOption<T = TableRowData> = {
   title?: string;
   data: TableDataType<T>;
   columns: TableColumn<T>[];

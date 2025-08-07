@@ -37,7 +37,7 @@
         <!-- Table Header -->
         <thead>
           <tr>
-            @if ((option.actions ?? []) && option.actions && option.actions.length > 0) {
+            @if (option.actions && option.actions.length > 0) {
               <th nzWidth="100px" nzLeft></th>
             }
             @for (column of option.columns; track trackByColumn($index, column)) {
@@ -94,28 +94,28 @@
                     <!-- Number Type -->
                     @case ('number') {
                       <span>
-                        {{ getColumnValue(data, column) | number }}
+                        {{ getNumberValue(data, column) | number }}
                       </span>
                     }
 
                     <!-- Date Type -->
                     @case ('date') {
                       <span>
-                        {{ getColumnValue(data, column) | date: 'dd/MM/yyyy' }}
+                        {{ getDateValue(data, column) | date: 'dd/MM/yyyy' }}
                       </span>
                     }
 
                     <!-- DateTime Type -->
                     @case ('datetime') {
                       <span>
-                        {{ getColumnValue(data, column) | date: 'dd/MM/yyyy HH:mm' }}
+                        {{ getDateValue(data, column) | date: 'dd/MM/yyyy HH:mm' }}
                       </span>
                     }
 
                     <!-- Time Type -->
                     @case ('time') {
                       <span>
-                        {{ getColumnValue(data, column) | date: 'HH:mm' }}
+                        {{ getDateValue(data, column) | date: 'HH:mm' }}
                       </span>
                     }
 
@@ -160,16 +160,16 @@
                     <!-- Percent Type -->
                     @case ('percent') {
                       <span>
-                        {{ getColumnValue(data, column) | percent }}
+                        {{ getNumberValue(data, column) | percent }}
                       </span>
                     }
 
                     <!-- Image Type -->
                     @case ('image') {
                       <span>
-                        @if (getColumnValue(data, column)) {
+                        @if (getStringValue(data, column)) {
                           <img
-                            [src]="getColumnValue(data, column)"
+                            [src]="getStringValue(data, column)"
                             [alt]="column.title"
                             style="width: 50px; height: 50px; object-fit: cover"
                           />
@@ -181,8 +181,8 @@
 
                     <!-- Long Text Type -->
                     @case ('long-text') {
-                      <span [title]="getColumnValue(data, column)">
-                        {{ truncateText(getColumnValue(data, column), 50) }}
+                      <span [title]="getStringValue(data, column)">
+                        {{ truncateText(getStringValue(data, column), 50) }}
                       </span>
                     }
 

@@ -1,10 +1,27 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges, AfterViewInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  TemplateRef,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { ListPaginate } from '../../types/base';
 
-import { TableAction, TableActionColor, TableColumn, TableOption } from './table.modle';
+import {
+  CheckedIdMap,
+  FilterParams,
+  TableAction,
+  TableActionColor,
+  TableColumn,
+  TableOption,
+  TableQueryParams,
+  TableRowData,
+} from './table.model';
 
 @Component({
   standalone: false,
@@ -12,10 +29,12 @@ import { TableAction, TableActionColor, TableColumn, TableOption } from './table
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss'],
 })
-export class TableComponent implements OnInit, OnChanges, AfterViewInit {
-  @Input() option!: TableOption;
+export class TableComponent<T extends TableRowData = TableRowData>
+  implements OnInit, OnChanges, AfterViewInit
+{
+  @Input() option!: TableOption<T>;
 
-  tableData: any[] = [];
+  tableData: T[] = [];
   loading = false;
   total = 0;
   currentPage = 1;
@@ -25,11 +44,11 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
   // Selection
   allChecked = false;
   indeterminate = false;
-  mapOfCheckedId: { [key: string]: boolean } = {};
+  mapOfCheckedId: CheckedIdMap = {};
 
   // Current filters and sorting
-  currentFilters: any = {};
-  currentSort: string = '';
+  currentFilters: FilterParams = {};
+  currentSort = '';
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -80,7 +99,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
     }
 
     // Get filter parameters
-    const filters: any = {};
+    const filters: FilterParams = {};
 
     // Handle search text parameter (filter)
     const searchTextParam = this.getQueryParam('filter');
@@ -92,16 +111,16 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
       this.option.filters.forEach(filter => {
         const filterValue = this.getQueryParam(filter.name);
         if (filterValue !== null && filterValue !== '') {
-          let convertedValue: any = filterValue;
+          let convertedValue: string | number | boolean = filterValue;
 
           // Convert to proper type based on filter type and options
           if (filter.type === 'select' && Array.isArray(filter.options)) {
             // Find matching option to get the correct type
             const matchingOption = filter.options.find(
-              option => option.value.toString() === filterValue.toString()
+              option => String(option.value) === String(filterValue)
             );
             if (matchingOption) {
-              convertedValue = matchingOption.value;
+              convertedValue = matchingOption.value as string | number | boolean;
             }
           } else if (filter.type === 'number') {
             const numValue = Number(filterValue);
@@ -146,7 +165,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
     }
 
     // Get Dynamic data from API
-    (this.option.data(params) as Observable<ListPaginate<any>>).subscribe({
+    (this.option.data(params) as Observable<ListPaginate<T>>).subscribe({
       next: response => {
         this.tableData = response.data;
         this.total = response.total_records;
@@ -178,7 +197,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   // MARK: Filter handlers
-  onFilterChange(filters: any) {
+  onFilterChange(filters: FilterParams) {
     this.currentFilters = filters;
     this.currentPage = 1;
     this.updateQueryParams();
@@ -194,7 +213,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
 
   // Helper method to update query parameters
   private updateQueryParams() {
-    const queryParams: any = {
+    const queryParams: TableQueryParams = {
       page: this.currentPage,
       limit: this.pageSize,
       ...this.currentFilters,
@@ -212,7 +231,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   // MARK: Sorting
-  onSort(column: TableColumn) {
+  onSort(column: TableColumn<T>) {
     if (!column.sortable) return;
 
     const columnName = column.name;
@@ -232,7 +251,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
     this.loadData();
   }
 
-  getSortDirection(column: TableColumn): 'ascend' | 'descend' | null {
+  getSortDirection(column: TableColumn<T>): 'ascend' | 'descend' | null {
     if (!column.sortable || !this.currentSort) return null;
 
     const columnName = column.name;
@@ -244,20 +263,24 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
     return null;
   }
 
-  getSortFn(column: TableColumn) {
+  getSortFn(column: TableColumn<T>) {
     if (!column.sortable) return null;
 
-    return (a: any, b: any) => {
+    return (a: T, b: T) => {
       const aValue = this.getNestedValue(a, column.name);
       const bValue = this.getNestedValue(b, column.name);
 
-      if (aValue < bValue) return -1;
-      if (aValue > bValue) return 1;
+      // Handle comparison of unknown types safely
+      const aStr = String(aValue ?? '');
+      const bStr = String(bValue ?? '');
+
+      if (aStr < bStr) return -1;
+      if (aStr > bStr) return 1;
       return 0;
     };
   }
 
-  onSortChange(column: TableColumn, sortOrder: string | null) {
+  onSortChange(column: TableColumn<T>, sortOrder: string | null) {
     if (!column.sortable) return;
 
     const columnName = column.name;
@@ -301,7 +324,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   // MARK: Column methods
-  getColumnType(column: TableColumn): string {
+  getColumnType(column: TableColumn<T>): string {
     if (column.customRender) {
       return 'custom-render';
     }
@@ -312,14 +335,16 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
     return (column.type as string) || 'text';
   }
 
-  getColumnTemplate(column: TableColumn): any {
+  getColumnTemplate(
+    column: TableColumn<T>
+  ): TemplateRef<{ $implicit: T; column: TableColumn<T> }> | null {
     if (column.type && typeof column.type === 'object' && 'createEmbeddedView' in column.type) {
-      return column.type;
+      return column.type as TemplateRef<{ $implicit: T; column: TableColumn<T> }>;
     }
     return null;
   }
 
-  getColumnValue(row: any, column: TableColumn): any {
+  getColumnValue(row: T, column: TableColumn<T>): unknown {
     const value = this.getNestedValue(row, column.name);
 
     // For status and switch types, convert numeric values to boolean
@@ -330,27 +355,64 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
     return value;
   }
 
-  getCustomRender(row: any, column: TableColumn): string {
+  getDateValue(row: T, column: TableColumn<T>): Date | string | number | null | undefined {
+    const value = this.getNestedValue(row, column.name);
+
+    // Return value as is for date pipe - it handles string/number/Date/null/undefined
+    if (value === null || value === undefined) {
+      return value;
+    }
+
+    if (value instanceof Date || typeof value === 'string' || typeof value === 'number') {
+      return value;
+    }
+
+    // Fallback to string conversion for other types
+    return String(value);
+  }
+
+  getNumberValue(row: T, column: TableColumn<T>): number | null | undefined {
+    const value = this.getNestedValue(row, column.name);
+
+    if (value === null || value === undefined) {
+      return value;
+    }
+
+    if (typeof value === 'number') {
+      return value;
+    }
+
+    // Try to convert to number
+    const numValue = Number(value);
+    return isNaN(numValue) ? 0 : numValue;
+  }
+
+  getStringValue(row: T, column: TableColumn<T>): string {
+    const value = this.getNestedValue(row, column.name);
+    return String(value ?? '');
+  }
+
+  getCustomRender(row: T, column: TableColumn<T>): string {
     if (column.customRender) {
       return column.customRender(row);
     }
-    return this.getColumnValue(row, column);
+    return String(this.getColumnValue(row, column) ?? '');
   }
 
-  isColumnDisabled(row: any, column: TableColumn): boolean {
+  isColumnDisabled(row: T, column: TableColumn<T>): boolean {
     if (column.disable) {
       return column.disable(row);
     }
     return false;
   }
 
-  onColumnClick(row: any, column: TableColumn) {
+  onColumnClick(row: T, column: TableColumn<T>) {
     if (column.click && !this.isColumnDisabled(row, column)) {
       column.click(row);
     }
   }
 
-  onStatusChange(row: any, column: TableColumn, newValue: boolean) {
+  onStatusChange(row: T, column: TableColumn<T>, newValue: boolean) {
     // Update the row data
     this.setNestedValue(row, column.name, newValue ? 1 : 0);
 
@@ -360,7 +422,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   // MARK: Action methods
-  getVisibleActions(row: any): TableAction[] {
+  getVisibleActions(row: T): TableAction<T>[] {
     if (!this.option.actions) return [];
 
     return this.option.actions.filter(action => {
@@ -371,7 +433,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
     });
   }
 
-  onActionClick(row: any, action: TableAction) {
+  onActionClick(row: T, action: TableAction<T>) {
     if (action.handler) {
       action.handler(row);
     }
@@ -395,17 +457,24 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   // MARK: Utility methods
-  private getNestedValue(obj: any, path: string): any {
-    return path.split('.').reduce((current, prop) => current?.[prop], obj);
+  private getNestedValue(obj: Record<string, unknown>, path: string): unknown {
+    return path.split('.').reduce((current: unknown, prop: string) => {
+      if (current && typeof current === 'object' && prop in current) {
+        return (current as Record<string, unknown>)[prop];
+      }
+      return undefined;
+    }, obj);
   }
 
-  private setNestedValue(obj: any, path: string, value: any): void {
+  private setNestedValue(obj: Record<string, unknown>, path: string, value: unknown): void {
     const keys = path.split('.');
     const lastKey = keys.pop();
 
     if (!lastKey) return;
 
-    const target = keys.reduce((current, key) => current[key], obj);
+    const target = keys.reduce((current, key) => {
+      return (current as Record<string, unknown>)[key] as Record<string, unknown>;
+    }, obj);
     target[lastKey] = value;
   }
 
@@ -441,7 +510,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
     }
   }
 
-  private _applyFiltersToStaticData(data: any[], filters: any): any[] {
+  private _applyFiltersToStaticData(data: T[], filters: FilterParams): T[] {
     return data.filter(item => {
       return Object.keys(filters).every(key => {
         const filterValue = filters[key];
@@ -452,7 +521,9 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
         }
 
         if (typeof filterValue === 'string') {
-          return itemValue?.toString().toLowerCase().includes(filterValue.toLowerCase());
+          return String(itemValue ?? '')
+            .toLowerCase()
+            .includes(filterValue.toLowerCase());
         }
 
         return itemValue === filterValue;
@@ -460,7 +531,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
     });
   }
 
-  private _applySortingToStaticData(data: any[], sortString: string): any[] {
+  private _applySortingToStaticData(data: T[], sortString: string): T[] {
     if (!sortString) return data;
 
     const [field, direction] = sortString.split(' ');
@@ -468,10 +539,14 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
       const aValue = this.getNestedValue(a, field);
       const bValue = this.getNestedValue(b, field);
 
+      // Convert to strings for safe comparison
+      const aStr = String(aValue ?? '');
+      const bStr = String(bValue ?? '');
+
       if (direction === 'asc') {
-        return aValue > bValue ? 1 : -1;
+        return aStr > bStr ? 1 : -1;
       } else {
-        return aValue < bValue ? 1 : -1;
+        return aStr < bStr ? 1 : -1;
       }
     });
   }
@@ -526,17 +601,17 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   // TrackBy functions for performance optimization
-  trackByColumn(index: number, column: TableColumn): any {
+  trackByColumn(index: number, column: TableColumn<T>): string | number {
     return column.name || index;
   }
 
-  trackByData(index: number, data: any): any {
+  trackByData(index: number, data: T): string | number {
     return data.id || index;
   }
 
   // MARK: PERMISSIONS
   // Method to check if a column should be visible based on permissions
-  isColumnVisible(column: TableColumn): boolean {
+  isColumnVisible(column: TableColumn<T>): boolean {
     if (column.permission) {
       // You can implement permission checking logic here
       // For now, return true (show all columns)
@@ -546,7 +621,7 @@ export class TableComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   // Method to check if an action should be visible based on permissions and visibility function
-  isActionVisible(action: TableAction, row: any): boolean {
+  isActionVisible(action: TableAction<T>, row: T): boolean {
     // Check permission first
     if (action.permission) {
       // You can implement permission checking logic here
