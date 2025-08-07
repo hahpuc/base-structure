@@ -3,12 +3,13 @@ import {
   Component,
   Input,
   OnChanges,
+  OnDestroy,
   OnInit,
   SimpleChanges,
   TemplateRef,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 
 import { ListPaginate } from '../../types/base';
 
@@ -30,7 +31,7 @@ import {
   styleUrls: ['./table.component.scss'],
 })
 export class TableComponent<T extends TableRowData = TableRowData>
-  implements OnInit, OnChanges, AfterViewInit
+  implements OnInit, OnChanges, AfterViewInit, OnDestroy
 {
   @Input() option!: TableOption<T>;
 
@@ -50,6 +51,10 @@ export class TableComponent<T extends TableRowData = TableRowData>
   currentFilters: FilterParams = {};
   currentSort = '';
 
+  // Subscription management
+  private destroy$ = new Subject<void>();
+  private isInitialized = false;
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router
@@ -61,17 +66,27 @@ export class TableComponent<T extends TableRowData = TableRowData>
 
   // MARK: Initialization
   ngOnInit() {
-    this.initializeTable();
+    // Only initialize basic settings, don't load data yet
+    if (this.option) {
+      this.pageSize = this.option.pageSize || 10;
+      this.pageSizeOptions = this.option.pageSizeOptions || [10, 20, 50, 100];
+    }
   }
 
   ngAfterViewInit() {
     this.initializeFromQueryParams();
+    this.isInitialized = true;
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['option'] && !changes['option'].firstChange) {
+    if (changes['option'] && !changes['option'].firstChange && this.isInitialized) {
       this.initializeTable();
     }
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private initializeFromQueryParams() {
@@ -147,6 +162,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
     }
   }
 
+  // MARK: Data loading
   loadData() {
     if (!this.option.data) return;
 
@@ -165,17 +181,19 @@ export class TableComponent<T extends TableRowData = TableRowData>
     }
 
     // Get Dynamic data from API
-    (this.option.data(params) as Observable<ListPaginate<T>>).subscribe({
-      next: response => {
-        this.tableData = response.data;
-        this.total = response.total_records;
-        this.loading = false;
-        this.updateSelection();
-      },
-      error: () => {
-        this.loading = false;
-      },
-    });
+    (this.option.data(params) as Observable<ListPaginate<T>>)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: response => {
+          this.tableData = response.data;
+          this.total = response.total_records;
+          this.loading = false;
+          this.updateSelection();
+        },
+        error: () => {
+          this.loading = false;
+        },
+      });
   }
 
   refresh() {

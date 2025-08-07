@@ -4,12 +4,13 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  OnDestroy,
   OnInit,
   Output,
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Observable, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Observable, Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 
 import {
   ActiveFilter,
@@ -26,7 +27,7 @@ import {
   templateUrl: './table-filter.component.html',
   styleUrls: ['./table-filter.component.scss'],
 })
-export class TableFilterComponent implements OnInit, OnChanges {
+export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
   @Input() filters: TableFilter[] = [];
   @Input() initialFilterValues: FilterValues = {};
   @Output() filterChange = new EventEmitter<FilterValues>();
@@ -39,6 +40,10 @@ export class TableFilterComponent implements OnInit, OnChanges {
 
   searchText = '';
   activeFilters: ActiveFilter[] = [];
+
+  // Subscription management
+  private destroy$ = new Subject<void>();
+  private searchSubject$ = new Subject<string>();
 
   constructor(
     private fb: FormBuilder,
@@ -53,6 +58,7 @@ export class TableFilterComponent implements OnInit, OnChanges {
     this.initializeSearchText();
     this.loadFilterOptions();
     this.setupFormChanges();
+    this.setupSearchDebounce();
 
     setTimeout(() => {
       this.setInitialValuesAfterOptionsLoad();
@@ -70,6 +76,11 @@ export class TableFilterComponent implements OnInit, OnChanges {
       this.initializeSearchText(); // Also update search text when initial values change
       this.updateActiveFilters();
     }
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   // MARK: Init & Load Data
@@ -160,7 +171,7 @@ export class TableFilterComponent implements OnInit, OnChanges {
         const childControl = this.filterForm.get(filter.name);
 
         if (parentControl && childControl) {
-          parentControl.valueChanges.subscribe(parentValue => {
+          parentControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(parentValue => {
             childControl.setValue(null);
             if (parentValue) {
               this.loadDependentOptions(filter, parentValue);
@@ -173,10 +184,22 @@ export class TableFilterComponent implements OnInit, OnChanges {
     });
 
     // Auto-submit form on changes with debounce
-    this.filterForm.valueChanges.pipe(debounceTime(500), distinctUntilChanged()).subscribe(() => {
-      this.updateActiveFilters();
-      this.onFilter();
-    });
+    this.filterForm.valueChanges
+      .pipe(debounceTime(500), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.updateActiveFilters();
+        this.onFilter();
+      });
+  }
+
+  private setupSearchDebounce() {
+    // Setup search text debounce separately to avoid conflicts
+    this.searchSubject$
+      .pipe(debounceTime(500), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.updateActiveFilters();
+        this.onFilter();
+      });
   }
 
   private loadFilterOptions() {
@@ -192,7 +215,7 @@ export class TableFilterComponent implements OnInit, OnChanges {
       this.filterOptions[filter.name] = filter.options;
     } else if (typeof filter.options === 'function') {
       this.isLoadingOptions[filter.name] = true;
-      (filter.options({}) as Observable<SelectOption[]>).subscribe({
+      (filter.options({}) as Observable<SelectOption[]>).pipe(takeUntil(this.destroy$)).subscribe({
         next: options => {
           this.filterOptions[filter.name] = options;
           this.isLoadingOptions[filter.name] = false;
@@ -209,15 +232,17 @@ export class TableFilterComponent implements OnInit, OnChanges {
       this.isLoadingOptions[filter.name] = true;
       const params = filter.parent ? { [filter.parent.filterName]: parentValue } : {};
 
-      (filter.options(params) as Observable<SelectOption[]>).subscribe({
-        next: options => {
-          this.filterOptions[filter.name] = options;
-          this.isLoadingOptions[filter.name] = false;
-        },
-        error: () => {
-          this.isLoadingOptions[filter.name] = false;
-        },
-      });
+      (filter.options(params) as Observable<SelectOption[]>)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: options => {
+            this.filterOptions[filter.name] = options;
+            this.isLoadingOptions[filter.name] = false;
+          },
+          error: () => {
+            this.isLoadingOptions[filter.name] = false;
+          },
+        });
     }
   }
 
@@ -251,11 +276,8 @@ export class TableFilterComponent implements OnInit, OnChanges {
   }
 
   onSearchTextChange() {
-    // Debounce search text changes
-    setTimeout(() => {
-      this.updateActiveFilters();
-      this.onFilter();
-    }, 300);
+    // Use the search subject for debouncing instead of setTimeout
+    this.searchSubject$.next(this.searchText);
   }
 
   clearSearchText() {
