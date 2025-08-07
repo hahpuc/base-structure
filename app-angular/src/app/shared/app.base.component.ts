@@ -7,7 +7,9 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { environment } from '@/environments/environment';
 
+import { HeaderButton, HeaderService } from './layouts/header/header.service';
 import { AuthService } from './services/auth.service';
+import { PermissionService } from './services/permission.service';
 import { ToastService } from './services/toast.service';
 import { Dictionary } from './types/base';
 
@@ -17,7 +19,8 @@ export abstract class AppBaseComponent {
   protected readonly authService: AuthService;
   protected readonly msgService: NzMessageService;
   protected readonly toastService: ToastService;
-  // protected readonly permissionService: PermissionService;
+  protected readonly headerService: HeaderService;
+  protected readonly permissionService: PermissionService;
 
   protected isValidating = false;
 
@@ -32,11 +35,13 @@ export abstract class AppBaseComponent {
     this.router = injector.get(Router);
     this.activeRoute = injector.get(ActivatedRoute);
     this.authService = injector.get(AuthService);
-    // this.permissionService = injector.get(PermissionService);
+    this.permissionService = injector.get(PermissionService);
     this.msgService = injector.get(NzMessageService);
     this.toastService = injector.get(ToastService);
+    this.headerService = injector.get(HeaderService);
   }
 
+  // MARK: Navigations
   protected redirect(url: string, params: Params = {}, isRelative = true) {
     const navigationExtras: NavigationExtras = {
       queryParams: params,
@@ -55,6 +60,7 @@ export abstract class AppBaseComponent {
     window.open(fullUrl, '_blank');
   }
 
+  // MARK: Query Params
   protected setQueryParam(params: Dictionary): void {
     this.router
       .navigate([], {
@@ -77,11 +83,11 @@ export abstract class AppBaseComponent {
     return this.activeRoute.snapshot.queryParamMap.getAll(param) as T[];
   }
 
-  // Helper method to get all query parameters as an object
   protected getAllQueryParams(): Dictionary {
     return { ...this.activeRoute.snapshot.queryParams };
   }
 
+  // MARK: Form Utilities
   protected compareObject(a: Dictionary, b: Dictionary): boolean {
     const keysToCompare = Object.keys({ ...a, ...b }).filter(
       key =>
@@ -142,13 +148,67 @@ export abstract class AppBaseComponent {
     });
   }
 
-  protected hasPermission(permission?: string): boolean {
-    if (permission) {
-      // return this.permissionService.currentPermissions?.includes(permission);
+  protected getFormControlError(control: AbstractControl | null): string {
+    const errorMessages = {
+      required: 'This field is required',
+      minlength: 'Minimum length is ',
+      maxlength: 'Maximum length is ',
+      email: 'Please enter a valid email address',
+      pattern: 'Please match the required pattern',
+      annoyingInvalid: 'Selected time must be between 6:00 and 21:59.',
+      pastDate: 'The date and time cannot be in the past',
+      minArrayLength: 'At least one option is required',
+      isParam: 'Invalid parameter format',
+    };
+
+    if (control?.errors) {
+      for (const [key, message] of Object.entries(errorMessages)) {
+        if (control.errors[key]) {
+          if (key === 'minlength' || key === 'maxlength') {
+            return `${message}${control.errors[key].requiredLength}`;
+          }
+          if (key === 'minArrayLength') {
+            const { requiredLength } = control.errors['minArrayLength'];
+            return `At least ${requiredLength} item(s) are required.`;
+          }
+          return message;
+        }
+      }
     }
+    return '';
+  }
+
+  protected validateParameter() {
+    return (control: AbstractControl): { [key: string]: boolean } | null => {
+      if (!this.isParamValid(control.value)) {
+        return { isParam: true, error: true };
+      }
+
+      return null;
+    };
+  }
+
+  private isParamValid(value: string): boolean {
+    if (
+      value.includes('< ') ||
+      value.includes(' >') ||
+      value.includes('<>') ||
+      value.endsWith('<') ||
+      /<[^>]*$/.test(value) ||
+      /^(.+)\s+([^<]+)>$/.test(value)
+    ) {
+      return false;
+    }
+
+    const paramMatches = value.match(/<([^>]+)>/g);
+    if (paramMatches) {
+      return paramMatches.every(match => /^[a-z][a-zA-Z0-9_]*$/.test(match.slice(1, -1)));
+    }
+
     return true;
   }
 
+  // MARK: Date Utilities
   protected disabledDateLessThanCurrent = (value: Date) => {
     return dayjs().diff(value, 'days') > 0;
   };
@@ -235,63 +295,20 @@ export abstract class AppBaseComponent {
     return `${environment.media.publishUrl}/${key}`;
   }
 
-  protected getFormControlError(control: AbstractControl | null): string {
-    const errorMessages = {
-      required: 'This field is required',
-      minlength: 'Minimum length is ',
-      maxlength: 'Maximum length is ',
-      email: 'Please enter a valid email address',
-      pattern: 'Please match the required pattern',
-      annoyingInvalid: 'Selected time must be between 6:00 and 21:59.',
-      pastDate: 'The date and time cannot be in the past',
-      minArrayLength: 'At least one option is required',
-      isParam: 'Invalid parameter format',
-    };
-
-    if (control?.errors) {
-      for (const [key, message] of Object.entries(errorMessages)) {
-        if (control.errors[key]) {
-          if (key === 'minlength' || key === 'maxlength') {
-            return `${message}${control.errors[key].requiredLength}`;
-          }
-          if (key === 'minArrayLength') {
-            const { requiredLength } = control.errors['minArrayLength'];
-            return `At least ${requiredLength} item(s) are required.`;
-          }
-          return message;
-        }
-      }
+  // MARK: Permissions
+  protected hasPermission(permission?: string): boolean {
+    if (permission) {
+      return this.permissionService.currentPermissions?.includes(permission);
     }
-    return '';
-  }
-
-  protected validateParameter() {
-    return (control: AbstractControl): { [key: string]: boolean } | null => {
-      if (!this.isParamValid(control.value)) {
-        return { isParam: true, error: true };
-      }
-
-      return null;
-    };
-  }
-
-  private isParamValid(value: string): boolean {
-    if (
-      value.includes('< ') ||
-      value.includes(' >') ||
-      value.includes('<>') ||
-      value.endsWith('<') ||
-      /<[^>]*$/.test(value) ||
-      /^(.+)\s+([^<]+)>$/.test(value)
-    ) {
-      return false;
-    }
-
-    const paramMatches = value.match(/<([^>]+)>/g);
-    if (paramMatches) {
-      return paramMatches.every(match => /^[a-z][a-zA-Z0-9_]*$/.test(match.slice(1, -1)));
-    }
-
     return true;
+  }
+
+  // MARK: Header Functions
+  protected setPageTitle(title: string) {
+    this.headerService.setTitle(title);
+  }
+
+  protected setHeaderButtons(buttons: HeaderButton[]) {
+    this.headerService.setButtons(buttons.filter(x => x) || []);
   }
 }

@@ -10,7 +10,7 @@ import { ProvinceDto, QueryProvince } from '@/app/shared/types/province';
   standalone: false,
   templateUrl: './province.component.html',
 })
-export class ProvinceComponent extends AppBaseComponent {
+export class ProvinceComponent extends AppBaseComponent implements OnInit {
   @ViewChild('ftTable') ftTable!: TableComponent;
 
   tableOptions: TableOption<ProvinceDto> = {
@@ -85,7 +85,7 @@ export class ProvinceComponent extends AppBaseComponent {
     actions: [
       {
         label: 'Edit',
-        iconClass: 'edit',
+        iconClass: 'ki-filled ki-pencil',
         color: 'primary',
         handler: row => {
           this.editProvince(row);
@@ -93,25 +93,25 @@ export class ProvinceComponent extends AppBaseComponent {
         visible: () => true,
         permission: 'province.edit',
       },
-      // {
-      //   label: 'Delete',
-      //   iconClass: 'ki-filled ki-trash',
-      //   color: 'danger',
-      //   handler: (row) => {
-      //     this.deleteProvince(row);
-      //   },
-      //   visible: (row) => true,
-      //   permission: 'province.delete',
-      // },
-      // {
-      //   label: 'View Details',
-      //   iconClass: 'ki-filled ki-eye',
-      //   color: 'secondary',
-      //   handler: (row) => {
-      //     this.viewProvince(row);
-      //   },
-      //   visible: (row) => true,
-      // },
+      {
+        label: 'Delete',
+        iconClass: 'ki-filled ki-trash',
+        color: 'danger',
+        handler: row => {
+          this.deleteProvince(row);
+        },
+        visible: row => true,
+        permission: 'province.delete',
+      },
+      {
+        label: 'View Details',
+        iconClass: 'ki-filled ki-eye',
+        color: 'secondary',
+        handler: row => {
+          this.viewProvince(row);
+        },
+        visible: row => true,
+      },
     ],
   };
 
@@ -120,6 +120,48 @@ export class ProvinceComponent extends AppBaseComponent {
     private readonly provinceService: ProvinceService
   ) {
     super(injector);
+  }
+
+  ngOnInit(): void {
+    this.setPageTitle('Province Management');
+    this.setHeaderButtons([
+      {
+        title: 'Create',
+        icon: 'ki-outline ki-plus',
+        type: 'primary',
+        visible: true,
+        click: () => {
+          this.toastService.info('Create Province', 'You can implement create logic here');
+        },
+      },
+      {
+        title: 'Export',
+        icon: 'ki-filled ki-exit-down',
+        type: 'success',
+        visible: true,
+        click: () => {
+          this.toastService.info('Export Data', 'You can implement export logic here');
+        },
+      },
+      {
+        title: 'Settings',
+        icon: 'ki-filled ki-setting-3',
+        type: 'warning',
+        visible: () => true, // Dynamic visibility
+        click: () => {
+          this.toastService.warning('Settings', 'Settings functionality coming soon');
+        },
+      },
+      {
+        title: 'Delete all',
+        icon: 'ki-filled ki-trash',
+        type: 'danger',
+        visible: true,
+        click: () => {
+          this.toastService.error('Delete All', 'This action is disabled');
+        },
+      },
+    ]);
   }
 
   // Action handlers

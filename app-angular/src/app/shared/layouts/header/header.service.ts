@@ -1,5 +1,17 @@
 import { Injectable } from '@angular/core';
 
+export type HeaderButtonType = 'default' | 'primary' | 'success' | 'info' | 'warning' | 'danger';
+
+export interface HeaderButton {
+  title: string | (() => string);
+  icon?: string | (() => string);
+  type?: HeaderButtonType | (() => HeaderButtonType);
+  visible?: boolean | (() => boolean);
+  disable?: boolean | (() => boolean);
+  click?: () => Promise<void> | void;
+  permission?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class HeaderService {
   private title: string | undefined;
@@ -25,16 +37,4 @@ export class HeaderService {
   setButtons(buttons: HeaderButton[]) {
     this.buttons = buttons;
   }
-}
-
-declare type HeaderButtonType = 'light' | 'primary' | 'success' | 'info' | 'warning' | 'danger';
-
-export interface HeaderButton {
-  title: string | (() => string);
-  icon?: string | (() => string);
-  type?: HeaderButtonType | (() => HeaderButtonType);
-  visible?: boolean | (() => boolean);
-  disable?: boolean | (() => boolean);
-  click?: () => Promise<void> | void;
-  permission?: string;
 }

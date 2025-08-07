@@ -439,6 +439,45 @@ export class TableComponent<T extends TableRowData = TableRowData>
     }
   }
 
+  getActionButtonClasses(action: TableAction<T>): string {
+    const baseClasses =
+      'table-btn-action w-[36px] h-[36px] rounded-[36px] flex items-center justify-center transition-colors duration-200';
+
+    switch (action.color) {
+      case 'primary':
+        return `${baseClasses} bg-blue-50 text-blue-600 hover:bg-blue-200`;
+      case 'danger':
+        return `${baseClasses} bg-red-50 text-red-600 hover:bg-red-200`;
+      case 'success':
+        return `${baseClasses} bg-green-50 text-green-600 hover:bg-green-200`;
+      case 'warning':
+        return `${baseClasses} bg-yellow-50 text-yellow-600 hover:bg-yellow-200`;
+      case 'secondary':
+        return `${baseClasses} bg-gray-50 text-gray-600 hover:bg-gray-200`;
+      default:
+        return `${baseClasses} bg-blue-50 text-blue-600 hover:bg-blue-200`;
+    }
+  }
+
+  getActionIconClasses(action: TableAction<T>): string {
+    const baseClasses = 'text-sm font-medium transition-colors duration-200';
+
+    switch (action.color) {
+      case 'primary':
+        return `${baseClasses} text-blue-600`;
+      case 'danger':
+        return `${baseClasses} text-red-600`;
+      case 'success':
+        return `${baseClasses} text-green-600`;
+      case 'warning':
+        return `${baseClasses} text-yellow-600`;
+      case 'secondary':
+        return `${baseClasses} text-gray-600`;
+      default:
+        return `${baseClasses} text-blue-600`;
+    }
+  }
+
   getActionType(color?: TableActionColor): 'primary' | 'default' | 'dashed' | 'link' | 'text' {
     switch (color) {
       case 'primary':
