@@ -1,36 +1,31 @@
-<div class="ft-table-container">
-  <!-- Table Title -->
-  <!-- <div class="table-header" *ngIf="option?.title">
-    <h4 class="table-title">{{ option.title }}</h4>
-  </div> -->
+<div class="ft-table-container w-full m-0 p-0 grid">
+  <div class="card card-grid h-full min-w-full">
+    <!-- Table Filter -->
+    @if (option.filterable && option.filters && option.filters.length > 0) {
+      <app-table-filter
+        [filters]="option.filters!"
+        [initialFilterValues]="currentFilters"
+        (filterChange)="onFilterChange($event)"
+        (clearFilter)="onClearFilter()"
+      ></app-table-filter>
+    }
 
-  <!-- Table Filter -->
-  @if (option.filterable && option.filters && option.filters.length > 0) {
-    <app-table-filter
-      [filters]="option.filters!"
-      [initialFilterValues]="currentFilters"
-      (filterChange)="onFilterChange($event)"
-      (clearFilter)="onClearFilter()"
-    ></app-table-filter>
-  }
-
-  <!-- Responsive Table Container -->
-  <div class="table-responsive-container">
-    <!-- Table wrapper for horizontal scroll -->
-    <div class="table-scroll-wrapper">
+    <!-- Responsive Table Container -->
+    <div class="card-body">
       <!-- Basic Ant Design Table -->
       <nz-table
         #basicTable
         [nzData]="tableData"
         [nzLoading]="loading"
         [nzPageSize]="pageSize"
-        [nzShowSizeChanger]="false"
+        [nzShowSizeChanger]="true"
         [nzTotal]="total"
         [nzPageIndex]="currentPage"
         [nzPageSizeOptions]="pageSizeOptions"
         (nzPageIndexChange)="onPageChange($event)"
         (nzPageSizeChange)="onPageSizeChange($event)"
         [nzShowPagination]="false"
+        [nzScroll]="getTableScrollX()"
         nzBordered
         [nzFrontPagination]="false"
       >
@@ -233,25 +228,29 @@
         </tbody>
       </nz-table>
     </div>
-  </div>
 
-  <!-- Sticky Pagination Outside Scroll Area -->
-  <div class="table-pagination-container">
-    <nz-pagination
-      [nzPageIndex]="currentPage"
-      [nzTotal]="total"
-      [nzPageSize]="pageSize"
-      [nzPageSizeOptions]="pageSizeOptions"
-      [nzShowSizeChanger]="true"
-      [nzShowQuickJumper]="false"
-      [nzShowTotal]="totalTemplate"
-      (nzPageIndexChange)="onPageChange($event)"
-      (nzPageSizeChange)="onPageSizeChange($event)"
-      class="table-pagination"
-    ></nz-pagination>
+    <!-- Sticky Pagination Outside Scroll Area -->
+    <div class="table-pagination-container">
+      <nz-pagination
+        [nzPageIndex]="currentPage"
+        [nzTotal]="total"
+        [nzPageSize]="pageSize"
+        [nzPageSizeOptions]="pageSizeOptions"
+        [nzShowSizeChanger]="true"
+        [nzShowQuickJumper]="false"
+        [nzShowTotal]="totalTemplate"
+        (nzPageIndexChange)="onPageChange($event)"
+        (nzPageSizeChange)="onPageSizeChange($event)"
+        class="table-pagination"
+      ></nz-pagination>
 
-    <ng-template #totalTemplate let-total let-range="range">
-      <span class="pagination-total"> {{ range[0] }}-{{ range[1] }} of {{ total }} items </span>
-    </ng-template>
+      <ng-template #totalTemplate let-total let-range="range">
+        <span class="pagination-total"> {{ range[0] }}-{{ range[1] }} of {{ total }} items </span>
+      </ng-template>
+    </div>
   </div>
+  <!-- Table Title -->
+  <!-- <div class="table-header" *ngIf="option?.title">
+    <h4 class="table-title">{{ option.title }}</h4>
+  </div> -->
 </div>

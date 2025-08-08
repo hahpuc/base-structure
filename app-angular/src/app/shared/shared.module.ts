@@ -23,6 +23,7 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
+import { NzResizableModule } from 'ng-zorro-antd/resizable';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
@@ -92,6 +93,7 @@ const antD = [
   NzGridModule,
   NzCollapseModule,
   NzTagModule,
+  NzResizableModule,
 ];
 @NgModule({
   declarations: [...layouts, ...components, ...directives, ...pipes],

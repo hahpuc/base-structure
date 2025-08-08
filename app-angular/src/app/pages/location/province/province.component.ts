@@ -39,7 +39,6 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
         title: '#',
         name: '',
         type: 'custom-render',
-        width: '80px',
         customRender: row => {
           return `<span class="text-blue-500 font-semibold">#${row.id}</span>`;
         },
@@ -48,32 +47,27 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
         title: 'ID',
         name: 'id',
         type: 'number',
-        width: '100px',
       },
       {
         title: 'Name',
         name: 'name',
         type: 'text',
         sortable: true,
-        width: '200px',
       },
       {
         title: 'Created Date',
         name: 'created_at',
         type: 'date',
-        width: '150px',
       },
       {
         title: 'Updated Date',
         name: 'updated_at',
         type: 'datetime',
-        width: '180px',
       },
       {
         title: 'Status',
         name: 'status',
         type: 'status',
-        width: '80px',
         click: row => {
           this.provinceService.toggleStatus(+row.id).subscribe(() => {
             this.ftTable.refresh();

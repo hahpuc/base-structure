@@ -118,9 +118,10 @@
         padding: 1rem !important;
     }
 
-    .ant-table-tbody>tr>td {
-        border-bottom: 1px solid #f3f4f6 !important;
-        padding: 0.75rem 1rem !important;
+    .ant-table-tbody {
+        .ant-table-cell {
+            padding: 0.75rem 1rem !important;
+        }
     }
 
     .ant-table-tbody>tr:hover>td {
