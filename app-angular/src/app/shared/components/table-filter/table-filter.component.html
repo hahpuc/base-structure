@@ -101,14 +101,14 @@
               <input
                 placeholder="Search..."
                 type="text"
-                [(ngModel)]="searchText"
-                (ngModelChange)="onSearchTextChange()"
+                [(ngModel)]="drawerSearchText"
+                (ngModelChange)="onDrawerSearchTextChange()"
                 [ngModelOptions]="{ standalone: true }"
               />
               <!-- Clear search icon -->
-              @if (searchText && searchText.trim()) {
+              @if (drawerSearchText && drawerSearchText.trim()) {
                 <button
-                  (click)="clearSearchText()"
+                  (click)="clearDrawerSearchText()"
                   class="clear-search-btn absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer p-1 bg-transparent border-none rounded-full flex items-center justify-center"
                   type="button"
                 >

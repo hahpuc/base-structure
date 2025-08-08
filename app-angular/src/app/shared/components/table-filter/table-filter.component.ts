@@ -39,11 +39,14 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
   isLoading = false;
 
   searchText = '';
+  drawerSearchText = '';
   activeFilters: ActiveFilter[] = [];
+  appliedSearchText = '';
+  appliedFilters: FilterValues = {};
 
-  // Subscription management
   private destroy$ = new Subject<void>();
   private searchSubject$ = new Subject<string>();
+  private drawerSearchSubject$ = new Subject<string>();
 
   constructor(
     private fb: FormBuilder,
@@ -62,9 +65,12 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
 
     setTimeout(() => {
       this.setInitialValuesAfterOptionsLoad();
-      this.updateActiveFilters();
       if (this.hasInitialValues() || this.searchText.trim()) {
-        // Also check if searchText has value
+        this.appliedFilters = { ...this.initialFilterValues };
+        this.appliedSearchText = this.searchText;
+        this.drawerSearchText = this.searchText;
+
+        this.updateActiveFilters();
         this.onFilter();
       }
     }, 200);
@@ -73,7 +79,12 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['initialFilterValues'] && !changes['initialFilterValues'].firstChange) {
       this.updateFormWithInitialValues();
-      this.initializeSearchText(); // Also update search text when initial values change
+      this.initializeSearchText();
+
+      this.appliedFilters = { ...this.initialFilterValues };
+      this.appliedSearchText = this.searchText;
+      this.drawerSearchText = this.searchText;
+
       this.updateActiveFilters();
     }
   }
@@ -83,7 +94,7 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
     this.destroy$.complete();
   }
 
-  // MARK: Init & Load Data
+  // MARK: Init & Setup
   private hasInitialValues(): boolean {
     return (
       this.initialFilterValues &&
@@ -155,16 +166,15 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private initializeSearchText() {
-    // Initialize search text from initialFilterValues if 'filter' parameter exists
     const filterValue = this.initialFilterValues?.['filter'];
     if (filterValue && typeof filterValue === 'string') {
       this.searchText = filterValue;
+      this.drawerSearchText = filterValue;
       this.cdr.detectChanges(); // Trigger change detection
     }
   }
 
   private setupFormChanges() {
-    // Setup parent-child relationships for dependent filters
     this.filters.forEach(filter => {
       if (filter.parent) {
         const parentControl = this.filterForm.get(filter.parent.filterName);
@@ -182,23 +192,26 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
         }
       }
     });
-
-    // Auto-submit form on changes with debounce
-    this.filterForm.valueChanges
-      .pipe(debounceTime(500), distinctUntilChanged(), takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.updateActiveFilters();
-        this.onFilter();
-      });
   }
 
+  // MARK: Search - Load Data
   private setupSearchDebounce() {
-    // Setup search text debounce separately to avoid conflicts
+    // Main search text - auto debounce and call API
     this.searchSubject$
       .pipe(debounceTime(500), distinctUntilChanged(), takeUntil(this.destroy$))
       .subscribe(() => {
+        // Auto apply for main search
+        this.drawerSearchText = this.searchText;
+        this.appliedSearchText = this.searchText;
         this.updateActiveFilters();
         this.onFilter();
+      });
+
+    // Drawer search text - no auto apply, only update when Apply button is clicked
+    this.drawerSearchSubject$
+      .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe(() => {
+        // No automatic updates - only when Apply is clicked
       });
   }
 
@@ -251,9 +264,12 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
     const formValue = this.filterForm.value;
     const filterParams: FilterValues = {};
 
-    // Include search text if available
-    if (this.searchText?.trim()) {
-      filterParams['filter'] = this.searchText.trim();
+    // Use drawer search text when applying filters manually (from drawer)
+    // Use main search text when applying automatically (from main search)
+    const searchTextToUse = this.drawerSearchText?.trim() || this.searchText?.trim();
+
+    if (searchTextToUse) {
+      filterParams['filter'] = searchTextToUse;
     }
 
     Object.keys(formValue).forEach(key => {
@@ -262,12 +278,28 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
       }
     });
 
+    // Save applied filters and search text
+    this.appliedFilters = { ...filterParams };
+    this.appliedSearchText = searchTextToUse || '';
+
+    // Sync both search texts
+    if (searchTextToUse) {
+      this.searchText = searchTextToUse;
+      this.drawerSearchText = searchTextToUse;
+    }
+
+    // Update active filters display based on what was actually applied
+    this.updateActiveFilters();
+
     this.filterChange.emit(filterParams);
   }
 
   onClear() {
     this.filterForm.reset();
     this.searchText = '';
+    this.drawerSearchText = '';
+    this.appliedSearchText = '';
+    this.appliedFilters = {};
     this.activeFilters = [];
 
     // Emit empty filter object to clear all filter parameters from URL
@@ -276,36 +308,48 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onSearchTextChange() {
-    // Use the search subject for debouncing instead of setTimeout
+    // Use the search subject for debouncing main search (auto-apply)
     this.searchSubject$.next(this.searchText);
+  }
+
+  onDrawerSearchTextChange() {
+    // Use the drawer search subject for debouncing drawer search (manual apply)
+    this.drawerSearchSubject$.next(this.drawerSearchText);
   }
 
   clearSearchText() {
     this.searchText = '';
+    // Auto-apply when clearing main search
+    this.drawerSearchText = '';
+    this.appliedSearchText = '';
     this.updateActiveFilters();
     this.onFilter();
   }
 
+  clearDrawerSearchText() {
+    this.drawerSearchText = '';
+    // Don't auto-apply when clearing drawer search - wait for Apply button
+  }
+
   updateActiveFilters() {
     this.activeFilters = [];
-    const formValue = this.filterForm.value;
 
-    // Add search text to active filters if present
-    if (this.searchText?.trim()) {
+    // Add applied search text to active filters if present
+    if (this.appliedSearchText?.trim()) {
       this.activeFilters.push({
         filter: {
           name: 'filter',
           label: 'Search',
           type: 'text',
         } as TableFilter,
-        value: this.searchText,
-        displayValue: this.searchText,
+        value: this.appliedSearchText,
+        displayValue: this.appliedSearchText,
       });
     }
 
-    // Add form filters to active filters
+    // Add applied form filters to active filters
     this.filters.forEach(filter => {
-      const value = formValue[filter.name];
+      const value = this.appliedFilters[filter.name];
       if (value !== null && value !== undefined && value !== '') {
         let displayValue = value.toString();
 
@@ -335,13 +379,22 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
 
   removeActiveFilter(filterToRemove: ActiveFilter) {
     if (filterToRemove.filter.name === 'filter') {
-      this.clearSearchText();
+      // Clear both applied and current search texts
+      this.appliedSearchText = '';
+      this.searchText = '';
+      this.drawerSearchText = '';
     } else {
+      // Clear both applied filter and form control
+      delete this.appliedFilters[filterToRemove.filter.name];
       const control = this.filterForm.get(filterToRemove.filter.name);
       if (control) {
         control.setValue(null);
       }
     }
+
+    // Update active filters display and reapply filters
+    this.updateActiveFilters();
+    this.onFilter();
   }
 
   hasActiveFilters(): boolean {
