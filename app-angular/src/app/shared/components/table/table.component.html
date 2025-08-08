@@ -37,16 +37,27 @@
             }
             @for (column of option.columns; track trackByColumn($index, column)) {
               <th
+                [hidden]="!isColumnVisible(column)"
+                [nzDisabled]="!isColumnResizable(column)"
                 [nzShowSort]="column.sortable"
                 [nzSortFn]="getSortFn(column)"
                 [nzSortOrder]="getSortDirection(column)"
                 (nzSortOrderChange)="onSortChange(column, $event)"
-                [nzWidth]="column.width || '200px'"
                 [nzLeft]="column.fixed === 'left'"
                 [nzRight]="column.fixed === 'right'"
-                [hidden]="!isColumnVisible(column)"
+                nz-resizable
+                (nzResizeEnd)="onColumnResize(column, $event.width!)"
+                [nzWidth]="getColumnWidth(column)"
+                [nzMinWidth]="getColumnMinWidth(column)"
+                [nzMaxWidth]="getColumnMaxWidth(column)"
+                class="resize-table-th"
               >
                 {{ column.title }}
+                @if (isColumnResizable(column)) {
+                  <nz-resize-handle nzDirection="right" class="table-resize-handle">
+                    <div class="resize-trigger"></div>
+                  </nz-resize-handle>
+                }
               </th>
             }
           </tr>

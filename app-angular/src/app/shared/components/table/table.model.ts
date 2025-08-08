@@ -49,6 +49,9 @@ export type TableColumn<T = TableRowData> = {
   sortable?: boolean;
   filterable?: boolean;
   width?: string;
+  minWidth?: string;
+  maxWidth?: string;
+  resizable?: boolean;
   fixed?: 'left' | 'right';
   customRender?: (row: T) => string;
   click?: TableClickHandler<T>;

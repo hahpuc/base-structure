@@ -51,6 +51,9 @@ export class TableComponent<T extends TableRowData = TableRowData>
   currentFilters: FilterParams = {};
   currentSort = '';
 
+  // Column widths for resizing
+  columnWidths: { [key: string]: string } = {};
+
   // Subscription management
   private destroy$ = new Subject<void>();
   private isInitialized = false;
@@ -66,7 +69,6 @@ export class TableComponent<T extends TableRowData = TableRowData>
 
   // MARK: Initialization
   ngOnInit() {
-    // Only initialize basic settings, don't load data yet
     if (this.option) {
       this.pageSize = this.option.pageSize || 10;
       this.pageSizeOptions = this.option.pageSizeOptions || [10, 20, 50, 100];
@@ -150,7 +152,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
     }
     this.currentFilters = filters;
 
-    // Load data with the initialized parameters
+    this.initializeColumnWidths();
     this.loadData();
   }
 
@@ -158,7 +160,20 @@ export class TableComponent<T extends TableRowData = TableRowData>
     if (this.option) {
       this.pageSize = this.option.pageSize || 10;
       this.pageSizeOptions = this.option.pageSizeOptions || [10, 20, 50, 100];
+
+      this.initializeColumnWidths();
+
       this.loadData();
+    }
+  }
+
+  private initializeColumnWidths() {
+    if (this.option?.columns) {
+      this.option.columns.forEach(column => {
+        if (column.width && !this.columnWidths[column.name]) {
+          this.columnWidths[column.name] = column.width;
+        }
+      });
     }
   }
 
@@ -229,7 +244,6 @@ export class TableComponent<T extends TableRowData = TableRowData>
     this.loadData();
   }
 
-  // Helper method to update query parameters
   private updateQueryParams() {
     const queryParams: TableQueryParams = {
       page: this.currentPage,
@@ -318,7 +332,6 @@ export class TableComponent<T extends TableRowData = TableRowData>
     this.loadData();
   }
 
-  // Selection methods
   onAllChecked(checked: boolean) {
     this.tableData.forEach(item => {
       this.mapOfCheckedId[item.id] = checked;
@@ -365,7 +378,6 @@ export class TableComponent<T extends TableRowData = TableRowData>
   getColumnValue(row: T, column: TableColumn<T>): unknown {
     const value = this.getNestedValue(row, column.name);
 
-    // For status and switch types, convert numeric values to boolean
     if ((column.type === 'status' || column.type === 'switch') && typeof value === 'number') {
       return value === 1;
     }
@@ -376,7 +388,6 @@ export class TableComponent<T extends TableRowData = TableRowData>
   getDateValue(row: T, column: TableColumn<T>): Date | string | number | null | undefined {
     const value = this.getNestedValue(row, column.name);
 
-    // Return value as is for date pipe - it handles string/number/Date/null/undefined
     if (value === null || value === undefined) {
       return value;
     }
@@ -385,7 +396,6 @@ export class TableComponent<T extends TableRowData = TableRowData>
       return value;
     }
 
-    // Fallback to string conversion for other types
     return String(value);
   }
 
@@ -400,7 +410,6 @@ export class TableComponent<T extends TableRowData = TableRowData>
       return value;
     }
 
-    // Try to convert to number
     const numValue = Number(value);
     return isNaN(numValue) ? 0 : numValue;
   }
@@ -431,7 +440,6 @@ export class TableComponent<T extends TableRowData = TableRowData>
   }
 
   onStatusChange(row: T, column: TableColumn<T>, newValue: boolean) {
-    // Update the row data
     this.setNestedValue(row, column.name, newValue ? 1 : 0);
 
     if (column.click) {
@@ -608,7 +616,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
     });
   }
 
-  // MARK: Responsive Helper
+  // MARK: Behavior Helper
   getTableScrollX(): { x?: string | null; y?: string | null } {
     if (!this.option?.columns) {
       return { x: null, y: null };
@@ -657,7 +665,6 @@ export class TableComponent<T extends TableRowData = TableRowData>
     );
   }
 
-  // TrackBy functions for performance optimization
   trackByColumn(index: number, column: TableColumn<T>): string | number {
     return column.name || index;
   }
@@ -688,6 +695,50 @@ export class TableComponent<T extends TableRowData = TableRowData>
     // Check visibility function
     if (action.visible) {
       return action.visible(row);
+    }
+
+    return true;
+  }
+
+  // MARK: COLUMN RESIZING
+  onColumnResize(column: TableColumn<T>, width: number): void {
+    if (column.resizable === false) return;
+
+    const newWidth = `${width}px`;
+    this.columnWidths[column.name] = newWidth;
+
+    if (this.option?.columns) {
+      const columnIndex = this.option.columns.findIndex(col => col.name === column.name);
+      if (columnIndex !== -1) {
+        this.option.columns[columnIndex].width = newWidth;
+      }
+    }
+  }
+
+  getColumnWidth(column: TableColumn<T>): string {
+    if (this.columnWidths[column.name]) {
+      return this.columnWidths[column.name];
+    }
+    return column.width || '200px';
+  }
+
+  getColumnMinWidth(column: TableColumn<T>): number {
+    if (column.minWidth) {
+      return parseInt(column.minWidth.replace(/\D/g, ''), 10) || 80;
+    }
+    return 80;
+  }
+
+  getColumnMaxWidth(column: TableColumn<T>): number {
+    if (column.maxWidth) {
+      return parseInt(column.maxWidth.replace(/\D/g, ''), 10) || 800;
+    }
+    return 800;
+  }
+
+  isColumnResizable(column: TableColumn<T>): boolean {
+    if (column.fixed || column.resizable === false) {
+      return false;
     }
 
     return true;
