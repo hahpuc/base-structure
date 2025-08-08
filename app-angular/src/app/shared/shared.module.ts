@@ -3,12 +3,14 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
+import { NzColorPickerModule } from 'ng-zorro-antd/color-picker';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
@@ -23,15 +25,20 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { NzRateModule } from 'ng-zorro-antd/rate';
 import { NzResizableModule } from 'ng-zorro-antd/resizable';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzSliderModule } from 'ng-zorro-antd/slider';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 
+import { FormComponent } from './components/form/form.component';
 import { ProgressBarComponent } from './components/progress-bar/progress-bar.component';
 import { TableComponent } from './components/table/table.component';
 import { TableFilterComponent } from './components/table-filter/table-filter.component';
@@ -55,6 +62,7 @@ const layouts = [
 
 const components = [
   ToastComponent,
+  FormComponent,
   ProgressBarComponent,
   TableComponent,
   TableFilterComponent,
@@ -94,6 +102,12 @@ const antD = [
   NzCollapseModule,
   NzTagModule,
   NzResizableModule,
+  NzRadioModule,
+  NzTimePickerModule,
+  NzRateModule,
+  NzSliderModule,
+  NzAutocompleteModule,
+  NzColorPickerModule,
 ];
 @NgModule({
   declarations: [...layouts, ...components, ...directives, ...pipes],

@@ -22,3 +22,8 @@ export type ListPaginate<T> = {
 export type Dictionary = {
   [key: string]: unknown;
 };
+
+export interface SelectOptionDto {
+  label: string;
+  value: string | number | boolean;
+}

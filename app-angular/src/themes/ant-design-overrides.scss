@@ -25,14 +25,14 @@
 /* Button Overrides */
 .ant-btn {
     border-radius: 0.5rem !important;
-    height: calc(var(--spacing) * 8.5);
+    height: calc(var(--spacing) * 10);
 }
 
 .ant-btn-primary {
     background-color: var(--ant-primary-color) !important;
     border-color: var(--ant-primary-color) !important;
     border-radius: 0.5rem !important;
-    height: calc(var(--spacing) * 8.5);
+    height: calc(var(--spacing) * 10);
 
     &:hover,
     &:focus {
@@ -52,7 +52,7 @@
     border-radius: 0.5rem !important;
     // border: 1px solid #d1d5db !important;
     // box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    min-height: calc(var(--spacing) * 8);
+    min-height: calc(var(--spacing) * 10);
 
     // &:focus {
     //     border-color: var(--ant-primary-color) !important;
@@ -66,7 +66,7 @@
 
     --tw-shadow: 0 1px 2px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.05));
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    min-height: calc(var(--spacing) * 8.5);
+    min-height: calc(var(--spacing) * 10);
 
     &:focus,
     &.ant-input-affix-wrapper-focused,
@@ -85,6 +85,24 @@
 .ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input) .ant-select-selector {
     border-color: var(--ant-primary-color) !important;
     box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2) !important;
+}
+
+.ant-select {
+    font-size: 14px !important;
+
+    .ant-select-selector {
+        font-size: 14px !important;
+    }
+
+    .ant-select-selection-item {
+        font-size: 14px !important;
+    }
+}
+
+.ant-select-dropdown {
+    .ant-select-item {
+        font-size: 14px !important;
+    }
 }
 
 /* Card Overrides */

@@ -2,7 +2,6 @@ import { isPlatformBrowser } from '@angular/common';
 import { HttpErrorResponse, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
 import { PLATFORM_ID, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { NzMessageService } from 'ng-zorro-antd/message';
 import { throwError } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 
@@ -11,11 +10,13 @@ import { AuthService } from '@services/auth.service';
 import { ProgressBarService } from '@shared/services/progress-bar.service';
 import { Dictionary } from '@shared/types/base';
 
+import { ToastService } from '../services/toast.service';
+
 export const httpCustomInterceptor: HttpInterceptorFn = (request, next) => {
   const progressBarService = inject(ProgressBarService);
   const authService = inject(AuthService);
   const router = inject(Router);
-  const messageService = inject(NzMessageService);
+  const messageService = inject(ToastService);
   const platformId = inject(PLATFORM_ID);
 
   // Helper functions
@@ -99,7 +100,7 @@ export const httpCustomInterceptor: HttpInterceptorFn = (request, next) => {
     } else if (statusCode === 500) {
       router.navigate(['/error/500']).then();
     } else {
-      messageService.error(errorMessage || 'An error occurred');
+      messageService.error('Error ', errorMessage || 'An error occurred');
     }
   };
 

@@ -154,7 +154,7 @@ export class SidebarMenuComponent {
 
   isActiveRoute(path: string): boolean {
     const currentPath = this.router.url.split('?')[0];
-    return currentPath === path;
+    return currentPath === path || currentPath.startsWith(path + '/');
   }
 
   isParentActive(item: MenuItem): boolean {

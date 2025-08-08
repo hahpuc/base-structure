@@ -1,13 +1,21 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { ProvinceCreateEditComponent } from './create-edit/province-create-edit.component';
 import { ProvinceComponent } from './province.component';
 
 const routes: Routes = [
   {
     path: '',
     component: ProvinceComponent,
-    data: { title: 'Province' },
+  },
+  {
+    path: 'create',
+    component: ProvinceCreateEditComponent,
+  },
+  {
+    path: 'edit/:id',
+    component: ProvinceCreateEditComponent,
   },
 ];
 

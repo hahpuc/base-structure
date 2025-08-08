@@ -82,7 +82,7 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
         iconClass: 'ki-filled ki-pencil',
         color: 'primary',
         handler: row => {
-          this.editProvince(row);
+          this.redirect(`edit/${row.id}`);
         },
         visible: () => true,
         permission: 'province.edit',
@@ -117,7 +117,7 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.setPageTitle('Province Management');
+    this.setPageTitle('Province');
     this.setHeaderButtons([
       {
         title: 'Create',
@@ -125,7 +125,7 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
         type: 'primary',
         visible: true,
         click: () => {
-          this.toastService.info('Create Province', 'You can implement create logic here');
+          this.redirect('create');
         },
       },
       {
