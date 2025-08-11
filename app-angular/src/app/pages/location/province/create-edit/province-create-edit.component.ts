@@ -78,23 +78,10 @@ export class ProvinceCreateEditComponent extends AppBaseComponent implements OnI
     this.isSubmitting = true;
 
     try {
-      if (this.isEdit) {
-        const updateData: EditProvince = {
-          id: Number(this.id),
-          name: formValue['name'] as string,
-          status: formValue['status'] as EStatus,
-        };
-
-        await firstValueFrom(this.provinceService.update(updateData));
-        this.msgService.success('Province updated successfully');
+      if (this.isEdit && this.id) {
+        await this.updateProvince(formValue);
       } else {
-        const createData: CreateProvince = {
-          name: formValue['name'] as string,
-          status: formValue['status'] as EStatus,
-        };
-
-        await firstValueFrom(this.provinceService.create(createData));
-        this.msgService.success('Province created successfully');
+        await this.createProvince(formValue);
       }
 
       this.redirect('/province');
@@ -103,6 +90,29 @@ export class ProvinceCreateEditComponent extends AppBaseComponent implements OnI
     } finally {
       this.isSubmitting = false;
     }
+  }
+
+  private async createProvince(formValue: Record<string, unknown>): Promise<void> {
+    const createData: CreateProvince = {
+      name: formValue['name'] as string,
+      status: formValue['status'] as EStatus,
+    };
+
+    await firstValueFrom(this.provinceService.create(createData));
+    this.msgService.success('Province created successfully');
+  }
+
+  private async updateProvince(formValue: Record<string, unknown>): Promise<void> {
+    if (!this.id) return;
+
+    const updateData: EditProvince = {
+      id: Number(this.id),
+      name: formValue['name'] as string,
+      status: (formValue['status'] as boolean) ? EStatus.active : EStatus.inactive,
+    };
+
+    await firstValueFrom(this.provinceService.update(updateData));
+    this.msgService.success('Province updated successfully');
   }
 
   private setupFormOptions(): void {
@@ -131,17 +141,14 @@ export class ProvinceCreateEditComponent extends AppBaseComponent implements OnI
         {
           name: 'status',
           label: 'Status',
-          type: 'select',
+          type: 'switch',
           required: true,
-          options: [
-            { value: EStatus.active, label: 'Active' },
-            { value: EStatus.inactive, label: 'Inactive' },
-          ],
+          defaultValue: true,
           validators: [Validators.required],
           errorMessages: {
             required: 'Status is required',
           },
-          span: 12,
+          span: 8,
         },
       ],
     };

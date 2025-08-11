@@ -2,16 +2,21 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { lastValueFrom, Observable } from 'rxjs';
 
-import { ListPermissionDto } from '@shared/types/permission';
+import { ListPermissionDto, PermissionItem } from '@shared/types/permission';
 import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class PermissionService {
   currentPermissions: string[] = [];
+  private allPermissions: PermissionItem[] = [];
   protected readonly apiUrl: string;
 
   constructor(private readonly httpClient: HttpClient) {
     this.apiUrl = environment.apis.default.apiPrefix + '/permissions';
+  }
+
+  get permissions(): PermissionItem[] {
+    return this.allPermissions;
   }
 
   getMyPermission(): Observable<string[]> {

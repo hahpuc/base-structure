@@ -18,4 +18,8 @@ export class RoleService extends AppBaseService<number, RoleDto, CreateRole, Edi
       responseType: 'blob' as 'json',
     });
   }
+
+  getAll(): Observable<RoleDto[]> {
+    return this.httpClient.get<RoleDto[]>(`${this.apiUrl}/all`);
+  }
 }

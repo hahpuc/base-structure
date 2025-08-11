@@ -217,6 +217,16 @@
 }
 
 /* Checkbox & Radio Overrides */
+/* Checkbox & Radio Border Radius */
+.ant-checkbox .ant-checkbox-inner {
+    border-radius: 0.25rem !important;
+}
+
+.ant-radio .ant-radio-inner {
+    border-radius: 50% !important;
+}
+
+
 .ant-checkbox-checked .ant-checkbox-inner,
 .ant-radio-checked .ant-radio-inner {
     background-color: var(--ant-primary-color) !important;

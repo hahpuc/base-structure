@@ -7,13 +7,20 @@ export type UserDto = BaseModel & {
   status: EStatus;
   username: string;
   created_at: Date;
-  role: RoleDto;
-  profile: ProfileDto;
+  user_roles: {
+    role: RoleDto;
+  }[];
+  profile?: ProfileDto;
 };
 
 export type ProfileDto = BaseModel & {
-  user: UserDto;
-  user_id: string;
+  user?: UserDto;
+  user_id?: string;
+  full_name: string;
+  phone: string;
+};
+
+export type CreateProfileDto = {
   full_name: string;
   phone: string;
 };
@@ -21,10 +28,9 @@ export type ProfileDto = BaseModel & {
 export type CreateUser = {
   username: string;
   email: string;
-  password: string;
   status: EStatus;
-  role_id: number;
-  profile: ProfileDto;
+  role_ids: number[];
+  profile: CreateProfileDto;
 };
 
 export type EditUser = Partial<CreateUser> & {

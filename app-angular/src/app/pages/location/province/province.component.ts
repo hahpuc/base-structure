@@ -85,7 +85,7 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
           this.redirect(`edit/${row.id}`);
         },
         visible: () => true,
-        permission: 'province.edit',
+        permission: 'province_manage_update',
       },
       {
         label: 'Delete',
@@ -95,16 +95,7 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
           this.deleteProvince(row);
         },
         visible: row => true,
-        permission: 'province.delete',
-      },
-      {
-        label: 'View Details',
-        iconClass: 'ki-filled ki-eye',
-        color: 'secondary',
-        handler: row => {
-          this.viewProvince(row);
-        },
-        visible: row => true,
+        permission: 'province_manage_delete',
       },
     ],
   };

@@ -1,21 +1,40 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { lastValueFrom, Subject } from 'rxjs';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import slugify from 'slugify';
 
 import { AppBaseComponent } from '@/app/shared/app.base.component';
 import { FormComponent } from '@/app/shared/components/form/form.component';
 import { FormOption } from '@/app/shared/components/form/form.model';
 import { EStatus } from '@/app/shared/constants/enum';
 import { RoleService } from '@/app/shared/services/role.service';
-import { RoleDto } from '@/app/shared/types/role';
+import { CreateRole, EditRole, RoleDto } from '@/app/shared/types/role';
+import { PermissionItem } from '@shared/types/permission';
+
+interface PermissionModule {
+  name: string;
+  permissions: PermissionItem[];
+}
 
 @Component({
   standalone: false,
   templateUrl: './role-create-edit.component.html',
 })
-export class RoleCreateEditComponent extends AppBaseComponent implements OnInit {
-  @ViewChild('ftForm') ftForm!: FormComponent;
+export class RoleCreateEditComponent
+  extends AppBaseComponent
+  implements OnInit, AfterViewInit, OnDestroy
+{
+  @ViewChild('ftForm') ftForm!: FormComponent<RoleDto>;
 
   formOptions!: FormOption<RoleDto>;
+  permissionModules: PermissionModule[] = [];
+  selectedPermissionIds: number[] = [];
+  isLoading = false;
+  currentRole: RoleDto | null = null;
+
+  private destroy$ = new Subject<void>();
+  private formReady = false;
 
   constructor(
     injector: Injector,
@@ -24,8 +43,9 @@ export class RoleCreateEditComponent extends AppBaseComponent implements OnInit 
     super(injector);
   }
 
-  get id(): string | null {
-    return this.getRouteParam('id');
+  get id(): number | null {
+    const idParam = this.getRouteParam('id');
+    return idParam ? Number(idParam) : null;
   }
 
   get isEdit(): boolean {
@@ -40,7 +60,6 @@ export class RoleCreateEditComponent extends AppBaseComponent implements OnInit 
         icon: 'ki-outline ki-arrow-left',
         type: 'danger',
         visible: true,
-
         click: () => {
           this.redirect('/role');
         },
@@ -50,14 +69,33 @@ export class RoleCreateEditComponent extends AppBaseComponent implements OnInit 
         icon: () => 'ki-outline ki-check',
         type: 'primary',
         visible: true,
-        click: () => {},
+        click: () => {
+          this.handleSubmit();
+        },
       },
     ]);
 
     this.setupFormOptions();
+    this.loadData();
+  }
 
-    if (this.isEdit) {
-      this.loadRoleData();
+  ngAfterViewInit(): void {
+    this.formReady = true;
+    this.patchFormIfReady();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private patchFormIfReady(): void {
+    if (this.formReady && this.currentRole && this.ftForm) {
+      this.ftForm.form.patchValue({
+        name: this.currentRole.name,
+        slug: this.currentRole.slug,
+        status: this.currentRole.status == EStatus.active ? true : false,
+      });
     }
   }
 
@@ -81,13 +119,17 @@ export class RoleCreateEditComponent extends AppBaseComponent implements OnInit 
             required: 'Role name is required',
           },
           span: 8,
+          onChange: (value: string | unknown) => {
+            this.updateSlugFromName(value as string);
+          },
         },
         {
           name: 'slug',
           label: 'Slug',
           type: 'text',
           required: true,
-          placeholder: 'Enter role slug',
+          disabled: this.isEdit,
+          placeholder: 'Auto-generated from role name',
           validators: [Validators.required],
           errorMessages: {
             required: 'Role slug is required',
@@ -97,12 +139,9 @@ export class RoleCreateEditComponent extends AppBaseComponent implements OnInit 
         {
           name: 'status',
           label: 'Status',
-          type: 'select',
+          type: 'switch',
           required: true,
-          options: [
-            { value: EStatus.active, label: 'Active' },
-            { value: EStatus.inactive, label: 'Inactive' },
-          ],
+          defaultValue: true,
           validators: [Validators.required],
           errorMessages: {
             required: 'Status is required',
@@ -113,17 +152,215 @@ export class RoleCreateEditComponent extends AppBaseComponent implements OnInit 
     };
   }
 
+  changeSlug(): void {
+    const formValue = this.ftForm?.getFormValue();
+    this.updateSlugFromName(formValue ? (formValue['name'] as string) : '');
+  }
+
+  updateSlugFromName(name: string): void {
+    if (this.isEdit) return;
+
+    if (!name || !this.ftForm) return;
+
+    const slug = slugify(name, {
+      replacement: '-',
+      lower: true,
+      strict: true,
+      locale: 'en',
+      trim: true,
+    });
+
+    this.ftForm.form.patchValue({ slug }, { emitEvent: false });
+  }
+
   private async handleSubmit(): Promise<void> {
-    // Check if form component is available and form is valid
     if (!this.ftForm?.validateForm()) {
       return;
     }
 
     // Get form values from the form component
     const formValue = this.ftForm.getFormValue();
+
+    await this.onSubmit({
+      ...formValue,
+      permission_ids: this.selectedPermissionIds,
+    });
   }
 
-  private async loadRoleData(): Promise<void> {}
+  private async loadData(): Promise<void> {
+    try {
+      this.isLoading = true;
 
-  private async onSubmit(formValue: Record<string, unknown>): Promise<void> {}
+      if (this.isEdit && this.id) {
+        // EDIT Mode: Load both role data and permissions
+        const [role, permissionList] = await Promise.all([
+          lastValueFrom(this.roleService.getById(this.id)),
+          lastValueFrom(this.permissionService.getList()),
+        ]);
+
+        this.currentRole = role;
+        this.buildPermissionModules(permissionList);
+
+        // Set form initial data
+        this.formOptions.initialData = {
+          name: role?.name,
+          slug: role?.slug,
+          status: role?.status,
+        };
+
+        // Try to patch form immediately if form is ready
+        this.patchFormIfReady();
+
+        // Set selected permissions based on role permissions
+        if (role?.permissions) {
+          this.selectedPermissionIds = Object.values(role.permissions)
+            .flat()
+            .map(p => p.id);
+        }
+      } else {
+        // CREATE Mode
+
+        const permissionList = await lastValueFrom(this.permissionService.getList());
+        this.buildPermissionModules(permissionList);
+        this.selectedPermissionIds = [];
+      }
+    } catch (error) {
+      this.toastService.error('Failed to load data', 'Error');
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  private buildPermissionModules(permissionList: Record<string, PermissionItem[]>): void {
+    this.permissionModules = [];
+
+    Object.keys(permissionList).forEach(moduleKey => {
+      this.permissionModules.push({
+        name: moduleKey,
+        permissions: permissionList[moduleKey],
+      });
+    });
+  }
+
+  // Checkbox event handlers
+  isPermissionChecked(permissionId: number): boolean {
+    return this.selectedPermissionIds.includes(permissionId);
+  }
+
+  onPermissionCheckChange(permissionId: number, checked: boolean): void {
+    if (checked) {
+      if (!this.selectedPermissionIds.includes(permissionId)) {
+        this.selectedPermissionIds.push(permissionId);
+      }
+    } else {
+      this.selectedPermissionIds = this.selectedPermissionIds.filter(id => id !== permissionId);
+    }
+  }
+
+  isModuleChecked(moduleName: string): boolean {
+    const module = this.permissionModules.find(m => m.name === moduleName);
+    if (!module) return false;
+
+    return module.permissions.every(p => this.selectedPermissionIds.includes(p.id));
+  }
+
+  isModuleIndeterminate(moduleName: string): boolean {
+    const module = this.permissionModules.find(m => m.name === moduleName);
+    if (!module) return false;
+
+    const checkedCount = module.permissions.filter(p =>
+      this.selectedPermissionIds.includes(p.id)
+    ).length;
+    return checkedCount > 0 && checkedCount < module.permissions.length;
+  }
+
+  onModuleCheckChange(moduleName: string, checked: boolean): void {
+    const module = this.permissionModules.find(m => m.name === moduleName);
+    if (!module) return;
+
+    if (checked) {
+      // Add all permissions from this module
+      module.permissions.forEach(permission => {
+        if (!this.selectedPermissionIds.includes(permission.id)) {
+          this.selectedPermissionIds.push(permission.id);
+        }
+      });
+    } else {
+      // Remove all permissions from this module
+      const modulePermissionIds = module.permissions.map(p => p.id);
+      this.selectedPermissionIds = this.selectedPermissionIds.filter(
+        id => !modulePermissionIds.includes(id)
+      );
+    }
+  }
+
+  getPermissionName(permissionId: number): string {
+    for (const module of this.permissionModules) {
+      const permission = module.permissions.find(p => p.id === permissionId);
+      if (permission) {
+        return permission.name;
+      }
+    }
+    return `Permission ${permissionId}`;
+  }
+
+  getLeftColumnModules(): PermissionModule[] {
+    const totalModules = this.permissionModules.length;
+    const leftCount = Math.ceil(totalModules / 2);
+    return this.permissionModules.slice(0, leftCount);
+  }
+
+  getRightColumnModules(): PermissionModule[] {
+    const totalModules = this.permissionModules.length;
+    const leftCount = Math.ceil(totalModules / 2);
+    return this.permissionModules.slice(leftCount);
+  }
+
+  private async onSubmit(formData: Record<string, unknown>): Promise<void> {
+    try {
+      this.isLoading = true;
+
+      if (this.isEdit && this.id) {
+        await this._updateRole(formData);
+      } else {
+        await this._createRole(formData);
+      }
+
+      this.redirect('/role');
+    } catch (error) {
+      this.toastService.error(
+        this.isEdit ? 'Failed to update role' : 'Failed to create role',
+        'Error'
+      );
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  private async _createRole(formData: Record<string, unknown>): Promise<void> {
+    const createData: CreateRole = {
+      name: formData['name'] as string,
+      slug: formData['slug'] as string,
+      status: (formData['status'] as boolean) ? EStatus.active : EStatus.inactive,
+      permission_ids: formData['permission_ids'] as number[],
+    };
+
+    await lastValueFrom(this.roleService.create(createData));
+    this.toastService.success('Role created successfully', 'Success');
+  }
+
+  private async _updateRole(formData: Record<string, unknown>): Promise<void> {
+    if (!this.id) return;
+
+    const editData: EditRole = {
+      id: this.id,
+      name: formData['name'] as string,
+      slug: formData['slug'] as string,
+      status: (formData['status'] as boolean) ? EStatus.active : EStatus.inactive,
+      permission_ids: formData['permission_ids'] as number[],
+    };
+
+    await lastValueFrom(this.roleService.update(editData));
+    this.toastService.success('Role updated successfully', 'Success');
+  }
 }

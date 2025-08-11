@@ -32,6 +32,10 @@ const routes: Routes = [
         loadChildren: () => import('@pages/role/role.module').then(x => x.RoleModule),
       },
       {
+        path: 'user',
+        loadChildren: () => import('@pages/user/user.module').then(x => x.UserModule),
+      },
+      {
         path: 'province',
         loadChildren: () =>
           import('@pages/location/province/province.module').then(x => x.ProvinceModule),

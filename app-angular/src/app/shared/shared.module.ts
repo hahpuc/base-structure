@@ -36,6 +36,7 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
+import { NzTreeModule } from 'ng-zorro-antd/tree';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 
 import { FormComponent } from './components/form/form.component';
@@ -104,6 +105,7 @@ const antD = [
   NzResizableModule,
   NzRadioModule,
   NzTimePickerModule,
+  NzTreeModule,
   NzRateModule,
   NzSliderModule,
   NzAutocompleteModule,
