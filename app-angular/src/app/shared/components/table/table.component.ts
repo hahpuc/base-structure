@@ -12,6 +12,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
+import { PermissionService } from '../../services/permission.service';
 import { ListPaginate } from '../../types/base';
 
 import {
@@ -62,7 +63,8 @@ export class TableComponent<T extends TableRowData = TableRowData>
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private permissionService: PermissionService
   ) {}
 
   protected getQueryParam(param: string): string | null {
@@ -79,6 +81,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
 
   ngAfterViewInit() {
     this.initializeFromQueryParams();
+    this.initializePermissionCache(); // Initialize permission cache
     this.isInitialized = true;
     this.cdr.detectChanges();
   }
@@ -86,6 +89,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
   ngOnChanges(changes: SimpleChanges) {
     if (changes['option'] && !changes['option'].firstChange && this.isInitialized) {
       this.initializeTable();
+      this.initializePermissionCache(); // Reinitialize permission cache when options change
     }
   }
 
@@ -363,6 +367,14 @@ export class TableComponent<T extends TableRowData = TableRowData>
   }
 
   // MARK: Column methods
+  getVisibleColumns(): TableColumn<T>[] {
+    if (!this.option?.columns) return [];
+
+    return this.option.columns.filter(column => {
+      return this.isColumnVisibleSync(column);
+    });
+  }
+
   getColumnType(column: TableColumn<T>): string {
     if (column.customRender) {
       return 'custom-render';
@@ -460,10 +472,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
     if (!this.option.actions) return [];
 
     return this.option.actions.filter(action => {
-      if (action.visible) {
-        return action.visible(row);
-      }
-      return true;
+      return this.isActionVisibleSync(action, row);
     });
   }
 
@@ -685,21 +694,73 @@ export class TableComponent<T extends TableRowData = TableRowData>
 
   // MARK: PERMISSIONS
   // Method to check if a column should be visible based on permissions
-  isColumnVisible(column: TableColumn<T>): boolean {
+  async isColumnVisible(column: TableColumn<T>): Promise<boolean> {
     if (column.permission) {
-      // You can implement permission checking logic here
-      // For now, return true (show all columns)
-      return true;
+      return await this.permissionService.checkPermissions([column.permission]);
     }
     return true;
   }
 
   // Method to check if an action should be visible based on permissions and visibility function
-  isActionVisible(action: TableAction<T>, row: T): boolean {
+  async isActionVisible(action: TableAction<T>, row: T): Promise<boolean> {
     // Check permission first
     if (action.permission) {
-      // You can implement permission checking logic here
-      // For now, return true (show all actions)
+      const hasPermission = await this.permissionService.checkPermissions([action.permission]);
+      if (!hasPermission) {
+        return false;
+      }
+    }
+
+    // Check visibility function
+    if (action.visible) {
+      return action.visible(row);
+    }
+
+    return true;
+  }
+
+  // Synchronous version for template usage - caches permission results
+  private columnPermissionCache: { [key: string]: boolean } = {};
+  private actionPermissionCache: { [key: string]: boolean } = {};
+
+  // Initialize permission cache on component init
+  private async initializePermissionCache() {
+    // Cache column permissions
+    if (this.option?.columns) {
+      for (const column of this.option.columns) {
+        if (column.permission) {
+          this.columnPermissionCache[column.permission] = await this.permissionService.checkPermissions([column.permission]);
+        }
+      }
+    }
+
+    // Cache action permissions
+    if (this.option?.actions) {
+      for (const action of this.option.actions) {
+        if (action.permission) {
+          this.actionPermissionCache[action.permission] = await this.permissionService.checkPermissions([action.permission]);
+        }
+      }
+    }
+
+    this.cdr.detectChanges();
+  }
+
+  // Synchronous methods for template usage
+  isColumnVisibleSync(column: TableColumn<T>): boolean {
+    if (column.permission) {
+      return this.columnPermissionCache[column.permission] ?? false;
+    }
+    return true;
+  }
+
+  isActionVisibleSync(action: TableAction<T>, row: T): boolean {
+    // Check permission first
+    if (action.permission) {
+      const hasPermission = this.actionPermissionCache[action.permission] ?? false;
+      if (!hasPermission) {
+        return false;
+      }
     }
 
     // Check visibility function

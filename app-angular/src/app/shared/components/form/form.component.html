@@ -65,7 +65,7 @@
                     [nzPlaceHolder]="control.placeholder || 'Please select'"
                     [nzAllowClear]="control.allowClear"
                     [nzShowSearch]="control.showSearch"
-                    [nzMode]="control.mode || 'default'"
+                    [nzMode]="control.multiple ? 'multiple' : control.mode || 'default'"
                     [nzSize]="option.size || 'default'"
                     [nzDisabled]="control.disabled"
                     class="w-full"

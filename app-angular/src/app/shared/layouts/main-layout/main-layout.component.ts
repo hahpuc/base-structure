@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, Injector } from '@angular/core';
+
+import { AppBaseComponent } from '../../app.base.component';
 
 @Component({
   standalone: false,
   templateUrl: './main-layout.component.html',
 })
-export class MainLayoutComponent {
+export class MainLayoutComponent extends AppBaseComponent {
   isSidebarOpen = false;
   currentUser = {
     name: 'Long Nguyen',
@@ -14,14 +15,18 @@ export class MainLayoutComponent {
       'https://media.about.nike.com/img/bb971c73-1433-41e3-97cb-4b40e62d353c/250424-nike-seoul-day1-lightbox-karina-0687-v1g-rgb-re.jpg?m=eyJlZGl0cyI6eyJqcGVnIjp7InF1YWxpdHkiOjEwMH0sIndlYnAiOnsicXVhbGl0eSI6MTAwfSwiZXh0cmFjdCI6eyJsZWZ0IjowLCJ0b3AiOjAsIndpZHRoIjozMDAwLCJoZWlnaHQiOjE2ODh9LCJyZXNpemUiOnsid2lkdGgiOjkwMH19fQ%3D%3D&s=c14a011e4279b2852fac17fb52acda20feb6980cbb3afda1535f75dd52435a58',
   };
 
-  constructor(private router: Router) {}
+  constructor(injector: Injector) {
+    super(injector);
+  }
 
   toggleSidebar(): void {
     this.isSidebarOpen = !this.isSidebarOpen;
   }
 
   logout(): void {
-    // Implement logout logic here
-    this.router.navigate(['/login']);
+    this.permissionService.clearPermssion();
+    this.authService.logout().subscribe(() => {
+      this.redirect('/login');
+    });
   }
 }

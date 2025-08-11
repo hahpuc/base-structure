@@ -39,7 +39,7 @@
                 }
                 @for (column of option.columns; track trackByColumn($index, column)) {
                   <th
-                    [hidden]="!isColumnVisible(column)"
+                    [hidden]="!isColumnVisibleSync(column)"
                     [nzDisabled]="!isColumnResizable(column)"
                     [nzShowSort]="column.sortable"
                     [nzSortFn]="getSortFn(column)"
@@ -78,7 +78,7 @@
                             [title]="action.label"
                             (click)="onActionClick(data, action)"
                             [class]="getActionButtonClasses(action)"
-                            [hidden]="!isActionVisible(action, data)"
+                            [hidden]="!isActionVisibleSync(action, data)"
                           >
                             @if (action.iconClass) {
                               <i [class]="action.iconClass + ' ' + getActionIconClasses(action)"></i>
@@ -94,7 +94,7 @@
                     <td
                       [nzLeft]="column.fixed === 'left'"
                       [nzRight]="column.fixed === 'right'"
-                      [hidden]="!isColumnVisible(column)"
+                      [hidden]="!isColumnVisibleSync(column)"
                     >
                       @switch (getColumnType(column)) {
                         <!-- Text Type -->

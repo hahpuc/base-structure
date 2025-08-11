@@ -16,8 +16,8 @@
         data-kt-menu-accordion-expand-all="false"
         id="sidebar_primary_menu"
       >
-        <!-- Loop through all menu items -->
-        @for (item of menuItems; track item) {
+        <!-- Loop through filtered menu items based on permissions -->
+        @for (item of filteredMenuItems; track item) {
           <ng-container *ngTemplateOutlet="menuItemTemplate; context: { $implicit: item, level: 0 }"></ng-container>
         }
       </div>

@@ -118,6 +118,7 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
         click: () => {
           this.redirect('create');
         },
+        permission: 'province_manage_create',
       },
       {
         title: 'Export',
@@ -127,12 +128,14 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
         click: () => {
           this.toastService.info('Export Data', 'You can implement export logic here');
         },
+        permission: 'province_manage_read',
       },
       {
         title: 'Settings',
         icon: 'ki-filled ki-setting-3',
         type: 'warning',
         visible: () => true, // Dynamic visibility
+        permission: 'province_manage_update',
         click: () => {
           this.toastService.warning('Settings', 'Settings functionality coming soon');
         },
@@ -142,6 +145,7 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
         icon: 'ki-filled ki-trash',
         type: 'danger',
         visible: true,
+        permission: 'province_manage_delete',
         click: () => {
           this.toastService.error('Delete All', 'This action is disabled');
         },

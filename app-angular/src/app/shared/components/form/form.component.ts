@@ -88,7 +88,23 @@ export class FormComponent<T = Record<string, unknown>>
   // MARK: - ControlValueAccessor Implementation
   writeValue(value: Record<string, unknown>): void {
     if (value && this.form) {
-      this.form.patchValue(value, { emitEvent: false });
+      // Ensure multiple select fields have array values
+      const processedValue = { ...value };
+      this.option.controls.forEach(control => {
+        if (
+          control.type === 'select' &&
+          control.multiple &&
+          processedValue[control.name] !== undefined
+        ) {
+          if (!Array.isArray(processedValue[control.name])) {
+            processedValue[control.name] = processedValue[control.name]
+              ? [processedValue[control.name]]
+              : [];
+          }
+        }
+      });
+
+      this.form.patchValue(processedValue, { emitEvent: false });
     }
   }
 
@@ -126,9 +142,27 @@ export class FormComponent<T = Record<string, unknown>>
         defaultValue = (this.option.initialData as Record<string, unknown>)[control.name];
       }
 
+      // Ensure proper default values based on control type
+      if (defaultValue === undefined || defaultValue === null) {
+        if (control.type === 'select' && control.multiple) {
+          defaultValue = [];
+        } else if (control.type === 'multipleChoice') {
+          defaultValue = [];
+        } else if (control.type === 'switch') {
+          defaultValue = control.value !== undefined ? control.value : false;
+        } else {
+          defaultValue = control.value || '';
+        }
+      }
+
+      // Additional safety check for multiple selects
+      if (control.type === 'select' && control.multiple && !Array.isArray(defaultValue)) {
+        defaultValue = defaultValue ? [defaultValue] : [];
+      }
+
       formControls[control.name] = [
         {
-          value: defaultValue || control.value || '',
+          value: defaultValue,
           disabled: control.disabled || this.option.disabled || false,
         },
         validators,

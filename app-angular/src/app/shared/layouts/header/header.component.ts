@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subject, takeUntil } from 'rxjs';
+
+import { PermissionService } from '@shared/services/permission.service';
 
 import { HeaderService, HeaderButton, HeaderButtonType } from './header.service';
 
@@ -7,12 +10,48 @@ import { HeaderService, HeaderButton, HeaderButtonType } from './header.service'
   standalone: false,
   templateUrl: './header.component.html',
 })
-export class HeaderComponent implements OnInit {
-  constructor(private readonly headerService: HeaderService) {}
+export class HeaderComponent implements OnInit, OnDestroy {
+  private buttonPermissionCache: { [key: string]: boolean } = {};
+  private destroy$ = new Subject<void>();
+
+  constructor(
+    private readonly headerService: HeaderService,
+    private readonly permissionService: PermissionService
+  ) {}
 
   ngOnInit(): void {
     this.headerService.setTitle('');
     this.headerService.setButtons([]);
+
+    // Listen for button changes and refresh permissions
+    this.headerService.buttonsChange.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.initializePermissionCache();
+    });
+
+    this.initializePermissionCache();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  // Initialize permission cache for header buttons
+  private async initializePermissionCache(): Promise<void> {
+    const buttons = this.headerService.headerButtons;
+
+    for (const button of buttons) {
+      if (button.permission) {
+        this.buttonPermissionCache[button.permission] =
+          await this.permissionService.checkPermissions([button.permission]);
+      }
+    }
+  }
+
+  // Method to refresh permission cache when buttons change
+  async refreshPermissionCache(): Promise<void> {
+    this.buttonPermissionCache = {};
+    await this.initializePermissionCache();
   }
 
   get title() {
@@ -48,6 +87,15 @@ export class HeaderComponent implements OnInit {
   }
 
   isButtonVisible(button: HeaderButton): boolean {
+    // Check permission first
+    if (button.permission) {
+      const hasPermission = this.buttonPermissionCache[button.permission] ?? false;
+      if (!hasPermission) {
+        return false;
+      }
+    }
+
+    // Then check visibility function
     if (typeof button.visible === 'function') {
       return button.visible();
     }

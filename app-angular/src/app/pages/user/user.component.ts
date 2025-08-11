@@ -119,6 +119,7 @@ export class UserComponent extends AppBaseComponent implements OnInit {
         icon: 'ki-outline ki-plus',
         type: 'primary',
         visible: true,
+        permission: 'user_manage_create',
         click: () => {
           this.redirect('create');
         },
@@ -127,6 +128,7 @@ export class UserComponent extends AppBaseComponent implements OnInit {
         title: 'Export',
         icon: 'ki-filled ki-exit-down',
         type: 'success',
+        permission: 'user_manage_read',
         visible: true,
         click: () => {
           this.toastService.info('Export Data', 'You can implement export logic here');

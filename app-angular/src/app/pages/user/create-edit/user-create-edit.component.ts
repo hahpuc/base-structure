@@ -85,11 +85,17 @@ export class UserCreateEditComponent extends AppBaseComponent implements OnInit 
           type: 'text',
           required: true,
           placeholder: 'Enter username',
-          validators: [Validators.required, Validators.minLength(3), Validators.maxLength(50)],
+          validators: [
+            Validators.required,
+            Validators.minLength(3),
+            Validators.maxLength(50),
+            Validators.pattern(/^\S+$/),
+          ],
           errorMessages: {
             required: 'Username is required',
             minlength: 'Username must be at least 3 characters',
             maxlength: 'Username cannot exceed 50 characters',
+            pattern: 'Username cannot contain spaces',
           },
           span: 12,
         },
@@ -139,6 +145,7 @@ export class UserCreateEditComponent extends AppBaseComponent implements OnInit 
           required: true,
           placeholder: 'Select roles',
           multiple: true,
+          mode: 'multiple',
           allowClear: true,
           options: () =>
             this.roleService.getAll().pipe(

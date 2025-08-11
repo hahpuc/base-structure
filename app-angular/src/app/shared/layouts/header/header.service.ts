@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 
 export type HeaderButtonType = 'default' | 'primary' | 'success' | 'info' | 'warning' | 'danger';
 
@@ -16,6 +17,7 @@ export interface HeaderButton {
 export class HeaderService {
   private title: string | undefined;
   private buttons: HeaderButton[] = [];
+  private buttonsChange$ = new Subject<HeaderButton[]>();
 
   get pageTitle(): string | undefined {
     return this.title;
@@ -25,9 +27,14 @@ export class HeaderService {
     return this.buttons;
   }
 
+  get buttonsChange() {
+    return this.buttonsChange$.asObservable();
+  }
+
   clear() {
     this.title = undefined;
     this.buttons = [];
+    this.buttonsChange$.next(this.buttons);
   }
 
   setTitle(title: string) {
@@ -36,5 +43,6 @@ export class HeaderService {
 
   setButtons(buttons: HeaderButton[]) {
     this.buttons = buttons;
+    this.buttonsChange$.next(this.buttons);
   }
 }

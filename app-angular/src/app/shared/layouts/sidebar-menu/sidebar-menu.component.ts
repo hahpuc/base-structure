@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+
+import { PermissionService } from '@shared/services/permission.service';
 
 export interface MenuItem {
   label: string;
@@ -7,6 +9,8 @@ export interface MenuItem {
   icon: string;
   children?: MenuItem[];
   isAccordion?: boolean;
+  permissions?: string | string[]; // Single permission string or array of permission slugs required to access this menu item
+  permissionMode?: 'all' | 'any'; // 'all' means user needs ALL permissions, 'any' means user needs at least ONE permission (default: 'all' for single items, 'any' for parent items)
 }
 
 @Component({
@@ -14,7 +18,7 @@ export interface MenuItem {
   standalone: false,
   templateUrl: './sidebar-menu.component.html',
 })
-export class SidebarMenuComponent {
+export class SidebarMenuComponent implements OnInit {
   menuItems: MenuItem[] = [
     {
       label: 'Overview',
@@ -25,107 +29,43 @@ export class SidebarMenuComponent {
       label: 'User Management',
       icon: 'ki-users',
       isAccordion: true,
+      permissions: ['user_manage_read', 'role_manage_read'],
+      permissionMode: 'any',
       children: [
-        { label: 'Role', path: '/role', icon: '' },
-        { label: 'User', path: '/user', icon: '' },
+        {
+          label: 'Role',
+          path: '/role',
+          icon: '',
+          permissions: 'role_manage_read',
+        },
+        {
+          label: 'User',
+          path: '/user',
+          icon: '',
+          permissions: 'user_manage_read',
+        },
       ],
     },
     {
       label: 'Account Management',
       icon: 'ki-profile-circle',
       isAccordion: true,
-      children: [
-        { label: 'Default', path: '/profile', icon: '' },
-        {
-          label: 'Profiles',
-          icon: '',
-          isAccordion: true,
-          children: [
-            {
-              label: 'Creator',
-              path: '/public-profile/profiles/creator',
-              icon: '',
-            },
-            {
-              label: 'Company',
-              path: '/public-profile/profiles/company',
-              icon: '',
-            },
-            { label: 'NFT', path: '/public-profile/profiles/nft', icon: '' },
-            {
-              label: 'Blogger',
-              path: '/public-profile/profiles/blogger',
-              icon: '',
-            },
-            { label: 'CRM', path: '/public-profile/profiles/crm', icon: '' },
-            {
-              label: 'Gamer',
-              path: '/public-profile/profiles/gamer',
-              icon: '',
-            },
-            {
-              label: 'Feeds',
-              path: '/public-profile/profiles/feeds',
-              icon: '',
-            },
-            {
-              label: 'Plain',
-              path: '/public-profile/profiles/plain',
-              icon: '',
-            },
-            {
-              label: 'Modal',
-              path: '/public-profile/profiles/modal',
-              icon: '',
-            },
-          ],
-        },
-        {
-          label: 'Projects',
-          icon: '',
-          isAccordion: true,
-          children: [
-            {
-              label: '3 Columns',
-              path: '/public-profile/projects/3-columns',
-              icon: '',
-            },
-            {
-              label: '2 Columns',
-              path: '/public-profile/projects/2-columns',
-              icon: '',
-            },
-          ],
-        },
-        { label: 'Works', path: '/public-profile/works', icon: '' },
-        { label: 'Teams', path: '/public-profile/teams', icon: '' },
-        { label: 'Network', path: '/public-profile/network', icon: '' },
-        { label: 'Activity', path: '/public-profile/activity', icon: '' },
-        {
-          label: 'Campaigns - Card',
-          path: '/public-profile/campaigns/card',
-          icon: '',
-        },
-        {
-          label: 'Campaigns - List',
-          path: '/public-profile/campaigns/list',
-          icon: '',
-        },
-        { label: 'Empty', path: '/public-profile/empty', icon: '' },
-      ],
+      permissions: 'user_manage_read',
+      children: [{ label: 'Default', path: '/profile', icon: '', permissions: 'user_manage_read' }],
     },
     {
       label: 'Location Management',
       icon: 'ki-setting-2',
       isAccordion: true,
+      permissions: ['province_manage_read', 'ward_manage_read'],
+      permissionMode: 'any',
       children: [
-        { label: 'Province', path: '/province', icon: '' },
-        { label: 'Ward', path: '/ward', icon: '' },
+        { label: 'Province', path: '/province', icon: '', permissions: ['province_manage_read'] },
+        { label: 'Ward', path: '/ward', icon: '', permissions: ['ward_manage_read'] },
       ],
     },
-
     {
-      label: 'Authentication',
+      label: 'Sample Menu',
       icon: 'ki-security-user',
       isAccordion: true,
       children: [
@@ -150,7 +90,79 @@ export class SidebarMenuComponent {
     },
   ];
 
-  constructor(private router: Router) {}
+  filteredMenuItems: MenuItem[] = [];
+
+  constructor(
+    private router: Router,
+    private permissionService: PermissionService
+  ) {}
+
+  async ngOnInit(): Promise<void> {
+    await this.filterMenuByPermissions();
+  }
+
+  private async filterMenuByPermissions(): Promise<void> {
+    this.filteredMenuItems = await this.filterMenuItems(this.menuItems);
+  }
+
+  private async filterMenuItems(items: MenuItem[]): Promise<MenuItem[]> {
+    const filteredItems: MenuItem[] = [];
+
+    for (const item of items) {
+      const hasPermission = await this.hasPermission(item);
+
+      if (hasPermission) {
+        const filteredItem: MenuItem = { ...item };
+
+        // If item has children, filter them recursively
+        if (item.children && item.children.length > 0) {
+          filteredItem.children = await this.filterMenuItems(item.children);
+
+          // Only include parent if it has visible children or if it has its own path
+          if (filteredItem.children.length > 0 || item.path) {
+            filteredItems.push(filteredItem);
+          }
+        } else {
+          filteredItems.push(filteredItem);
+        }
+      }
+    }
+
+    return filteredItems;
+  }
+
+  private async hasPermission(item: MenuItem): Promise<boolean> {
+    // If no permissions are defined for this item, allow access
+    if (!item.permissions) {
+      return true;
+    }
+
+    // Convert single permission to array for consistent handling
+    const permissionsArray = Array.isArray(item.permissions)
+      ? item.permissions
+      : [item.permissions];
+
+    // If empty array, allow access
+    if (permissionsArray.length === 0) {
+      return true;
+    }
+
+    // Determine permission mode
+    // Default: 'all' for single permissions, 'any' for parent items with children
+    const mode = item.permissionMode || (item.children && item.children.length > 0 ? 'any' : 'all');
+
+    // Check permissions based on mode
+    if (mode === 'any') {
+      return await this.permissionService.checkAnyPermissions(permissionsArray);
+    } else {
+      return await this.permissionService.checkPermissions(permissionsArray);
+    }
+  }
+
+  // Method to check if a specific menu item should be visible
+  async isMenuItemVisible(item: MenuItem): Promise<boolean> {
+    return await this.hasPermission(item);
+  }
 
   isActiveRoute(path: string): boolean {
     const currentPath = this.router.url.split('?')[0];

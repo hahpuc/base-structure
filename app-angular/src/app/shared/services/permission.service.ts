@@ -2,21 +2,20 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { lastValueFrom, Observable } from 'rxjs';
 
-import { ListPermissionDto, PermissionItem } from '@shared/types/permission';
+import { ListPermissionDto } from '@shared/types/permission';
 import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class PermissionService {
   currentPermissions: string[] = [];
-  private allPermissions: PermissionItem[] = [];
   protected readonly apiUrl: string;
 
   constructor(private readonly httpClient: HttpClient) {
     this.apiUrl = environment.apis.default.apiPrefix + '/permissions';
   }
 
-  get permissions(): PermissionItem[] {
-    return this.allPermissions;
+  clearPermssion(): void {
+    this.currentPermissions = [];
   }
 
   getMyPermission(): Observable<string[]> {
@@ -38,6 +37,20 @@ export class PermissionService {
 
     return !!(
       this.currentPermissions.length && permissions.every(p => this.currentPermissions?.includes(p))
+    );
+  }
+
+  async checkAnyPermissions(permissions: string[]): Promise<boolean> {
+    if (!this.currentPermissions.length) {
+      this.currentPermissions = await lastValueFrom(this.getMyPermission());
+    }
+
+    if (!permissions.length) {
+      return true;
+    }
+
+    return !!(
+      this.currentPermissions.length && permissions.some(p => this.currentPermissions?.includes(p))
     );
   }
 }

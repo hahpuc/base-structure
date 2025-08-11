@@ -95,6 +95,7 @@ export class RoleComponent extends AppBaseComponent implements OnInit {
         icon: 'ki-outline ki-plus',
         type: 'primary',
         visible: true,
+        permission: 'role_manage_create',
         click: () => {
           this.redirect('create');
         },
