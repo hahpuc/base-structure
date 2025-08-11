@@ -1,3 +1,4 @@
+import { EStatus } from '@app/constant/app.enum';
 import { BaseEntity } from '@common/base/repositories/entities/base.entity';
 import { PermissionRole } from '@modules/permission/repository/entities/permission-role.entity';
 import { UserRole } from '@modules/user/repository/entities/user-role.entity';
@@ -13,6 +14,10 @@ export class Role extends BaseEntity {
   @Column({ unique: true })
   @ApiProperty()
   slug: string;
+
+  @Column('tinyint', { default: EStatus.active })
+  @ApiProperty({ enum: EStatus })
+  status: EStatus;
 
   @OneToMany(() => PermissionRole, (pr) => pr.role, {
     cascade: true,

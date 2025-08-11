@@ -1,38 +1,36 @@
 import {
-  Component,
-  Input,
-  OnInit,
-  OnDestroy,
   ChangeDetectorRef,
+  Component,
   forwardRef,
+  Input,
   OnChanges,
+  OnDestroy,
+  OnInit,
   SimpleChanges,
 } from '@angular/core';
 import {
   AbstractControl,
+  ControlValueAccessor,
   FormBuilder,
   FormGroup,
   NG_VALUE_ACCESSOR,
-  ControlValueAccessor,
-  ValidationErrors,
 } from '@angular/forms';
 import {
-  Observable,
-  Subject,
-  takeUntil,
   debounceTime,
   distinctUntilChanged,
   firstValueFrom,
+  Observable,
+  Subject,
+  takeUntil,
 } from 'rxjs';
 
 import {
+  CheckboxOption,
+  FormAction,
   FormOption,
   FtFormControl,
-  FormAction,
-  FormActionType,
-  SelectOption,
   RadioOption,
-  CheckboxOption,
+  SelectOption,
 } from './form.model';
 
 @Component({
@@ -396,6 +394,33 @@ export class FormComponent<T = Record<string, unknown>>
     const customActions = this.option.actions || [];
     const defaultActions = this.hasDefaultActions ? this.defaultActions : [];
     return [...customActions, ...defaultActions];
+  }
+
+  // Public methods for external access
+  getFormValue(): Record<string, unknown> {
+    return this.form.value;
+  }
+
+  isFormValid(): boolean {
+    return this.form.valid;
+  }
+
+  validateForm(): boolean {
+    if (this.form.invalid) {
+      this.markFormGroupTouched(this.form);
+      return false;
+    }
+    return true;
+  }
+
+  submitForm(): void {
+    if (this.validateForm()) {
+      this.handleSubmit({
+        type: 'submit',
+        label: 'Submit',
+        handler: this.option.onSubmit,
+      } as FormAction);
+    }
   }
 
   // TrackBy functions for performance

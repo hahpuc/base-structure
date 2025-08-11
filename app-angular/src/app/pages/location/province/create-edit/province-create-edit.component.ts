@@ -1,8 +1,9 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 
 import { AppBaseComponent } from '@/app/shared/app.base.component';
+import { FormComponent } from '@/app/shared/components/form/form.component';
 import { FormOption } from '@/app/shared/components/form/form.model';
 import { EStatus } from '@/app/shared/constants/enum';
 import { ProvinceService } from '@/app/shared/services/province.service';
@@ -13,7 +14,10 @@ import { CreateProvince, EditProvince, ProvinceDto } from '@/app/shared/types/pr
   templateUrl: './province-create-edit.component.html',
 })
 export class ProvinceCreateEditComponent extends AppBaseComponent implements OnInit {
+  @ViewChild('ftForm') ftForm!: FormComponent;
+
   formOptions!: FormOption<ProvinceDto>;
+  isSubmitting = false;
 
   constructor(
     injector: Injector,
@@ -32,12 +36,72 @@ export class ProvinceCreateEditComponent extends AppBaseComponent implements OnI
 
   ngOnInit(): void {
     this.setPageTitle(this.id ? 'Edit Province' : 'Create Province');
-    this.setHeaderButtons([]);
+    this.setHeaderButtons([
+      {
+        title: 'Cancel',
+        icon: 'ki-outline ki-arrow-left',
+        type: 'danger',
+        visible: true,
+        disable: () => this.isSubmitting,
+        click: () => {
+          this.redirect('/province');
+        },
+      },
+      {
+        title: () => (this.isSubmitting ? 'Saving...' : 'Save'),
+        icon: () => (this.isSubmitting ? 'ki-outline ki-loading' : 'ki-outline ki-check'),
+        type: 'primary',
+        visible: true,
+        disable: () => this.isSubmitting,
+        click: () => {
+          this.handleSubmit();
+        },
+      },
+    ]);
 
     this.setupFormOptions();
 
     if (this.isEdit) {
       this.loadProvinceData();
+    }
+  }
+
+  private async handleSubmit(): Promise<void> {
+    // Check if form component is available and form is valid
+    if (!this.ftForm?.validateForm()) {
+      return;
+    }
+
+    // Get form values from the form component
+    const formValue = this.ftForm.getFormValue();
+
+    this.isSubmitting = true;
+
+    try {
+      if (this.isEdit) {
+        const updateData: EditProvince = {
+          id: Number(this.id),
+          name: formValue['name'] as string,
+          status: formValue['status'] as EStatus,
+        };
+
+        await firstValueFrom(this.provinceService.update(updateData));
+        this.msgService.success('Province updated successfully');
+      } else {
+        const createData: CreateProvince = {
+          name: formValue['name'] as string,
+          status: formValue['status'] as EStatus,
+        };
+
+        await firstValueFrom(this.provinceService.create(createData));
+        this.msgService.success('Province created successfully');
+      }
+
+      this.redirect('/province');
+    } catch (error) {
+      this.msgService.error('Failed to save province');
+    } finally {
+      this.isSubmitting = false;
     }
   }
 
@@ -80,23 +144,6 @@ export class ProvinceCreateEditComponent extends AppBaseComponent implements OnI
           span: 12,
         },
       ],
-      actions: [
-        {
-          type: 'submit',
-          label: this.isEdit ? 'Update' : 'Create',
-          icon: 'ki-outline ki-plus',
-          color: 'primary',
-          loading: false,
-          handler: formValue => this.onSubmit(formValue),
-        },
-        {
-          type: 'cancel',
-          label: 'Cancel',
-          icon: 'ki-outline ki-close',
-          color: 'default',
-          handler: () => this.onCancel(),
-        },
-      ],
     };
   }
 
@@ -113,37 +160,5 @@ export class ProvinceCreateEditComponent extends AppBaseComponent implements OnI
     } catch (error) {
       this.msgService.error('Failed to load province data');
     }
-  }
-
-  private async onSubmit(formValue: Record<string, unknown>): Promise<void> {
-    try {
-      if (this.isEdit) {
-        const updateData: EditProvince = {
-          id: Number(this.id),
-          name: formValue['name'] as string,
-          status: formValue['status'] as EStatus,
-        };
-
-        await firstValueFrom(this.provinceService.update(updateData));
-        this.msgService.success('Province updated successfully');
-      } else {
-        const createData: CreateProvince = {
-          name: formValue['name'] as string,
-          status: formValue['status'] as EStatus,
-        };
-
-        await firstValueFrom(this.provinceService.create(createData));
-        this.msgService.success('Province created successfully');
-      }
-
-      this.redirect('/province');
-    } catch (error) {
-      this.msgService.error('Failed to save province');
-      // Error already handled by displaying message to user
-    }
-  }
-
-  private onCancel(): void {
-    this.redirect('/province');
   }
 }

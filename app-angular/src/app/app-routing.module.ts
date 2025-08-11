@@ -30,7 +30,6 @@ const routes: Routes = [
       {
         path: 'role',
         loadChildren: () => import('@pages/role/role.module').then(x => x.RoleModule),
-        data: { title: 'User Management' },
       },
       {
         path: 'province',

@@ -17,7 +17,7 @@
               <nz-form-control [nzErrorTip]="getErrorMessage(control)">
                 <!-- Text Input -->
                 @if (control.type === 'text' || control.type === 'email' || control.type === 'password') {
-                  <nz-input-group>
+                  <nz-input-group [nzSize]="option.size || 'default'">
                     <input
                       nz-input
                       [type]="control.type"
@@ -26,7 +26,6 @@
                       [readonly]="control.readonly"
                       [maxlength]="control.maxLength || null"
                       [minlength]="control.minLength || null"
-                      [size]="option.size || 'default'"
                     />
                   </nz-input-group>
                 }
@@ -223,13 +222,14 @@
 
                 <!-- Autocomplete -->
                 @if (control.type === 'autocomplete') {
-                  <input
-                    nz-input
-                    [formControlName]="control.name"
-                    [placeholder]="control.placeholder || ''"
-                    [readonly]="control.readonly"
-                    [size]="option.size || 'default'"
-                  />
+                  <nz-input-group [nzSize]="option.size || 'default'">
+                    <input
+                      nz-input
+                      [formControlName]="control.name"
+                      [placeholder]="control.placeholder || ''"
+                      [readonly]="control.readonly"
+                    />
+                  </nz-input-group>
                 }
 
                 <!-- Hidden Input -->

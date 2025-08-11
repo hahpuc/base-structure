@@ -34,14 +34,14 @@ export class ProvinceAdminController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  // @Auth({ permissions: 'province_manage_create' })
+  @Auth({ permissions: 'province_manage_create' })
   async create(@Body() body: CreateProvinceDto): Promise<void> {
     return this.provinceService.create(body);
   }
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  // @Auth({ permissions: 'province_manage_read' })
+  @Auth({ permissions: 'province_manage_read' })
   async getList(
     @Query() param: FilterProvinceDto,
   ): Promise<ListPaginate<Province>> {
@@ -50,14 +50,14 @@ export class ProvinceAdminController {
 
   @Get('/:id([0-9]+)')
   @HttpCode(HttpStatus.OK)
-  // @Auth({ permissions: 'province_manage_read' })
+  @Auth({ permissions: 'province_manage_read' })
   async getById(@Param('id') id: number): Promise<Province> {
     return await this.provinceService.getById(id);
   }
 
   @Put()
   @HttpCode(HttpStatus.NO_CONTENT)
-  // @Auth({ permissions: 'province_manage_update' })
+  @Auth({ permissions: 'province_manage_update' })
   async update(@Body() body: UpdateProvinceDto): Promise<void> {
     return await this.provinceService.update(body);
   }
@@ -71,7 +71,7 @@ export class ProvinceAdminController {
 
   @Put('/toggle/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  // @Auth({ permissions: 'province_manage_update' })
+  @Auth({ permissions: 'province_manage_update' })
   async toggleStatus(@Param('id') id: number): Promise<void> {
     await this.provinceService.toggleStatus(id);
   }

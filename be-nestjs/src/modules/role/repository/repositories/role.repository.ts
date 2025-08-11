@@ -22,6 +22,12 @@ export class RoleRepository extends Repository<Role> {
       });
     }
 
+    if (!isNaN(params.status)) {
+      query.andWhere('(role.status = :status)', {
+        status: params?.status,
+      });
+    }
+
     applyQuerySorting(params.sorting, query, 'role');
     applyQueryPaging(params, query);
 
