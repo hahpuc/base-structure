@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectorRef,
   Component,
   Input,
   OnChanges,
@@ -60,7 +61,8 @@ export class TableComponent<T extends TableRowData = TableRowData>
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   protected getQueryParam(param: string): string | null {
@@ -78,6 +80,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
   ngAfterViewInit() {
     this.initializeFromQueryParams();
     this.isInitialized = true;
+    this.cdr.detectChanges();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -182,6 +185,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
     if (!this.option.data) return;
 
     this.loading = true;
+    this.cdr.detectChanges();
 
     const params = {
       page: this.currentPage,
@@ -204,9 +208,11 @@ export class TableComponent<T extends TableRowData = TableRowData>
           this.total = response.total_records;
           this.loading = false;
           this.updateSelection();
+          this.cdr.detectChanges();
         },
         error: () => {
           this.loading = false;
+          this.cdr.detectChanges();
         },
       });
   }
@@ -337,11 +343,13 @@ export class TableComponent<T extends TableRowData = TableRowData>
       this.mapOfCheckedId[item.id] = checked;
     });
     this.updateSelection();
+    this.cdr.detectChanges();
   }
 
   onItemChecked(id: string, checked: boolean) {
     this.mapOfCheckedId[id] = checked;
     this.updateSelection();
+    this.cdr.detectChanges();
   }
 
   private updateSelection() {
@@ -572,6 +580,8 @@ export class TableComponent<T extends TableRowData = TableRowData>
       this.tableData = filteredData.slice(startIndex, endIndex);
 
       this.loading = false;
+      this.updateSelection();
+      this.cdr.detectChanges();
     }
   }
 

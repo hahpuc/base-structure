@@ -10,7 +10,16 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Observable, Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
+import {
+  Observable,
+  Subject,
+  debounceTime,
+  distinctUntilChanged,
+  takeUntil,
+  forkJoin,
+  of,
+  tap,
+} from 'rxjs';
 
 import {
   ActiveFilter,
@@ -55,25 +64,15 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
     this.filterForm = this.fb.group({});
   }
 
-  // MARK: Life Circle
+  // MARK: - Lifecycle Hooks
   ngOnInit() {
     this.initializeForm();
     this.initializeSearchText();
-    this.loadFilterOptions();
     this.setupFormChanges();
     this.setupSearchDebounce();
 
-    setTimeout(() => {
-      this.setInitialValuesAfterOptionsLoad();
-      if (this.hasInitialValues() || this.searchText.trim()) {
-        this.appliedFilters = { ...this.initialFilterValues };
-        this.appliedSearchText = this.searchText;
-        this.drawerSearchText = this.searchText;
-
-        this.updateActiveFilters();
-        this.onFilter();
-      }
-    }, 200);
+    // Load options and then apply initial values
+    this.loadFilterOptionsAndApplyInitialValues();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -94,7 +93,7 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
     this.destroy$.complete();
   }
 
-  // MARK: Init & Setup
+  // MARK: - Initialization & Setup
   private hasInitialValues(): boolean {
     return (
       this.initialFilterValues &&
@@ -194,7 +193,77 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  // MARK: Search - Load Data
+  // MARK: - Search & Data Loading
+  private loadFilterOptionsAndApplyInitialValues() {
+    // Collect all async option loading observables
+    const asyncLoaders: Observable<SelectOption[]>[] = [];
+
+    this.filters.forEach(filter => {
+      if (filter.type === 'select' && filter.options && !filter.parent) {
+        if (typeof filter.options === 'function') {
+          // This is an async loader
+          asyncLoaders.push(this.loadOptionsForFilterAsync(filter));
+        } else if (Array.isArray(filter.options)) {
+          // Static options, load immediately
+          this.filterOptions[filter.name] = filter.options;
+        }
+      }
+    });
+
+    // If we have async loaders, wait for them to complete
+    if (asyncLoaders.length > 0) {
+      forkJoin(asyncLoaders)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () => {
+            this.applyInitialValuesAfterOptionsLoad();
+          },
+          error: () => {
+            // Even if some options fail to load, apply initial values
+            this.applyInitialValuesAfterOptionsLoad();
+          },
+        });
+    } else {
+      // No async loaders, apply initial values immediately
+      this.applyInitialValuesAfterOptionsLoad();
+    }
+  }
+
+  private loadOptionsForFilterAsync(filter: TableFilter): Observable<SelectOption[]> {
+    this.isLoadingOptions[filter.name] = true;
+
+    if (typeof filter.options === 'function') {
+      return (filter.options({}) as Observable<SelectOption[]>).pipe(
+        takeUntil(this.destroy$),
+        // Handle the response
+        tap({
+          next: (options: SelectOption[]) => {
+            this.filterOptions[filter.name] = options;
+            this.isLoadingOptions[filter.name] = false;
+          },
+          error: () => {
+            this.isLoadingOptions[filter.name] = false;
+          },
+        })
+      );
+    }
+
+    // Fallback for static options (shouldn't happen in this context)
+    return of([]);
+  }
+
+  private applyInitialValuesAfterOptionsLoad() {
+    this.setInitialValuesAfterOptionsLoad();
+
+    if (this.hasInitialValues() || this.searchText.trim()) {
+      this.appliedFilters = { ...this.initialFilterValues };
+      this.appliedSearchText = this.searchText;
+      this.drawerSearchText = this.searchText;
+
+      this.updateActiveFilters();
+      this.onFilter();
+    }
+  }
   private setupSearchDebounce() {
     // Main search text - auto debounce and call API
     this.searchSubject$
@@ -213,31 +282,6 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
       .subscribe(() => {
         // No automatic updates - only when Apply is clicked
       });
-  }
-
-  private loadFilterOptions() {
-    this.filters.forEach(filter => {
-      if (filter.type === 'select' && filter.options && !filter.parent) {
-        this.loadOptionsForFilter(filter);
-      }
-    });
-  }
-
-  private loadOptionsForFilter(filter: TableFilter) {
-    if (Array.isArray(filter.options)) {
-      this.filterOptions[filter.name] = filter.options;
-    } else if (typeof filter.options === 'function') {
-      this.isLoadingOptions[filter.name] = true;
-      (filter.options({}) as Observable<SelectOption[]>).pipe(takeUntil(this.destroy$)).subscribe({
-        next: options => {
-          this.filterOptions[filter.name] = options;
-          this.isLoadingOptions[filter.name] = false;
-        },
-        error: () => {
-          this.isLoadingOptions[filter.name] = false;
-        },
-      });
-    }
   }
 
   private loadDependentOptions(filter: TableFilter, parentValue: unknown) {
@@ -259,14 +303,14 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  // MARK: Filter functions
+  // MARK: - Filter Actions
   onFilter() {
     const formValue = this.filterForm.value;
     const filterParams: FilterValues = {};
 
-    // Use drawer search text when applying filters manually (from drawer)
-    // Use main search text when applying automatically (from main search)
-    const searchTextToUse = this.drawerSearchText?.trim() || this.searchText?.trim();
+    // When applying from drawer, use drawer search text explicitly
+    // Don't fall back to main search text if drawer search is empty
+    const searchTextToUse = this.drawerSearchText?.trim() || '';
 
     if (searchTextToUse) {
       filterParams['filter'] = searchTextToUse;
@@ -280,13 +324,10 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
 
     // Save applied filters and search text
     this.appliedFilters = { ...filterParams };
-    this.appliedSearchText = searchTextToUse || '';
+    this.appliedSearchText = searchTextToUse;
 
-    // Sync both search texts
-    if (searchTextToUse) {
-      this.searchText = searchTextToUse;
-      this.drawerSearchText = searchTextToUse;
-    }
+    // Sync main search text with drawer search text when applying
+    this.searchText = searchTextToUse;
 
     // Update active filters display based on what was actually applied
     this.updateActiveFilters();
@@ -329,8 +370,10 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
   clearDrawerSearchText() {
     this.drawerSearchText = '';
     // Don't auto-apply when clearing drawer search - wait for Apply button
+    this.cdr.detectChanges();
   }
 
+  // MARK: - Active Filters Management
   updateActiveFilters() {
     this.activeFilters = [];
 
@@ -401,7 +444,7 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
     return this.activeFilters.length > 0;
   }
 
-  // MARK: Utils
+  // MARK: - Utility Functions
   // Compare function for select values to ensure proper selection
   compareSelectValues = (o1: unknown, o2: unknown): boolean => {
     if (o1 === null || o2 === null || o1 === undefined || o2 === undefined) {

@@ -1,6 +1,7 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { AppBaseComponent } from '@/app/shared/app.base.component';
 import { FormComponent } from '@/app/shared/components/form/form.component';
@@ -20,7 +21,6 @@ export class UserCreateEditComponent extends AppBaseComponent implements OnInit 
 
   formOptions!: FormOption<Record<string, unknown>>;
   isSubmitting = false;
-  roles: RoleDto[] = [];
 
   constructor(
     injector: Injector,
@@ -63,46 +63,14 @@ export class UserCreateEditComponent extends AppBaseComponent implements OnInit 
       },
     ]);
 
-    // Initialize form options with empty structure first
-    this.initializeFormOptions();
+    this.setupFormOptions();
 
-    // Then load roles and setup the actual form
-    this.loadRoles().then(() => {
-      this.setupFormOptions();
-      if (this.isEdit) {
-        this.loadUserData();
-      }
-    });
-  }
-
-  private async loadRoles(): Promise<void> {
-    try {
-      this.roles = await firstValueFrom(this.roleService.getAll());
-    } catch (error) {
-      this.msgService.error('Failed to load roles');
-      this.roles = []; // Fallback to empty array
+    if (this.isEdit) {
+      this.loadUserData();
     }
   }
 
-  private initializeFormOptions(): void {
-    // Initialize with empty form structure to prevent undefined errors
-    this.formOptions = {
-      layout: 'vertical',
-      size: 'large',
-      gutter: 16,
-      labelCol: { span: 24 },
-      wrapperCol: { span: 24 },
-      showDefaultActions: false,
-      controls: [],
-    };
-  }
-
   private setupFormOptions(): void {
-    const roleOptions = this.roles.map(role => ({
-      label: role.name,
-      value: role.id,
-    }));
-
     this.formOptions = {
       layout: 'vertical',
       size: 'large',
@@ -171,7 +139,16 @@ export class UserCreateEditComponent extends AppBaseComponent implements OnInit 
           required: true,
           placeholder: 'Select roles',
           multiple: true,
-          options: roleOptions,
+          allowClear: true,
+          options: () =>
+            this.roleService.getAll().pipe(
+              map((roles: RoleDto[]) =>
+                roles.map((role: RoleDto) => ({
+                  label: role.name,
+                  value: role.id,
+                }))
+              )
+            ),
           validators: [Validators.required],
           errorMessages: {
             required: 'At least one role is required',

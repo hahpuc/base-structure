@@ -1,5 +1,5 @@
 import { registerLocaleData } from '@angular/common';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import en from '@angular/common/locales/en';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -11,14 +11,13 @@ import { AppComponent } from './app.component';
 import { httpCustomInterceptor } from './shared/http-interceptor/http-custom-interceptor';
 import { SharedModule } from './shared/shared.module';
 
-
 registerLocaleData(en);
 
 @NgModule({
   declarations: [AppComponent],
   imports: [BrowserModule, BrowserAnimationsModule, AppRoutingModule, SharedModule],
   providers: [
-    provideHttpClient(withInterceptors([httpCustomInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([httpCustomInterceptor])),
     { provide: NZ_I18N, useValue: en_US },
   ],
   bootstrap: [AppComponent],

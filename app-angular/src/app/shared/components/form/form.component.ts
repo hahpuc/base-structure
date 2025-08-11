@@ -24,6 +24,8 @@ import {
   takeUntil,
 } from 'rxjs';
 
+import { BaseQuery } from '../../types/base';
+
 import {
   CheckboxOption,
   FormAction,
@@ -56,21 +58,25 @@ export class FormComponent<T = Record<string, unknown>>
   private destroy$ = new Subject<void>();
   private onChange = (value: Record<string, unknown>) => {};
   private onTouched = () => {};
+  private controlOptionsCache = new Map<string, SelectOption[]>();
 
   constructor(
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef
   ) {}
 
+  // MARK: - Lifecycle Hooks
   ngOnInit(): void {
     this.buildForm();
     this.setupFormValueChanges();
+    this.loadDynamicOptions();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['option'] && !changes['option'].firstChange) {
       this.buildForm();
       this.setupFormValueChanges();
+      this.loadDynamicOptions();
     }
   }
 
@@ -79,7 +85,7 @@ export class FormComponent<T = Record<string, unknown>>
     this.destroy$.complete();
   }
 
-  // ControlValueAccessor implementation
+  // MARK: - ControlValueAccessor Implementation
   writeValue(value: Record<string, unknown>): void {
     if (value && this.form) {
       this.form.patchValue(value, { emitEvent: false });
@@ -104,6 +110,7 @@ export class FormComponent<T = Record<string, unknown>>
     }
   }
 
+  // MARK: - Form Building and Setup
   private buildForm(): void {
     const formControls: { [key: string]: unknown[] } = {};
 
@@ -160,6 +167,7 @@ export class FormComponent<T = Record<string, unknown>>
     });
   }
 
+  // MARK: - Conditional Logic
   private handleConditionalLogic(): void {
     const formValue = this.form.value;
 
@@ -185,6 +193,7 @@ export class FormComponent<T = Record<string, unknown>>
     });
   }
 
+  // MARK: - Action Handlers
   async onAction(action: FormAction): Promise<void> {
     if (action.disabled || action.loading) {
       return;
@@ -250,6 +259,7 @@ export class FormComponent<T = Record<string, unknown>>
     }
   }
 
+  // MARK: - Form Utilities
   private markFormGroupTouched(formGroup: FormGroup): void {
     Object.keys(formGroup.controls).forEach(key => {
       const control = formGroup.get(key);
@@ -262,7 +272,6 @@ export class FormComponent<T = Record<string, unknown>>
     });
   }
 
-  // Utility methods for template
   getControl(name: string): AbstractControl | null {
     return this.form.get(name);
   }
@@ -315,7 +324,59 @@ export class FormComponent<T = Record<string, unknown>>
     return true;
   }
 
+  // MARK: - Dynamic Options Loading
+  private async loadDynamicOptions(): Promise<void> {
+    const promises: Promise<void>[] = [];
+
+    for (const control of this.option.controls) {
+      if (control.options && typeof control.options === 'function') {
+        const promise = this.loadOptionsForControl(control);
+        promises.push(promise);
+      }
+    }
+
+    await Promise.all(promises);
+    this.cdr.detectChanges();
+  }
+
+  private async loadOptionsForControl(control: FtFormControl): Promise<void> {
+    if (!control.options || typeof control.options !== 'function') {
+      return;
+    }
+
+    try {
+      // Set empty options initially to prevent errors
+      this.controlOptionsCache.set(control.name, []);
+
+      const optionsFunction = control.options as (
+        input?: BaseQuery
+      ) => Observable<SelectOption[]> | Promise<SelectOption[]> | SelectOption[];
+      const result = optionsFunction();
+
+      if (result instanceof Promise) {
+        const options = await result;
+        this.controlOptionsCache.set(control.name, options);
+      } else if (result instanceof Observable) {
+        result.pipe(takeUntil(this.destroy$)).subscribe(options => {
+          this.controlOptionsCache.set(control.name, options);
+          this.cdr.detectChanges();
+        });
+      } else if (Array.isArray(result)) {
+        this.controlOptionsCache.set(control.name, result);
+      }
+    } catch (error) {
+      // Log error for debugging but don't throw to prevent form from breaking
+      this.controlOptionsCache.set(control.name, []);
+    }
+  }
+
+  // MARK: - Options Getters
   getSelectOptions(control: FtFormControl): SelectOption[] {
+    // Return cached options if available
+    if (this.controlOptionsCache.has(control.name)) {
+      return this.controlOptionsCache.get(control.name) || [];
+    }
+
     if (!control.options) {
       return [];
     }
@@ -326,10 +387,14 @@ export class FormComponent<T = Record<string, unknown>>
 
     // Handle Observable options
     if (control.options instanceof Observable) {
-      // You might want to handle this with async pipe in template
+      control.options.pipe(takeUntil(this.destroy$)).subscribe(options => {
+        this.controlOptionsCache.set(control.name, options);
+        this.cdr.detectChanges();
+      });
       return [];
     }
 
+    // For function-based options, they should be loaded by loadDynamicOptions
     return [];
   }
 
@@ -355,6 +420,7 @@ export class FormComponent<T = Record<string, unknown>>
     return control.offset || 0;
   }
 
+  // MARK: - Default Actions
   get hasDefaultActions(): boolean {
     return this.option.showDefaultActions !== false;
   }
@@ -396,7 +462,7 @@ export class FormComponent<T = Record<string, unknown>>
     return [...customActions, ...defaultActions];
   }
 
-  // Public methods for external access
+  // MARK: - Public Methods
   getFormValue(): Record<string, unknown> {
     return this.form.value;
   }
@@ -423,7 +489,21 @@ export class FormComponent<T = Record<string, unknown>>
     }
   }
 
-  // TrackBy functions for performance
+  // Method to refresh options for a specific control
+  async refreshControlOptions(controlName: string): Promise<void> {
+    const control = this.option.controls.find(c => c.name === controlName);
+    if (control) {
+      await this.loadOptionsForControl(control);
+      this.cdr.detectChanges();
+    }
+  }
+
+  // Method to get current options for a control
+  getCurrentOptions(controlName: string): SelectOption[] {
+    return this.controlOptionsCache.get(controlName) || [];
+  }
+
+  // MARK: - TrackBy Functions
   trackByControlName(index: number, control: FtFormControl): string {
     return control.name;
   }

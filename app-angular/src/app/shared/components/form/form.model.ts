@@ -2,6 +2,8 @@ import { TemplateRef } from '@angular/core';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Observable } from 'rxjs';
 
+import { BaseQuery } from '../../types/base';
+
 export declare type FormControlType =
   | 'text'
   | 'number'
@@ -96,7 +98,15 @@ export type FtFormControl = {
   offset?: number; // Grid offset
 
   // Type-specific properties
-  options?: SelectOption[] | RadioOption[] | CheckboxOption[] | Observable<SelectOption[]>;
+  options?:
+    | SelectOption[]
+    | RadioOption[]
+    | CheckboxOption[]
+    | Observable<SelectOption[]>
+    | ((input?: BaseQuery) => Observable<SelectOption[]>)
+    | ((input?: BaseQuery) => Promise<SelectOption[]>)
+    | ((input?: BaseQuery) => SelectOption[])
+    | string;
   multiple?: boolean; // For select
   allowClear?: boolean; // For select/input
   showSearch?: boolean; // For select
