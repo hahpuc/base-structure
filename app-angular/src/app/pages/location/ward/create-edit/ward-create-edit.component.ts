@@ -139,51 +139,44 @@ export class WardCreateEditComponent extends AppBaseComponent implements OnInit 
     };
   }
 
-  private async handleSubmit(): Promise<void> {
+  private handleSubmit(): void {
     if (!this.ftForm?.validateForm()) {
       return;
     }
 
-    // Get form values from the form component
     const formValue = this.ftForm.getFormValue();
-
     this.isSubmitting = true;
 
-    try {
-      if (this.isEdit && this.id) {
-        await this.update(formValue);
-      } else {
-        await this.create(formValue);
-      }
+    const submition =
+      this.isEdit && this.id ? this.updateWard(formValue) : this.createWard(formValue);
 
-      this.redirect('/ward');
-    } catch (error) {
-      this.msgService.error('Failed to save ward');
-    } finally {
-      this.isSubmitting = false;
-    }
+    submition.subscribe({
+      next: () => {
+        const message = this.isEdit ? 'Ward updated successfully' : 'Ward created successfully';
+        this.msgService.success(message);
+        this.redirect('/ward');
+      },
+      error: () => {
+        const message = this.isEdit ? 'Failed to update ward' : 'Failed to create ward';
+        this.msgService.error(message);
+      },
+      complete: () => {
+        this.isSubmitting = false;
+      },
+    });
   }
 
-  private async create(formValue: Record<string, unknown>): Promise<void> {
+  private createWard(formValue: Record<string, unknown>) {
     const createData: CreateWard = {
       name: formValue['name'] as string,
       status: (formValue['status'] as boolean) ? EStatus.active : EStatus.inactive,
       province_id: formValue['province_id'] as number,
     };
 
-    this.wardService.create(createData).subscribe({
-      next: () => {
-        this.msgService.success('Ward created successfully');
-      },
-      error: () => {
-        this.msgService.error('Failed to create ward');
-      },
-    });
+    return this.wardService.create(createData);
   }
 
-  private async update(formValue: Record<string, unknown>): Promise<void> {
-    if (!this.id) return;
-
+  private updateWard(formValue: Record<string, unknown>) {
     const updateData: EditWard = {
       id: Number(this.id),
       name: formValue['name'] as string,
@@ -191,13 +184,6 @@ export class WardCreateEditComponent extends AppBaseComponent implements OnInit 
       status: (formValue['status'] as boolean) ? EStatus.active : EStatus.inactive,
     };
 
-    this.wardService.update(updateData).subscribe({
-      next: () => {
-        this.msgService.success('Ward updated successfully');
-      },
-      error: () => {
-        this.msgService.error('Failed to update ward');
-      },
-    });
+    return this.wardService.update(updateData);
   }
 }

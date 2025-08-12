@@ -50,7 +50,6 @@ export class WardComponent extends AppBaseComponent {
         title: 'ID',
         name: '',
         type: 'custom-render',
-        width: '100px',
         customRender: row => {
           return `<span class="text-blue-500 font-semibold">#${row.id}</span>`;
         },
@@ -59,20 +58,18 @@ export class WardComponent extends AppBaseComponent {
         title: 'Name',
         name: 'name',
         type: 'text',
-        width: '150px',
         sortable: true,
       },
       {
         title: 'Province',
         name: 'province.name',
         type: 'text',
-        width: '150px',
       },
       {
         title: 'Status',
         name: 'status',
         type: 'status',
-        width: '100px',
+
         click: row => {
           this.wardService.toggleStatus(+row.id).subscribe(() => {
             this.ftTable.refresh();

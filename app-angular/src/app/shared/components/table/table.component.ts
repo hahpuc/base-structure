@@ -212,6 +212,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
           this.total = response.total_records;
           this.loading = false;
           this.updateSelection();
+          // Trigger change detection to recalculate action column width
           this.cdr.detectChanges();
         },
         error: () => {
@@ -565,6 +566,14 @@ export class TableComponent<T extends TableRowData = TableRowData>
     return text.length > length ? text.substring(0, length) + '...' : text;
   }
 
+  trackByColumn(index: number, column: TableColumn<T>): string | number {
+    return column.name || index;
+  }
+
+  trackByData(index: number, data: T): string | number {
+    return data.id || index;
+  }
+
   // MARK: Static Data Utils
   private _loadStaticData() {
     if (Array.isArray(this.option.data)) {
@@ -590,6 +599,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
 
       this.loading = false;
       this.updateSelection();
+      // Trigger change detection to recalculate action column width
       this.cdr.detectChanges();
     }
   }
@@ -635,7 +645,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
     });
   }
 
-  // MARK: Behavior Helper
+  // MARK: Width & Scroll
   getTableScrollX(): { x?: string | null; y?: string | null } {
     if (!this.option?.columns) {
       return { x: null, y: null };
@@ -643,35 +653,70 @@ export class TableComponent<T extends TableRowData = TableRowData>
 
     // Calculate total width from columns that have width specified
     let totalWidth = 0;
-    let hasFixedWidths = false;
 
     this.option.columns.forEach(column => {
       if (column.width) {
-        hasFixedWidths = true;
         // Extract numeric value from width (e.g., "120px" -> 120)
         const numericWidth = parseInt(column.width.replace(/\D/g, ''), 10);
         totalWidth += numericWidth || 100; // Default to 100px if can't parse
       } else {
-        totalWidth += 150; // Default width for columns without specified width
+        // Use smarter default widths based on column type and name
+        totalWidth += this.getDefaultColumnWidth(column);
       }
     });
 
-    // Add width for actions column if exists
+    // Add width for actions column if exists - use dynamic width calculation
     if (this.option?.actions && this.option.actions.length > 0) {
-      totalWidth += 120;
+      const actionColumnWidth = parseInt(this.getActionColumnWidth().replace(/\D/g, ''), 10);
+      totalWidth += actionColumnWidth || 150;
     }
 
-    // Only return scroll config if the table width exceeds a reasonable threshold
-    // This helps prevent unnecessary measurement rows
+    // Always set a scroll width to prevent column stretching
+    // This ensures columns maintain their intended widths
     const calculatedWidth = Math.max(totalWidth, 800);
+    return { x: `${calculatedWidth}px`, y: null };
+  }
 
-    // Only enable horizontal scroll if we have fixed widths or many columns
-    if (hasFixedWidths || this.option.columns.length > 4) {
-      return { x: `${calculatedWidth}px`, y: null };
+  // Helper method to determine default column width based on type and content
+  private getDefaultColumnWidth(column: TableColumn<T>): number {
+    // Default widths based on column type and common patterns
+    if (column.name === 'id' || column.name === '' || column.title?.toLowerCase() === 'id') {
+      return 80; // ID columns are typically narrow
     }
 
-    // Return minimal scroll config to prevent measurement row creation
-    return { x: null, y: null };
+    if (column.type === 'status' || column.type === 'switch' || column.type === 'boolean') {
+      return 100; // Status/switch columns
+    }
+
+    if (column.type === 'date' || column.type === 'datetime') {
+      return 150; // Date columns
+    }
+
+    if (column.type === 'time') {
+      return 100; // Time columns
+    }
+
+    if (column.type === 'number' || column.type === 'percent') {
+      return 120; // Number columns
+    }
+
+    if (column.type === 'image') {
+      return 80; // Image columns
+    }
+
+    if (column.type === 'button') {
+      return 120; // Button columns
+    }
+
+    // For text columns, consider the title length for a better estimate
+    const titleLength = column.title?.length || 0;
+    if (titleLength > 15) {
+      return 200; // Longer titles likely need more space
+    } else if (titleLength > 10) {
+      return 150;
+    } else {
+      return 120; // Standard text column width
+    }
   }
 
   // Alternative method for scenarios where scroll measurement causes issues
@@ -682,14 +727,6 @@ export class TableComponent<T extends TableRowData = TableRowData>
     return (
       this.option.columns.some(col => col.fixed || col.width) || this.option.columns.length > 5
     );
-  }
-
-  trackByColumn(index: number, column: TableColumn<T>): string | number {
-    return column.name || index;
-  }
-
-  trackByData(index: number, data: T): string | number {
-    return data.id || index;
   }
 
   // MARK: PERMISSIONS
@@ -729,7 +766,8 @@ export class TableComponent<T extends TableRowData = TableRowData>
     if (this.option?.columns) {
       for (const column of this.option.columns) {
         if (column.permission) {
-          this.columnPermissionCache[column.permission] = await this.permissionService.checkPermissions([column.permission]);
+          this.columnPermissionCache[column.permission] =
+            await this.permissionService.checkPermissions([column.permission]);
         }
       }
     }
@@ -738,11 +776,13 @@ export class TableComponent<T extends TableRowData = TableRowData>
     if (this.option?.actions) {
       for (const action of this.option.actions) {
         if (action.permission) {
-          this.actionPermissionCache[action.permission] = await this.permissionService.checkPermissions([action.permission]);
+          this.actionPermissionCache[action.permission] =
+            await this.permissionService.checkPermissions([action.permission]);
         }
       }
     }
 
+    // Trigger change detection to recalculate action column width after permissions are loaded
     this.cdr.detectChanges();
   }
 
@@ -773,7 +813,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
 
   // MARK: COLUMN RESIZING
   onColumnResize(column: TableColumn<T>, width: number): void {
-    if (column.resizable === false) return;
+    if (!this.option?.resizable) return;
 
     const newWidth = `${width}px`;
     this.columnWidths[column.name] = newWidth;
@@ -790,7 +830,14 @@ export class TableComponent<T extends TableRowData = TableRowData>
     if (this.columnWidths[column.name]) {
       return this.columnWidths[column.name];
     }
-    return column.width || '200px';
+
+    if (column.width) {
+      return column.width;
+    }
+
+    // Use the same smart default calculation as in getDefaultColumnWidth
+    const defaultWidth = this.getDefaultColumnWidth(column);
+    return `${defaultWidth}px`;
   }
 
   getColumnMinWidth(column: TableColumn<T>): number {
@@ -808,10 +855,58 @@ export class TableComponent<T extends TableRowData = TableRowData>
   }
 
   isColumnResizable(column: TableColumn<T>): boolean {
-    if (column.fixed || column.resizable === false) {
+    // Check if table-level resizable is enabled and column is not fixed
+    if (!this.option?.resizable || column.fixed) {
       return false;
     }
 
     return true;
+  }
+
+  // MARK: ACTION COLUMN WIDTH CALCULATION
+  getActionColumnWidth(): string {
+    if (!this.option?.actions || this.option.actions.length === 0) {
+      return '150px';
+    }
+
+    // Calculate width based on number of visible actions
+    // Each action button is 36px wide + 8px gap between buttons (except the last one)
+    // Add 16px padding (8px on each side)
+    const buttonWidth = 36;
+    const gapWidth = 8;
+    const padding = 16;
+
+    // Get the maximum number of visible actions for any row
+    let maxVisibleActions = 0;
+    if (this.tableData && this.tableData.length > 0) {
+      maxVisibleActions = Math.max(
+        ...this.tableData.map(row => this.getVisibleActions(row).length)
+      );
+    } else {
+      // Fallback to total actions if no data loaded yet
+      maxVisibleActions = this.option.actions.length;
+    }
+
+    if (maxVisibleActions === 0) {
+      return '150px'; // Minimum width even if no visible actions
+    }
+
+    // Calculate total width: (buttons * buttonWidth) + (gaps * gapWidth) + padding
+    const totalWidth =
+      maxVisibleActions * buttonWidth + (maxVisibleActions - 1) * gapWidth + padding;
+
+    // Ensure minimum width of 80px and maximum of 300px
+    const finalWidth = Math.max(80, Math.min(300, totalWidth));
+
+    return `${finalWidth}px`;
+  }
+
+  getActionColumnStyle(): { [key: string]: string } {
+    const width = this.getActionColumnWidth();
+    return {
+      'min-width': width,
+      'max-width': width,
+      width: width,
+    };
   }
 }

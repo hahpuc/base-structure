@@ -51,7 +51,6 @@ export type TableColumn<T = TableRowData> = {
   width?: string;
   minWidth?: string;
   maxWidth?: string;
-  resizable?: boolean;
   fixed?: 'left' | 'right';
   customRender?: (row: T) => string;
   click?: TableClickHandler<T>;
@@ -78,6 +77,7 @@ export type TableOption<T = TableRowData> = {
   sortable?: boolean;
   filterable?: boolean;
   selectable?: boolean;
+  resizable?: boolean;
   pageSize?: number;
   pageSizeOptions?: number[];
   showTotal?: boolean;

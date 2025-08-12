@@ -38,6 +38,7 @@ export class UserComponent extends AppBaseComponent implements OnInit {
       {
         title: 'ID',
         name: '',
+        width: '250px',
         type: 'custom-render',
         customRender: row => {
           return `<span class="text-blue-500 font-semibold">${row.id}</span>`;
@@ -46,27 +47,32 @@ export class UserComponent extends AppBaseComponent implements OnInit {
       {
         title: 'User Name',
         name: 'username',
+        width: '200px',
         type: 'text',
       },
 
       {
         title: 'Full name',
         name: 'profile.full_name',
+        width: '250px',
         type: 'text',
       },
       {
         title: 'Phone',
         name: 'profile.phone',
+        width: '200px',
         type: 'text',
       },
       {
         title: 'Email',
         name: 'email',
         type: 'text',
+        width: '200px',
       },
       {
         title: 'Role',
         name: 'user_roles',
+        width: '200px',
         type: 'custom-render',
         customRender: row => {
           let roles = '';

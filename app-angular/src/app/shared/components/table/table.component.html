@@ -35,7 +35,7 @@
             <thead>
               <tr>
                 @if (option.actions && option.actions.length > 0) {
-                  <th nzWidth="140px" nzLeft></th>
+                  <th [nzWidth]="getActionColumnWidth()" [style]="getActionColumnStyle()" nzLeft></th>
                 }
                 @for (column of option.columns; track trackByColumn($index, column)) {
                   <th
@@ -52,6 +52,8 @@
                     [nzWidth]="getColumnWidth(column)"
                     [nzMinWidth]="getColumnMinWidth(column)"
                     [nzMaxWidth]="getColumnMaxWidth(column)"
+                    [style.min-width]="getColumnWidth(column)"
+                    [style.width]="getColumnWidth(column)"
                     class="resize-table-th"
                   >
                     {{ column.title }}
@@ -71,7 +73,7 @@
                 <tr>
                   <!-- Actions -->
                   @if (option.actions && option.actions.length > 0) {
-                    <td nzLeft>
+                    <td nzLeft [style]="getActionColumnStyle()">
                       <div class="flex flex-row gap-2 items-center">
                         @for (action of option.actions; track action) {
                           <button
@@ -95,6 +97,9 @@
                       [nzLeft]="column.fixed === 'left'"
                       [nzRight]="column.fixed === 'right'"
                       [hidden]="!isColumnVisibleSync(column)"
+                      [style.min-width]="getColumnWidth(column)"
+                      [style.width]="getColumnWidth(column)"
+                      [style.max-width]="getColumnWidth(column)"
                     >
                       @switch (getColumnType(column)) {
                         <!-- Text Type -->
