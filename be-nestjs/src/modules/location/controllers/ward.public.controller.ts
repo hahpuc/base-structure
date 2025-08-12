@@ -10,9 +10,9 @@ import { WardService } from '../services/ward.service';
 export class WardPublicController {
   constructor(private readonly wardService: WardService) {}
 
-  @Get(':districtId')
+  @Get(':provinceId')
   @HttpCode(HttpStatus.OK)
-  async getList(@Param('districtId') provinceId: number): Promise<Ward[]> {
+  async getList(@Param('provinceId') provinceId: number): Promise<Ward[]> {
     return await this.wardService.getAll(+provinceId);
   }
 }

@@ -14,5 +14,5 @@ export class CreateWardDto {
 
   @IsNotEmpty()
   @IsInt()
-  district_id: number;
+  province_id: number;
 }

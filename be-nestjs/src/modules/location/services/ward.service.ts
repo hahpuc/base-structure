@@ -54,7 +54,7 @@ export class WardService {
   async getById(id: number): Promise<Ward> {
     const data = await this.wardRepository.findOne({
       where: { id },
-      relations: ['district', 'district.province'],
+      relations: ['province'],
     });
     if (!data) {
       throw new CustomError(

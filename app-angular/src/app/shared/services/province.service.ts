@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 import { environment } from '@/environments/environment';
 
@@ -19,5 +20,9 @@ export class ProvinceService extends AppBaseService<
 > {
   constructor(httpClient: HttpClient) {
     super(httpClient, environment.apis.default.apiPrefix, 'provinces');
+  }
+
+  getAll(): Observable<ProvinceDto[]> {
+    return this.httpClient.get<ProvinceDto[]>(this.apiUrl + `/all`);
   }
 }

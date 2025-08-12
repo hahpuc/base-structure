@@ -26,7 +26,7 @@ import { ProvinceService } from '../services/province.service';
 export class ProvinceAdminController {
   constructor(private readonly provinceService: ProvinceService) {}
 
-  @Get('/not-permission')
+  @Get('/all')
   @HttpCode(HttpStatus.OK)
   async getAll(): Promise<Province[]> {
     return this.provinceService.getNotPermission();
@@ -64,7 +64,7 @@ export class ProvinceAdminController {
 
   @Get('/export')
   @HttpCode(HttpStatus.OK)
-  @Auth({ permissions: 'district_manage_export' })
+  @Auth({ permissions: 'province_manage_read' })
   async export(@Query() param: FilterProvinceDto): Promise<ExportResponse> {
     return await this.provinceService.export(param);
   }
