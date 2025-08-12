@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 import { environment } from '@/environments/environment';
 
@@ -13,5 +14,9 @@ import { AppBaseService } from './app-base.service';
 export class WardService extends AppBaseService<number, WardDto, CreateWard, EditWard, QueryWard> {
   constructor(httpClient: HttpClient) {
     super(httpClient, environment.apis.default.apiPrefix, 'wards');
+  }
+
+  getAll(): Observable<WardDto[]> {
+    return this.httpClient.get<WardDto[]>(`${this.apiUrl}`);
   }
 }

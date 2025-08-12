@@ -43,6 +43,14 @@ const routes: Routes = [
         path: 'ward',
         loadChildren: () => import('@pages/location/ward/ward.module').then(x => x.WardModule),
       },
+      {
+        path: 'category',
+        loadChildren: () => import('@pages/category/category.module').then(x => x.CategoryModule),
+      },
+      {
+        path: 'sample',
+        loadChildren: () => import('@pages/sample/sample.module').then(x => x.SampleModule),
+      },
     ],
   },
   {

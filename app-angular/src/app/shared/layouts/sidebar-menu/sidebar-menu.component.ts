@@ -69,23 +69,8 @@ export class SidebarMenuComponent implements OnInit {
       icon: 'ki-security-user',
       isAccordion: true,
       children: [
-        {
-          label: 'Get Started',
-          icon: '',
-          isAccordion: true,
-          children: [
-            {
-              label: 'Welcome',
-              path: '/authentication/get-started/welcome',
-              icon: '',
-            },
-            {
-              label: 'Overview',
-              path: '/authentication/get-started/overview',
-              icon: '',
-            },
-          ],
-        },
+        { label: 'Category', path: '/category', icon: '' },
+        { label: 'Sample', path: '/sample', icon: '' },
       ],
     },
   ];

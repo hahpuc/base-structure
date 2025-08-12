@@ -24,3 +24,10 @@ export enum ESystemType {
   json,
   boolean,
 }
+
+export enum ESampleType {
+  event,
+  promotion,
+  news,
+  announcement,
+}

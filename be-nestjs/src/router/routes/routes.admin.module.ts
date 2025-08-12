@@ -1,3 +1,5 @@
+import { CategoryModule } from '@modules/category/category.module';
+import { CategoryAdminController } from '@modules/category/controllers/category.admin.controller';
 import { ProvinceAdminController } from '@modules/location/controllers/province.admin.controller';
 import { WardAdminController } from '@modules/location/controllers/ward.admin.controller';
 import { LocationModule } from '@modules/location/location.module';
@@ -7,6 +9,8 @@ import { PermissionAdminController } from '@modules/permission/controllers/permi
 import { PermissionModule } from '@modules/permission/permission.module';
 import { RoleAdminController } from '@modules/role/controllers/role.admin.controller';
 import { RoleModule } from '@modules/role/role.module';
+import { SampleAdminController } from '@modules/sample/controllers/sample.admin.controller';
+import { SampleModule } from '@modules/sample/sample.module';
 import { SystemAdminController } from '@modules/system/controllers/system.admin.controller';
 import { SystemModule } from '@modules/system/system.module';
 import { UserAdminController } from '@modules/user/controllers/user.admin.controller';
@@ -22,6 +26,8 @@ import { Module } from '@nestjs/common';
     LogAdminController,
     ProvinceAdminController,
     WardAdminController,
+    CategoryAdminController,
+    SampleAdminController,
   ],
   providers: [],
   exports: [],
@@ -32,6 +38,8 @@ import { Module } from '@nestjs/common';
     SystemModule,
     LogModule,
     LocationModule,
+    CategoryModule,
+    SampleModule,
   ],
 })
 export class RoutesAdminModule {}
