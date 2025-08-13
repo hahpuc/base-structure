@@ -11,8 +11,8 @@ const options = {
   username: process.env.DATABASE_USERNAME,
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_NAME,
-  synchronize: process.env.DATABASE_SYNC === 'true' ?? false,
-  logging: process.env.DATABASE_DEBUG === 'true' ?? false,
+  synchronize: process.env.DATABASE_SYNC === 'true',
+  logging: process.env.DATABASE_DEBUG === 'true',
   entities: [
     'dist/modules/**/*.entity{.ts,.js}',
     'dist/auth/**/*.entity{.ts,.js}',
@@ -20,7 +20,7 @@ const options = {
   migrations: [join(__dirname, '../common/database/migrations/', '*.{ts,js}')],
   autoLoadEntities: true,
   timezone: 'Z',
-  seeding: process.env.DATABASE_SEEDING === 'true' ?? false,
+  seeding: process.env.DATABASE_SEEDING === 'true',
 };
 
 export default registerAs(

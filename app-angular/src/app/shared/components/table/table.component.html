@@ -54,7 +54,7 @@
                     [nzMaxWidth]="getColumnMaxWidth(column)"
                     [style.min-width]="getColumnWidth(column)"
                     [style.width]="getColumnWidth(column)"
-                    class="resize-table-th"
+                    [class]="'resize-table-th ' + getColumnAlignClass(column)"
                   >
                     {{ column.title }}
                     @if (isColumnResizable(column)) {
@@ -100,18 +100,19 @@
                       [style.min-width]="getColumnWidth(column)"
                       [style.width]="getColumnWidth(column)"
                       [style.max-width]="getColumnWidth(column)"
+                      [class]="getColumnAlignClass(column)"
                     >
                       @switch (getColumnType(column)) {
                         <!-- Text Type -->
                         @case ('text') {
-                          <span>
+                          <span [class]="'flex ' + getColumnFlexAlignClass(column)">
                             {{ getColumnValue(data, column) }}
                           </span>
                         }
 
                         <!-- Number Type -->
                         @case ('number') {
-                          <span>
+                          <span [class]="'flex ' + getColumnFlexAlignClass(column)">
                             {{ getNumberValue(data, column) | number }}
                           </span>
                         }
@@ -139,7 +140,7 @@
 
                         <!-- Boolean Type -->
                         @case ('boolean') {
-                          <span>
+                          <span [class]="'flex ' + getColumnFlexAlignClass(column)">
                             <nz-tag [nzColor]="getColumnValue(data, column) ? 'green' : 'red'">
                               {{ getColumnValue(data, column) ? 'Yes' : 'No' }}
                             </nz-tag>
@@ -148,7 +149,7 @@
 
                         <!-- Status Type (Switch) -->
                         @case ('status') {
-                          <span>
+                          <span [class]="'flex ' + getColumnFlexAlignClass(column)">
                             <nz-switch
                               [ngModel]="getColumnValue(data, column)"
                               [nzDisabled]="isColumnDisabled(data, column)"
@@ -160,7 +161,7 @@
 
                         <!-- Switch Type -->
                         @case ('switch') {
-                          <span>
+                          <span [class]="'flex ' + getColumnFlexAlignClass(column)">
                             <nz-switch
                               [ngModel]="getColumnValue(data, column)"
                               [nzDisabled]="isColumnDisabled(data, column)"
@@ -179,12 +180,14 @@
 
                         <!-- Image Type -->
                         @case ('image') {
-                          <span>
+                          <span [class]="'flex ' + getColumnFlexAlignClass(column)">
                             @if (getStringValue(data, column)) {
                               <img
                                 [src]="getStringValue(data, column)"
                                 [alt]="column.title"
-                                style="width: 50px; height: 50px; object-fit: cover"
+                                class="w-12 h-12 object-cover rounded cursor-pointer transition-all duration-200 hover:scale-110 hover:shadow-lg"
+                                (click)="showPreviewImage(getStringValue(data, column))"
+                                title="Click to preview image"
                               />
                             } @else {
                               <span>No Image</span>

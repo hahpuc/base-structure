@@ -1,3 +1,5 @@
+import { BlogPostModule } from '@modules/blog-post/blog-post.module';
+import { BlogPostAdminController } from '@modules/blog-post/controllers/blog-post.admin.controller';
 import { CategoryModule } from '@modules/category/category.module';
 import { CategoryAdminController } from '@modules/category/controllers/category.admin.controller';
 import { ProvinceAdminController } from '@modules/location/controllers/province.admin.controller';
@@ -28,6 +30,7 @@ import { Module } from '@nestjs/common';
     WardAdminController,
     CategoryAdminController,
     SampleAdminController,
+    BlogPostAdminController,
   ],
   providers: [],
   exports: [],
@@ -40,6 +43,7 @@ import { Module } from '@nestjs/common';
     LocationModule,
     CategoryModule,
     SampleModule,
+    BlogPostModule,
   ],
 })
 export class RoutesAdminModule {}

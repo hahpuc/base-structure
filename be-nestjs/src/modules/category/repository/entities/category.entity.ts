@@ -1,5 +1,6 @@
 import { EStatus } from '@app/constant/app.enum';
 import { BaseEntity } from '@common/base/repositories/entities/base.entity';
+import { BlogPost } from '@modules/blog-post/repository/entities/blog-post.entity';
 import { Sample } from '@modules/sample/repository/entities/sample.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Column, Entity, OneToMany } from 'typeorm';
@@ -25,4 +26,7 @@ export class Category extends BaseEntity {
   @OneToMany(() => Sample, (sample) => sample.category)
   @ApiProperty({ type: () => Sample, isArray: true })
   samples: Sample[];
+
+  @OneToMany(() => BlogPost, (post) => post.category_id)
+  blog_posts: BlogPost[];
 }

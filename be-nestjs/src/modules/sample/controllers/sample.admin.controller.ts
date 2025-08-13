@@ -36,7 +36,7 @@ export class SampleAdminController {
   async getList(
     @Query() param: FilterSampleDto,
   ): Promise<ListPaginate<Sample>> {
-    return await this.sampleService.getList(param);
+    return this.sampleService.getList(param);
   }
 
   @Get(':id')

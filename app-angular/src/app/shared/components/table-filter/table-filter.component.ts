@@ -52,6 +52,7 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
   activeFilters: ActiveFilter[] = [];
   appliedSearchText = '';
   appliedFilters: FilterValues = {};
+  isDrawerVisible = false;
 
   private destroy$ = new Subject<void>();
   private searchSubject$ = new Subject<string>();
@@ -91,6 +92,8 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+    this.searchSubject$.complete();
+    this.drawerSearchSubject$.complete();
   }
 
   // MARK: - Initialization & Setup
@@ -333,6 +336,9 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
     this.updateActiveFilters();
 
     this.filterChange.emit(filterParams);
+
+    // Close drawer after applying filters
+    this.closeDrawer();
   }
 
   onClear() {
@@ -346,6 +352,9 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
     // Emit empty filter object to clear all filter parameters from URL
     this.filterChange.emit({});
     this.clearFilter.emit();
+
+    // Close drawer after clearing filters
+    this.closeDrawer();
   }
 
   onSearchTextChange() {
@@ -442,6 +451,15 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
 
   hasActiveFilters(): boolean {
     return this.activeFilters.length > 0;
+  }
+
+  // MARK: - Drawer Control Methods
+  openDrawer() {
+    this.isDrawerVisible = true;
+  }
+
+  closeDrawer() {
+    this.isDrawerVisible = false;
   }
 
   // MARK: - Utility Functions

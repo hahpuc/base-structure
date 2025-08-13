@@ -10,6 +10,7 @@ import {
   TemplateRef,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NzModalService } from 'ng-zorro-antd/modal';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
 import { PermissionService } from '../../services/permission.service';
@@ -64,7 +65,8 @@ export class TableComponent<T extends TableRowData = TableRowData>
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    private permissionService: PermissionService
+    private permissionService: PermissionService,
+    private modal: NzModalService
   ) {}
 
   protected getQueryParam(param: string): string | null {
@@ -452,6 +454,34 @@ export class TableComponent<T extends TableRowData = TableRowData>
       return column.disable(row);
     }
     return false;
+  }
+
+  getColumnAlignClass(column: TableColumn<T>): string {
+    const align = column.align || 'left';
+
+    switch (align) {
+      case 'center':
+        return 'text-center';
+      case 'right':
+        return 'text-right';
+      case 'left':
+      default:
+        return 'text-left';
+    }
+  }
+
+  getColumnFlexAlignClass(column: TableColumn<T>): string {
+    const align = column.align || 'left'; // Default to 'left' if not specified
+
+    switch (align) {
+      case 'center':
+        return 'justify-center items-center';
+      case 'right':
+        return 'justify-end items-center';
+      case 'left':
+      default:
+        return 'justify-start items-center';
+    }
   }
 
   onColumnClick(row: T, column: TableColumn<T>) {
@@ -908,5 +938,22 @@ export class TableComponent<T extends TableRowData = TableRowData>
       'max-width': width,
       width: width,
     };
+  }
+
+  // MARK: Column Type Actions
+  showPreviewImage(imageUrl: string) {
+    this.modal.create({
+      nzTitle: 'Image Preview',
+      nzContent: `
+        <div style="text-align: center; padding: 20px;">
+          <img src="${imageUrl}" style="max-width: 100%; max-height: 70vh; object-fit: contain;" alt="Preview" />
+        </div>
+      `,
+      nzFooter: null,
+      nzWidth: 'auto',
+      nzCentered: true,
+      nzMaskClosable: true,
+      nzKeyboard: true,
+    });
   }
 }

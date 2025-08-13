@@ -13,6 +13,7 @@ import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzColorPickerModule } from 'ng-zorro-antd/color-picker';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzGridModule } from 'ng-zorro-antd/grid';
@@ -81,6 +82,7 @@ const antD = [
   NzMenuModule,
   NzIconModule,
   NzDropDownModule,
+  NzDrawerModule,
   NzAvatarModule,
   NzFormModule,
   NzCheckboxModule,

@@ -26,8 +26,8 @@ export enum ESystemType {
 }
 
 export enum ESampleType {
-  event,
-  promotion,
-  news,
-  announcement,
+  event = 0,
+  promotion = 1,
+  news = 2,
+  announcement = 3,
 }

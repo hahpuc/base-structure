@@ -42,10 +42,13 @@ export declare type TableColumnType =
   | 'custom-render'
   | TemplateRef<unknown>;
 
+export declare type TableColumnAlign = 'left' | 'center' | 'right';
+
 export type TableColumn<T = TableRowData> = {
   title: string;
   name: string;
   type?: TableColumnType;
+  align?: TableColumnAlign;
   sortable?: boolean;
   filterable?: boolean;
   width?: string;

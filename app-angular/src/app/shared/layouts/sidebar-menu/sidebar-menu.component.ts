@@ -65,12 +65,12 @@ export class SidebarMenuComponent implements OnInit {
       ],
     },
     {
-      label: 'Sample Menu',
+      label: 'Article Management',
       icon: 'ki-security-user',
       isAccordion: true,
       children: [
-        { label: 'Category', path: '/category', icon: '' },
-        { label: 'Sample', path: '/sample', icon: '' },
+        { label: 'Category', path: '/category', icon: '', permissions: [] },
+        { label: 'Blog Post', path: '/blog-post', icon: '', permissions: [] },
       ],
     },
   ];

@@ -48,8 +48,8 @@ const routes: Routes = [
         loadChildren: () => import('@pages/category/category.module').then(x => x.CategoryModule),
       },
       {
-        path: 'sample',
-        loadChildren: () => import('@pages/sample/sample.module').then(x => x.SampleModule),
+        path: 'blog-post',
+        loadChildren: () => import('@pages/blog-post/blog-post.module').then(x => x.BlogPostModule),
       },
     ],
   },

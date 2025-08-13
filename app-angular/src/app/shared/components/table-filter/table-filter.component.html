@@ -25,7 +25,7 @@
           [class.bg-blue-600]="hasActiveFilters()"
           [class.border-blue-600]="hasActiveFilters()"
           [class.text-white]="hasActiveFilters()"
-          data-kt-drawer-toggle="#drawers_shop_filter"
+          (click)="openDrawer()"
         >
           <i class="ki-filled ki-filter"></i>
           <!-- Active filter indicator -->
@@ -72,61 +72,51 @@
       }
     </div>
 
-    <!-- UI for the filter drawer in right side -->
-    <div
-      class="hidden kt-drawer kt-drawer-end card flex-col max-w-[90%] w-[320px] top-5 bottom-5 end-5 rounded-xl border border-border"
-      data-kt-drawer="true"
-      data-kt-drawer-container="body"
-      id="drawers_shop_filter"
-      data-kt-drawer-initialized="true"
-      style="z-index: 100"
-      role="dialog"
-      aria-modal="true"
-      tabindex="-1"
+    <!-- Ant Design Drawer for filters -->
+    <nz-drawer
+      [nzClosable]="true"
+      [nzVisible]="isDrawerVisible"
+      nzPlacement="right"
+      nzTitle="Filter"
+      nzWidth="320px"
+      (nzOnClose)="closeDrawer()"
     >
-      <form [formGroup]="filterForm" (ngSubmit)="onFilter()" class="flex flex-col h-full">
-        <div class="kt-card-header ps-5 pr-2">
-          <h3 class="kt-card-title">Filter</h3>
-          <button class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost shrink-0" data-kt-drawer-dismiss="true">
-            <i class="ki-filled ki-cross text-base"></i>
-          </button>
-        </div>
-        <div class="kt-card-content px-0 pt-3.5 kt-scrollable-y-auto">
-          <!-- Search input in drawer (synced with main search) -->
-
-          <div class="px-5 mb-4">
-            <span class="text-sm font-medium text-gray-700"> Search </span>
-            <div class="kt-input relative">
-              <i class="ki-filled ki-magnifier"></i>
-              <input
-                placeholder="Search..."
-                type="text"
-                [(ngModel)]="drawerSearchText"
-                (ngModelChange)="onDrawerSearchTextChange()"
-                [ngModelOptions]="{ standalone: true }"
-              />
-              <!-- Clear search icon -->
-              @if (drawerSearchText && drawerSearchText.trim()) {
-                <button
-                  (click)="clearDrawerSearchText()"
-                  class="clear-search-btn absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer p-1 bg-transparent border-none rounded-full flex items-center justify-center"
-                  type="button"
-                >
-                  <i class="ki-filled ki-cross text-sm"></i>
-                </button>
-              }
+      <ng-container *nzDrawerContent>
+        <form [formGroup]="filterForm" (ngSubmit)="onFilter()" class="flex flex-col h-full">
+          <div class="px-0 pt-3.5 flex-1 overflow-y-auto">
+            <!-- Search input in drawer (synced with main search) -->
+            <div class="mb-4">
+              <span class="text-sm font-medium text-gray-700"> Search </span>
+              <div class="kt-input relative">
+                <i class="ki-filled ki-magnifier"></i>
+                <input
+                  placeholder="Search..."
+                  type="text"
+                  [(ngModel)]="drawerSearchText"
+                  (ngModelChange)="onDrawerSearchTextChange()"
+                  [ngModelOptions]="{ standalone: true }"
+                />
+                <!-- Clear search icon -->
+                @if (drawerSearchText && drawerSearchText.trim()) {
+                  <button
+                    (click)="clearDrawerSearchText()"
+                    class="clear-search-btn absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer p-1 bg-transparent border-none rounded-full flex items-center justify-center"
+                    type="button"
+                  >
+                    <i class="ki-filled ki-cross text-sm"></i>
+                  </button>
+                }
+              </div>
             </div>
-          </div>
 
-          <!-- Item Filters -->
-          <div class="flex flex-col px-5 space-y-4">
-            @for (filter of filters; track filter) {
-              <div class="space-y-2">
-                <span class="text-sm font-medium text-gray-700">
-                  {{ filter.label }}
-                </span>
+            <!-- Item Filters -->
+            <div class="flex flex-col space-y-4">
+              @for (filter of filters; track filter) {
+                <div class="space-y-2">
+                  <span class="text-sm font-medium text-gray-700">
+                    {{ filter.label }}
+                  </span>
 
-                <nz-form-item class="mb-0">
                   <nz-form-control>
                     <!-- Text Input -->
                     @if (filter.type === 'text') {
@@ -168,32 +158,29 @@
                     }
                     @if (filter.note) {
                       <div class="form-note">
-                        <small class="text-muted">{{ filter.note }}</small>
+                        <small class="text-muted italic">{{ filter.note }}</small>
                       </div>
                     }
                   </nz-form-control>
-                </nz-form-item>
-              </div>
-            }
+                </div>
+              }
+            </div>
           </div>
-        </div>
 
-        <div class="kt-card-footer grid grid-cols-2 gap-2.5">
-          <button
-            nz-button
-            nzType="primary"
-            type="submit"
-            [nzLoading]="isLoading"
-            class="flex items-center justify-center gap-2"
-          >
-            Apply
-          </button>
-          <button nz-button nzType="default" (click)="onClear()">Clear</button>
-        </div>
-      </form>
-    </div>
-
-    <!-- UI Backdrop blur content effect -->
-    <div data-kt-drawer-backdrop="true" style="z-index: 99" class="kt-drawer-backdrop hidden"></div>
+          <div class="grid grid-cols-2 gap-2.5 p-4">
+            <button
+              nz-button
+              nzType="primary"
+              type="submit"
+              [nzLoading]="isLoading"
+              class="flex items-center justify-center gap-2"
+            >
+              Apply
+            </button>
+            <button nz-button nzType="default" (click)="onClear()">Clear</button>
+          </div>
+        </form>
+      </ng-container>
+    </nz-drawer>
   </div>
 }
