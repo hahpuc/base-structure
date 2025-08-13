@@ -35,6 +35,10 @@ export class CategoryService {
     return wrapPagination<Category>(data, count, params);
   }
 
+  async getAll(): Promise<Category[]> {
+    return await this.categoryRepository.find();
+  }
+
   async findAll(filterDto: FilterCategoryDto): Promise<[Category[], number]> {
     return this.categoryRepository.getList(filterDto);
   }

@@ -23,6 +23,6 @@ export class CategoryService extends AppBaseService<
   }
 
   getAll(): Observable<CategoryDto[]> {
-    return this.httpClient.get<CategoryDto[]>(`${this.apiUrl}`);
+    return this.httpClient.get<CategoryDto[]>(`${this.apiUrl}/all`);
   }
 }

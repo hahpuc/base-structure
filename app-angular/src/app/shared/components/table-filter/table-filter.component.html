@@ -147,12 +147,25 @@
                         [formControlName]="filter.name"
                         [nzPlaceHolder]="filter.label"
                         nzAllowClear
-                        [nzLoading]="isLoadingOptions[filter.name]"
+                        [nzLoading]="isLoadingOptions[filter.name] || isPaginatedLoading(filter.name)"
+                        [nzShowSearch]="filter.searchable || isPaginatedFilter(filter.name)"
+                        [nzServerSearch]="isPaginatedFilter(filter.name)"
                         style="width: 100%"
                         [compareWith]="compareSelectValues"
+                        (nzOnSearch)="isPaginatedFilter(filter.name) ? onSelectSearch(filter.name, $event) : null"
+                        (nzScrollToBottom)="isPaginatedFilter(filter.name) ? onSelectScrollToBottom(filter.name) : null"
                       >
                         @for (option of filterOptions[filter.name]; track option) {
                           <nz-option [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+                        }
+                        <!-- Loading more indicator for paginated selects -->
+                        @if (isPaginatedFilter(filter.name) && isPaginatedLoading(filter.name)) {
+                          <nz-option nzDisabled nzCustomContent>
+                            <div class="flex items-center justify-center py-2">
+                              <nz-spin nzSimple [nzSize]="'small'"></nz-spin>
+                              <span class="ml-2 text-gray-500">Loading more...</span>
+                            </div>
+                          </nz-option>
                         }
                       </nz-select>
                     }

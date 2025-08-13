@@ -38,6 +38,12 @@ export class CategoryAdminController {
     return await this.categoryService.getList(param);
   }
 
+  @Get('/all')
+  @Auth({ permissions: 'category_manage_read' })
+  async getAll(): Promise<Category[]> {
+    return await this.categoryService.getAll();
+  }
+
   @Get(':id')
   @Auth({ permissions: 'category_manage_read' })
   findOne(@Param('id') id: number) {

@@ -22,15 +22,17 @@ import {
   Observable,
   Subject,
   takeUntil,
+  map,
 } from 'rxjs';
 
-import { BaseQuery } from '../../types/base';
+import { BaseQuery, ListPaginate } from '../../types/base';
 
 import {
   CheckboxOption,
   FormAction,
   FormOption,
   FtFormControl,
+  PaginatedFormSelectOptions,
   RadioOption,
   SelectOption,
 } from './form.model';
@@ -59,6 +61,10 @@ export class FormComponent<T = Record<string, unknown>>
   private onChange = (value: Record<string, unknown>) => {};
   private onTouched = () => {};
   private controlOptionsCache = new Map<string, SelectOption[]>();
+
+  // Pagination for select options
+  paginatedOptions: { [key: string]: PaginatedFormSelectOptions } = {};
+  searchSubjects: { [key: string]: Subject<string> } = {};
 
   constructor(
     private fb: FormBuilder,
@@ -382,26 +388,145 @@ export class FormComponent<T = Record<string, unknown>>
       // Set empty options initially to prevent errors
       this.controlOptionsCache.set(control.name, []);
 
-      const optionsFunction = control.options as (
-        input?: BaseQuery
-      ) => Observable<SelectOption[]> | Promise<SelectOption[]> | SelectOption[];
-      const result = optionsFunction();
+      // Check if this control uses pagination
+      if (control.usePagination) {
+        // Use paginated API
+        this.loadPaginatedOptions(control, '', 1).subscribe();
+      } else {
+        // Use getAll() API - no parameters required
+        const getAllFunction = control.options as () => Observable<SelectOption[]>;
+        const result = getAllFunction();
 
-      if (result instanceof Promise) {
-        const options = await result;
-        this.controlOptionsCache.set(control.name, options);
-      } else if (result instanceof Observable) {
-        result.pipe(takeUntil(this.destroy$)).subscribe(options => {
+        if (result instanceof Promise) {
+          const options = await result;
           this.controlOptionsCache.set(control.name, options);
-          this.cdr.detectChanges();
-        });
-      } else if (Array.isArray(result)) {
-        this.controlOptionsCache.set(control.name, result);
+        } else if (result instanceof Observable) {
+          result.pipe(takeUntil(this.destroy$)).subscribe(options => {
+            this.controlOptionsCache.set(control.name, options);
+            this.cdr.detectChanges();
+          });
+        } else if (Array.isArray(result)) {
+          this.controlOptionsCache.set(control.name, result);
+        }
       }
     } catch (error) {
       // Log error for debugging but don't throw to prevent form from breaking
       this.controlOptionsCache.set(control.name, []);
     }
+  }
+
+  private loadPaginatedOptions(
+    control: FtFormControl,
+    searchText = '',
+    page = 1
+  ): Observable<SelectOption[]> {
+    if (typeof control.options !== 'function') {
+      return new Observable(observer => observer.next([]));
+    }
+
+    const query: BaseQuery = {
+      page,
+      limit: control.pageSize || 20,
+      ...(searchText ? { filter: searchText } : {}),
+    };
+
+    // Initialize pagination state if not exists
+    if (!this.paginatedOptions[control.name]) {
+      this.paginatedOptions[control.name] = {
+        options: [],
+        hasMore: true,
+        currentPage: 0,
+        pageSize: control.pageSize || 20,
+        total: 0,
+        loading: false,
+        searchText: '',
+      };
+    }
+
+    const paginatedState = this.paginatedOptions[control.name];
+    paginatedState.loading = true;
+
+    return (control.options(query) as Observable<ListPaginate<unknown>>).pipe(
+      takeUntil(this.destroy$),
+      map((response: ListPaginate<unknown>) => {
+        // Convert paginated response to SelectOption[]
+        const newOptions = response.data.map(item => {
+          const record = item as Record<string, unknown>;
+          return {
+            label: (record['name'] || record['title'] || record['label'] || String(item)) as string,
+            value: record['id'] || item,
+          };
+        });
+
+        // Update pagination state
+        if (page === 1) {
+          // First page or new search - replace options
+          paginatedState.options = newOptions;
+        } else {
+          // Subsequent pages - append options
+          paginatedState.options = [...paginatedState.options, ...newOptions];
+        }
+
+        paginatedState.currentPage = page;
+        paginatedState.total = response.total_records;
+        paginatedState.hasMore = page < response.total_pages;
+        paginatedState.loading = false;
+        paginatedState.searchText = searchText;
+
+        // Update cache for the component
+        this.controlOptionsCache.set(control.name, paginatedState.options);
+        this.cdr.detectChanges();
+
+        return paginatedState.options;
+      })
+    );
+  }
+
+  // MARK: - Pagination Methods for Ant Design Select
+  onSelectSearch(controlName: string, searchText: string): void {
+    const control = this.option.controls.find(c => c.name === controlName);
+    if (!control?.usePagination) {
+      return;
+    }
+
+    // Debounce search
+    if (!this.searchSubjects[controlName]) {
+      this.searchSubjects[controlName] = new Subject<string>();
+      this.searchSubjects[controlName]
+        .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
+        .subscribe(search => {
+          this.loadPaginatedOptions(control, search, 1).subscribe();
+        });
+    }
+
+    this.searchSubjects[controlName].next(searchText);
+  }
+
+  onSelectScrollToBottom(controlName: string): void {
+    const control = this.option.controls.find(c => c.name === controlName);
+    if (!control?.usePagination) {
+      return;
+    }
+
+    const paginatedState = this.paginatedOptions[controlName];
+    if (!paginatedState || paginatedState.loading || !paginatedState.hasMore) {
+      return;
+    }
+
+    // Load next page
+    const nextPage = paginatedState.currentPage + 1;
+    this.loadPaginatedOptions(control, paginatedState.searchText || '', nextPage).subscribe();
+  }
+
+  // Check if a control uses pagination
+  isPaginatedControl(controlName: string): boolean {
+    const control = this.option.controls.find(c => c.name === controlName);
+    return control?.usePagination === true;
+  }
+
+  // Get loading state for paginated controls
+  isPaginatedLoading(controlName: string): boolean {
+    return this.paginatedOptions[controlName]?.loading || false;
   }
 
   // MARK: - Options Getters

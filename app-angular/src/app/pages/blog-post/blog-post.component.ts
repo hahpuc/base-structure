@@ -6,6 +6,7 @@ import { TableComponent } from '@/app/shared/components/table/table.component';
 import { TableOption } from '@/app/shared/components/table/table.model';
 import { BlogPostService } from '@/app/shared/services/blog-post.service';
 import { CategoryService } from '@/app/shared/services/category.service';
+import { BaseQuery } from '@/app/shared/types/base';
 import { BlogPostDto, QueryBlogPost } from '@/app/shared/types/blog-post';
 
 @Component({
@@ -42,16 +43,30 @@ export class BlogPostComponent extends AppBaseComponent implements OnInit {
           { label: 'Active', value: 1 },
           { label: 'Inactive', value: 0 },
         ],
+        usePagination: false, // Static options don't need pagination
       },
+      // Example of paginated select (loads data from API with pagination)
+      {
+        type: 'select',
+        options: (query: BaseQuery) => this.categoryService.getByPaged(query),
+        name: 'category_id',
+        label: 'Category (Paginated)',
+        note: 'Select a category for the blog post (loads with pagination)',
+        usePagination: true, // Enable pagination for this select
+        searchable: true, // Enable search functionality
+        pageSize: 10, // Custom page size (default is 20)
+      },
+      // Example of non-paginated select that loads all data at once
       {
         type: 'select',
         options: () =>
           this.categoryService
             .getAll()
             .pipe(map(categories => categories.map(c => ({ label: c.name, value: c.id })))),
-        name: 'category_id',
-        label: 'Category',
-        note: 'Select a category for the blog post',
+        name: 'category_type',
+        label: 'Category (All at once)',
+        note: 'This loads all categories at once using getAll() API',
+        usePagination: false, // Explicitly disable pagination (default behavior)
       },
     ],
     columns: [

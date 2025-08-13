@@ -2,7 +2,7 @@ import { TemplateRef } from '@angular/core';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Observable } from 'rxjs';
 
-import { BaseQuery } from '../../types/base';
+import { BaseQuery, ListPaginate } from '../../types/base';
 
 export declare type FormControlType =
   | 'text'
@@ -54,6 +54,16 @@ export type CheckboxOption = {
   checked?: boolean;
 };
 
+export type PaginatedFormSelectOptions = {
+  options: SelectOption[];
+  hasMore: boolean;
+  currentPage: number;
+  pageSize: number;
+  total: number;
+  loading: boolean;
+  searchText?: string;
+};
+
 export type FormSubmitResult = {
   success: boolean;
   data?: unknown;
@@ -99,18 +109,24 @@ export type FtFormControl = {
 
   // Type-specific properties
   options?:
-    | SelectOption[]
-    | RadioOption[]
-    | CheckboxOption[]
-    | Observable<SelectOption[]>
-    | ((input?: BaseQuery) => Observable<SelectOption[]>)
-    | ((input?: BaseQuery) => Promise<SelectOption[]>)
-    | ((input?: BaseQuery) => SelectOption[])
-    | string;
+    | SelectOption[] // Static options array
+    | RadioOption[] // Static radio options
+    | CheckboxOption[] // Static checkbox options
+    | Observable<SelectOption[]> // Direct observable
+    | (() => Observable<SelectOption[]>) // getAll() API - no parameters
+    | ((input: BaseQuery) => Observable<ListPaginate<unknown>>) // getByPaged() API - with pagination
+    | ((input?: BaseQuery) => Promise<SelectOption[]>) // Promise-based API
+    | ((input?: BaseQuery) => SelectOption[]) // Synchronous function
+    | string; // String identifier
   multiple?: boolean; // For select
   allowClear?: boolean; // For select/input
   showSearch?: boolean; // For select
   mode?: 'default' | 'multiple' | 'tags'; // For select
+
+  // Pagination configuration for select options
+  usePagination?: boolean; // If true, use paginated API; if false/undefined, use getAll() API
+  pageSize?: number; // Page size for pagination (default: 20)
+  searchable?: boolean; // Whether this select supports search
 
   // Number input
   min?: number;

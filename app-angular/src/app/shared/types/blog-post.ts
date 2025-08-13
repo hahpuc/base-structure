@@ -16,7 +16,17 @@ export type BlogPostDto = BaseModel & {
   category_id: number;
 };
 
-export type CreateBlogPost = BlogPostDto;
+export type CreateBlogPost = {
+  title: string;
+  slug: string;
+  order_index: number;
+  description: string;
+  content: string;
+  thumbnail: string;
+  published_at: Date;
+  status: EStatus;
+  category_id: number;
+};
 export type EditBlogPost = Partial<BlogPostDto> & {
   id: number;
 };
