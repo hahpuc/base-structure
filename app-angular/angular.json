@@ -36,7 +36,9 @@
               "src/assets/css/styles.css",
               "src/assets/vendors/apexcharts/apexcharts.css",
               "src/assets/vendors/keenicons/styles.bundle.css",
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/quill/dist/quill.snow.css",
+              "node_modules/quill/dist/quill.bubble.css"
             ],
             "scripts": [
               "src/assets/js/core.bundle.js",

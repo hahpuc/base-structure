@@ -1,0 +1,16 @@
+::ng-deep .ql-editor {
+    min-height: 200px;
+    padding: 12px;
+}
+
+::ng-deep .ql-container {
+    border: 1px solid #d9d9d9 !important;
+    border-bottom-left-radius: 0.5rem !important;
+    border-bottom-right-radius: 0.5rem !important;
+}
+
+::ng-deep .ql-toolbar {
+    border: 1px solid #d9d9d9 !important;
+    border-top-left-radius: 0.5rem !important;
+    border-top-right-radius: 0.5rem !important;
+}

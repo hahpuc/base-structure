@@ -183,10 +183,14 @@ export class BlogPostCreateEditComponent extends AppBaseComponent implements OnI
           //     .getAll()
           //     .pipe(map(categories => categories.map(p => ({ label: p.name, value: p.id })))),
           //   usePagination: false, // Default behavior
-
           // Example 2: Paginated approach (loads categories with pagination)
-          options: (query: BaseQuery) => this.categoryService.getByPaged(query),
-          usePagination: true, // Enable pagination
+          // options: (query: BaseQuery) => this.categoryService.getByPaged(query),
+          // usePagination: true,
+          options: () =>
+            this.categoryService
+              .getAll()
+              .pipe(map(categories => categories.map(p => ({ label: p.name, value: p.id })))),
+          usePagination: false, // Enable pagination
           searchable: true, // Enable search functionality
           pageSize: 10, // Custom page size (default is 20)
 
@@ -211,13 +215,9 @@ export class BlogPostCreateEditComponent extends AppBaseComponent implements OnI
         {
           name: 'content',
           label: 'Content',
-          type: 'textarea',
-          required: true,
+          type: 'richtext',
+          required: false,
           placeholder: 'Enter content',
-          validators: [Validators.required],
-          errorMessages: {
-            required: 'Content is required',
-          },
           span: 24,
         },
       ],

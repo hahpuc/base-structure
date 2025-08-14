@@ -36,7 +36,10 @@ export class BlogPostService {
   }
 
   async getById(id: number): Promise<BlogPost> {
-    const app = await this.blogpostRepository.findOneBy({ id });
+    const app = await this.blogpostRepository.findOne({
+      where: { id },
+      relations: ['category'],
+    });
     if (!app) {
       throw new CustomError(
         404,

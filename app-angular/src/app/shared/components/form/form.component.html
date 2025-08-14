@@ -250,6 +250,14 @@
                   <input type="hidden" [formControlName]="control.name" />
                 }
 
+                <!-- Rich Text Editor -->
+                @if (control.type === 'richtext') {
+                  <app-rich-text
+                    [formControlName]="control.name"
+                    [required]="control.required ?? false"
+                  ></app-rich-text>
+                }
+
                 <!-- Custom Template -->
                 @if (control.template) {
                   <ng-container

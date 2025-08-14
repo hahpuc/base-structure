@@ -39,9 +39,12 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 import { NzTreeModule } from 'ng-zorro-antd/tree';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { QuillModule } from 'ngx-quill';
 
 import { FormComponent } from './components/form/form.component';
 import { ProgressBarComponent } from './components/progress-bar/progress-bar.component';
+import { RichTextComponent } from './components/rich-text/rich-text.component';
 import { TableComponent } from './components/table/table.component';
 import { TableFilterComponent } from './components/table-filter/table-filter.component';
 import { ToastComponent } from './components/toast/toast.component';
@@ -69,6 +72,7 @@ const components = [
   TableComponent,
   TableFilterComponent,
   HeaderComponent,
+  RichTextComponent,
 ];
 
 const directives = [ThrottleClickDirective];
@@ -122,6 +126,7 @@ const antD = [
     NgOptimizedImage,
     ScrollingModule,
     FormsModule,
+    QuillModule.forRoot(),
     ...antD,
   ],
   exports: [
