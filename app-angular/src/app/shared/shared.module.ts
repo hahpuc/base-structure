@@ -46,7 +46,10 @@ import { FormComponent } from './components/form/form.component';
 import { ProgressBarComponent } from './components/progress-bar/progress-bar.component';
 import { RichTextComponent } from './components/rich-text/rich-text.component';
 import { TableComponent } from './components/table/table.component';
+import { TableFilterDrawerComponent } from './components/table-filter/drawer/table-filter-drawer.component';
+import { TableFilterSearchComponent } from './components/table-filter/search/table-filter-search.component';
 import { TableFilterComponent } from './components/table-filter/table-filter.component';
+import { TableFilterTagsComponent } from './components/table-filter/tags/table-filter-tags.component';
 import { ToastComponent } from './components/toast/toast.component';
 import { ThrottleClickDirective } from './directives/throttle-click.directive';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
@@ -71,6 +74,9 @@ const components = [
   ProgressBarComponent,
   TableComponent,
   TableFilterComponent,
+  TableFilterTagsComponent,
+  TableFilterDrawerComponent,
+  TableFilterSearchComponent,
   HeaderComponent,
   RichTextComponent,
 ];

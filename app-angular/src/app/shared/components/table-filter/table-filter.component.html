@@ -2,198 +2,46 @@
   <div class="table-filter mb-4">
     <div class="flex flex-col lg:flex-row lg:items-center gap-3 w-full">
       <div class="flex items-center gap-3 w-full lg:w-auto">
-        <!-- Filter Input Text -->
-        <div class="kt-input flex-1 lg:flex-none lg:w-[250px] relative">
-          <i class="ki-filled ki-magnifier"> </i>
-          <input placeholder="Search..." type="text" [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" />
-          <!-- Clear search icon -->
-          @if (searchText && searchText.trim()) {
-            <button
-              (click)="clearSearchText()"
-              class="clear-search-btn absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer p-1 bg-transparent border-none rounded-full flex items-center justify-center"
-              type="button"
-            >
-              <i class="ki-filled ki-cross text-sm"></i>
-            </button>
-          }
-        </div>
-
-        <!--Filter Drawer Toggle Button Icon-->
-        <a
-          class="kt-btn kt-btn-outline relative flex-shrink-0"
-          [class.kt-btn-primary]="hasActiveFilters()"
-          [class.bg-blue-600]="hasActiveFilters()"
-          [class.border-blue-600]="hasActiveFilters()"
-          [class.text-white]="hasActiveFilters()"
-          (click)="openDrawer()"
-        >
-          <i class="ki-filled ki-filter"></i>
-          <!-- Active filter indicator -->
-          @if (hasActiveFilters()) {
-            <span
-              class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full text-xs min-w-[16px] h-4 flex items-center justify-content-center px-1 font-medium"
-            >
-              {{ activeFilters.length }}
-            </span>
-          }
-        </a>
+        <app-table-filter-search
+          [searchText]="searchText"
+          (searchTextChange)="searchText = $event; onSearchTextChange()"
+          (clearSearch)="clearSearchText()"
+          [hasActiveFilters]="hasActiveFilters()"
+          [activeFiltersCount]="activeFilters.length"
+          (toggleDrawer)="openDrawer()"
+        ></app-table-filter-search>
       </div>
 
       <!-- Active Filters Display -->
       @if (hasActiveFilters()) {
-        <div class="flex flex-wrap items-center gap-2 flex-1">
-          <span class="text-sm font-medium text-gray-600 hidden lg:inline">Active filters:</span>
-          <div class="flex flex-wrap items-center gap-2">
-            @for (activeFilter of activeFilters; track activeFilter) {
-              <div
-                class="inline-flex items-center gap-1 bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full border border-blue-200"
-              >
-                <span class="font-semibold">{{ activeFilter.filter.label }}:</span>
-                <span>{{ activeFilter.displayValue }}</span>
-                <button
-                  (click)="removeActiveFilter(activeFilter)"
-                  class="filter-tag-remove ml-1 text-blue-600 cursor-pointer p-0 bg-transparent border-none rounded-full w-4 h-4 flex items-center justify-center"
-                  type="button"
-                >
-                  <i class="ki-filled ki-cross text-xs"></i>
-                </button>
-              </div>
-            }
-
-            <button
-              type="button"
-              (click)="onClear()"
-              class="kt-btn kt-btn-icon kt-btn-outline rounded-full w-[32px] h-[32px] flex items-center justify-center"
-            >
-              <i class="ki-outline ki-trash text-red-600"></i>
-            </button>
-          </div>
-        </div>
+        <app-table-filter-tags
+          [activeFilters]="activeFilters"
+          (remove)="removeActiveFilter($event)"
+          (clearAll)="onClear()"
+        ></app-table-filter-tags>
       }
     </div>
 
-    <!-- Ant Design Drawer for filters -->
-    <nz-drawer
-      [nzClosable]="true"
-      [nzVisible]="isDrawerVisible"
-      nzPlacement="right"
-      nzTitle="Filter"
-      nzWidth="320px"
-      (nzOnClose)="closeDrawer()"
-    >
-      <ng-container *nzDrawerContent>
-        <form [formGroup]="filterForm" (ngSubmit)="onFilter()" class="flex flex-col h-full">
-          <div class="px-0 pt-3.5 flex-1 overflow-y-auto">
-            <!-- Search input in drawer (synced with main search) -->
-            <div class="mb-4">
-              <span class="text-sm font-medium text-gray-700"> Search </span>
-              <div class="kt-input relative">
-                <i class="ki-filled ki-magnifier"></i>
-                <input
-                  placeholder="Search..."
-                  type="text"
-                  [(ngModel)]="drawerSearchText"
-                  (ngModelChange)="onDrawerSearchTextChange()"
-                  [ngModelOptions]="{ standalone: true }"
-                />
-                <!-- Clear search icon -->
-                @if (drawerSearchText && drawerSearchText.trim()) {
-                  <button
-                    (click)="clearDrawerSearchText()"
-                    class="clear-search-btn absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer p-1 bg-transparent border-none rounded-full flex items-center justify-center"
-                    type="button"
-                  >
-                    <i class="ki-filled ki-cross text-sm"></i>
-                  </button>
-                }
-              </div>
-            </div>
-
-            <!-- Item Filters -->
-            <div class="flex flex-col space-y-4">
-              @for (filter of filters; track filter) {
-                <div class="space-y-2">
-                  <span class="text-sm font-medium text-gray-700">
-                    {{ filter.label }}
-                  </span>
-
-                  <nz-form-control>
-                    <!-- Text Input -->
-                    @if (filter.type === 'text') {
-                      <input nz-input [formControlName]="filter.name" [placeholder]="filter.label" />
-                    }
-
-                    <!-- Number Input -->
-                    @if (filter.type === 'number') {
-                      <nz-input-number
-                        [formControlName]="filter.name"
-                        [nzPlaceHolder]="filter.label"
-                        style="width: 100%"
-                      ></nz-input-number>
-                    }
-
-                    <!-- Date Picker -->
-                    @if (filter.type === 'date') {
-                      <nz-date-picker
-                        [formControlName]="filter.name"
-                        [nzPlaceHolder]="filter.label"
-                        style="width: 100%"
-                      ></nz-date-picker>
-                    }
-
-                    <!-- Select Dropdown -->
-                    @if (filter.type === 'select') {
-                      <nz-select
-                        [formControlName]="filter.name"
-                        [nzPlaceHolder]="filter.label"
-                        nzAllowClear
-                        [nzLoading]="isLoadingOptions[filter.name] || isPaginatedLoading(filter.name)"
-                        [nzShowSearch]="filter.searchable || isPaginatedFilter(filter.name)"
-                        [nzServerSearch]="isPaginatedFilter(filter.name)"
-                        style="width: 100%"
-                        [compareWith]="compareSelectValues"
-                        (nzOnSearch)="isPaginatedFilter(filter.name) ? onSelectSearch(filter.name, $event) : null"
-                        (nzScrollToBottom)="isPaginatedFilter(filter.name) ? onSelectScrollToBottom(filter.name) : null"
-                      >
-                        @for (option of filterOptions[filter.name]; track option) {
-                          <nz-option [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
-                        }
-                        <!-- Loading more indicator for paginated selects -->
-                        @if (isPaginatedFilter(filter.name) && isPaginatedLoading(filter.name)) {
-                          <nz-option nzDisabled nzCustomContent>
-                            <div class="flex items-center justify-center py-2">
-                              <nz-spin nzSimple [nzSize]="'small'"></nz-spin>
-                              <span class="ml-2 text-gray-500">Loading more...</span>
-                            </div>
-                          </nz-option>
-                        }
-                      </nz-select>
-                    }
-                    @if (filter.note) {
-                      <div class="form-note">
-                        <small class="text-muted italic">{{ filter.note }}</small>
-                      </div>
-                    }
-                  </nz-form-control>
-                </div>
-              }
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2.5 p-4">
-            <button
-              nz-button
-              nzType="primary"
-              type="submit"
-              [nzLoading]="isLoading"
-              class="flex items-center justify-center gap-2"
-            >
-              Apply
-            </button>
-            <button nz-button nzType="default" (click)="onClear()">Clear</button>
-          </div>
-        </form>
-      </ng-container>
-    </nz-drawer>
+    <!-- Table Filter Drawer Component -->
+    <app-table-filter-drawer
+      [visible]="isDrawerVisible"
+      [filters]="filters"
+      [filterForm]="filterForm"
+      [filterOptions]="filterOptions"
+      [isLoadingOptions]="isLoadingOptions"
+      [isLoading]="isLoading"
+      [searchText]="drawerSearchText"
+      [appliedSearchText]="appliedSearchText"
+      [paginatedOptions]="paginatedOptions"
+      [compareSelectValues]="compareSelectValues"
+      (closeDrawer)="closeDrawer()"
+      (onFilter)="onFilter()"
+      (onClear)="onClear()"
+      (searchTextChange)="drawerSearchText = $event; onDrawerSearchTextChange()"
+      (onSelectSearch)="onSelectSearch($event.filterName, $event.searchText)"
+      (onSelectScrollToBottom)="onSelectScrollToBottom($event)"
+      [isPaginatedFilter]="isPaginatedFilter.bind(this)"
+      [isPaginatedLoading]="isPaginatedLoading.bind(this)"
+    ></app-table-filter-drawer>
   </div>
 }

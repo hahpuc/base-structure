@@ -15,12 +15,11 @@ import {
   Subject,
   debounceTime,
   distinctUntilChanged,
-  takeUntil,
   forkJoin,
-  of,
-  tap,
-  switchMap,
   map,
+  of,
+  takeUntil,
+  tap,
 } from 'rxjs';
 
 import { BaseQuery, ListPaginate } from '../../types/base';

@@ -1,0 +1,124 @@
+<nz-drawer
+  [nzClosable]="true"
+  [nzVisible]="visible"
+  nzPlacement="right"
+  nzTitle="Filter"
+  nzWidth="320px"
+  (nzOnClose)="closeDrawer.emit()"
+>
+  <ng-container *nzDrawerContent>
+    <form [formGroup]="filterForm" (ngSubmit)="onFilter.emit()" class="flex flex-col h-full">
+      <div class="px-0 pt-3.5 flex-1 overflow-y-auto">
+        <!-- Search input in drawer (synced with main search) -->
+        <div class="mb-4">
+          <span class="text-sm font-medium text-gray-700"> Search </span>
+          <div class="kt-input relative">
+            <i class="ki-filled ki-magnifier"></i>
+            <input
+              placeholder="Search..."
+              type="text"
+              [ngModel]="searchText"
+              (ngModelChange)="handleSearchTextChange($event)"
+              [ngModelOptions]="{ standalone: true }"
+            />
+            <!-- Clear search icon -->
+            @if (searchText && searchText.trim()) {
+              <button
+                (click)="clearDrawerSearchText()"
+                class="clear-search-btn absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer p-1 bg-transparent border-none rounded-full flex items-center justify-center"
+                type="button"
+              >
+                <i class="ki-filled ki-cross text-sm"></i>
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Item Filters -->
+        <div class="flex flex-col space-y-4">
+          @for (filter of filters; track filter) {
+            <div class="space-y-2">
+              <span class="text-sm font-medium text-gray-700">
+                {{ filter.label }}
+              </span>
+
+              <nz-form-control>
+                <!-- Text Input -->
+                @if (filter.type === 'text') {
+                  <input nz-input [formControlName]="filter.name" [placeholder]="filter.label" />
+                }
+
+                <!-- Number Input -->
+                @if (filter.type === 'number') {
+                  <nz-input-number
+                    [formControlName]="filter.name"
+                    [nzPlaceHolder]="filter.label"
+                    style="width: 100%"
+                  ></nz-input-number>
+                }
+
+                <!-- Date Picker -->
+                @if (filter.type === 'date') {
+                  <nz-date-picker
+                    [formControlName]="filter.name"
+                    [nzPlaceHolder]="filter.label"
+                    style="width: 100%"
+                  ></nz-date-picker>
+                }
+
+                <!-- Select Dropdown -->
+                @if (filter.type === 'select') {
+                  <nz-select
+                    [formControlName]="filter.name"
+                    [nzPlaceHolder]="filter.label"
+                    nzAllowClear
+                    [nzLoading]="isLoadingOptions[filter.name] || isPaginatedLoading(filter.name)"
+                    [nzShowSearch]="filter.searchable || isPaginatedFilter(filter.name)"
+                    [nzServerSearch]="isPaginatedFilter(filter.name)"
+                    style="width: 100%"
+                    [compareWith]="compareSelectValues"
+                    (nzOnSearch)="isPaginatedFilter(filter.name) ? handleSelectSearch(filter.name, $event) : null"
+                    (nzScrollToBottom)="isPaginatedFilter(filter.name) ? handleSelectScrollToBottom(filter.name) : null"
+                  >
+                    @for (option of filterOptions[filter.name]; track option) {
+                      <nz-option [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+                    }
+
+                    <!-- Loading more indicator for paginated selects -->
+                    @if (isPaginatedFilter(filter.name) && isPaginatedLoading(filter.name)) {
+                      <nz-option nzDisabled nzCustomContent>
+                        <div class="flex items-center justify-center py-2">
+                          <nz-spin nzSimple [nzSize]="'small'"></nz-spin>
+                          <span class="ml-2 text-gray-500">Loading more...</span>
+                        </div>
+                      </nz-option>
+                    }
+                  </nz-select>
+                }
+
+                @if (filter.note) {
+                  <div class="form-note">
+                    <small class="text-muted italic">{{ filter.note }}</small>
+                  </div>
+                }
+              </nz-form-control>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2.5 p-4">
+        <button
+          nz-button
+          nzType="primary"
+          type="submit"
+          [nzLoading]="isLoading"
+          class="flex items-center justify-center gap-2"
+        >
+          Apply
+        </button>
+        <button nz-button nzType="default" type="button" (click)="onClear.emit()">Clear</button>
+      </div>
+    </form>
+  </ng-container>
+</nz-drawer>
