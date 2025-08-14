@@ -16,13 +16,9 @@ import {
   debounceTime,
   distinctUntilChanged,
   forkJoin,
-  map,
-  of,
   takeUntil,
   tap,
 } from 'rxjs';
-
-import { BaseQuery, ListPaginate } from '../../types/base';
 
 import {
   ActiveFilter,
@@ -33,12 +29,14 @@ import {
   SelectOption,
   TableFilter,
 } from './table-filter.model';
+import { TableFilterService } from './table-filter.service';
 
 @Component({
   standalone: false,
   selector: 'app-table-filter',
   templateUrl: './table-filter.component.html',
   styleUrls: ['./table-filter.component.scss'],
+  providers: [TableFilterService],
 })
 export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
   @Input() filters: TableFilter[] = [];
@@ -68,8 +66,10 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private filterService: TableFilterService
   ) {
+    // Form will be initialized in ngOnInit
     this.filterForm = this.fb.group({});
   }
 
@@ -118,28 +118,11 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private initializeForm() {
-    const formControls: { [key: string]: unknown[] } = {};
-
-    this.filters.forEach(filter => {
-      let initialValue: unknown = this.initialFilterValues[filter.name] || null;
-
-      // Convert string values to proper types for select filters
-      if (initialValue !== null && filter.type === 'select' && Array.isArray(filter.options)) {
-        // Find the matching option to get the correct type
-        const matchingOption = filter.options.find(
-          option => String(option.value) === String(initialValue)
-        );
-        if (matchingOption) {
-          initialValue = matchingOption.value;
-        }
-      }
-
-      formControls[filter.name] = [initialValue];
-      this.isLoadingOptions[filter.name] = false;
-      this.filterOptions[filter.name] = [];
-    });
-
+    const { formControls, filterOptions, isLoadingOptions } =
+      this.filterService.initializeFormControls(this.filters, this.initialFilterValues);
     this.filterForm = this.fb.group(formControls);
+    this.filterOptions = filterOptions;
+    this.isLoadingOptions = isLoadingOptions;
   }
 
   private updateFormWithInitialValues() {
@@ -212,10 +195,17 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
     this.filters.forEach(filter => {
       if (filter.type === 'select' && filter.options && !filter.parent) {
         if (typeof filter.options === 'function') {
-          // This is an async loader
-          asyncLoaders.push(this.loadOptionsForFilterAsync(filter));
+          // Use service for async loader
+          asyncLoaders.push(
+            this.filterService.loadOptionsForFilterAsync(filter, this.destroy$).pipe(
+              tap(options => {
+                this.filterOptions[filter.name] = options;
+                this.isLoadingOptions[filter.name] = false;
+              })
+            )
+          );
+          this.isLoadingOptions[filter.name] = true;
         } else if (Array.isArray(filter.options)) {
-          // Static options, load immediately
           this.filterOptions[filter.name] = filter.options;
         }
       }
@@ -240,106 +230,16 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  private loadOptionsForFilterAsync(filter: TableFilter): Observable<SelectOption[]> {
-    this.isLoadingOptions[filter.name] = true;
-
-    if (typeof filter.options === 'function') {
-      // Check if this filter uses pagination or getAll approach
-      if (filter.usePagination) {
-        // Use paginated API - expects BaseQuery parameters
-        return this.loadPaginatedOptions(filter);
-      } else {
-        // Use getAll() API - no parameters required
-        // Cast to the correct function type that takes no parameters
-        const getAllFunction = filter.options as () => Observable<SelectOption[]>;
-        return getAllFunction().pipe(
-          takeUntil(this.destroy$),
-          tap({
-            next: (options: SelectOption[]) => {
-              this.filterOptions[filter.name] = options;
-              this.isLoadingOptions[filter.name] = false;
-            },
-            error: () => {
-              this.isLoadingOptions[filter.name] = false;
-            },
-          })
-        );
-      }
-    }
-
-    // Fallback for static options (shouldn't happen in this context)
-    return of([]);
-  }
-
   private loadPaginatedOptions(
     filter: TableFilter,
     searchText = '',
     page = 1
   ): Observable<SelectOption[]> {
-    if (typeof filter.options !== 'function') {
-      return of([]);
-    }
-
-    const query: BaseQuery = {
-      page,
-      limit: filter.pageSize || 20,
-      ...(searchText ? { filter: searchText } : {}),
-    };
-
-    // Initialize pagination state if not exists
-    if (!this.paginatedOptions[filter.name]) {
-      this.paginatedOptions[filter.name] = {
-        options: [],
-        hasMore: true,
-        currentPage: 0,
-        pageSize: filter.pageSize || 20,
-        total: 0,
-        loading: false,
-        searchText: '',
-      };
-    }
-
-    const paginatedState = this.paginatedOptions[filter.name];
-    paginatedState.loading = true;
-
-    return (filter.options(query) as Observable<ListPaginate<unknown>>).pipe(
-      takeUntil(this.destroy$),
-      map((response: ListPaginate<unknown>) => {
-        // Convert paginated response to SelectOption[]
-        const newOptions = response.data.map(item => {
-          const record = item as Record<string, unknown>;
-          return {
-            label: (record['name'] || record['title'] || record['label'] || String(item)) as string,
-            value: record['id'] || item,
-          };
-        });
-
-        // Update pagination state
-        if (page === 1) {
-          // First page or new search - replace options
-          paginatedState.options = newOptions;
-        } else {
-          // Subsequent pages - append options
-          paginatedState.options = [...paginatedState.options, ...newOptions];
-        }
-
-        paginatedState.currentPage = page;
-        paginatedState.total = response.total_records;
-        paginatedState.hasMore = page < response.total_pages;
-        paginatedState.loading = false;
-        paginatedState.searchText = searchText;
-
-        // Update filter options for the component
-        this.filterOptions[filter.name] = paginatedState.options;
+    return this.filterService.loadPaginatedOptions(filter, searchText, page, this.destroy$).pipe(
+      tap(options => {
+        // You may want to update paginatedOptions state here if needed
+        this.filterOptions[filter.name] = options;
         this.isLoadingOptions[filter.name] = false;
-
-        return paginatedState.options;
-      }),
-      tap({
-        error: () => {
-          paginatedState.loading = false;
-          this.isLoadingOptions[filter.name] = false;
-        },
       })
     );
   }
@@ -358,79 +258,31 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
   }
   private setupSearchDebounce() {
     // Main search text - auto debounce and call API
-    this.searchSubject$
-      .pipe(debounceTime(500), distinctUntilChanged(), takeUntil(this.destroy$))
-      .subscribe(() => {
-        // Auto apply for main search
-        this.drawerSearchText = this.searchText;
-        this.appliedSearchText = this.searchText;
-        this.updateActiveFilters();
-        this.onFilter();
-      });
+    this.filterService.setupDebounce(this.searchSubject$, 500, this.destroy$, () => {
+      this.drawerSearchText = this.searchText;
+      this.appliedSearchText = this.searchText;
+      this.updateActiveFilters();
+      this.onFilter();
+    });
 
     // Drawer search text - no auto apply, only update when Apply button is clicked
-    this.drawerSearchSubject$
-      .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
-      .subscribe(() => {
-        // No automatic updates - only when Apply is clicked
-      });
+    this.filterService.setupDebounce(this.drawerSearchSubject$, 300, this.destroy$, () => {
+      // No automatic updates - only when Apply is clicked
+    });
   }
 
   private loadDependentOptions(filter: TableFilter, parentValue: unknown) {
-    if (filter.type === 'select' && filter.options && typeof filter.options === 'function') {
-      this.isLoadingOptions[filter.name] = true;
-
-      if (filter.usePagination) {
-        // For paginated dependent filters, we need to pass the parent value through the query
-        const query: BaseQuery = {
-          page: 1,
-          limit: filter.pageSize || 20,
-          ...(filter.parent ? { [filter.parent.filterName]: parentValue } : {}),
-        };
-
-        (filter.options(query) as Observable<ListPaginate<unknown>>)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (response: ListPaginate<unknown>) => {
-              // Convert paginated response to SelectOption[]
-              const options = response.data.map(item => {
-                const record = item as Record<string, unknown>;
-                return {
-                  label: (record['name'] ||
-                    record['title'] ||
-                    record['label'] ||
-                    String(item)) as string,
-                  value: record['id'] || item,
-                };
-              });
-              this.filterOptions[filter.name] = options;
-              this.isLoadingOptions[filter.name] = false;
-            },
-            error: () => {
-              this.isLoadingOptions[filter.name] = false;
-            },
-          });
-      } else {
-        // For non-paginated dependent filters, we need to handle differently
-        // Since getAll() doesn't take parameters, we might need to filter client-side
-        // or use a different approach for dependent filters
-
-        // For now, call getAll() and filter client-side (not ideal for large datasets)
-        const getAllFunction = filter.options as () => Observable<SelectOption[]>;
-        getAllFunction()
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: options => {
-              // TODO: Add client-side filtering based on parentValue if needed
-              this.filterOptions[filter.name] = options;
-              this.isLoadingOptions[filter.name] = false;
-            },
-            error: () => {
-              this.isLoadingOptions[filter.name] = false;
-            },
-          });
+    this.filterService.loadDependentOptions(
+      filter,
+      parentValue,
+      this.destroy$,
+      options => {
+        this.filterOptions[filter.name] = options;
+      },
+      loading => {
+        this.isLoadingOptions[filter.name] = loading;
       }
-    }
+    );
   }
 
   // MARK: - Filter Actions
@@ -511,49 +363,12 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
 
   // MARK: - Active Filters Management
   updateActiveFilters() {
-    this.activeFilters = [];
-
-    // Add applied search text to active filters if present
-    if (this.appliedSearchText?.trim()) {
-      this.activeFilters.push({
-        filter: {
-          name: 'filter',
-          label: 'Search',
-          type: 'text',
-        } as TableFilter,
-        value: this.appliedSearchText,
-        displayValue: this.appliedSearchText,
-      });
-    }
-
-    // Add applied form filters to active filters
-    this.filters.forEach(filter => {
-      const value = this.appliedFilters[filter.name];
-      if (value !== null && value !== undefined && value !== '') {
-        let displayValue = value.toString();
-
-        // For select filters, get the display label
-        if (filter.type === 'select' && this.filterOptions[filter.name]) {
-          const option = this.filterOptions[filter.name].find(opt =>
-            this.compareSelectValues(opt.value, value)
-          );
-          if (option) {
-            displayValue = option.label;
-          }
-        }
-
-        // Format date values
-        if (filter.type === 'date' && value instanceof Date) {
-          displayValue = value.toLocaleDateString();
-        }
-
-        this.activeFilters.push({
-          filter,
-          value,
-          displayValue,
-        });
-      }
-    });
+    this.activeFilters = this.filterService.formatActiveFilters(
+      this.filters,
+      this.appliedFilters,
+      this.appliedSearchText,
+      this.filterOptions
+    );
   }
 
   removeActiveFilter(filterToRemove: ActiveFilter) {
@@ -630,10 +445,7 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
   // MARK: - Utility Functions
   // Compare function for select values to ensure proper selection
   compareSelectValues = (o1: unknown, o2: unknown): boolean => {
-    if (o1 === null || o2 === null || o1 === undefined || o2 === undefined) {
-      return o1 === o2;
-    }
-    return o1.toString() === o2.toString();
+    return this.filterService.compareSelectValues(o1, o2);
   };
 
   openDrawer() {
