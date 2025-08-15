@@ -216,7 +216,7 @@ export class BlogPostCreateEditComponent extends AppBaseComponent implements OnI
           name: 'content',
           label: 'Content',
           type: 'richtext',
-          required: false,
+          required: true,
           placeholder: 'Enter content',
           span: 24,
         },

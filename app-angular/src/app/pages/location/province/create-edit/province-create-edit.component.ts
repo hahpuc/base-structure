@@ -95,7 +95,7 @@ export class ProvinceCreateEditComponent extends AppBaseComponent implements OnI
   private async createProvince(formValue: Record<string, unknown>): Promise<void> {
     const createData: CreateProvince = {
       name: formValue['name'] as string,
-      status: formValue['status'] as EStatus,
+      status: (formValue['status'] as boolean) ? EStatus.active : EStatus.inactive,
     };
 
     await firstValueFrom(this.provinceService.create(createData));

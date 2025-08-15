@@ -39,12 +39,9 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 import { NzTreeModule } from 'ng-zorro-antd/tree';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { QuillModule } from 'ngx-quill';
 
-import { FormComponent } from './components/form/form.component';
+import { AppFormModule } from './components/form/form.module';
 import { ProgressBarComponent } from './components/progress-bar/progress-bar.component';
-import { RichTextComponent } from './components/rich-text/rich-text.component';
 import { TableComponent } from './components/table/table.component';
 import { TableFilterDrawerComponent } from './components/table-filter/drawer/table-filter-drawer.component';
 import { TableFilterSearchComponent } from './components/table-filter/search/table-filter-search.component';
@@ -70,7 +67,6 @@ const layouts = [
 
 const components = [
   ToastComponent,
-  FormComponent,
   ProgressBarComponent,
   TableComponent,
   TableFilterComponent,
@@ -78,7 +74,6 @@ const components = [
   TableFilterDrawerComponent,
   TableFilterSearchComponent,
   HeaderComponent,
-  RichTextComponent,
 ];
 
 const directives = [ThrottleClickDirective];
@@ -126,13 +121,14 @@ const antD = [
 @NgModule({
   declarations: [...layouts, ...components, ...directives, ...pipes],
   imports: [
-    ReactiveFormsModule,
     CommonModule,
+    ReactiveFormsModule,
     RouterModule,
     NgOptimizedImage,
     ScrollingModule,
     FormsModule,
-    QuillModule.forRoot(),
+
+    AppFormModule,
     ...antD,
   ],
   exports: [
@@ -140,6 +136,7 @@ const antD = [
     ReactiveFormsModule,
     RouterModule,
     FormsModule,
+    AppFormModule,
     ...layouts,
     ...components,
     ...antD,
