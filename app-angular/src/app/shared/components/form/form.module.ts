@@ -18,7 +18,6 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { QuillModule } from 'ngx-quill';
 
 import { RichTextComponent } from './controls/rich-text/rich-text.component';

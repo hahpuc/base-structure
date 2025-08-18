@@ -80,6 +80,8 @@ const directives = [ThrottleClickDirective];
 
 const pipes = [SafeHtmlPipe];
 
+const customModule = [AppFormModule];
+
 const antD = [
   NzLayoutModule,
   NzBreadCrumbModule,
@@ -128,8 +130,8 @@ const antD = [
     ScrollingModule,
     FormsModule,
 
-    AppFormModule,
     ...antD,
+    ...customModule,
   ],
   exports: [
     CommonModule,

@@ -7,7 +7,6 @@ import {
   ValidationErrors,
   Validator,
 } from '@angular/forms';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { ContentChange } from 'ngx-quill';
 
 @Component({

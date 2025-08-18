@@ -13,9 +13,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
-import { PermissionService } from '../../services/permission.service';
 import { ListPaginate } from '../../types/base';
 
+import { TableDataService } from './services/table-data.service';
+import { TablePermissionService } from './services/table-permission.service';
+import { getNestedValue, setNestedValue, truncateText } from './table-utils';
 import {
   CheckedIdMap,
   FilterParams,
@@ -65,8 +67,9 @@ export class TableComponent<T extends TableRowData = TableRowData>
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    private permissionService: PermissionService,
-    private modal: NzModalService
+    private modal: NzModalService,
+    private tableDataService: TableDataService<T>,
+    private tablePermissionService: TablePermissionService<T>
   ) {}
 
   protected getQueryParam(param: string): string | null {
@@ -200,21 +203,16 @@ export class TableComponent<T extends TableRowData = TableRowData>
       ...this.currentFilters,
     };
 
-    if (Array.isArray(this.option.data)) {
-      this._loadStaticData();
-      return;
-    }
+    const result = this.tableDataService.loadData(this.option, params);
 
-    // Get Dynamic data from API
-    (this.option.data(params) as Observable<ListPaginate<T>>)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
+    if (result && typeof (result as Observable<ListPaginate<T>>).subscribe === 'function') {
+      // Dynamic data (Observable)
+      (result as Observable<ListPaginate<T>>).pipe(takeUntil(this.destroy$)).subscribe({
         next: response => {
           this.tableData = response.data;
           this.total = response.total_records;
           this.loading = false;
           this.updateSelection();
-          // Trigger change detection to recalculate action column width
           this.cdr.detectChanges();
         },
         error: () => {
@@ -222,6 +220,15 @@ export class TableComponent<T extends TableRowData = TableRowData>
           this.cdr.detectChanges();
         },
       });
+    } else if (result) {
+      // Static data (ListPaginate<T>)
+      const response = result as ListPaginate<T>;
+      this.tableData = response.data;
+      this.total = response.total_records;
+      this.loading = false;
+      this.updateSelection();
+      this.cdr.detectChanges();
+    }
   }
 
   refresh() {
@@ -310,15 +317,11 @@ export class TableComponent<T extends TableRowData = TableRowData>
 
   getSortFn(column: TableColumn<T>) {
     if (!column.sortable) return null;
-
     return (a: T, b: T) => {
-      const aValue = this.getNestedValue(a, column.name);
-      const bValue = this.getNestedValue(b, column.name);
-
-      // Handle comparison of unknown types safely
+      const aValue = getNestedValue(a, column.name);
+      const bValue = getNestedValue(b, column.name);
       const aStr = String(aValue ?? '');
       const bStr = String(bValue ?? '');
-
       if (aStr < bStr) return -1;
       if (aStr > bStr) return 1;
       return 0;
@@ -399,32 +402,26 @@ export class TableComponent<T extends TableRowData = TableRowData>
   }
 
   getColumnValue(row: T, column: TableColumn<T>): unknown {
-    const value = this.getNestedValue(row, column.name);
-
+    const value = getNestedValue(row, column.name);
     if ((column.type === 'status' || column.type === 'switch') && typeof value === 'number') {
       return value === 1;
     }
-
     return value;
   }
 
   getDateValue(row: T, column: TableColumn<T>): Date | string | number | null | undefined {
-    const value = this.getNestedValue(row, column.name);
-
+    const value = getNestedValue(row, column.name);
     if (value === null || value === undefined) {
       return value;
     }
-
     if (value instanceof Date || typeof value === 'string' || typeof value === 'number') {
       return value;
     }
-
     return String(value);
   }
 
   getNumberValue(row: T, column: TableColumn<T>): number | null | undefined {
-    const value = this.getNestedValue(row, column.name);
-
+    const value = getNestedValue(row, column.name);
     if (value === null || value === undefined) {
       return value;
     }
@@ -438,7 +435,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
   }
 
   getStringValue(row: T, column: TableColumn<T>): string {
-    const value = this.getNestedValue(row, column.name);
+    const value = getNestedValue(row, column.name);
     return String(value ?? '');
   }
 
@@ -491,8 +488,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
   }
 
   onStatusChange(row: T, column: TableColumn<T>, newValue: boolean) {
-    this.setNestedValue(row, column.name, newValue ? 1 : 0);
-
+    setNestedValue(row, column.name, newValue ? 1 : 0);
     if (column.click) {
       column.click(row);
     }
@@ -569,31 +565,8 @@ export class TableComponent<T extends TableRowData = TableRowData>
     }
   }
 
-  // MARK: Utility methods
-  private getNestedValue(obj: Record<string, unknown>, path: string): unknown {
-    return path.split('.').reduce((current: unknown, prop: string) => {
-      if (current && typeof current === 'object' && prop in current) {
-        return (current as Record<string, unknown>)[prop];
-      }
-      return undefined;
-    }, obj);
-  }
-
-  private setNestedValue(obj: Record<string, unknown>, path: string, value: unknown): void {
-    const keys = path.split('.');
-    const lastKey = keys.pop();
-
-    if (!lastKey) return;
-
-    const target = keys.reduce((current, key) => {
-      return (current as Record<string, unknown>)[key] as Record<string, unknown>;
-    }, obj);
-    target[lastKey] = value;
-  }
-
   truncateText(text: string, length: number): string {
-    if (!text) return '';
-    return text.length > length ? text.substring(0, length) + '...' : text;
+    return truncateText(text, length);
   }
 
   trackByColumn(index: number, column: TableColumn<T>): string | number {
@@ -602,77 +575,6 @@ export class TableComponent<T extends TableRowData = TableRowData>
 
   trackByData(index: number, data: T): string | number {
     return data.id || index;
-  }
-
-  // MARK: Static Data Utils
-  private _loadStaticData() {
-    if (Array.isArray(this.option.data)) {
-      // Static data - apply client-side pagination
-      let filteredData = [...this.option.data];
-
-      // Apply filters for static data if needed
-      if (Object.keys(this.currentFilters).length > 0) {
-        filteredData = this._applyFiltersToStaticData(filteredData, this.currentFilters);
-      }
-
-      // Apply sorting for static data if needed
-      if (this.currentSort) {
-        filteredData = this._applySortingToStaticData(filteredData, this.currentSort);
-      }
-
-      this.total = filteredData.length;
-
-      // Apply pagination
-      const startIndex = (this.currentPage - 1) * this.pageSize;
-      const endIndex = startIndex + this.pageSize;
-      this.tableData = filteredData.slice(startIndex, endIndex);
-
-      this.loading = false;
-      this.updateSelection();
-      // Trigger change detection to recalculate action column width
-      this.cdr.detectChanges();
-    }
-  }
-
-  private _applyFiltersToStaticData(data: T[], filters: FilterParams): T[] {
-    return data.filter(item => {
-      return Object.keys(filters).every(key => {
-        const filterValue = filters[key];
-        const itemValue = this.getNestedValue(item, key);
-
-        if (filterValue === null || filterValue === undefined || filterValue === '') {
-          return true;
-        }
-
-        if (typeof filterValue === 'string') {
-          return String(itemValue ?? '')
-            .toLowerCase()
-            .includes(filterValue.toLowerCase());
-        }
-
-        return itemValue === filterValue;
-      });
-    });
-  }
-
-  private _applySortingToStaticData(data: T[], sortString: string): T[] {
-    if (!sortString) return data;
-
-    const [field, direction] = sortString.split(' ');
-    return [...data].sort((a, b) => {
-      const aValue = this.getNestedValue(a, field);
-      const bValue = this.getNestedValue(b, field);
-
-      // Convert to strings for safe comparison
-      const aStr = String(aValue ?? '');
-      const bStr = String(bValue ?? '');
-
-      if (direction === 'asc') {
-        return aStr > bStr ? 1 : -1;
-      } else {
-        return aStr < bStr ? 1 : -1;
-      }
-    });
   }
 
   // MARK: Width & Scroll
@@ -759,86 +661,29 @@ export class TableComponent<T extends TableRowData = TableRowData>
     );
   }
 
-  // MARK: PERMISSIONS
-  // Method to check if a column should be visible based on permissions
-  async isColumnVisible(column: TableColumn<T>): Promise<boolean> {
-    if (column.permission) {
-      return await this.permissionService.checkPermissions([column.permission]);
-    }
-    return true;
-  }
-
-  // Method to check if an action should be visible based on permissions and visibility function
-  async isActionVisible(action: TableAction<T>, row: T): Promise<boolean> {
-    // Check permission first
-    if (action.permission) {
-      const hasPermission = await this.permissionService.checkPermissions([action.permission]);
-      if (!hasPermission) {
-        return false;
-      }
-    }
-
-    // Check visibility function
-    if (action.visible) {
-      return action.visible(row);
-    }
-
-    return true;
-  }
-
-  // Synchronous version for template usage - caches permission results
-  private columnPermissionCache: { [key: string]: boolean } = {};
-  private actionPermissionCache: { [key: string]: boolean } = {};
-
-  // Initialize permission cache on component init
+  // MARK: PERMISSIONS (delegated to TablePermissionService)
   private async initializePermissionCache() {
-    // Cache column permissions
-    if (this.option?.columns) {
-      for (const column of this.option.columns) {
-        if (column.permission) {
-          this.columnPermissionCache[column.permission] =
-            await this.permissionService.checkPermissions([column.permission]);
-        }
-      }
-    }
-
-    // Cache action permissions
-    if (this.option?.actions) {
-      for (const action of this.option.actions) {
-        if (action.permission) {
-          this.actionPermissionCache[action.permission] =
-            await this.permissionService.checkPermissions([action.permission]);
-        }
-      }
-    }
-
-    // Trigger change detection to recalculate action column width after permissions are loaded
+    await this.tablePermissionService.initializePermissionCache(
+      this.option?.columns,
+      this.option?.actions
+    );
     this.cdr.detectChanges();
   }
 
-  // Synchronous methods for template usage
+  async isColumnVisible(column: TableColumn<T>): Promise<boolean> {
+    return this.tablePermissionService.isColumnVisible(column);
+  }
+
+  async isActionVisible(action: TableAction<T>, row: T): Promise<boolean> {
+    return this.tablePermissionService.isActionVisible(action, row);
+  }
+
   isColumnVisibleSync(column: TableColumn<T>): boolean {
-    if (column.permission) {
-      return this.columnPermissionCache[column.permission] ?? false;
-    }
-    return true;
+    return this.tablePermissionService.isColumnVisibleSync(column);
   }
 
   isActionVisibleSync(action: TableAction<T>, row: T): boolean {
-    // Check permission first
-    if (action.permission) {
-      const hasPermission = this.actionPermissionCache[action.permission] ?? false;
-      if (!hasPermission) {
-        return false;
-      }
-    }
-
-    // Check visibility function
-    if (action.visible) {
-      return action.visible(row);
-    }
-
-    return true;
+    return this.tablePermissionService.isActionVisibleSync(action, row);
   }
 
   // MARK: COLUMN RESIZING
