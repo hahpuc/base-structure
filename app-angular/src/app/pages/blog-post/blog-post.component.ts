@@ -1,4 +1,5 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { NzModalService } from 'ng-zorro-antd/modal';
 import { map } from 'rxjs';
 
 import { AppBaseComponent } from '@/app/shared/app.base.component';
@@ -19,7 +20,8 @@ export class BlogPostComponent extends AppBaseComponent implements OnInit {
   constructor(
     injector: Injector,
     private readonly blogPostService: BlogPostService,
-    private readonly categoryService: CategoryService
+    private readonly categoryService: CategoryService,
+    private readonly modal: NzModalService
   ) {
     super(injector);
   }
@@ -105,8 +107,16 @@ export class BlogPostComponent extends AppBaseComponent implements OnInit {
       {
         title: 'Content',
         name: 'content',
-        type: 'text',
-        width: '200px',
+        type: 'custom-render',
+        width: '100px',
+        click: row => {
+          this.previewContent(row.content);
+        },
+        customRender: () => {
+          return `<div class="flex items-center justify-center">
+                      <i class="ki-filled ki-eye" />
+                  </div>`;
+        },
       },
       {
         title: 'Thumbnail',
@@ -162,5 +172,26 @@ export class BlogPostComponent extends AppBaseComponent implements OnInit {
         },
       },
     ]);
+  }
+
+  previewContent(content: string): void {
+    this.modal.create({
+      nzTitle: 'Content Preview',
+      nzContent: `
+        <div>
+          ${content}
+        </div>
+      `,
+      nzFooter: null,
+      nzWidth: 'auto',
+      nzCentered: true,
+      nzStyle: {
+        'min-width': '500px',
+        'min-height': '500px',
+        'max-width': '90%',
+      },
+      nzMaskClosable: true,
+      nzKeyboard: true,
+    });
   }
 }

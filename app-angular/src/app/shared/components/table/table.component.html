@@ -219,7 +219,11 @@
 
                         <!-- Custom Render Type -->
                         @case ('custom-render') {
-                          <span [innerHTML]="getCustomRender(data, column)"> </span>
+                          <span
+                            [innerHTML]="getCustomRender(data, column)"
+                            (click)="onColumnClick(data, column)"
+                            style="cursor: pointer"
+                          ></span>
                         }
 
                         <!-- Template Type -->
