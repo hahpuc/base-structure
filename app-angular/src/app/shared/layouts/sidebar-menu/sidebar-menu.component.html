@@ -45,7 +45,7 @@
         <span
           class="kt-menu-title text-sm text-secondary-foreground font-medium kt-menu-item-here:text-mono kt-menu-item-active:text-mono kt-menu-link-hover:text-mono"
         >
-          {{ item.label }}
+          {{ item.label | translate }}
         </span>
       </a>
     </div>
@@ -78,7 +78,7 @@
           class="kt-menu-title text-sm text-secondary-foreground kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono"
           [class.font-medium]="level === 0"
         >
-          {{ item.label }}
+          {{ item.label | translate }}
         </span>
         <span
           class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-muted-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground"

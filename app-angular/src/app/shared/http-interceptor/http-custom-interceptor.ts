@@ -25,8 +25,13 @@ export const httpCustomInterceptor: HttpInterceptorFn = (request, next) => {
   };
 
   const addHeader = (req: HttpRequest<unknown>): HttpRequest<unknown> => {
+    // Skip modifying requests for static assets (e.g., /assets/i18n/)
+    if (req.url.startsWith('/assets/') || req.url.includes('/assets/')) {
+      return req;
+    }
+
     let modifiedRequest = req.clone({
-      headers: req.headers.set('locale', 'vi'),
+      headers: req.headers.set('locale', 'en'),
     });
 
     if (!req.url.startsWith('http')) {

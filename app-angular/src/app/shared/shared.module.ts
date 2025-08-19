@@ -3,6 +3,7 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
@@ -129,6 +130,7 @@ const antD = [
     NgOptimizedImage,
     ScrollingModule,
     FormsModule,
+    TranslateModule,
 
     ...antD,
     ...customModule,
@@ -139,6 +141,7 @@ const antD = [
     RouterModule,
     FormsModule,
     AppFormModule,
+    TranslateModule,
     ...layouts,
     ...components,
     ...antD,

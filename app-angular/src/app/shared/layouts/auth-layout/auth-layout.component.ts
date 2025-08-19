@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Injector } from '@angular/core';
+
+import { AppBaseComponent } from '../../app.base.component';
 
 @Component({
   selector: 'app-auth-layout',
@@ -6,6 +8,8 @@ import { Component } from '@angular/core';
   templateUrl: './auth-layout.component.html',
   styleUrls: ['./auth-layout.component.css'],
 })
-export class AuthLayoutComponent {
-  constructor() {}
+export class AuthLayoutComponent extends AppBaseComponent {
+  constructor(injector: Injector) {
+    super(injector);
+  }
 }

@@ -1,6 +1,7 @@
 import { Injector } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, NavigationExtras, Params, Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import dayjs from 'dayjs';
 import { DisabledTimeConfig } from 'ng-zorro-antd/date-picker';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -21,6 +22,7 @@ export abstract class AppBaseComponent {
   protected readonly toastService: ToastService;
   protected readonly headerService: HeaderService;
   protected readonly permissionService: PermissionService;
+  protected readonly translateService: TranslateService;
 
   protected isValidating = false;
 
@@ -39,6 +41,7 @@ export abstract class AppBaseComponent {
     this.msgService = injector.get(NzMessageService);
     this.toastService = injector.get(ToastService);
     this.headerService = injector.get(HeaderService);
+    this.translateService = injector.get(TranslateService);
   }
 
   // MARK: Navigations
@@ -310,5 +313,9 @@ export abstract class AppBaseComponent {
 
   protected setHeaderButtons(buttons: HeaderButton[]) {
     this.headerService.setButtons(buttons.filter(x => x) || []);
+  }
+
+  protected l(key: string): string {
+    return this.translateService.instant(key);
   }
 }

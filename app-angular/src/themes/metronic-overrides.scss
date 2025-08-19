@@ -18,3 +18,15 @@
         /* Primary color */
     }
 }
+
+.kt-dropdown-menu-sub {
+    a {
+        color: white !important;
+
+        &:hover {
+            background-color: oklch(27.4% .006 286.033) !important;
+        }
+
+        font-weight: 600 !important;
+    }
+}

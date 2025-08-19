@@ -179,7 +179,7 @@
     yargs "18.0.0"
     zod "3.25.75"
 
-"@angular/common@^20.0.0", "@angular/common@^20.0.0 || ^21.0.0", "@angular/common@^20.1.0", "@angular/common@20.1.0":
+"@angular/common@^20.0.0", "@angular/common@^20.0.0 || ^21.0.0", "@angular/common@^20.1.0", "@angular/common@>=16", "@angular/common@20.1.0":
   version "20.1.0"
   resolved "https://registry.npmjs.org/@angular/common/-/common-20.1.0.tgz"
   integrity sha512-RsHClHJux+4lXrHdGHVw22wekRbSjYtx6Xwjox2S+IRPP51CbX0KskAALZ9ZmtCttkYSFVtvr0S+SQrU2cu5WA==
@@ -207,7 +207,7 @@
   dependencies:
     tslib "^2.3.0"
 
-"@angular/core@^20.0.0", "@angular/core@^20.0.0 || ^21.0.0", "@angular/core@^20.1.0", "@angular/core@20.1.0":
+"@angular/core@^20.0.0", "@angular/core@^20.0.0 || ^21.0.0", "@angular/core@^20.1.0", "@angular/core@>=16", "@angular/core@20.1.0":
   version "20.1.0"
   resolved "https://registry.npmjs.org/@angular/core/-/core-20.1.0.tgz"
   integrity sha512-/dJooZi+OAACkjWgGMPrOOGikdtlTJXwdeXPJTgZSUD5L8oQMbhZFG0XW/1Hldvsti87wPjZPz67ivB7zR86VA==
@@ -1094,6 +1094,20 @@
     "@emnapi/core" "^1.4.3"
     "@emnapi/runtime" "^1.4.3"
     "@tybys/wasm-util" "^0.10.0"
+
+"@ngx-translate/core@^17.0.0":
+  version "17.0.0"
+  resolved "https://registry.npmjs.org/@ngx-translate/core/-/core-17.0.0.tgz"
+  integrity sha512-Rft2D5ns2pq4orLZjEtx1uhNuEBerUdpFUG1IcqtGuipj6SavgB8SkxtNQALNDA+EVlvsNCCjC2ewZVtUeN6rg==
+  dependencies:
+    tslib "^2.3.0"
+
+"@ngx-translate/http-loader@^17.0.0":
+  version "17.0.0"
+  resolved "https://registry.npmjs.org/@ngx-translate/http-loader/-/http-loader-17.0.0.tgz"
+  integrity sha512-hgS8sa0ARjH9ll3PhkLTufeVXNI2DNR2uFKDhBgq13siUXzzVr/a31M6zgecrtwbA34iaBV01hsTMbMS8V7iIw==
+  dependencies:
+    tslib "^2.3.0"
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"

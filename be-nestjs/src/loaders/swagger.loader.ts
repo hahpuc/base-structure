@@ -26,6 +26,14 @@ const swaggerLoader = async (app: NestExpressApplication) => {
       { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
       'refreshToken',
     )
+    .addGlobalParameters({
+      in: 'header',
+      required: true,
+      name: 'locale',
+      schema: {
+        example: 'vi',
+      },
+    })
     .build();
 
   const optionAdmin: SwaggerDocumentOptions = {

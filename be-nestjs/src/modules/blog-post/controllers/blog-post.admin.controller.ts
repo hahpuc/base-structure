@@ -35,7 +35,7 @@ export class BlogPostAdminController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  // @Auth({ permissions: 'blog_post_manage_read' })
+  @Auth({ permissions: 'blog_post_manage_read' })
   async getList(
     @Query() param: FilterBlogPostDto,
   ): Promise<ListPaginate<BlogPost>> {

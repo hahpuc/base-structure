@@ -1,0 +1,11 @@
+{
+    "hello": "Xin chào",
+    "welcome": "Chào mừng",
+    "user": "Người dùng",
+    "management_user": "Quản lý người dùng",
+    "management_account": "Quản lý tài khoản",
+    "management_location": "Quản lý địa điểm",
+    "management_article": "Quản lý bài viết",
+    "category": "Danh mục",
+    "blog_post": "Bài viết blog"
+}

@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, Injector, OnInit } from '@angular/core';
 
-import { PermissionService } from '@shared/services/permission.service';
+import { AppBaseComponent } from '../../app.base.component';
 
 export interface MenuItem {
   label: string;
@@ -18,7 +17,7 @@ export interface MenuItem {
   standalone: false,
   templateUrl: './sidebar-menu.component.html',
 })
-export class SidebarMenuComponent implements OnInit {
+export class SidebarMenuComponent extends AppBaseComponent implements OnInit {
   menuItems: MenuItem[] = [
     {
       label: 'Overview',
@@ -26,7 +25,7 @@ export class SidebarMenuComponent implements OnInit {
       icon: 'ki-home-3',
     },
     {
-      label: 'User Management',
+      label: this.l('management_user'),
       icon: 'ki-users',
       isAccordion: true,
       permissions: ['user_manage_read', 'role_manage_read'],
@@ -47,14 +46,14 @@ export class SidebarMenuComponent implements OnInit {
       ],
     },
     {
-      label: 'Account Management',
+      label: this.l('management_account'),
       icon: 'ki-profile-circle',
       isAccordion: true,
       permissions: 'user_manage_read',
       children: [{ label: 'Default', path: '/profile', icon: '', permissions: 'user_manage_read' }],
     },
     {
-      label: 'Location Management',
+      label: this.l('management_location'),
       icon: 'ki-setting-2',
       isAccordion: true,
       permissions: ['province_manage_read', 'ward_manage_read'],
@@ -65,22 +64,23 @@ export class SidebarMenuComponent implements OnInit {
       ],
     },
     {
-      label: 'Article Management',
+      label: this.l('management_article'),
       icon: 'ki-security-user',
       isAccordion: true,
+      permissions: ['category_manage_read', 'blog_post_manage_read'],
+      permissionMode: 'all',
       children: [
-        { label: 'Category', path: '/category', icon: '', permissions: [] },
-        { label: 'Blog Post', path: '/blog-post', icon: '', permissions: [] },
+        { label: this.l('category'), path: '/category', icon: '', permissions: [] },
+        { label: this.l('blog_post'), path: '/blog-post', icon: '', permissions: [] },
       ],
     },
   ];
 
   filteredMenuItems: MenuItem[] = [];
 
-  constructor(
-    private router: Router,
-    private permissionService: PermissionService
-  ) {}
+  constructor(injector: Injector) {
+    super(injector);
+  }
 
   async ngOnInit(): Promise<void> {
     await this.filterMenuByPermissions();
@@ -94,7 +94,7 @@ export class SidebarMenuComponent implements OnInit {
     const filteredItems: MenuItem[] = [];
 
     for (const item of items) {
-      const hasPermission = await this.hasPermission(item);
+      const hasPermission = await this.hasPermissionForItem(item);
 
       if (hasPermission) {
         const filteredItem: MenuItem = { ...item };
@@ -116,7 +116,7 @@ export class SidebarMenuComponent implements OnInit {
     return filteredItems;
   }
 
-  private async hasPermission(item: MenuItem): Promise<boolean> {
+  private async hasPermissionForItem(item: MenuItem): Promise<boolean> {
     // If no permissions are defined for this item, allow access
     if (!item.permissions) {
       return true;
@@ -146,7 +146,7 @@ export class SidebarMenuComponent implements OnInit {
 
   // Method to check if a specific menu item should be visible
   async isMenuItemVisible(item: MenuItem): Promise<boolean> {
-    return await this.hasPermission(item);
+    return await this.hasPermissionForItem(item);
   }
 
   isActiveRoute(path: string): boolean {

@@ -1,12 +1,13 @@
-import { Component, Injector } from '@angular/core';
+import { Component, Injector, AfterViewInit } from '@angular/core';
 
 import { AppBaseComponent } from '../../app.base.component';
+import { LocaleService } from '../../services/i18n.service';
 
 @Component({
   standalone: false,
   templateUrl: './main-layout.component.html',
 })
-export class MainLayoutComponent extends AppBaseComponent {
+export class MainLayoutComponent extends AppBaseComponent implements AfterViewInit {
   isSidebarOpen = false;
   currentUser = {
     name: 'Long Nguyen',
@@ -15,8 +16,33 @@ export class MainLayoutComponent extends AppBaseComponent {
       'https://media.about.nike.com/img/bb971c73-1433-41e3-97cb-4b40e62d353c/250424-nike-seoul-day1-lightbox-karina-0687-v1g-rgb-re.jpg?m=eyJlZGl0cyI6eyJqcGVnIjp7InF1YWxpdHkiOjEwMH0sIndlYnAiOnsicXVhbGl0eSI6MTAwfSwiZXh0cmFjdCI6eyJsZWZ0IjowLCJ0b3AiOjAsIndpZHRoIjozMDAwLCJoZWlnaHQiOjE2ODh9LCJyZXNpemUiOnsid2lkdGgiOjkwMH19fQ%3D%3D&s=c14a011e4279b2852fac17fb52acda20feb6980cbb3afda1535f75dd52435a58',
   };
 
-  constructor(injector: Injector) {
+  constructor(
+    injector: Injector,
+    private localeService: LocaleService
+  ) {
     super(injector);
+  }
+
+  setLanguage(lang: 'en' | 'vi') {
+    localStorage.setItem('lang', lang);
+    this.localeService.setLanguage(lang);
+    this.translateService.use(lang);
+    window.location.reload();
+  }
+
+  getLanguage() {
+    return this.localeService.getLanguage();
+  }
+
+  getLanguageLabel() {
+    const lang = this.getLanguage();
+    return lang === 'en' ? 'English' : 'Tiếng Việt';
+  }
+
+  ngAfterViewInit(): void {
+    if (typeof window !== 'undefined' && (window as any).KTDropdown) {
+      (window as any).KTDropdown.init();
+    }
   }
 
   toggleSidebar(): void {
@@ -28,5 +54,9 @@ export class MainLayoutComponent extends AppBaseComponent {
     this.authService.logout().subscribe(() => {
       this.redirect('/login');
     });
+  }
+
+  goToProfile(): void {
+    this.redirect('/profile');
   }
 }
