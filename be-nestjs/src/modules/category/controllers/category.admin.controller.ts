@@ -5,6 +5,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   Put,
@@ -19,49 +21,52 @@ import { Category } from '../repository/entities/category.entity';
 import { CategoryService } from '../services/category.service';
 
 @Controller('categories')
-@ApiTags('Categories')
+@ApiTags('Category')
 @ApiBearerAuth('accessToken')
 export class CategoryAdminController {
-  constructor(private readonly categoryService: CategoryService) {}
+  constructor(private readonly service: CategoryService) {}
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   @Auth({ permissions: 'category_manage_create' })
-  create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoryService.create(createCategoryDto);
+  async create(@Body() body: CreateCategoryDto): Promise<void> {
+    return this.service.create(body);
+  }
+
+  @Get('/all')
+  @HttpCode(HttpStatus.OK)
+  @Auth({ permissions: 'category_manage_read' })
+  async getAll(): Promise<Category[]> {
+    return await this.service.getAll();
   }
 
   @Get()
+  @HttpCode(HttpStatus.OK)
   @Auth({ permissions: 'category_manage_read' })
   async getList(
     @Query() param: FilterCategoryDto,
   ): Promise<ListPaginate<Category>> {
-    return await this.categoryService.getList(param);
+    return await this.service.getList(param);
   }
 
-  @Get('/all')
+  @Get(':id([0-9]+)')
+  @HttpCode(HttpStatus.OK)
   @Auth({ permissions: 'category_manage_read' })
-  async getAll(): Promise<Category[]> {
-    return await this.categoryService.getAll();
+  async getById(@Param('id') id: number): Promise<Category> {
+    return await this.service.getById(id);
   }
 
-  @Get(':id')
-  @Auth({ permissions: 'category_manage_read' })
-  findOne(@Param('id') id: number) {
-    return this.categoryService.findOne(id);
-  }
-
-  @Put(':id')
+  @Put()
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Auth({ permissions: 'category_manage_update' })
-  update(
-    @Param('id') id: number,
-    @Body() updateCategoryDto: UpdateCategoryDto,
-  ) {
-    return this.categoryService.update(id, updateCategoryDto);
+  async update(@Body() body: UpdateCategoryDto): Promise<void> {
+    return await this.service.update(body);
   }
 
-  @Delete(':id')
+  @Delete(':id([0-9]+)')
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Auth({ permissions: 'category_manage_delete' })
-  remove(@Param('id') id: number) {
-    return this.categoryService.remove(id);
+  async delete(@Param('id') id: number): Promise<void> {
+    return await this.service.delete(id);
   }
 }

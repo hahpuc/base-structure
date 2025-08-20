@@ -1,33 +1,30 @@
-import { EStatus } from '@app/constant/app.enum';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { SLUG_REGEX } from '@app/constant/app.constant';
 import {
-  IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
+  Matches,
   MaxLength,
 } from 'class-validator';
 
 export class CreateCategoryDto {
-  @ApiProperty()
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   @MaxLength(255)
   name: string;
 
-  @ApiProperty()
+  @Matches(SLUG_REGEX)
+  @MaxLength(255)
   @IsString()
   @IsNotEmpty()
-  @MaxLength(255)
   slug: string;
 
-  @ApiPropertyOptional()
+  @IsOptional()
   @IsString()
-  @IsOptional()
-  description?: string;
+  description: string;
 
-  @ApiPropertyOptional({ enum: EStatus })
-  @IsEnum(EStatus)
   @IsOptional()
-  status?: EStatus;
+  @IsNumber()
+  order_index: number;
 }

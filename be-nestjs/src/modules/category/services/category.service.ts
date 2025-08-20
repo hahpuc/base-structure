@@ -1,10 +1,9 @@
 import { ListPaginate } from '@common/database/types/database.type';
+import CustomError from '@common/error/exceptions/custom-error.exception';
+import { MessageService } from '@common/message/services/message.service';
 import { wrapPagination } from '@common/utils/object.util';
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { I18nService } from 'nestjs-i18n';
 
 import { CreateCategoryDto } from '../dtos/create-category.dto';
 import { FilterCategoryDto } from '../dtos/filter-category.dto';
@@ -14,19 +13,41 @@ import { CategoryRepository } from '../repository/repositories/category.reposito
 
 @Injectable()
 export class CategoryService {
-  constructor(private readonly categoryRepository: CategoryRepository) {}
+  private categoryMessage: MessageService;
 
-  async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
-    const existingCategory = await this.categoryRepository.findOne({
-      where: { slug: createCategoryDto.slug },
+  constructor(
+    private readonly categoryRepository: CategoryRepository,
+    i18nService: I18nService,
+  ) {
+    this.categoryMessage = new MessageService(i18nService, 'category');
+  }
+
+  async create(input: CreateCategoryDto): Promise<void> {
+    await this._checkSlugExist(input.slug);
+
+    const category = new Category();
+
+    Object.assign(category, {
+      ...input,
     });
 
-    if (existingCategory) {
-      throw new ConflictException('Category with this slug already exists');
-    }
+    await this.categoryRepository.save(category);
+  }
 
-    const category = this.categoryRepository.create(createCategoryDto);
-    return this.categoryRepository.save(category);
+  async getById(id: number): Promise<Category> {
+    const app = await this.categoryRepository.findOneBy({ id });
+    if (!app) {
+      throw new CustomError(
+        404,
+        'NOT_FOUND',
+        this.categoryMessage.get('NOT_FOUND'),
+      );
+    }
+    return app;
+  }
+
+  async getAll(): Promise<Category[]> {
+    return await this.categoryRepository.find();
   }
 
   async getList(params: FilterCategoryDto): Promise<ListPaginate<Category>> {
@@ -35,61 +56,46 @@ export class CategoryService {
     return wrapPagination<Category>(data, count, params);
   }
 
-  async getAll(): Promise<Category[]> {
-    return await this.categoryRepository.find();
+  async update(input: UpdateCategoryDto): Promise<void> {
+    const category = await this._getByIdOrSlug(input.id);
+
+    await this._checkSlugExist(input.slug, input.id);
+
+    Object.assign(category, { ...input });
+
+    await this.categoryRepository.save(category);
   }
 
-  async findAll(filterDto: FilterCategoryDto): Promise<[Category[], number]> {
-    return this.categoryRepository.getList(filterDto);
+  async delete(id: number): Promise<void> {
+    const app = await this.getById(id);
+    await this.categoryRepository.remove(app);
   }
 
-  async findOne(id: number): Promise<Category> {
-    const category = await this.categoryRepository.findOne({
-      where: { id },
-    });
+  private async _getByIdOrSlug(idOrSlug: number | string): Promise<Category> {
+    const category = await this.categoryRepository.findByIdOrSlug(idOrSlug);
 
     if (!category) {
-      throw new NotFoundException('Category not found');
+      throw new CustomError(
+        404,
+        'NOT_FOUND',
+        this.categoryMessage.get('NOT_FOUND'),
+      );
     }
 
     return category;
   }
 
-  async update(
-    id: number,
-    updateCategoryDto: UpdateCategoryDto,
-  ): Promise<Category> {
-    const category = await this.findOne(id);
+  private async _checkSlugExist(slug: string, id?: number): Promise<void> {
+    const category = await this.categoryRepository.findOneBy({ slug });
 
-    // Check if slug already exists (excluding current category)
-    if (updateCategoryDto.slug) {
-      const existingCategory = await this.categoryRepository.findOne({
-        where: { slug: updateCategoryDto.slug },
-      });
-
-      if (existingCategory && existingCategory.id !== id) {
-        throw new ConflictException('Category with this slug already exists');
+    if (category) {
+      if (!id || category.id !== id) {
+        throw new CustomError(
+          400,
+          'SLUG_INVALID',
+          this.categoryMessage.get('SLUG_INVALID'),
+        );
       }
     }
-
-    Object.assign(category, updateCategoryDto);
-    return this.categoryRepository.save(category);
-  }
-
-  async remove(id: number): Promise<void> {
-    const category = await this.findOne(id);
-    await this.categoryRepository.remove(category);
-  }
-
-  async findBySlug(slug: string): Promise<Category> {
-    const category = await this.categoryRepository.findOne({
-      where: { slug },
-    });
-
-    if (!category) {
-      throw new NotFoundException('Category not found');
-    }
-
-    return category;
   }
 }
