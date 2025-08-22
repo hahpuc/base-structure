@@ -51,6 +51,11 @@ const routes: Routes = [
         path: 'blog-post',
         loadChildren: () => import('@pages/blog-post/blog-post.module').then(x => x.BlogPostModule),
       },
+      {
+        path: 'flow-joint',
+        loadChildren: () =>
+          import('@pages/flow-joint/flow-joint.module').then(x => x.FlowJointModule),
+      },
     ],
   },
   {

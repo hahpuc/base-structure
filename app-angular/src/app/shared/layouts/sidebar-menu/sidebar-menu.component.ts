@@ -74,6 +74,11 @@ export class SidebarMenuComponent extends AppBaseComponent implements OnInit {
         { label: this.l('blog_post'), path: '/blog-post', icon: '', permissions: [] },
       ],
     },
+    {
+      label: 'Flow Joint',
+      icon: 'ki-graph',
+      path: '/flow-joint',
+    },
   ];
 
   filteredMenuItems: MenuItem[] = [];

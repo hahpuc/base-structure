@@ -1,0 +1,62 @@
+<div class="flex h-[650px] gap-4">
+  <!-- Toolbox (Left) -->
+  <div class="kt-card w-[220px] p-4">
+    <div class="h-[48px] flex justify-center items-center">
+      <span class="font-semibold text-gray-700 text-center">Actions</span>
+    </div>
+    <div class="kt-separator kt-separator-horizontal my-4"></div>
+    <div class="items center flex flex-col gap-2">
+      <div
+        class="fj-toolbox-item flex items-center p-2 kt-card rounded cursor-grab select-none"
+        draggable="true"
+        (dragstart)="onToolboxDragStart('rectangle', $event)"
+      >
+        <span class="inline-block w-6 h-6 bg-[#c94a46] rounded-sm mr-2"></span>
+        <span class="text-gray-700 mt-1">Action</span>
+      </div>
+      <div
+        class="fj-toolbox-item flex items-center p-2 kt-card rounded cursor-grab select-none"
+        draggable="true"
+        (dragstart)="onToolboxDragStart('polygon', $event)"
+      >
+        <span
+          class="inline-block mr-2 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-b-[24px] border-b-[#3b82f6]"
+        ></span>
+
+        <span class="text-gray-700 mt-1">Condition </span>
+      </div>
+      <!-- Add more shapes as needed -->
+    </div>
+  </div>
+
+  <!-- Paper (Center) -->
+  <div class="kt-card flex-1 flex flex-col p-4">
+    <div class="h-[48px] flex justify-center items-center">
+      <span class="font-semibold text-gray-700 text-center">Flow Paper</span>
+    </div>
+    <div class="kt-separator kt-separator-horizontal my-4"></div>
+    <div class="flex-1">
+      <div
+        id="paper-container"
+        [style.cursor]="cursor"
+        (dragover)="$event.preventDefault()"
+        (drop)="onPaperDrop($event)"
+        class="shadow rounded"
+      ></div>
+    </div>
+  </div>
+
+  <!-- Info Panel (Right) -->
+  <div class="kt-card w-[320px] p-4 border-l">
+    <div class="h-[48px] flex justify-center items-center">
+      <span class="font-semibold text-gray-700 text-center">Information</span>
+    </div>
+    <div class="kt-separator kt-separator-horizontal my-4"></div>
+
+    @if (selectedShape) {
+      <div><span class="font-semibold">Type:</span> {{ selectedShapeType }}</div>
+    } @else {
+      <div class="text-gray-400">Select a shape to see details.</div>
+    }
+  </div>
+</div>
