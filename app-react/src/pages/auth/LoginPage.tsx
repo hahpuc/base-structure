@@ -1,0 +1,109 @@
+import React, { useState } from 'react';
+import { Form, Input, Button, Checkbox, Alert } from 'antd';
+import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { Navigate, useLocation } from 'react-router-dom';
+
+import { AppDispatch, RootState } from '@/store';
+import { loginAsync, clearError } from '@/store/slices/authSlice';
+import { LoginRequest } from '@/types/auth';
+
+const LoginPage: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const location = useLocation();
+  const { loading, error, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const [rememberMe, setRememberMe] = useState(false);
+
+  // Redirect if already authenticated
+  if (isAuthenticated) {
+    const from = (location.state as any)?.from?.pathname || '/dashboard';
+    return <Navigate to={from} replace />;
+  }
+
+  const onFinish = async (values: LoginRequest) => {
+    dispatch(clearError());
+
+    const loginData: LoginRequest = {
+      username: values.username,
+      password: values.password,
+      rememberMe,
+    };
+
+    dispatch(loginAsync(loginData));
+  };
+
+  return (
+    <div className="w-full">
+      {error && (
+        <Alert
+          message="Login Failed"
+          description={error}
+          type="error"
+          showIcon
+          closable
+          className="mb-6"
+          onClose={() => dispatch(clearError())}
+        />
+      )}
+
+      <Form name="login" onFinish={onFinish} layout="vertical" size="large" autoComplete="off">
+        <Form.Item
+          label="Username"
+          name="username"
+          rules={[
+            { required: true, message: 'Please input your username!' },
+            { min: 3, message: 'Username must be at least 3 characters!' },
+          ]}
+        >
+          <Input
+            prefix={<UserOutlined className="text-gray-400" />}
+            placeholder="Enter your username"
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="Password"
+          name="password"
+          rules={[
+            { required: true, message: 'Please input your password!' },
+            { min: 6, message: 'Password must be at least 6 characters!' },
+          ]}
+        >
+          <Input.Password
+            prefix={<LockOutlined className="text-gray-400" />}
+            placeholder="Enter your password"
+          />
+        </Form.Item>
+
+        <Form.Item>
+          <div className="flex items-center justify-between">
+            <Checkbox checked={rememberMe} onChange={e => setRememberMe(e.target.checked)}>
+              Remember me
+            </Checkbox>
+            <a className="text-primary-600 hover:text-primary-500" href="#forgot">
+              Forgot password?
+            </a>
+          </div>
+        </Form.Item>
+
+        <Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={loading}
+            className="w-full h-12 text-base font-medium"
+          >
+            Sign In
+          </Button>
+        </Form.Item>
+      </Form>
+
+      <div className="text-center text-sm text-gray-600 mt-6">
+        <p>Demo credentials:</p>
+        <p className="font-mono">admin / password</p>
+      </div>
+    </div>
+  );
+};
+
+export default LoginPage;
