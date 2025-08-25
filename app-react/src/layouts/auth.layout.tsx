@@ -1,6 +1,6 @@
+import { Card, Layout } from 'antd';
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { Layout, Card } from 'antd';
 
 const { Content } = Layout;
 

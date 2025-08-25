@@ -1,5 +1,5 @@
-import { apiService } from './apiService';
-import { env } from './envService';
+import { apiService } from './api.service';
+import { env } from './env.service';
 import { LoginRequest, LoginResponse } from '@/types/auth';
 
 class AuthService {

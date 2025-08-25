@@ -3,11 +3,11 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 import { RootState } from './store';
-import AuthLayout from './layouts/AuthLayout';
-import MainLayout from './layouts/MainLayout';
-import ProtectedRoute from './guards/ProtectedRoute';
-import LoginPage from './pages/auth/LoginPage';
-import DashboardPage from './pages/dashboard/DashboardPage';
+import AuthLayout from './layouts/auth.layout';
+import MainLayout from './layouts/main.layout';
+import ProtectedRoute from './guards/protected-route';
+import LoginPage from './pages/auth/login.page';
+import DashboardPage from './pages/dashboard/dashboard.page';
 
 const App: React.FC = () => {
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);

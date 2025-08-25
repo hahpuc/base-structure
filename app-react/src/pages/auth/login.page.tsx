@@ -1,11 +1,11 @@
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Alert, Button, Checkbox, Form, Input } from 'antd';
 import React, { useState } from 'react';
-import { Form, Input, Button, Checkbox, Alert } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
 
 import { AppDispatch, RootState } from '@/store';
-import { loginAsync, clearError } from '@/store/slices/authSlice';
+import { clearError, loginAsync } from '@/store/slices/auth.slice';
 import { LoginRequest } from '@/types/auth';
 
 const LoginPage: React.FC = () => {

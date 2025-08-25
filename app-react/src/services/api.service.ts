@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { message } from 'antd';
-import { env } from './envService';
+import { env } from './env.service';
 
 class ApiService {
   private api: AxiosInstance;

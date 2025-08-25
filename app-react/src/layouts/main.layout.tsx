@@ -1,11 +1,11 @@
+import { Layout } from 'antd';
 import React from 'react';
-import { Outlet } from 'react-router-dom';
-import { Layout, theme } from 'antd';
 import { useSelector } from 'react-redux';
+import { Outlet } from 'react-router-dom';
 
+import Header from '@/components/layout/header.component';
+import Sidebar from '@/components/layout/sidebar.component';
 import { RootState } from '@/store';
-import Sidebar from '@/components/layout/Sidebar';
-import Header from '@/components/layout/Header';
 
 const { Content } = Layout;
 

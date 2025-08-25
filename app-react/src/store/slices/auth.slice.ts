@@ -1,4 +1,4 @@
-import { authService } from '@/services/authService';
+import { authService } from '@/services/auth.service';
 import { LoginRequest, TokenPayload, User } from '@/types/auth';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { jwtDecode } from 'jwt-decode';

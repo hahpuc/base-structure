@@ -12,8 +12,8 @@ import {
 } from '@ant-design/icons';
 
 import { RootState, AppDispatch } from '@/store';
-import { toggleSidebar } from '@/store/slices/uiSlice';
-import { logoutAsync } from '@/store/slices/authSlice';
+import { toggleSidebar } from '@/store/slices/ui.slice';
+import { logoutAsync } from '@/store/slices/auth.slice';
 
 const { Header: AntHeader } = Layout;
 
