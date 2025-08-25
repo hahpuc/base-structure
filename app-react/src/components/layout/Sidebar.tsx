@@ -53,7 +53,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
       theme="light"
       width={256}
     >
-      <div className="p-4 text-center border-b">
+      <div className="p-4 text-center">
         {collapsed ? (
           <h2 className="text-lg font-bold text-primary-600">A</h2>
         ) : (
@@ -61,13 +61,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
         )}
       </div>
 
-      <Menu
-        theme="light"
-        mode="inline"
-        selectedKeys={[location.pathname]}
-        items={menuItems}
-        className="border-r-0"
-      />
+      <Menu theme="light" mode="inline" selectedKeys={[location.pathname]} items={menuItems} />
     </Sider>
   );
 };

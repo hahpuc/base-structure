@@ -9,8 +9,8 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App.tsx';
 import './i18n';
 import { store } from './store';
-import './styles/antd-custom.css'; // Import Ant Design customizations first
-import './styles/index.css'; // Import Tailwind last so it can override
+import './styles/antd-custom.css';
+import './styles/index.css';
 
 const queryClient = new QueryClient({
   defaultOptions: {

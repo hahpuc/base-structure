@@ -49,7 +49,7 @@ const Header: React.FC = () => {
   ];
 
   return (
-    <AntHeader className="bg-white px-6 flex items-center justify-between shadow-sm border-b">
+    <AntHeader className="bg-white px-6 flex items-center justify-between shadow-sm">
       <div className="flex items-center">
         <Button
           type="text"
