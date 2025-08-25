@@ -1,7 +1,8 @@
-import { authService } from '@/services/auth.service';
-import { LoginRequest, TokenPayload, User } from '@/types/auth';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { jwtDecode } from 'jwt-decode';
+
+import { authService } from '@/services/auth.service';
+import { LoginRequest, TokenPayload, User } from '@/types/auth';
 
 export interface AuthState {
   isAuthenticated: boolean;

@@ -1,19 +1,19 @@
-import React from 'react';
-import { Layout, Button, Dropdown, Avatar, Space } from 'antd';
-import type { MenuProps } from 'antd';
-import { useDispatch, useSelector } from 'react-redux';
 import {
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
   BellOutlined,
-  UserOutlined,
   LogoutOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
   SettingOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
+import type { MenuProps } from 'antd';
+import { Avatar, Button, Dropdown, Layout, Space } from 'antd';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { RootState, AppDispatch } from '@/store';
-import { toggleSidebar } from '@/store/slices/ui.slice';
+import { AppDispatch, RootState } from '@/store';
 import { logoutAsync } from '@/store/slices/auth.slice';
+import { toggleSidebar } from '@/store/slices/ui.slice';
 
 const { Header: AntHeader } = Layout;
 

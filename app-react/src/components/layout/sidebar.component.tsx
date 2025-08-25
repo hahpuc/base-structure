@@ -1,13 +1,13 @@
-import React from 'react';
-import { Layout, Menu } from 'antd';
-import { Link, useLocation } from 'react-router-dom';
 import {
   DashboardOutlined,
-  UserOutlined,
+  FileTextOutlined,
   SettingOutlined,
   TeamOutlined,
-  FileTextOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
+import { Layout, Menu } from 'antd';
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 const { Sider } = Layout;
 

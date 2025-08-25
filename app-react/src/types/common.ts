@@ -1,4 +1,4 @@
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   data: T;
   message: string;
   success: boolean;
@@ -23,7 +23,7 @@ export interface BaseEntity {
   updatedAt: string;
 }
 
-export interface Dictionary<T = any> {
+export interface Dictionary<T = unknown> {
   [key: string]: T;
 }
 
@@ -40,7 +40,7 @@ export interface TableColumn {
   width?: number;
   sortable?: boolean;
   filterable?: boolean;
-  render?: (value: any, record: any, index: number) => React.ReactNode;
+  render?: (value: unknown, record: unknown, index: number) => React.ReactNode;
 }
 
 export interface QueryParams {
@@ -49,5 +49,5 @@ export interface QueryParams {
   search?: string;
   sort?: string;
   order?: 'asc' | 'desc';
-  [key: string]: any;
+  [key: string]: string | number | boolean | undefined;
 }

@@ -1,6 +1,7 @@
+import { LoginRequest, LoginResponse } from '@/types/auth';
+
 import { apiService } from './api.service';
 import { env } from './env.service';
-import { LoginRequest, LoginResponse } from '@/types/auth';
 
 class AuthService {
   private readonly baseUrl = '/auth';

@@ -8,6 +8,12 @@ import { AppDispatch, RootState } from '@/store';
 import { clearError, loginAsync } from '@/store/slices/auth.slice';
 import { LoginRequest } from '@/types/auth';
 
+interface LocationState {
+  from?: {
+    pathname: string;
+  };
+}
+
 const LoginPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
@@ -16,7 +22,8 @@ const LoginPage: React.FC = () => {
 
   // Redirect if already authenticated
   if (isAuthenticated) {
-    const from = (location.state as any)?.from?.pathname || '/dashboard';
+    const state = location.state as LocationState | null;
+    const from = state?.from?.pathname || '/dashboard';
     return <Navigate to={from} replace />;
   }
 
