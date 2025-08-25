@@ -8,7 +8,6 @@ import MainLayout from './layouts/MainLayout';
 import ProtectedRoute from './guards/ProtectedRoute';
 import LoginPage from './pages/auth/LoginPage';
 import DashboardPage from './pages/dashboard/DashboardPage';
-import './styles/antd-custom.css';
 
 const App: React.FC = () => {
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);

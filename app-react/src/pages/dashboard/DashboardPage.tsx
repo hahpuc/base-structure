@@ -1,11 +1,11 @@
-import React from 'react';
-import { Card, Row, Col, Statistic, Typography, Table, Tag } from 'antd';
 import {
-  UserOutlined,
-  ShoppingCartOutlined,
   DollarCircleOutlined,
   RiseOutlined,
+  ShoppingCartOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
+import { Card, Col, Row, Statistic, Table, Tag, Typography } from 'antd';
+import React from 'react';
 import { useSelector } from 'react-redux';
 
 import { RootState } from '@/store';

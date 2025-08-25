@@ -1,9 +1,7 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+/* Psrevent the style from overriding antd */
+@layer theme, base, antd, components, utilities;
 
-/* Custom global styles */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
 
 * {
     box-sizing: border-box;
@@ -44,7 +42,10 @@ body {
 
 /* Loading spinner */
 .loading-spinner {
-    @apply flex items-center justify-center min-h-screen;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
 }
 
 /* Fade animations */
