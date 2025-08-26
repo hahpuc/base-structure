@@ -26,18 +26,20 @@ export class PermissionsService {
     return await apiService.get(`${this.apiUrl}`);
   }
 
-  async checkPermissions(permissions: string[]): Promise<boolean> {
+  checkPermissions(permissions: string[]): boolean {
     if (!this.currentPermissions.length) {
-      this.currentPermissions = await this.getMyPermissions();
+      return false;
     }
+
     if (!permissions.length) return true;
     return permissions.every(p => this.currentPermissions.includes(p));
   }
 
-  async checkAnyPermissions(permissions: string[]): Promise<boolean> {
+  checkAnyPermissions(permissions: string[]): boolean {
     if (!this.currentPermissions.length) {
-      this.currentPermissions = await this.getMyPermissions();
+      return false;
     }
+
     if (!permissions.length) return true;
     return permissions.some(p => this.currentPermissions.includes(p));
   }

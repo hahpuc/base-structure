@@ -1,16 +1,24 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import ProtectedRoute from './guards/protected-route';
 import AuthLayout from './layouts/auth.layout';
 import MainLayout from './layouts/main.layout';
 import LoginPage from './pages/auth/login.page';
 import DashboardPage from './pages/dashboard/dashboard.page';
-import { RootState } from './store';
+import { AppDispatch, RootState } from './store';
+import { fetchPermissions } from './store/slices/permissions.slice';
 
 const App: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchPermissions());
+    }
+  }, [isAuthenticated, dispatch]);
 
   return (
     <Routes>

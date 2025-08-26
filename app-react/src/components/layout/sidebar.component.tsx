@@ -10,10 +10,11 @@ import {
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Layout, Menu } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 
-import { PermissionsService } from '@/services/permissions.service';
+import { RootState } from '@/store';
 
 const { Sider } = Layout;
 
@@ -107,13 +108,8 @@ const menuItems: MenuItem[] = [
   },
 ];
 
-interface SidebarProps {
-  collapsed: boolean;
-}
-
-// Filter menu items by permissions (async)
-const filterMenuItems = async (items: MenuItem[]): Promise<MenuItem[]> => {
-  const permsService = PermissionsService.getInstance();
+// Filter menu items by permissions (sync, using Redux permissions)
+const filterMenuItems = (items: MenuItem[], userPermissions: string[]): MenuItem[] => {
   const filtered: MenuItem[] = [];
   for (const item of items) {
     let hasPermission = true;
@@ -122,15 +118,15 @@ const filterMenuItems = async (items: MenuItem[]): Promise<MenuItem[]> => {
       const mode =
         item.permissionMode || (item.children && item.children.length > 0 ? 'any' : 'all');
       if (mode === 'any') {
-        hasPermission = await permsService.checkAnyPermissions(permsArr);
+        hasPermission = permsArr.some(p => userPermissions.includes(p));
       } else {
-        hasPermission = await permsService.checkPermissions(permsArr);
+        hasPermission = permsArr.every(p => userPermissions.includes(p));
       }
     }
     if (hasPermission) {
       const filteredItem: MenuItem = { ...item };
       if (item.children && item.children.length > 0) {
-        filteredItem.children = await filterMenuItems(item.children);
+        filteredItem.children = filterMenuItems(item.children, userPermissions);
         if (filteredItem.children.length > 0 || item.path) {
           filtered.push(filteredItem);
         }
@@ -163,9 +159,17 @@ const buildMenuItems = (items: MenuItem[], parentKey = ''): NonNullable<MenuProp
   });
 };
 
+interface SidebarProps {
+  collapsed: boolean;
+}
+
 const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
   const location = useLocation();
-  const [filteredMenu, setFilteredMenu] = useState<MenuItem[]>([]);
+
+  const { permissions: userPermissions, loading } = useSelector(
+    (state: RootState) => state.permissions
+  );
+  const filteredMenu = filterMenuItems(menuItems, userPermissions);
 
   // Find all open keys for current path (for submenu expansion)
   const getOpenKeys = (items: MenuItem[], pathname: string, parentKey = ''): string[] => {
@@ -189,12 +193,9 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
 
   const openKeys = getOpenKeys(filteredMenu, location.pathname);
 
-  useEffect(() => {
-    (async () => {
-      const filtered = await filterMenuItems(menuItems);
-      setFilteredMenu(filtered);
-    })();
-  }, []);
+  if (loading) {
+    return null; // or a loading spinner
+  }
 
   return (
     <Sider
