@@ -1,33 +1,23 @@
-import { LoginRequest, LoginResponse } from '@/types/auth';
+import type { LoginRequest, LoginResponse } from '@/types/auth';
 
 import { apiService } from './api.service';
-import { env } from './env.service';
 
 class AuthService {
   private readonly baseUrl = '/auth';
 
-  async login(loginData: LoginRequest): Promise<LoginResponse> {
-    const body = new URLSearchParams({
-      username: loginData.username,
-      password: loginData.password,
-      scope: 'admin',
-      grant_type: 'password',
-    }).toString();
-
-    const response = await fetch(`${env.api.fullUrl}${this.baseUrl}/token`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body,
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Login failed');
+  async login(input: LoginRequest): Promise<LoginResponse> {
+    const body = new URLSearchParams(
+      Object.entries({ ...input, scope: 'admin', grant_type: 'password' })
+    ).toString();
+    try {
+      return await apiService.post<LoginResponse>(`${this.baseUrl}/token`, body, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+    } catch (error: any) {
+      throw new Error(error?.response?.data?.message || error.message || 'Login failed');
     }
-
-    return response.json();
   }
 
   async logout(): Promise<void> {
@@ -35,38 +25,38 @@ class AuthService {
   }
 
   async refreshToken(): Promise<LoginResponse> {
-    const refreshToken = localStorage.getItem(env.auth.refreshTokenKey);
-
-    const response = await fetch(`${env.api.fullUrl}${this.baseUrl}/refresh`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${refreshToken}`,
-      },
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Token refresh failed');
+    const refreshToken = localStorage.getItem('refresh_token');
+    try {
+      return await apiService.post<LoginResponse>(`${this.baseUrl}/refresh`, null, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Authorization: `Bearer ${refreshToken}`,
+        },
+      });
+    } catch (error: any) {
+      throw new Error(error?.response?.data?.message || error.message || 'Token refresh failed');
     }
-
-    return response.json();
   }
 
-  async getCurrentUser() {
-    return apiService.get(`${this.baseUrl}/me`);
+  setTokenStorage(data: LoginResponse) {
+    localStorage.setItem('access_token', data.accessToken);
+    localStorage.setItem('refresh_token', data.refreshToken);
+    localStorage.setItem('user_id', data.user.id);
+    localStorage.setItem('expires_at', new Date(data.accessTokenExpiresAt).getTime().toString());
+    localStorage.setItem(
+      'refresh_token_expires_at',
+      new Date(data.refreshTokenExpiresAt).getTime().toString()
+    );
   }
 
-  async changePassword(data: { currentPassword: string; newPassword: string }): Promise<void> {
-    return apiService.post(`${this.baseUrl}/change-password`, data);
-  }
-
-  async forgotPassword(email: string): Promise<void> {
-    return apiService.post(`${this.baseUrl}/forgot-password`, { email });
-  }
-
-  async resetPassword(data: { token: string; newPassword: string }): Promise<void> {
-    return apiService.post(`${this.baseUrl}/reset-password`, data);
+  removeTokenStorage() {
+    localStorage.removeItem('remember_me');
+    localStorage.removeItem('is_change_password');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user_id');
+    localStorage.removeItem('expires_at');
+    localStorage.removeItem('refresh_token_expires_at');
   }
 }
 

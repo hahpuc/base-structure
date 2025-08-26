@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export interface UIState {
+export type UIState = {
   sidebarCollapsed: boolean;
   loading: boolean;
   theme: 'light' | 'dark';
   language: string;
-}
+};
 
 const initialState: UIState = {
   sidebarCollapsed: false,

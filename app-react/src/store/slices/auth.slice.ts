@@ -2,17 +2,25 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { jwtDecode } from 'jwt-decode';
 
 import { authService } from '@/services/auth.service';
-import { LoginRequest, TokenPayload, User } from '@/types/auth';
+import type { LoginRequest, LoginResponse, TokenPayload } from '@/types/auth';
 
-export interface AuthState {
+// MARK: Types
+export type AuthUser = {
+  id: string;
+  username: string;
+  email: string | null;
+  role?: string[];
+};
+
+export type AuthState = {
   isAuthenticated: boolean;
-  user: User | null;
+  user: AuthUser | null;
   accessToken: string | null;
   refreshToken: string | null;
   loading: boolean;
   error: string | null;
   tokenExpiration: number | null;
-}
+};
 
 const initialState: AuthState = {
   isAuthenticated: false,
@@ -24,6 +32,7 @@ const initialState: AuthState = {
   tokenExpiration: null,
 };
 
+// MARK: Functions
 // Check if user is authenticated on app load
 const checkAuthOnLoad = (): boolean => {
   const token = localStorage.getItem('access_token');
@@ -65,36 +74,38 @@ if (initialState.accessToken && checkAuthOnLoad()) {
     // If we didn't get user/token info from stored expiresAt, try decoding
     if (!initialState.user) {
       const decoded: TokenPayload = jwtDecode(initialState.accessToken as string);
+
       initialState.isAuthenticated = true;
       initialState.user = {
-        id: decoded.sub ?? decoded.uid ?? '',
-        username: decoded.username ?? '',
-        email: decoded.email ?? null,
-        role: decoded.role ?? '',
-      } as any;
+        id: decoded.claims?.user_id ?? '',
+        username: decoded.claims?.username ?? '',
+        email: decoded.claims?.email ?? null,
+      };
       if (!initialState.tokenExpiration && decoded.exp) {
         initialState.tokenExpiration = decoded.exp;
       }
     }
   } catch {
-    // Clear invalid token
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('access_token_expires_at');
+    initialState.isAuthenticated = false;
+    initialState.user = null;
     initialState.accessToken = null;
     initialState.refreshToken = null;
+    initialState.tokenExpiration = null;
+    authService.removeTokenStorage();
   }
 }
 
-// Async thunks
+// MARK: Async thunks
 export const loginAsync = createAsyncThunk(
   'auth/login',
   async (loginData: LoginRequest, { rejectWithValue }) => {
     try {
-      const response = await authService.login(loginData);
+      const response: LoginResponse = await authService.login(loginData);
+
+      authService.setTokenStorage(response);
       return response;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Login failed');
+    } catch (error) {
+      return rejectWithValue((error as Error).message || 'Login failed');
     }
   }
 );
@@ -102,8 +113,8 @@ export const loginAsync = createAsyncThunk(
 export const logoutAsync = createAsyncThunk('auth/logout', async (_, { rejectWithValue }) => {
   try {
     await authService.logout();
-  } catch (error: any) {
-    return rejectWithValue(error.response?.data?.message || 'Logout failed');
+  } catch (error) {
+    return rejectWithValue((error as Error).message || 'Logout failed');
   }
 });
 
@@ -113,12 +124,13 @@ export const refreshTokenAsync = createAsyncThunk(
     try {
       const response = await authService.refreshToken();
       return response;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Token refresh failed');
+    } catch (error) {
+      return rejectWithValue((error as Error).message || 'Token refresh failed');
     }
   }
 );
 
+// MARK: Slice
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -132,8 +144,7 @@ const authSlice = createSlice({
       state.accessToken = null;
       state.refreshToken = null;
       state.tokenExpiration = null;
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
+      authService.removeTokenStorage();
     },
   },
   extraReducers: builder => {
@@ -143,55 +154,59 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(loginAsync.fulfilled, (state, action) => {
-        // Support both snake_case (legacy) and camelCase payloads
-        const payload: any = action.payload;
-        const accessToken = payload?.accessToken ?? payload?.access_token ?? null;
-        const refreshToken = payload?.refreshToken ?? payload?.refresh_token ?? null;
-        const accessTokenExpiresAt =
-          payload?.accessTokenExpiresAt ?? payload?.access_token_expires_at ?? null;
-        const userFromPayload = payload?.user ?? null;
-
+      .addCase(loginAsync.fulfilled, (state, { payload }) => {
         state.loading = false;
-        if (!accessToken) {
+        if (!payload || !payload.accessToken) {
           state.error = 'No access token returned from login';
           return;
         }
-
         state.isAuthenticated = true;
-        state.accessToken = accessToken;
-        state.refreshToken = refreshToken;
-
-        // If server returned explicit expiresAt ISO string, store it and set tokenExpiration (seconds)
-        if (accessTokenExpiresAt) {
-          try {
-            const expiresMs = Date.parse(accessTokenExpiresAt);
-            if (!Number.isNaN(expiresMs)) {
-              state.tokenExpiration = Math.floor(expiresMs / 1000);
-              localStorage.setItem('access_token_expires_at', new Date(expiresMs).toISOString());
+        state.accessToken = payload.accessToken;
+        state.refreshToken = payload.refreshToken;
+        state.tokenExpiration = payload.accessTokenExpiresAt
+          ? Math.floor(new Date(payload.accessTokenExpiresAt).getTime() / 1000)
+          : null;
+        state.user = payload.user
+          ? {
+              id: payload.user.id,
+              username: payload.user.slug,
+              email: '',
+              role: payload.user.roles,
             }
-          } catch {
-            // ignore bad date
-          }
-        }
-
-        // If user object provided by server, map it
-        if (userFromPayload) {
-          state.user = {
-            id: userFromPayload.id ?? userFromPayload.user_id ?? '',
-            username: userFromPayload.username ?? userFromPayload.user_name ?? '',
-            email: userFromPayload.email ?? null,
-            role: (userFromPayload.scope ?? userFromPayload.role ?? '') as string,
-          } as any;
-        }
-
-        // Persist tokens
-        localStorage.setItem('access_token', accessToken);
-        if (refreshToken) localStorage.setItem('refresh_token', refreshToken);
+          : null;
       })
-      .addCase(loginAsync.rejected, (state, action) => {
+      .addCase(loginAsync.rejected, (state, { payload }) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = payload as string;
+      })
+
+      // Refresh Token
+      .addCase(refreshTokenAsync.fulfilled, (state, { payload }) => {
+        if (!payload?.accessToken) {
+          state.error = 'No access token returned from refresh';
+          return;
+        }
+        state.accessToken = payload.accessToken;
+        state.refreshToken = payload.refreshToken;
+        state.tokenExpiration = payload.accessTokenExpiresAt
+          ? Math.floor(new Date(payload.accessTokenExpiresAt).getTime() / 1000)
+          : null;
+        localStorage.setItem('access_token', payload.accessToken);
+        if (payload.refreshToken) localStorage.setItem('refresh_token', payload.refreshToken);
+        if (payload.accessTokenExpiresAt) {
+          localStorage.setItem(
+            'access_token_expires_at',
+            new Date(payload.accessTokenExpiresAt).toISOString()
+          );
+        }
+      })
+      .addCase(refreshTokenAsync.rejected, state => {
+        state.isAuthenticated = false;
+        state.user = null;
+        state.accessToken = null;
+        state.refreshToken = null;
+        state.tokenExpiration = null;
+        authService.removeTokenStorage();
       })
 
       // Logout
@@ -201,45 +216,7 @@ const authSlice = createSlice({
         state.accessToken = null;
         state.refreshToken = null;
         state.tokenExpiration = null;
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-      })
-
-      // Refresh Token
-      .addCase(refreshTokenAsync.fulfilled, (state, action) => {
-        const payload: any = action.payload;
-        const accessToken = payload?.accessToken ?? payload?.access_token ?? null;
-        const refreshToken = payload?.refreshToken ?? payload?.refresh_token ?? null;
-        const accessTokenExpiresAt =
-          payload?.accessTokenExpiresAt ?? payload?.access_token_expires_at ?? null;
-
-        if (!accessToken) {
-          state.error = 'No access token returned from refresh';
-          return;
-        }
-
-        state.accessToken = accessToken;
-        state.refreshToken = refreshToken;
-
-        if (accessTokenExpiresAt) {
-          const expiresMs = Date.parse(accessTokenExpiresAt);
-          if (!Number.isNaN(expiresMs)) {
-            state.tokenExpiration = Math.floor(expiresMs / 1000);
-            localStorage.setItem('access_token_expires_at', new Date(expiresMs).toISOString());
-          }
-        }
-
-        localStorage.setItem('access_token', accessToken);
-        if (refreshToken) localStorage.setItem('refresh_token', refreshToken);
-      })
-      .addCase(refreshTokenAsync.rejected, state => {
-        state.isAuthenticated = false;
-        state.user = null;
-        state.accessToken = null;
-        state.refreshToken = null;
-        state.tokenExpiration = null;
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
+        authService.removeTokenStorage();
       });
   },
 });

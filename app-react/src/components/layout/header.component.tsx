@@ -65,7 +65,7 @@ const Header: React.FC = () => {
 
         <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" trigger={['click']}>
           <div className="flex items-center cursor-pointer px-2 py-1 rounded hover:bg-gray-100">
-            <Avatar size="small" icon={<UserOutlined />} src={user?.avatar} className="mr-2" />
+            <Avatar size="small" icon={<UserOutlined />} src={''} className="mr-2" />
             <span className="text-sm font-medium text-gray-700">{user?.username || 'Admin'}</span>
           </div>
         </Dropdown>

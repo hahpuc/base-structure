@@ -33,7 +33,6 @@ const LoginPage: React.FC = () => {
     const loginData: LoginRequest = {
       username: values.username,
       password: values.password,
-      rememberMe,
     };
 
     dispatch(loginAsync(loginData));
