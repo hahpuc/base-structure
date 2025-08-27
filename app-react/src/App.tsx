@@ -7,6 +7,8 @@ import AuthLayout from './layouts/auth.layout';
 import MainLayout from './layouts/main.layout';
 import LoginPage from './pages/auth/login.page';
 import DashboardPage from './pages/dashboard/dashboard.page';
+import ProvincePage from './pages/province/province.page';
+import RolePage from './pages/role/role.page';
 import { AppDispatch, RootState } from './store';
 import { fetchPermissions } from './store/slices/permissions.slice';
 
@@ -38,6 +40,8 @@ const App: React.FC = () => {
         }
       >
         <Route path="dashboard" element={<DashboardPage />} />
+        <Route path="role" element={<RolePage />} />
+        <Route path="province" element={<ProvincePage />} />
         <Route path="" element={<Navigate to="/dashboard" replace />} />
       </Route>
 
