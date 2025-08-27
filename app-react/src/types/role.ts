@@ -1,7 +1,7 @@
+import { EStatus } from '@/constants/enum';
+
 import { BaseModel, BaseQuery } from './base';
 import { ListPermissionDto, PermissionRole } from './permission';
-
-import { EStatus } from '@/constants/enum';
 
 export type RoleDto = BaseModel & {
   name: string;

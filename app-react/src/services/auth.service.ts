@@ -1,41 +1,35 @@
 import type { LoginRequest, LoginResponse } from '@/types/auth';
 
-import { apiService } from './api.service';
+import { ApiClient } from './client/axios-client';
 
 class AuthService {
   private readonly baseUrl = '/auth';
 
-  async login(input: LoginRequest): Promise<LoginResponse> {
+  async login(input: LoginRequest) {
     const body = new URLSearchParams(
       Object.entries({ ...input, scope: 'admin', grant_type: 'password' })
     ).toString();
-    try {
-      return await apiService.post<LoginResponse>(`${this.baseUrl}/token`, body, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      });
-    } catch (error: any) {
-      throw new Error(error?.response?.data?.message || error.message || 'Login failed');
-    }
+
+    return await ApiClient.post<LoginResponse>(`${this.baseUrl}/token`, body, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
   }
 
-  async logout(): Promise<void> {
-    return apiService.post(`${this.baseUrl}/revoke`);
+  async logout() {
+    return await ApiClient.post<unknown>(`${this.baseUrl}/revoke`, {});
   }
 
-  async refreshToken(): Promise<LoginResponse> {
+  async refreshToken() {
     const refreshToken = localStorage.getItem('refresh_token');
-    try {
-      return await apiService.post<LoginResponse>(`${this.baseUrl}/refresh`, null, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Authorization: `Bearer ${refreshToken}`,
-        },
-      });
-    } catch (error: any) {
-      throw new Error(error?.response?.data?.message || error.message || 'Token refresh failed');
-    }
+
+    return await ApiClient.post<LoginResponse>(`${this.baseUrl}/refresh`, null, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    });
   }
 
   setTokenStorage(data: LoginResponse) {

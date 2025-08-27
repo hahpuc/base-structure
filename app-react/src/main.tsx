@@ -2,6 +2,7 @@ import { StyleProvider } from '@ant-design/cssinjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ConfigProvider } from 'antd';
 import enUS from 'antd/locale/en_US';
+import axios from 'axios';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
@@ -9,6 +10,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 import App from './App.tsx';
 import './i18n';
+import { setUpAxios } from './services/client/axios-setup.ts';
 import { store } from './store';
 import './styles/antd-custom.css';
 import './styles/index.css';
@@ -22,6 +24,8 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+setUpAxios(axios);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

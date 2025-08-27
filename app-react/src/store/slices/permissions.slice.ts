@@ -1,11 +1,12 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { ErrorResponse } from 'react-router-dom';
 
-import { PermissionsService } from '@/services/permissions.service';
+import { permissionService } from '@/services/permissions.service';
 
 export interface PermissionsState {
   permissions: string[];
   loading: boolean;
-  error: string | null;
+  error: ErrorResponse | string | null;
 }
 
 const initialState: PermissionsState = {
@@ -17,13 +18,13 @@ const initialState: PermissionsState = {
 export const fetchPermissions = createAsyncThunk(
   'permissions/fetchPermissions',
   async (_, { rejectWithValue }) => {
-    try {
-      const service = PermissionsService.getInstance();
-      const perms = await service.getMyPermissions();
-      return perms;
-    } catch (err: any) {
-      return rejectWithValue(err?.message || 'Failed to fetch permissions');
+    const result = await permissionService.getMyPermissions();
+
+    if (result.isSuccess) {
+      return result.data;
     }
+
+    return rejectWithValue(result.error || 'Failed to fetch permissions');
   }
 );
 
@@ -46,7 +47,7 @@ const permissionsSlice = createSlice({
       })
       .addCase(fetchPermissions.fulfilled, (state, action) => {
         state.loading = false;
-        state.permissions = action.payload;
+        state.permissions = action.payload ?? [];
       })
       .addCase(fetchPermissions.rejected, (state, action) => {
         state.loading = false;

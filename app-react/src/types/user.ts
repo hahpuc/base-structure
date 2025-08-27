@@ -1,7 +1,7 @@
+import { EStatus } from '@/constants/enum';
+
 import { BaseModel, BaseQuery } from './base';
 import { RoleDto } from './role';
-
-import { EStatus } from '@/constants/enum';
 
 export type UserDto = BaseModel & {
   email: string;

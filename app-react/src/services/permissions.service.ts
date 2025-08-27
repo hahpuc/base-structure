@@ -1,29 +1,20 @@
-import { apiService } from './api.service';
+import { ApiResult } from './client/api-result';
+import { ApiClient } from './client/axios-client';
 
-export class PermissionsService {
-  private static instance: PermissionsService;
+class PermissionsService {
   private currentPermissions: string[] = [];
   private readonly apiUrl: string = '/admin/permissions'; // Adjust base URL as needed
-
-  private constructor() {}
-
-  static getInstance() {
-    if (!PermissionsService.instance) {
-      PermissionsService.instance = new PermissionsService();
-    }
-    return PermissionsService.instance;
-  }
 
   clearPermissions() {
     this.currentPermissions = [];
   }
 
-  async getMyPermissions(): Promise<string[]> {
-    return await apiService.get<string[]>(`${this.apiUrl}/my-permission`);
+  async getMyPermissions(): Promise<ApiResult<string[]>> {
+    return await ApiClient.get<string[]>(`${this.apiUrl}/my-permission`);
   }
 
-  async getList(): Promise<any> {
-    return await apiService.get(`${this.apiUrl}`);
+  async getList(): Promise<ApiResult<string[]>> {
+    return await ApiClient.get<string[]>(`${this.apiUrl}`);
   }
 
   checkPermissions(permissions: string[]): boolean {
@@ -52,3 +43,5 @@ export class PermissionsService {
     return this.currentPermissions;
   }
 }
+
+export const permissionService = new PermissionsService();

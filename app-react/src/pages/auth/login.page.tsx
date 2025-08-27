@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
 
+import { ErrorResponse } from '@/services/client/api-result';
 import { AppDispatch, RootState } from '@/store';
 import { clearError, loginAsync } from '@/store/slices/auth.slice';
 import { LoginRequest } from '@/types/auth';
@@ -43,7 +44,7 @@ const LoginPage: React.FC = () => {
       {error && (
         <Alert
           message="Login Failed"
-          description={error}
+          description={(error as ErrorResponse)?.message}
           type="error"
           showIcon
           closable

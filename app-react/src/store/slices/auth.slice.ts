@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { jwtDecode } from 'jwt-decode';
 
 import { authService } from '@/services/auth.service';
+import { ApiResult, ErrorResponse } from '@/services/client/api-result';
 import type { LoginRequest, LoginResponse, TokenPayload } from '@/types/auth';
 
 // MARK: Types
@@ -18,7 +19,7 @@ export type AuthState = {
   accessToken: string | null;
   refreshToken: string | null;
   loading: boolean;
-  error: string | null;
+  error: ErrorResponse | string | null;
   tokenExpiration: number | null;
 };
 
@@ -99,34 +100,36 @@ if (initialState.accessToken && checkAuthOnLoad()) {
 export const loginAsync = createAsyncThunk(
   'auth/login',
   async (loginData: LoginRequest, { rejectWithValue }) => {
-    try {
-      const response: LoginResponse = await authService.login(loginData);
+    const resultApi: ApiResult<LoginResponse> = await authService.login(loginData);
 
-      authService.setTokenStorage(response);
-      return response;
-    } catch (error) {
-      return rejectWithValue((error as Error).message || 'Login failed');
+    if (resultApi.isSuccess) {
+      return resultApi.data;
     }
+
+    return rejectWithValue(resultApi.error || 'Login failed');
   }
 );
 
 export const logoutAsync = createAsyncThunk('auth/logout', async (_, { rejectWithValue }) => {
-  try {
-    await authService.logout();
-  } catch (error) {
-    return rejectWithValue((error as Error).message || 'Logout failed');
+  const resultApi: ApiResult<unknown> = await authService.logout();
+
+  if (resultApi.isSuccess) {
+    return;
   }
+
+  return rejectWithValue(resultApi.error || 'Logout failed');
 });
 
 export const refreshTokenAsync = createAsyncThunk(
   'auth/refreshToken',
   async (_, { rejectWithValue }) => {
-    try {
-      const response = await authService.refreshToken();
-      return response;
-    } catch (error) {
-      return rejectWithValue((error as Error).message || 'Token refresh failed');
+    const resultApi: ApiResult<LoginResponse> = await authService.refreshToken();
+
+    if (resultApi.isSuccess) {
+      return resultApi.data;
     }
+
+    return rejectWithValue(resultApi.error || 'Token refresh failed');
   }
 );
 
@@ -155,6 +158,10 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(loginAsync.fulfilled, (state, { payload }) => {
+        if (payload) {
+          authService.setTokenStorage(payload);
+        }
+
         state.loading = false;
         if (!payload || !payload.accessToken) {
           state.error = 'No access token returned from login';
