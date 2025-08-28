@@ -1,5 +1,5 @@
 import type { GetProp, TablePaginationConfig } from 'antd';
-import { Table, TableProps } from 'antd';
+import { message, Table, TableProps } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
@@ -29,19 +29,16 @@ function AppTable<T extends TableRowData>({ option, className }: AppTableProps<T
     pageSizeOptions: option.pageSizeOptions || ['10', '20', '50', '100'],
   });
 
-  // Parse URL params to query params
+  // Parse URL params to query params - now handles all URL parameters dynamically
   const getQueryParamsFromUrl = useCallback((): TableQueryParams => {
     const params: TableQueryParams = {
       page: parseInt(searchParams.get('page') || '1'),
       limit: parseInt(searchParams.get('limit') || `${option.pageSize || 10}`),
-      sort: searchParams.get('sort') || undefined,
-      order: searchParams.get('order') as 'asc' | 'desc' | undefined,
-      search: searchParams.get('search') || undefined,
     };
 
-    // Add custom filter params
+    // Add all other parameters from URL dynamically
     searchParams.forEach((value, key) => {
-      if (!['page', 'limit', 'sort', 'order', 'search'].includes(key)) {
+      if (!['page', 'limit'].includes(key) && value) {
         params[key] = value;
       }
     });
@@ -105,6 +102,8 @@ function AppTable<T extends TableRowData>({ option, className }: AppTableProps<T
         }));
       } catch (error) {
         // Handle error appropriately in production
+        const errorMessage = error || 'An error occurred';
+        message.error(String(errorMessage));
         setData([]);
       } finally {
         setLoading(false);
@@ -134,11 +133,9 @@ function AppTable<T extends TableRowData>({ option, className }: AppTableProps<T
     if (sorter && !Array.isArray(sorter)) {
       const sorterObj = sorter as Record<string, unknown>;
       if (sorterObj.order) {
-        newParams.sort = sorterObj.field as string;
-        newParams.order = sorterObj.order === 'ascend' ? 'asc' : 'desc';
+        newParams.sorting = `${sorterObj.field} ${sorterObj.order === 'ascend' ? 'asc' : 'desc'}`;
       } else {
-        newParams.sort = undefined;
-        newParams.order = undefined;
+        newParams.sorting = undefined;
       }
     }
 
@@ -148,26 +145,18 @@ function AppTable<T extends TableRowData>({ option, className }: AppTableProps<T
   // Handle search
   const handleSearch = (searchText: string) => {
     updateUrlParams({
-      search: searchText || undefined,
+      filter: searchText || undefined,
       page: 1, // Reset to first page when searching
     });
   };
 
   // Handle filter change
   const handleFilterChange = (filterParams: Record<string, unknown>) => {
-    // Get current system params (pagination, sorting, search)
-    const systemParams: Record<string, unknown> = {
-      page: 1, // Reset to first page when filtering
-    };
+    const systemParams: Record<string, unknown> = {};
 
-    // Preserve search, sort, and order if they exist
-    const searchValue = searchParams.get('search');
-    const sortValue = searchParams.get('sort');
-    const orderValue = searchParams.get('order');
-
-    if (searchValue) systemParams.search = searchValue;
-    if (sortValue) systemParams.sort = sortValue;
-    if (orderValue) systemParams.order = orderValue;
+    // Preserve sorting if it exists
+    const sortValue = searchParams.get('sorting');
+    if (sortValue) systemParams.sorting = sortValue;
 
     // Combine system params with new filter params and replace all
     updateUrlParams(
@@ -180,36 +169,50 @@ function AppTable<T extends TableRowData>({ option, className }: AppTableProps<T
   };
 
   // Convert columns to Ant Design format
-  const antdColumns: ColumnsType<T> = option.columns.map(col => ({
-    title: col.title,
-    dataIndex: col.name,
-    key: col.name,
-    width: col.width,
-    fixed: col.fixed,
-    align: col.align,
-    sorter: col.sortable,
-    ellipsis: true,
-    render: (value: unknown, record: T): React.ReactNode => {
-      if (col.customRender) {
-        return col.customRender(record);
-      }
+  const antdColumns: ColumnsType<T> = option.columns.map(col => {
+    const column: Record<string, unknown> = {
+      title: col.title,
+      dataIndex: col.name,
+      key: col.name,
+      width: col.width,
+      fixed: col.fixed,
+      align: col.align,
+      sorter: col.sortable,
+      ellipsis: true,
+      render: (value: unknown, record: T): React.ReactNode => {
+        if (col.customRender) {
+          return col.customRender(record);
+        }
 
-      switch (col.type) {
-        case 'date':
-          return value ? new Date(value as string).toLocaleDateString() : '';
-        case 'datetime':
-          return value ? new Date(value as string).toLocaleString() : '';
-        case 'boolean':
-          return value ? 'Yes' : 'No';
-        case 'number':
-          return typeof value === 'number' ? value.toLocaleString() : String(value || '');
-        default:
-          return String(value || '');
-      }
-    },
-  }));
+        switch (col.type) {
+          case 'date':
+            return value ? new Date(value as string).toLocaleDateString() : '';
+          case 'datetime':
+            return value ? new Date(value as string).toLocaleString() : '';
+          case 'boolean':
+            return value ? 'Yes' : 'No';
+          case 'number':
+            return typeof value === 'number' ? value.toLocaleString() : String(value || '');
+          default:
+            return String(value || '');
+        }
+      },
+    };
 
-  // Table props configuration
+    // Handle sorting state from URL
+    if (col.sortable) {
+      const sortingParam = searchParams.get('sorting');
+      if (sortingParam) {
+        const [sortField, sortOrder] = sortingParam.split(' ');
+        if (sortField === col.name) {
+          column.sortOrder =
+            sortOrder === 'asc' ? 'ascend' : sortOrder === 'desc' ? 'descend' : null;
+        }
+      }
+    }
+
+    return column;
+  }) as ColumnsType<T>; // Table props configuration
   const tableProps: TableProps<T> = {
     columns: antdColumns,
     dataSource: data,

@@ -1,11 +1,11 @@
 import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
-import { Button, Drawer, Input, Select, Space, Form, DatePicker, Tag } from 'antd';
-import React, { useState } from 'react';
+import { Button, DatePicker, Drawer, Form, Input, Select, Space, Tag } from 'antd';
+import React, { useEffect, useState } from 'react';
 
 import {
-  TableFilter as TableFilterType,
-  SelectOption,
   FilterValues,
+  SelectOption,
+  TableFilter as TableFilterType,
 } from './models/table-filter.model';
 
 const { Search } = Input;
@@ -25,44 +25,80 @@ export const TableFilter: React.FC<TableFilterProps> = ({
 }) => {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [form] = Form.useForm();
+  const [searchValue, setSearchValue] = useState('');
+
+  // Sync search values between main search and drawer search
+  useEffect(() => {
+    const urlSearchValue = searchParams.get('filter') || '';
+
+    setSearchValue(urlSearchValue);
+
+    form.setFieldValue('filter', urlSearchValue);
+  }, [searchParams, form]);
 
   const handleSearch = (value: string) => {
+    setSearchValue(value);
     onSearch(value);
   };
 
   const handleFilterSubmit = (values: FilterValues) => {
-    // Remove empty values
+    // Remove empty values and include all filters (including search)
     const cleanedValues = Object.entries(values).reduce(
       (acc, [key, value]) => {
         if (value !== undefined && value !== null && value !== '') {
           acc[key] = value;
+          // Also update search value state if it's the filter field
+          if (key === 'filter') {
+            setSearchValue(String(value));
+          }
         }
         return acc;
       },
       {} as Record<string, unknown>
     );
 
+    // Send all filter params including search to parent
     onFilterChange(cleanedValues);
     setDrawerVisible(false);
   };
 
   const handleFilterReset = () => {
     form.resetFields();
+    setSearchValue('');
+    onSearch('');
     onFilterChange({});
     setDrawerVisible(false);
   };
 
   // Remove individual filter
   const handleRemoveFilter = (filterName: string) => {
+    if (filterName === 'filter') {
+      setSearchValue('');
+      onSearch('');
+      // Get current values and remove only the search filter
+      const currentValues = getCurrentFilterValues();
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { filter: _removed, ...remainingFilters } = currentValues;
+      onFilterChange(remainingFilters);
+      return;
+    }
+
     const currentValues = getCurrentFilterValues();
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { [filterName]: _removed, ...remainingFilters } = currentValues;
     onFilterChange(remainingFilters);
+
+    if (form.getFieldValue(filterName) !== undefined) {
+      form.setFieldValue(filterName, undefined);
+    }
   };
 
   // Remove all filters
   const handleClearAllFilters = () => {
     // Clear search filter and all other filters by passing empty object
+    form.resetFields();
+    setSearchValue('');
     onSearch('');
     onFilterChange({});
   };
@@ -73,9 +109,11 @@ export const TableFilter: React.FC<TableFilterProps> = ({
       const option = filter.options.find(opt => String(opt.value) === String(value));
       return option ? option.label : String(value);
     }
+
     if (filter.type === 'date' && value) {
       return new Date(value as string).toLocaleDateString();
     }
+
     return String(value);
   };
 
@@ -90,10 +128,10 @@ export const TableFilter: React.FC<TableFilterProps> = ({
     }> = [];
 
     // Add search filter if present
-    const searchValue = searchParams.get('search');
+    const searchValue = searchParams.get('filter');
     if (searchValue) {
       activeFilters.push({
-        name: 'search',
+        name: 'filter',
         label: 'Search',
         value: searchValue,
         displayValue: searchValue,
@@ -116,16 +154,49 @@ export const TableFilter: React.FC<TableFilterProps> = ({
     return activeFilters;
   };
 
-  // Get current filter values from URL params
+  // Get current filter values from URL params with proper mapping
   const getCurrentFilterValues = (): FilterValues => {
     const values: FilterValues = {};
+
+    // Add search filter
+    const searchValue = searchParams.get('filter');
+    if (searchValue) {
+      values.filter = searchValue;
+    }
+
     filters.forEach(filter => {
       const value = searchParams.get(filter.name);
       if (value) {
-        values[filter.name] = value;
+        // For select filters, convert string back to proper type
+        if (filter.type === 'select' && Array.isArray(filter.options)) {
+          // Try to find matching option by value and use the original value type
+          const option = filter.options.find(opt => String(opt.value) === value);
+          values[filter.name] = option ? option.value : value;
+        } else {
+          values[filter.name] = value;
+        }
       }
     });
     return values;
+  };
+
+  // Get active filters count (excluding search)
+  const getActiveFiltersCount = (): number => {
+    const currentValues = getCurrentFilterValues();
+
+    let count = filters.filter(filter => {
+      const value = currentValues[filter.name];
+      return value !== undefined && value !== null && value !== '';
+    }).length;
+
+    if (
+      currentValues.filter !== undefined &&
+      currentValues.filter !== null &&
+      currentValues.filter !== ''
+    ) {
+      count += 1;
+    }
+    return count;
   };
 
   const renderFilterInput = (filter: TableFilterType) => {
@@ -147,6 +218,12 @@ export const TableFilter: React.FC<TableFilterProps> = ({
               allowClear
               showSearch
               optionFilterProp="children"
+              // Ensure proper value conversion for comparison
+              filterOption={(input, option) =>
+                String(option?.children || '')
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
             >
               {filter.options.map((option: SelectOption) => (
                 <Select.Option key={String(option.value)} value={option.value}>
@@ -167,19 +244,32 @@ export const TableFilter: React.FC<TableFilterProps> = ({
   return (
     <div style={{ marginBottom: 16 }}>
       <Space>
+        {/* Table Search */}
         <Search
           placeholder="Search..."
           allowClear
           enterButton={<SearchOutlined />}
           size="middle"
           onSearch={handleSearch}
-          defaultValue={searchParams.get('search') || ''}
-          style={{ width: 300 }}
+          value={searchValue}
+          onChange={e => setSearchValue(e.target.value)}
+          width={300}
         />
 
-        <Button type="primary" icon={<FilterOutlined />} onClick={() => setDrawerVisible(true)}>
-          Filters
-        </Button>
+        {/* Filter Button with Badge */}
+        <div style={{ position: 'relative' }}>
+          <Button
+            type="default"
+            variant="outlined"
+            icon={<FilterOutlined />}
+            onClick={() => setDrawerVisible(true)}
+          ></Button>
+          {getActiveFiltersCount() > 0 && (
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full min-w-[18px] h-[18px] text-xs flex items-center justify-center font-bold border border-white">
+              {getActiveFiltersCount()}
+            </span>
+          )}
+        </div>
       </Space>
 
       {/* Active Filter Tags */}
@@ -190,13 +280,7 @@ export const TableFilter: React.FC<TableFilterProps> = ({
               <Tag
                 key={activeFilter.name}
                 closable
-                onClose={() => {
-                  if (activeFilter.name === 'search') {
-                    onSearch('');
-                  } else {
-                    handleRemoveFilter(activeFilter.name);
-                  }
-                }}
+                onClose={() => handleRemoveFilter(activeFilter.name)}
                 color="blue"
               >
                 <strong>{activeFilter.label}:</strong> {activeFilter.displayValue}
@@ -204,10 +288,11 @@ export const TableFilter: React.FC<TableFilterProps> = ({
             ))}
             {getActiveFilters().length > 1 && (
               <Button
-                type="link"
+                type="text"
                 size="small"
+                icon={<FilterOutlined className="rotate-0" />}
                 onClick={handleClearAllFilters}
-                style={{ padding: 0, height: 'auto' }}
+                className="px-2 py-1 h-auto text-[#ff4d4f] text-xs"
               >
                 Clear All
               </Button>
@@ -222,6 +307,13 @@ export const TableFilter: React.FC<TableFilterProps> = ({
         width={400}
         onClose={() => setDrawerVisible(false)}
         open={drawerVisible}
+        afterOpenChange={open => {
+          if (open) {
+            // Reset form with current values when drawer opens
+            const currentValues = getCurrentFilterValues();
+            form.setFieldsValue(currentValues);
+          }
+        }}
         extra={
           <Space>
             <Button onClick={handleFilterReset}>Reset</Button>
@@ -231,12 +323,20 @@ export const TableFilter: React.FC<TableFilterProps> = ({
           </Space>
         }
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleFilterSubmit}
-          initialValues={getCurrentFilterValues()}
-        >
+        <Form form={form} layout="vertical" onFinish={handleFilterSubmit}>
+          {/* Table Search */}
+          <Form.Item className="mb-4" name="filter" label="Search">
+            <Input
+              placeholder="Enter search text"
+              allowClear
+              onChange={e => {
+                const newValue = e.target.value;
+                setSearchValue(newValue);
+                form.setFieldValue('filter', newValue);
+              }}
+            />
+          </Form.Item>
+
           {filters.map(filter => (
             <Form.Item key={filter.name} name={filter.name} label={filter.label} help={filter.note}>
               {renderFilterInput(filter)}

@@ -32,8 +32,20 @@ const ProvincePage: React.FunctionComponent = () => {
         title: 'Name',
         name: 'name',
         type: 'text',
-        sortable: false,
+        sortable: true,
         filterable: true,
+      },
+      {
+        title: 'Created At',
+        name: 'created_at',
+        type: 'datetime',
+        sortable: false,
+      },
+      {
+        title: 'Updated At',
+        name: 'updated_at',
+        type: 'datetime',
+        sortable: false,
       },
       {
         title: 'Status',
@@ -51,26 +63,8 @@ const ProvincePage: React.FunctionComponent = () => {
           </span>
         ),
       },
-      {
-        title: 'Created At',
-        name: 'created_at',
-        type: 'datetime',
-        sortable: false,
-      },
-      {
-        title: 'Updated At',
-        name: 'updated_at',
-        type: 'datetime',
-        sortable: false,
-      },
     ],
     filters: [
-      {
-        type: 'text',
-        name: 'name',
-        label: 'Province Name',
-        note: 'Search by province name',
-      },
       {
         type: 'select',
         name: 'status',

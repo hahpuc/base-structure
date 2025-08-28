@@ -10,9 +10,6 @@ export type TableRowData = {
 
 export type FilterParams = Dictionary & {
   filter?: string;
-  search?: string;
-  sort?: string;
-  order?: 'asc' | 'desc';
 };
 
 export type TableQueryParams = BaseQuery & FilterParams;
