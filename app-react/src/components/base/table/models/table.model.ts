@@ -63,10 +63,11 @@ export type TableColumn<T = TableRowData> = {
 
 export type TableAction<T = TableRowData> = {
   label: string;
-  iconClass?: string;
+  icon?: React.ReactNode;
   color?: TableActionColor;
   handler: TableClickHandler<T>;
   visible?: TableActionVisible<T>;
+  disable?: boolean;
   permission?: string;
 };
 

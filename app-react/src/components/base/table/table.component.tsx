@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 
 import { ListPaginate } from '../../../types/base';
 
+import ActionColumn from './action-column';
 import { TableOption, TableQueryParams, TableRowData } from './models/table.model';
 import { TableFilter } from './table-filter.component';
 
@@ -168,8 +169,22 @@ function AppTable<T extends TableRowData>({ option, className }: AppTableProps<T
     );
   };
 
+  // Action column (if actions are provided)
+  let actionColumn: ColumnsType<T>[number] | null = null;
+  if (option.actions && option.actions.length > 0) {
+    actionColumn = {
+      title: 'Actions',
+      key: 'actions',
+      dataIndex: 'actions',
+      width: Math.max(100, option.actions.length * 48),
+      fixed: 'left',
+      align: 'center',
+      render: (_: unknown, record: T) => <ActionColumn actions={option.actions} record={record} />,
+    };
+  }
+
   // Convert columns to Ant Design format
-  const antdColumns: ColumnsType<T> = option.columns.map(col => {
+  let antdColumns: ColumnsType<T> = option.columns.map(col => {
     const column: Record<string, unknown> = {
       title: col.title,
       dataIndex: col.name,
@@ -210,9 +225,14 @@ function AppTable<T extends TableRowData>({ option, className }: AppTableProps<T
         }
       }
     }
-
     return column;
-  }) as ColumnsType<T>; // Table props configuration
+  }) as ColumnsType<T>;
+
+  // Insert action column at the left if present
+  if (actionColumn) {
+    antdColumns = [actionColumn, ...antdColumns];
+  }
+
   const tableProps: TableProps<T> = {
     columns: antdColumns,
     dataSource: data,

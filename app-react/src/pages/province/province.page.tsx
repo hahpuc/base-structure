@@ -1,3 +1,6 @@
+import { CheckOutlined, DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
+import { message } from 'antd';
+
 import { AppTable, TableOption } from '@/components/base/table';
 import { EStatus } from '@/constants/enum';
 import { provinceService } from '@/services/province.service';
@@ -20,6 +23,41 @@ const ProvincePage: React.FunctionComponent = () => {
     selectable: true,
     resizable: false,
     pageSize: 10,
+    actions: [
+      {
+        label: 'edit',
+        icon: <EditOutlined />,
+        color: 'danger',
+        handler: () => {
+          message.info('Edit action clicked');
+        },
+      },
+      {
+        label: 'View',
+        icon: <EyeOutlined />,
+        handler: row => {
+          message.info(`View province: ${row.name}`);
+        },
+      },
+      {
+        label: 'Delete',
+        icon: <DeleteOutlined />,
+        color: 'danger',
+        handler: row => {
+          message.info(`Delete province: ${row.name}`);
+        },
+      },
+      {
+        label: 'Toggle Status',
+        icon: <CheckOutlined />,
+        disable: true,
+        handler: row => {
+          message.info(
+            `Toggle status for province: ${row.name} (current: ${row.status === EStatus.active ? 'Active' : 'Inactive'})`
+          );
+        },
+      },
+    ],
     columns: [
       {
         title: 'ID',
