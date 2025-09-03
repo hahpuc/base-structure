@@ -8,6 +8,7 @@ import { ListPaginate } from '../../../types/base';
 import ActionColumn from './action-column';
 import { TableOption, TableQueryParams, TableRowData } from './models/table.model';
 import { TableFilter } from './table-filter.component';
+import { getNestedValue } from './table-utils';
 
 type ColumnsType<T extends object> = GetProp<TableProps<T>, 'columns'>;
 
@@ -199,17 +200,23 @@ function AppTable<T extends TableRowData>({ option, className }: AppTableProps<T
           return col.customRender(record);
         }
 
+        const fieldValue = getNestedValue(record, col.name);
+
         switch (col.type) {
           case 'date':
-            return value ? new Date(value as string).toLocaleDateString() : '';
+            return fieldValue ? new Date(fieldValue as string).toLocaleDateString() : '';
           case 'datetime':
-            return value ? new Date(value as string).toLocaleString() : '';
+            return fieldValue ? new Date(fieldValue as string).toLocaleString() : '';
           case 'boolean':
-            return value ? 'Yes' : 'No';
+            return fieldValue ? 'Yes' : 'No';
           case 'number':
-            return typeof value === 'number' ? value.toLocaleString() : String(value || '');
+            return typeof fieldValue === 'number'
+              ? fieldValue.toLocaleString()
+              : String(fieldValue || '');
+          case 'image':
+            return <img className="max-w-[150px]" src={fieldValue as string} alt="Thumbnail" />;
           default:
-            return String(value || '');
+            return String(fieldValue || '');
         }
       },
     };
@@ -244,7 +251,7 @@ function AppTable<T extends TableRowData>({ option, className }: AppTableProps<T
     onChange: handleTableChange,
     rowKey: 'id',
     bordered: true,
-    scroll: { x: 'max-content', y: option.resizable ? 400 : undefined },
+    scroll: { x: 'max-content', y: option.resizable ? 500 : undefined },
     showHeader: true,
     size: 'middle',
     rowSelection: option.selectable
