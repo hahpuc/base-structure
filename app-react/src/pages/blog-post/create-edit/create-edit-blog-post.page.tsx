@@ -1,17 +1,18 @@
 import { message } from 'antd';
 import dayjs from 'dayjs';
-import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import slugify from 'slugify';
 
 import {
+  createValidationRules,
   FormComponent,
   FormComponentRef,
   FormOption,
-  createValidationRules,
   FormSubmitResult,
 } from '@/components/base/form';
 import { EStatus } from '@/constants/enum';
+import useHeader from '@/hooks/use-header.hook';
 import { blogPostService } from '@/services/blog-post.service';
 import { categoryService } from '@/services/category.service';
 import { CreateBlogPost, EditBlogPost } from '@/types/blog-post';
@@ -25,31 +26,39 @@ const CreateEditBlogPostPage: React.FunctionComponent = () => {
 
   const isEdit = !!id;
 
+  useHeader('Create Blog Post', [
+    {
+      id: 'back-blog-post',
+      title: 'Back',
+      icon: 'back',
+      type: 'default',
+      handler: () => navigate('/blog-post'),
+    },
+  ]);
+
   const loadBlogPost = useCallback(async () => {
     if (!id) return;
 
-    try {
-      setLoading(true);
-      const response = await blogPostService.getById(Number(id));
-      const blogPost = response.data;
+    setLoading(true);
+    const resultApi = await blogPostService.getById(Number(id));
+    setLoading(false);
 
-      if (blogPost) {
-        // Process the data for form initial values
-        const processedData = {
-          ...blogPost,
-          published_at: blogPost.published_at ? dayjs(blogPost.published_at) : undefined,
-          status: blogPost.status === EStatus.active,
-        };
+    if (resultApi.isSuccess && resultApi.data) {
+      const blogPost = resultApi.data;
 
-        setInitialData(processedData);
-      }
-    } catch {
-      message.error('Failed to load blog post');
-      navigate('/blog-post');
-    } finally {
-      setLoading(false);
+      // Process the data for form initial values
+      const processedData = {
+        ...blogPost,
+        published_at: blogPost.published_at ? dayjs(blogPost.published_at) : undefined,
+        status: blogPost.status === EStatus.active,
+      };
+
+      setInitialData(processedData);
+      return;
     }
-  }, [id, navigate]);
+
+    message.error(resultApi.error?.message || 'Failed to load blog post');
+  }, [id]);
 
   useEffect(() => {
     if (isEdit && id) {
@@ -58,49 +67,43 @@ const CreateEditBlogPostPage: React.FunctionComponent = () => {
   }, [isEdit, id, loadBlogPost]);
 
   const handleSubmit = async (formValue: Record<string, unknown>): Promise<FormSubmitResult> => {
-    try {
-      setLoading(true);
+    setLoading(true);
 
-      if (isEdit && id) {
-        const updateData: EditBlogPost = {
-          id: Number(id),
-          title: formValue.title as string,
-          slug: formValue.slug as string,
-          order_index: formValue.order_index as number,
-          description: formValue.description as string,
-          content: formValue.content as string,
-          thumbnail: formValue.thumbnail as string,
-          published_at: (formValue.published_at as dayjs.Dayjs)?.toDate(),
-          category_id: formValue.category_id as number,
-          status: (formValue.status as boolean) ? EStatus.active : EStatus.inactive,
-        };
+    const commonData = {
+      title: formValue.title as string,
+      slug: formValue.slug as string,
+      order_index: formValue.order_index as number,
+      description: formValue.description as string,
+      content: formValue.content as string,
+      thumbnail: formValue.thumbnail as string,
+      published_at: (formValue.published_at as dayjs.Dayjs)?.toDate(),
+      category_id: formValue.category_id as number,
+      status: (formValue.status as boolean) ? EStatus.active : EStatus.inactive,
+    };
 
-        await blogPostService.update(updateData);
-        message.success('Blog post updated successfully');
-      } else {
-        const createData: CreateBlogPost = {
-          title: formValue.title as string,
-          slug: formValue.slug as string,
-          order_index: formValue.order_index as number,
-          description: formValue.description as string,
-          content: formValue.content as string,
-          thumbnail: formValue.thumbnail as string,
-          published_at: (formValue.published_at as dayjs.Dayjs)?.toDate(),
-          category_id: formValue.category_id as number,
-          status: (formValue.status as boolean) ? EStatus.active : EStatus.inactive,
-        };
+    let resultApi;
+    if (isEdit && id) {
+      const updateData: EditBlogPost = {
+        id: Number(id),
+        ...commonData,
+      };
+      resultApi = await blogPostService.update(updateData);
+    } else {
+      const createData: CreateBlogPost = { ...commonData };
+      resultApi = await blogPostService.create(createData);
+    }
 
-        await blogPostService.create(createData);
-        message.success('Blog post created successfully');
-      }
+    setLoading(false);
 
+    if (resultApi.isSuccess) {
+      message.success(isEdit ? 'Blog post updated successfully' : 'Blog post created successfully');
       navigate('/blog-post');
       return { success: true };
-    } catch {
-      message.error(isEdit ? 'Failed to update blog post' : 'Failed to create blog post');
-      return { success: false, error: 'Submission failed' };
-    } finally {
-      setLoading(false);
+    } else {
+      message.error(
+        resultApi.error?.message || `Failed to ${isEdit ? 'update' : 'create'} blog post`
+      );
+      return { success: false, error: resultApi.error?.message || 'Submission failed' };
     }
   };
 

@@ -191,7 +191,28 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
     return [];
   };
 
-  const openKeys = getOpenKeys(filteredMenu, location.pathname);
+  // Find the best matching menu key for the current path (for selectedKeys)
+  const findSelectedKey = (items: MenuItem[], pathname: string): string | undefined => {
+    let matchedKey: string | undefined;
+    let maxLength = 0;
+    const check = (itemList: MenuItem[], parentKey = '') => {
+      for (const item of itemList) {
+        const key = item.path || `${parentKey}/${item.label}`;
+        if (item.path && pathname.startsWith(item.path) && item.path.length > maxLength) {
+          matchedKey = item.path;
+          maxLength = item.path.length;
+        }
+        if (item.children) {
+          check(item.children, key);
+        }
+      }
+    };
+    check(items);
+    return matchedKey;
+  };
+
+  const selectedKey = findSelectedKey(filteredMenu, location.pathname) || location.pathname;
+  const openKeys = getOpenKeys(filteredMenu, selectedKey);
 
   if (loading) {
     return null; // or a loading spinner
@@ -214,7 +235,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
       <Menu
         theme="light"
         mode="inline"
-        selectedKeys={[location.pathname]}
+        selectedKeys={[selectedKey]}
         defaultOpenKeys={openKeys}
         className="h-full border-r-0"
         items={buildMenuItems(filteredMenu)}

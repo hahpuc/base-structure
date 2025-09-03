@@ -1,12 +1,28 @@
 import { EditOutlined } from '@ant-design/icons';
 import { message } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 import { AppTable, TableOption } from '@/components/base/table';
+import useHeader from '@/hooks/use-header.hook';
 import { categoryService } from '@/services/category.service';
 import { ListPaginate } from '@/types/base';
 import { CategoryDto, QueryCategory } from '@/types/category';
 
 const CategoryPage: React.FunctionComponent = () => {
+  const navigate = useNavigate();
+
+  useHeader('Category Management', [
+    {
+      id: 'create-category',
+      title: 'Create',
+      icon: 'plus',
+      color: 'lime',
+      variant: 'solid',
+      type: 'default',
+      handler: () => navigate('/category/create'),
+    },
+  ]);
+
   const fetchCategories = async (params: QueryCategory): Promise<ListPaginate<CategoryDto>> => {
     const response = await categoryService.getByPaged(params);
 

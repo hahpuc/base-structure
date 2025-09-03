@@ -1,14 +1,57 @@
 import { EditOutlined } from '@ant-design/icons';
+import { message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
 import { AppTable, TableOption } from '@/components/base/table';
 import { EStatus } from '@/constants/enum';
+import { useHeader } from '@/hooks/use-header.hook';
 import { blogPostService } from '@/services/blog-post.service';
 import { ListPaginate } from '@/types/base';
 import { BlogPostDto, QueryBlogPost } from '@/types/blog-post';
 
 const BlogPostPage: React.FunctionComponent = () => {
   const navigate = useNavigate();
+
+  useHeader('Blog Post', [
+    {
+      id: 'add-blog-post',
+      title: 'Create',
+      icon: 'plus',
+      color: 'geekblue',
+      variant: 'outlined',
+      type: 'default',
+      handler: () => navigate('/blog-post/create'),
+    },
+    {
+      id: 'import-blog-post',
+      title: 'Import',
+      icon: 'import',
+      color: 'red',
+      variant: 'dashed',
+      handler: () => {
+        message.info('Import clicked');
+      },
+    },
+    {
+      id: 'export-blog-post',
+      title: 'Export',
+      icon: 'export',
+      type: 'primary',
+      handler: () => {
+        message.info('Export clicked');
+      },
+    },
+    {
+      id: 'delete-selected-blog-post',
+      title: 'Delete ',
+      icon: 'delete',
+      variant: 'outlined',
+      color: 'yellow',
+      handler: () => {
+        message.info('Delete clicked');
+      },
+    },
+  ]);
 
   const fetchBlogPosts = async (params: QueryBlogPost): Promise<ListPaginate<BlogPostDto>> => {
     const response = await blogPostService.getByPaged(params);
@@ -21,7 +64,7 @@ const BlogPostPage: React.FunctionComponent = () => {
   };
 
   const tableOption: TableOption<BlogPostDto> = {
-    title: 'Blog Post Management',
+    title: 'Blog Post',
     data: fetchBlogPosts,
     filterable: true,
     selectable: true,
@@ -60,6 +103,8 @@ const BlogPostPage: React.FunctionComponent = () => {
         title: 'Order Index',
         name: 'order_index',
         type: 'number',
+        sortable: true,
+        width: 150,
       },
       {
         title: 'Description',
@@ -82,7 +127,6 @@ const BlogPostPage: React.FunctionComponent = () => {
         title: 'Status',
         name: 'status',
         type: 'custom-render',
-        sortable: true,
         filterable: true,
         width: 150,
         customRender: row => (
@@ -102,7 +146,17 @@ const BlogPostPage: React.FunctionComponent = () => {
         width: 200,
       },
     ],
-    filters: [],
+    filters: [
+      {
+        type: 'select',
+        name: 'status',
+        label: 'Status',
+        options: [
+          { label: 'Active', value: EStatus.active },
+          { label: 'Inactive', value: EStatus.inactive },
+        ],
+      },
+    ],
   };
 
   return <AppTable option={tableOption} />;
