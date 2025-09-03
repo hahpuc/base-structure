@@ -8,7 +8,7 @@ import { ListPaginate } from '../../../types/base';
 import ActionColumn from './action-column';
 import { TableOption, TableQueryParams, TableRowData } from './models/table.model';
 import { TableFilter } from './table-filter.component';
-import { getNestedValue } from './table-utils';
+import { getNestedValue } from './utils/table-utils';
 
 type ColumnsType<T extends object> = GetProp<TableProps<T>, 'columns'>;
 
