@@ -1,5 +1,5 @@
-import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
-import { Button, DatePicker, Drawer, Form, Input, Select, Space, Tag } from 'antd';
+import { DeleteOutlined, FilterOutlined, SearchOutlined } from '@ant-design/icons';
+import { Badge, Button, DatePicker, Drawer, Form, Input, Select, Space, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 import {
@@ -243,63 +243,61 @@ export const TableFilter: React.FC<TableFilterProps> = ({
 
   return (
     <div style={{ marginBottom: 16 }}>
-      <Space>
-        {/* Table Search */}
-        <Search
-          placeholder="Search..."
-          allowClear
-          enterButton={<SearchOutlined />}
-          size="middle"
-          onSearch={handleSearch}
-          value={searchValue}
-          onChange={e => setSearchValue(e.target.value)}
-          width={300}
-        />
+      <div className="flex items-center flex-wrap gap-2">
+        <Space>
+          {/* Table Search */}
+          <Search
+            placeholder="Search..."
+            allowClear
+            enterButton={<SearchOutlined />}
+            size="middle"
+            onSearch={handleSearch}
+            value={searchValue}
+            onChange={e => setSearchValue(e.target.value)}
+            width={300}
+          />
 
-        {/* Filter Button with Badge */}
-        <div style={{ position: 'relative' }}>
-          <Button
-            type="default"
-            variant="outlined"
-            icon={<FilterOutlined />}
-            onClick={() => setDrawerVisible(true)}
-          ></Button>
-          {getActiveFiltersCount() > 0 && (
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full min-w-[18px] h-[18px] text-xs flex items-center justify-center font-bold border border-white">
-              {getActiveFiltersCount()}
-            </span>
-          )}
-        </div>
-      </Space>
+          {/* Filter Button with Badge */}
 
-      {/* Active Filter Tags */}
-      {getActiveFilters().length > 0 && (
-        <div style={{ marginTop: 12 }}>
-          <Space wrap>
-            {getActiveFilters().map(activeFilter => (
-              <Tag
-                key={activeFilter.name}
-                closable
-                onClose={() => handleRemoveFilter(activeFilter.name)}
-                color="blue"
-              >
-                <strong>{activeFilter.label}:</strong> {activeFilter.displayValue}
-              </Tag>
-            ))}
-            {getActiveFilters().length > 1 && (
-              <Button
-                type="text"
-                size="small"
-                icon={<FilterOutlined className="rotate-0" />}
-                onClick={handleClearAllFilters}
-                className="px-2 py-1 h-auto text-[#ff4d4f] text-xs"
-              >
-                Clear All
-              </Button>
-            )}
-          </Space>
-        </div>
-      )}
+          <Badge size="default" count={getActiveFiltersCount()}>
+            <Button
+              type="default"
+              variant="outlined"
+              icon={<FilterOutlined />}
+              onClick={() => setDrawerVisible(true)}
+            ></Button>
+          </Badge>
+        </Space>
+
+        {/* Active Filter Tags */}
+        {getActiveFilters().length > 0 && (
+          <div>
+            <Space wrap>
+              {getActiveFilters().map(activeFilter => (
+                <Tag
+                  key={activeFilter.name}
+                  closable
+                  onClose={() => handleRemoveFilter(activeFilter.name)}
+                  color="blue"
+                >
+                  <strong>{activeFilter.label}:</strong> {activeFilter.displayValue}
+                </Tag>
+              ))}
+              {getActiveFilters().length > 1 && (
+                <Button
+                  type="default"
+                  variant="filled"
+                  color="danger"
+                  size="small"
+                  icon={<DeleteOutlined />}
+                  onClick={handleClearAllFilters}
+                  className="px-2 py-1 h-auto text-[#ff4d4f] text-xs"
+                ></Button>
+              )}
+            </Space>
+          </div>
+        )}
+      </div>
 
       <Drawer
         title="Filter Options"

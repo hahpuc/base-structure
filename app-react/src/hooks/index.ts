@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 
+export * from './use-responsive.hook';
+
 /**
  * Custom hook for localStorage
  */

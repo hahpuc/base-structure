@@ -73,8 +73,6 @@ const iconMap: Record<IconName, React.ReactNode> = {
   back: <ArrowLeftOutlined />,
 };
 
-// Store for button handlers
-
 // Button handler registry
 const buttonHandlers = new Map<string, () => Promise<void> | void>();
 export const registerButtonHandler = (id: string, handler: () => Promise<void> | void) =>
@@ -148,7 +146,7 @@ const Header: React.FC = () => {
   }, []);
 
   return (
-    <AntHeader className="bg-white px-6 flex items-center justify-between shadow-sm">
+    <AntHeader className="bg-white px-6 sticky top-0 z-10 flex items-center justify-between shadow-sm">
       <div className="flex items-center">
         <Button
           type="text"
