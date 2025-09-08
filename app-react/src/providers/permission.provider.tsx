@@ -4,14 +4,14 @@ import { Navigate, useLocation } from 'react-router-dom';
 
 import { RootState } from '@/store';
 
-interface PermissionRouteProps {
+interface PermissionProviderProps {
   permissions: string | string[];
   mode?: 'all' | 'any';
   children: React.ReactNode;
   fallback?: React.ReactNode;
 }
 
-const PermissionRoute: React.FunctionComponent<PermissionRouteProps> = ({
+const PermissionProvider: React.FunctionComponent<PermissionProviderProps> = ({
   permissions,
   mode = 'all',
   children,
@@ -48,4 +48,4 @@ const PermissionRoute: React.FunctionComponent<PermissionRouteProps> = ({
   return <>{children}</>;
 };
 
-export default PermissionRoute;
+export default PermissionProvider;

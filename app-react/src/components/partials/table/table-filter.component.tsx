@@ -321,7 +321,7 @@ export const TableFilter: React.FC<TableFilterProps> = ({
           </Space>
         }
       >
-        <Form form={form} layout="vertical" onFinish={handleFilterSubmit}>
+        <Form className="p-6" form={form} layout="vertical" onFinish={handleFilterSubmit}>
           {/* Table Search */}
           <Form.Item className="mb-4" name="filter" label="Search">
             <Input

@@ -1,7 +1,7 @@
 import { CheckOutlined, DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import { message } from 'antd';
 
-import { AppTable, TableOption } from '@/components/base/table';
+import { AppTable, TableOption } from '@/components/partials/table';
 import { EStatus } from '@/constants/enum';
 import { provinceService } from '@/services/province.service';
 import { ListPaginate } from '@/types/base';

@@ -10,7 +10,7 @@ import {
   FormComponentRef,
   FormOption,
   FormSubmitResult,
-} from '@/components/base/form';
+} from '@/components/partials/form';
 import { EStatus } from '@/constants/enum';
 import useHeader from '@/hooks/use-header.hook';
 import { blogPostService } from '@/services/blog-post.service';

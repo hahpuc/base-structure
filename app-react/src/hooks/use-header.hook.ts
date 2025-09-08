@@ -5,7 +5,7 @@ import {
   HeaderButton,
   registerButtonHandler,
   unregisterButtonHandler,
-} from '@/components/layout/header.component';
+} from '@/components/layouts/main/components/header-buttons.component';
 import { AppDispatch } from '@/store';
 import { setButtons, setHeaderTitle } from '@/store/slices/ui.slice';
 

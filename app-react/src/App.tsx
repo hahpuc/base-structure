@@ -2,9 +2,8 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
-import ProtectedRoute from './guards/protected-route';
-import AuthLayout from './layouts/auth.layout';
-import MainLayout from './layouts/main.layout';
+import AuthLayout from './components/layouts/auth/auth.layout';
+import MainLayout from './components/layouts/main/main.layout';
 import LoginPage from './pages/auth/login.page';
 import BlogPostPage from './pages/blog-post/blog-post.page';
 import CreateEditBlogPostPage from './pages/blog-post/create-edit/create-edit-blog-post.page';
@@ -13,6 +12,7 @@ import CreateEditCategoryPage from './pages/category/create-edit/create-edit-cat
 import DashboardPage from './pages/dashboard/dashboard.page';
 import ProvincePage from './pages/province/province.page';
 import RolePage from './pages/role/role.page';
+import AuthProvider from './providers/auth.provider';
 import { AppDispatch, RootState } from './store';
 import { fetchPermissions } from './store/slices/permissions.slice';
 
@@ -38,9 +38,9 @@ const App: React.FC = () => {
       <Route
         path="/*"
         element={
-          <ProtectedRoute>
+          <AuthProvider>
             <MainLayout />
-          </ProtectedRoute>
+          </AuthProvider>
         }
       >
         <Route path="dashboard" element={<DashboardPage />} />

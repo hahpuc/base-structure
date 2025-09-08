@@ -2,7 +2,7 @@ import { EditOutlined } from '@ant-design/icons';
 import { message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
-import { AppTable, TableOption } from '@/components/base/table';
+import { AppTable, TableOption } from '@/components/partials/table';
 import useHeader from '@/hooks/use-header.hook';
 import { categoryService } from '@/services/category.service';
 import { ListPaginate } from '@/types/base';

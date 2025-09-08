@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { TableOption } from '@/components/base/table';
-import AppTable from '@/components/base/table/table.component';
+import { TableOption } from '@/components/partials/table';
+import AppTable from '@/components/partials/table/table.component';
 import { EStatus } from '@/constants/enum';
 import { roleService } from '@/services/role.service';
 import { ListPaginate, BaseQuery } from '@/types/base';

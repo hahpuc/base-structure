@@ -4,11 +4,11 @@ import { Navigate, useLocation } from 'react-router-dom';
 
 import { RootState } from '@/store';
 
-interface ProtectedRouteProps {
+interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const location = useLocation();
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
@@ -20,4 +20,4 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   return <>{children}</>;
 };
 
-export default ProtectedRoute;
+export default AuthProvider;

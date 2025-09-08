@@ -9,14 +9,12 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Layout, Menu } from 'antd';
+import { Menu } from 'antd';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 
 import { RootState } from '@/store';
-
-const { Sider } = Layout;
 
 interface MenuItem {
   label: string;
@@ -159,11 +157,9 @@ const buildMenuItems = (items: MenuItem[], parentKey = ''): NonNullable<MenuProp
   });
 };
 
-interface SidebarProps {
-  collapsed: boolean;
-}
+interface SidebarMenuProps {}
 
-const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
+const SidebarMenu: React.FC<SidebarMenuProps> = () => {
   const location = useLocation();
 
   const { permissions: userPermissions, loading } = useSelector(
@@ -219,29 +215,15 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
   }
 
   return (
-    <Sider
-      collapsed={collapsed}
-      className="fixed left-0 top-0 bottom-0 z-10"
+    <Menu
       theme="light"
-      width={256}
-    >
-      <div className="p-4 text-center">
-        {collapsed ? (
-          <h2 className="text-lg font-bold text-primary-600">A</h2>
-        ) : (
-          <h2 className="text-xl font-bold text-primary-600">Admin</h2>
-        )}
-      </div>
-      <Menu
-        theme="light"
-        mode="inline"
-        selectedKeys={[selectedKey]}
-        defaultOpenKeys={openKeys}
-        className="h-full border-r-0"
-        items={buildMenuItems(filteredMenu)}
-      />
-    </Sider>
+      mode="inline"
+      selectedKeys={[selectedKey]}
+      defaultOpenKeys={openKeys}
+      className="h-full border-r-0"
+      items={buildMenuItems(filteredMenu)}
+    />
   );
 };
 
-export default Sidebar;
+export default SidebarMenu;
