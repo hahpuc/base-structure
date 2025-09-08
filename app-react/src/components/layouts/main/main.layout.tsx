@@ -9,6 +9,8 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { AppDispatch, RootState } from '@/store';
 import { setMobileView } from '@/store/slices/ui.slice';
 
+import FooterComponent from './components/footer.component';
+
 const { Content } = Layout;
 
 const MainLayout: React.FC = () => {
@@ -37,11 +39,13 @@ const MainLayout: React.FC = () => {
       <Layout className={`transition-all duration-300 ${getMainContentMargin()}`}>
         <Header />
 
-        <Content className="bg-white m-6 p-6 min-h-[280px] rounded-2xl">
+        <Content className="bg-white mt-6 mx-6 p-6 min-h-[280px] rounded-2xl">
           <div className="min-h-full">
             <Outlet />
           </div>
         </Content>
+
+        <FooterComponent />
       </Layout>
     </Layout>
   );

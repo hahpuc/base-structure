@@ -32,7 +32,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
         <StyleProvider layer>
-          <ConfigProvider theme={{ cssVar: true, hashed: false }} locale={enUS}>
+          <ConfigProvider theme={{ cssVar: true, hashed: true }} locale={enUS}>
             <BrowserRouter>
               <App />
             </BrowserRouter>
