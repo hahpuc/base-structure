@@ -3,11 +3,14 @@ import React from 'react';
 import { TableOption } from '@/components/partials/table';
 import AppTable from '@/components/partials/table/table.component';
 import { EStatus } from '@/constants/enum';
+import useHeader from '@/hooks/use-header.hook';
 import { roleService } from '@/services/role.service';
 import { ListPaginate, BaseQuery } from '@/types/base';
 import { RoleDto } from '@/types/role';
 
 const RolePage: React.FunctionComponent = () => {
+  useHeader('Role Management');
+
   // Wrapper function to extract data from ApiResult
   const fetchRoles = async (params: BaseQuery): Promise<ListPaginate<RoleDto>> => {
     const response = await roleService.getByPaged(params);

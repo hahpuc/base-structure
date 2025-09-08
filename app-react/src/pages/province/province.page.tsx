@@ -3,11 +3,14 @@ import { message } from 'antd';
 
 import { AppTable, TableOption } from '@/components/partials/table';
 import { EStatus } from '@/constants/enum';
+import useHeader from '@/hooks/use-header.hook';
 import { provinceService } from '@/services/province.service';
 import { ListPaginate } from '@/types/base';
 import { ProvinceDto, QueryProvince } from '@/types/province';
 
 const ProvincePage: React.FunctionComponent = () => {
+  useHeader('Province Management');
+
   const fetchProvinces = async (params: QueryProvince): Promise<ListPaginate<ProvinceDto>> => {
     const response = await provinceService.getByPaged(params);
     if (response.isSuccess && response.data) {

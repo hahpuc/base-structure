@@ -8,11 +8,14 @@ import { Card, Col, Row, Statistic, Table, Tag, Typography } from 'antd';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
+import useHeader from '@/hooks/use-header.hook';
 import { RootState } from '@/store';
 
 const { Title } = Typography;
 
 const DashboardPage: React.FC = () => {
+  useHeader('Dashboard');
+
   const { user } = useSelector((state: RootState) => state.auth);
 
   // Mock data
