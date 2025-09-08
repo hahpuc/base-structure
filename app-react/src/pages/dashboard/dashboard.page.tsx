@@ -8,6 +8,7 @@ import { Card, Col, Row, Statistic, Table, Tag, Typography } from 'antd';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
+import { AreaChart, BarChart, LineChart, PieChart } from '@/components/charts';
 import useHeader from '@/hooks/use-header.hook';
 import { RootState } from '@/store';
 
@@ -51,28 +52,28 @@ const DashboardPage: React.FC = () => {
   const recentActivities = [
     {
       key: '1',
-      user: 'John Doe',
+      user: 'Karina',
       action: 'Created new post',
       time: '2 hours ago',
       status: 'success',
     },
     {
       key: '2',
-      user: 'Jane Smith',
+      user: 'Winter',
       action: 'Updated profile',
       time: '4 hours ago',
       status: 'info',
     },
     {
       key: '3',
-      user: 'Bob Johnson',
+      user: 'Ning Ning',
       action: 'Deleted comment',
       time: '6 hours ago',
       status: 'warning',
     },
     {
       key: '4',
-      user: 'Alice Brown',
+      user: 'Giselle',
       action: 'Login attempt failed',
       time: '8 hours ago',
       status: 'error',
@@ -143,6 +144,35 @@ const DashboardPage: React.FC = () => {
             </Card>
           </Col>
         ))}
+      </Row>
+
+      {/* Charts Section */}
+      <Row gutter={[16, 16]}>
+        <Col xs={24} lg={12}>
+          <Card className="h-full">
+            <LineChart title="Revenue Trend" height={350} />
+          </Card>
+        </Col>
+
+        <Col xs={24} lg={12}>
+          <Card className="h-full">
+            <BarChart title="Monthly Sales" height={350} />
+          </Card>
+        </Col>
+      </Row>
+
+      <Row gutter={[16, 16]}>
+        <Col xs={24} lg={12}>
+          <Card className="h-full">
+            <PieChart title="User Demographics" height={350} />
+          </Card>
+        </Col>
+
+        <Col xs={24} lg={12}>
+          <Card className="h-full">
+            <AreaChart title="User Activity" height={350} />
+          </Card>
+        </Col>
       </Row>
 
       {/* Recent Activities */}
