@@ -5,8 +5,8 @@ import useHeader from '@/hooks/use-header.hook';
 
 import ActivityLoginComponent from './components/activity-login.component';
 import ActivityTab from './components/activity-tab.component';
-import PersonalInfoTab from './components/personal-info-tab.component';
 import ProfileHeader from './components/profile-header.component';
+import ProfileTab from './components/profile-tab.component';
 import ProjectComponent from './components/project.component';
 import SettingsSecurityComponent from './components/settings-security.component';
 import SettingsTab from './components/settings-tab.component';
@@ -18,7 +18,7 @@ const ProfilePage: React.FunctionComponent = () => {
     {
       key: 'personal',
       label: 'Personal Info',
-      content: <PersonalInfoTab />,
+      content: <ProfileTab />,
       icon: <span className="text-lg">👤</span>,
     },
     {
