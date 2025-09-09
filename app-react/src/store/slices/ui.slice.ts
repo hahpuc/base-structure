@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { HeaderButton } from '@/components/layouts/main/components/header.component';
+import { HeaderButton } from '@/components/layouts/main/components/header-buttons.component';
 
 export type UIState = {
   sidebarCollapsed: boolean;

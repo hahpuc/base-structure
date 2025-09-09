@@ -9,7 +9,19 @@ import { ListPaginate } from '@/types/base';
 import { ProvinceDto, QueryProvince } from '@/types/province';
 
 const ProvincePage: React.FunctionComponent = () => {
-  useHeader('Province Management');
+  useHeader('Province Management', [
+    {
+      id: 'create-province',
+      title: 'Create',
+      icon: 'plus',
+      type: 'default',
+      variant: 'solid',
+      color: 'blue',
+      handler: () => {
+        message.info('Create province clicked');
+      },
+    },
+  ]);
 
   const fetchProvinces = async (params: QueryProvince): Promise<ListPaginate<ProvinceDto>> => {
     const response = await provinceService.getByPaged(params);

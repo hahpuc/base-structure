@@ -276,11 +276,11 @@ function AppTable<T extends TableRowData>({ option, className }: AppTableProps<T
   return (
     <div className={className}>
       {/* Title */}
-      {option.title && (
+      {/* {option.title && (
         <div style={{ marginBottom: 16 }}>
           <h2>{option.title}</h2>
         </div>
-      )}
+      )} */}
 
       {/* Table Filter */}
       {(option.filterable || option.filters) && (

@@ -102,5 +102,10 @@ export default {
                 '100%': { transform: 'translateX(0)' },
             },
         },
+        borderColor: {
+            DEFAULT: '#d1d5db', // gray.300
+            // You can also spread your colors if you want all available
+            ...colors,
+        },
     },
 }

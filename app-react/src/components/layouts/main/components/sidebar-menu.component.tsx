@@ -2,6 +2,7 @@ import {
   ApartmentOutlined,
   DashboardOutlined,
   FileTextOutlined,
+  ProductOutlined,
   ProfileOutlined,
   SecurityScanOutlined,
   SettingOutlined,
@@ -101,6 +102,54 @@ const menuItems: MenuItem[] = [
         path: '/blog-post',
         icon: <FileTextOutlined />,
         permissions: [],
+      },
+    ],
+  },
+  {
+    label: 'Product Management',
+    icon: <ProductOutlined />,
+    children: [
+      {
+        label: 'Products',
+        path: '/products',
+        icon: <FileTextOutlined />,
+      },
+      {
+        label: 'Categories',
+        path: '/product-categories',
+        icon: <ApartmentOutlined />,
+      },
+    ],
+  },
+  {
+    label: 'Order Management',
+    icon: <ProfileOutlined />,
+    children: [
+      {
+        label: 'Orders',
+        path: '/orders',
+        icon: <FileTextOutlined />,
+      },
+      {
+        label: 'Transactions',
+        path: '/transactions',
+        icon: <FileTextOutlined />,
+      },
+    ],
+  },
+  {
+    label: 'Report Management',
+    icon: <DashboardOutlined />,
+    children: [
+      {
+        label: 'Sales Report',
+        path: '/sales-report',
+        icon: <FileTextOutlined />,
+      },
+      {
+        label: 'User Report',
+        path: '/user-report',
+        icon: <FileTextOutlined />,
       },
     ],
   },

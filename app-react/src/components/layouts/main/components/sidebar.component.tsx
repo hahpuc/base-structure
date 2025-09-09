@@ -13,7 +13,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
   return (
     <Sider
       collapsed={collapsed}
-      className="fixed left-0 top-0 bottom-0 z-10"
+      className="fixed left-0 top-0 bottom-0 z-20"
       theme="light"
       width={256}
     >

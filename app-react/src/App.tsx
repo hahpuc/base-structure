@@ -2,19 +2,20 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
-import AuthLayout from './components/layouts/auth/auth.layout';
-import MainLayout from './components/layouts/main/main.layout';
-import LoginPage from './pages/auth/login.page';
-import BlogPostPage from './pages/blog-post/blog-post.page';
-import CreateEditBlogPostPage from './pages/blog-post/create-edit/create-edit-blog-post.page';
-import CategoryPage from './pages/category/category.page';
-import CreateEditCategoryPage from './pages/category/create-edit/create-edit-category.page';
-import DashboardPage from './pages/dashboard/dashboard.page';
-import ProvincePage from './pages/province/province.page';
-import RolePage from './pages/role/role.page';
-import AuthProvider from './providers/auth.provider';
-import { AppDispatch, RootState } from './store';
-import { fetchPermissions } from './store/slices/permissions.slice';
+import AuthLayout from '@/components/layouts/auth/auth.layout';
+import MainLayout from '@/components/layouts/main/main.layout';
+import LoginPage from '@/pages/auth/login.page';
+import BlogPostPage from '@/pages/blog-post/blog-post.page';
+import CreateEditBlogPostPage from '@/pages/blog-post/create-edit/create-edit-blog-post.page';
+import CategoryPage from '@/pages/category/category.page';
+import CreateEditCategoryPage from '@/pages/category/create-edit/create-edit-category.page';
+import DashboardPage from '@/pages/dashboard/dashboard.page';
+import ProfilePage from '@/pages/profile/profile.page';
+import ProvincePage from '@/pages/province/province.page';
+import RolePage from '@/pages/role/role.page';
+import AuthProvider from '@/providers/auth.provider';
+import { AppDispatch, RootState } from '@/store';
+import { fetchPermissions } from '@/store/slices/permissions.slice';
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -46,6 +47,8 @@ const App: React.FC = () => {
         <Route path="dashboard" element={<DashboardPage />} />
         <Route path="role" element={<RolePage />} />
         <Route path="province" element={<ProvincePage />} />
+
+        <Route path="profile" element={<ProfilePage />} />
 
         <Route path="category" element={<CategoryPage />} />
         <Route path="category/create" element={<CreateEditCategoryPage />} />

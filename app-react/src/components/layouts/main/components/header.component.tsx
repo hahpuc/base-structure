@@ -9,6 +9,7 @@ import type { MenuProps } from 'antd';
 import { Avatar, Button, Drawer, Dropdown, Layout, Space } from 'antd';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 import { useIsMobile } from '@/hooks/use-mobile';
 import { AppDispatch, RootState } from '@/store';
@@ -21,11 +22,15 @@ import SidebarMenu from './sidebar-menu.component';
 const { Header: AntHeader } = Layout;
 
 // User dropdown menu
-const getUserMenuItems = (handleLogout: () => void): MenuProps['items'] => [
+const getUserMenuItems = (
+  handleLogout: () => void,
+  handleProfileClick: () => void
+): MenuProps['items'] => [
   {
     key: 'profile',
     icon: <UserOutlined />,
     label: 'Profile',
+    onClick: handleProfileClick,
   },
   {
     key: 'settings',
@@ -49,6 +54,8 @@ const Header: React.FC = () => {
   const isMobile = useIsMobile();
   const [drawerVisible, setDrawerVisible] = useState(false);
 
+  const navigate = useNavigate();
+
   const handleLogout = useCallback(() => {
     dispatch(logoutAsync());
   }, [dispatch]);
@@ -57,6 +64,10 @@ const Header: React.FC = () => {
     const handler = buttonHandlers.get(buttonId);
     if (handler) handler();
   }, []);
+
+  const handleProfileClick = () => {
+    navigate('/profile');
+  };
 
   return (
     <AntHeader className="bg-white px-6 sticky top-0 z-10 flex items-center justify-between shadow-sm">
@@ -79,7 +90,9 @@ const Header: React.FC = () => {
           />
         )}
 
-        <h1 className="text-lg font-semibold text-gray-800">{headerTitle ?? 'Admin Dashboard'}</h1>
+        <h1 className="font-semibold text-gray-800 sm:text-sm md:text-base lg:text-lg">
+          {headerTitle ?? 'Admin Dashboard'}
+        </h1>
         <div className="buttons-view ms-3 flex space-x-2">
           <HeaderButtons buttons={buttons} onButtonClick={handleButtonClick} isMobile={isMobile} />
         </div>
@@ -87,7 +100,7 @@ const Header: React.FC = () => {
 
       <Space>
         <Dropdown
-          menu={{ items: getUserMenuItems(handleLogout) }}
+          menu={{ items: getUserMenuItems(handleLogout, handleProfileClick) }}
           placement="bottomRight"
           trigger={['click']}
         >

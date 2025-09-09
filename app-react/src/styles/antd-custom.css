@@ -2,9 +2,9 @@
 
 /* Override Ant Design colors with our theme */
 :root {
-    --ant-primary-color: #0ea5e9;
-    --ant-primary-color-hover: #0284c7;
-    --ant-primary-color-active: #0369a1;
+    --ant-primary-color: #1677FF;
+    --ant-primary-color-hover: #69c0ff;
+    --ant-primary-color-active: #0050b3;
 }
 
 /* Custom button styles */
@@ -74,4 +74,17 @@
 
 .ant-drawer-body {
     padding: 0;
+}
+
+.ant-drawer-mask {
+    background-color: rgba(0, 0, 0, 0.75);
+
+    backdrop-filter: blur(8px);
+}
+
+.border,
+.border-b,
+.border-s,
+.border-t {
+    border-color: #d1d5db;
 }
