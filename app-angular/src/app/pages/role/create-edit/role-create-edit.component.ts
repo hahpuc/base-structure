@@ -225,7 +225,7 @@ export class RoleCreateEditComponent
         this.selectedPermissionIds = [];
       }
     } catch (error) {
-      this.toastService.error('Failed to load data', 'Error');
+      this.msgService.error('Failed to load data');
     } finally {
       this.isLoading = false;
     }
@@ -328,10 +328,7 @@ export class RoleCreateEditComponent
 
       this.redirect('/role');
     } catch (error) {
-      this.toastService.error(
-        this.isEdit ? 'Failed to update role' : 'Failed to create role',
-        'Error'
-      );
+      this.msgService.error(this.isEdit ? 'Failed to update role' : 'Failed to create role');
     } finally {
       this.isLoading = false;
     }
@@ -346,7 +343,7 @@ export class RoleCreateEditComponent
     };
 
     await lastValueFrom(this.roleService.create(createData));
-    this.toastService.success('Role created successfully', 'Success');
+    this.msgService.success('Role created successfully');
   }
 
   private async _updateRole(formData: Record<string, unknown>): Promise<void> {
@@ -361,6 +358,6 @@ export class RoleCreateEditComponent
     };
 
     await lastValueFrom(this.roleService.update(editData));
-    this.toastService.success('Role updated successfully', 'Success');
+    this.msgService.success('Role updated successfully');
   }
 }

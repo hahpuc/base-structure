@@ -91,7 +91,7 @@ export class UserComponent extends AppBaseComponent implements OnInit {
         click: row => {
           this.userService.toggleStatus(String(row.id)).subscribe(() => {
             this.ftTable.refresh();
-            this.toastService.success('Success', 'Status updated successfully');
+            this.msgService.success('Status updated successfully');
           });
         },
       },
@@ -137,7 +137,7 @@ export class UserComponent extends AppBaseComponent implements OnInit {
         permission: 'user_manage_read',
         visible: true,
         click: () => {
-          this.toastService.info('Export Data', 'You can implement export logic here');
+          this.msgService.info('Export Data functionality is not implemented yet');
         },
       },
     ]);

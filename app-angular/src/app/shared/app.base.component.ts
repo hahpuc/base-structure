@@ -11,7 +11,6 @@ import { environment } from '@/environments/environment';
 import { HeaderButton, HeaderService } from './layouts/header/header.service';
 import { AuthService } from './services/auth.service';
 import { PermissionService } from './services/permission.service';
-import { ToastService } from './services/toast.service';
 import { Dictionary } from './types/base';
 
 export abstract class AppBaseComponent {
@@ -19,7 +18,6 @@ export abstract class AppBaseComponent {
   protected readonly activeRoute: ActivatedRoute;
   protected readonly authService: AuthService;
   protected readonly msgService: NzMessageService;
-  protected readonly toastService: ToastService;
   protected readonly headerService: HeaderService;
   protected readonly permissionService: PermissionService;
   protected readonly translateService: TranslateService;
@@ -39,7 +37,6 @@ export abstract class AppBaseComponent {
     this.authService = injector.get(AuthService);
     this.permissionService = injector.get(PermissionService);
     this.msgService = injector.get(NzMessageService);
-    this.toastService = injector.get(ToastService);
     this.headerService = injector.get(HeaderService);
     this.translateService = injector.get(TranslateService);
   }

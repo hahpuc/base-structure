@@ -1,24 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 
-import { ToastService } from '@/app/shared/services/toast.service';
+import { AppBaseComponent } from '@/app/shared/app.base.component';
 
 @Component({
   selector: 'app-register',
   standalone: false,
   templateUrl: './register.component.html',
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent extends AppBaseComponent implements OnInit {
   registerForm!: FormGroup;
   isLoading = false;
   errorMessage = '';
 
   constructor(
-    private fb: FormBuilder,
-    private router: Router,
-    private toastService: ToastService
-  ) {}
+    injector: Injector,
+    private fb: FormBuilder
+  ) {
+    super(injector);
+  }
 
   ngOnInit(): void {
     this.initializeForm();
@@ -59,16 +59,15 @@ export class RegisterComponent implements OnInit {
       setTimeout(() => {
         this.isLoading = false;
         // Show success message
-        this.toastService.success(
-          'Registration Successful',
-          'Account created successfully! Please login.'
+        this.msgService.success(
+          'Registration Successful: Account created successfully! Please login.'
         );
         // Navigate to login on successful registration
         this.router.navigate(['/login']);
       }, 1500);
     } else {
       this.markFormGroupTouched();
-      this.toastService.error('Validation Error', 'Please check your input fields.');
+      this.msgService.error('Validation Error: Please check your input fields.');
     }
   }
 

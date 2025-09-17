@@ -34,18 +34,11 @@
             ],
             "styles": [
               "src/tailwind.css",
-              "src/assets/css/styles.css",
-              "src/assets/vendors/apexcharts/apexcharts.css",
-              "src/assets/vendors/keenicons/styles.bundle.css",
               "src/styles.scss",
               "node_modules/quill/dist/quill.snow.css",
               "node_modules/quill/dist/quill.bubble.css"
             ],
-            "scripts": [
-              "src/assets/js/core.bundle.js",
-              "src/assets/vendors/ktui/ktui.min.js",
-              "src/assets/vendors/apexcharts/apexcharts.min.js"
-            ]
+            "scripts": []
           },
           "configurations": {
             "production": {

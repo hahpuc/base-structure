@@ -78,15 +78,11 @@ export class LoginComponent extends AppBaseComponent implements OnInit {
 
           this._errorMsg = error.message;
 
-          this.toastService.error(
-            'error',
-            this._errorMsg || 'An error occurred while logging in.',
-            5000
-          );
+          this.msgService.error(this._errorMsg || 'An error occurred while logging in.');
         },
       });
     } else {
-      this.toastService.error('error', 'Please fill in all required fields.');
+      this.msgService.error('Please fill in all required fields.');
       this.validateFormGroup(this.validateForm);
     }
   }

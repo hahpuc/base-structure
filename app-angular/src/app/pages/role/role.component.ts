@@ -61,7 +61,7 @@ export class RoleComponent extends AppBaseComponent implements OnInit {
         click: row => {
           this.roleService.toggleStatus(+row.id).subscribe(() => {
             this.ftTable.refresh();
-            this.toastService.success('Success', 'Status updated successfully');
+            this.msgService.success('Status updated successfully');
           });
         },
       },

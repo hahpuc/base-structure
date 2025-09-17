@@ -126,7 +126,7 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
         type: 'success',
         visible: true,
         click: () => {
-          this.toastService.info('Export Data', 'You can implement export logic here');
+          this.msgService.info('Export Data functionality is not implemented yet');
         },
         permission: 'province_manage_read',
       },
@@ -137,7 +137,7 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
         visible: () => true, // Dynamic visibility
         permission: 'province_manage_update',
         click: () => {
-          this.toastService.warning('Settings', 'Settings functionality coming soon');
+          this.msgService.warning('Settings functionality coming soon');
         },
       },
       {
@@ -147,7 +147,7 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
         visible: true,
         permission: 'province_manage_delete',
         click: () => {
-          this.toastService.error('Delete All', 'This action is disabled');
+          this.msgService.error('Delete All functionality is not implemented yet');
         },
       },
     ]);
@@ -158,7 +158,7 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
     // Navigate to edit page or open modal
     this.showInfoMessage(`Edit province: ${province.name}`);
 
-    this.toastService.warning('Edit Province', `You are editing province: ${province.name}`, 3000);
+    this.msgService.warning(`You are editing province: ${province.name}`);
   }
 
   deleteProvince(province: ProvinceDto): void {
