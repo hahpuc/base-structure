@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { SwitchComponent } from '../../input/switch.component';
+
 import { ComponentCardComponent } from '../../../common/component-card/component-card.component';
+import { SwitchComponent } from '../../input/switch.component';
 
 @Component({
   selector: 'app-toggle-switch',

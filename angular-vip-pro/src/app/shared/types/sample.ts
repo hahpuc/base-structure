@@ -2,8 +2,8 @@ import { EStatus } from '../constants/enum';
 
 import { BaseModel, BaseQuery } from './base';
 import { CategoryDto } from './category';
-import { WardDto } from './ward';
 import { UserDto } from './user';
+import { WardDto } from './ward';
 
 export enum ESampleType {
   event,

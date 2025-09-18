@@ -6,14 +6,14 @@ import {
   ViewChildren,
   ChangeDetectorRef,
   Injector,
-  OnInit,
+  OnInit, OnDestroy,
 } from "@angular/core";
-import { SidebarService } from "../../services/sidebar.service";
 import { NavigationEnd, Router, RouterModule } from "@angular/router";
-import { SafeHtmlPipe } from "../../pipe/safe-html.pipe";
-import { AppBaseComponent } from "../../components/base/app.base.component";
-
 import { combineLatest, Subscription } from "rxjs";
+
+import { AppBaseComponent } from "../../components/base/app.base.component";
+import { SafeHtmlPipe } from "../../pipe/safe-html.pipe";
+import { SidebarService } from "../../services/sidebar.service";
 
 export interface MenuItem {
   label: string;
@@ -41,7 +41,7 @@ export interface MenuSection {
   imports: [CommonModule, RouterModule, SafeHtmlPipe],
   templateUrl: "./app-sidebar.component.html",
 })
-export class AppSidebarComponent extends AppBaseComponent implements OnInit {
+export class AppSidebarComponent extends AppBaseComponent implements OnInit, OnDestroy {
   // Dynamic menu sections
   menuSections: MenuSection[] = [
     {

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { GridShapeComponent } from '../../../shared/components/common/grid-shape/grid-shape.component';
 import { RouterModule } from '@angular/router';
+
+import { GridShapeComponent } from '../../../shared/components/common/grid-shape/grid-shape.component';
 
 @Component({
   selector: 'app-not-found',

@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { BadgeComponent } from '../../../ui/badge/badge.component';
-import { AvatarTextComponent } from '../../../ui/avatar/avatar-text.component';
+
 import { CheckboxComponent } from '../../../form/input/checkbox.component';
+import { AvatarTextComponent } from '../../../ui/avatar/avatar-text.component';
+import { BadgeComponent } from '../../../ui/badge/badge.component';
 
 @Component({
   selector: 'app-basic-table-two',

@@ -7,7 +7,7 @@ import {
   ElementRef,
   OnInit,
   OnDestroy,
-  HostListener
+  HostListener, OnChanges
 } from '@angular/core';
 
 @Component({
@@ -18,7 +18,7 @@ import {
   templateUrl: './modal.component.html',
   styles: ``
 })
-export class ModalComponent {
+export class ModalComponent implements OnChanges, OnInit, OnDestroy {
 
   @Input() isOpen = false;
   @Output() close = new EventEmitter<void>();

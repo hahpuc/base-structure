@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import {
   ApexAxisChartSeries,
@@ -11,9 +12,7 @@ import {
   ApexGrid,
   ApexFill,
   ApexTooltip
-} from 'ng-apexcharts';
-import { NgApexchartsModule } from 'ng-apexcharts';
-import { CommonModule } from '@angular/common';
+, NgApexchartsModule } from 'ng-apexcharts';
 
 
 @Component({

@@ -8,7 +8,7 @@
     [ngClass]="{
       'xl:ml-[290px]': (isExpanded$ | async) || (isHovered$ | async),
       'xl:ml-[90px]': !(isExpanded$ | async) && !(isHovered$ | async),
-      'ml-0': (isMobileOpen$ | async)
+      'ml-0': (isMobileOpen$ | async),
     }"
   >
     <!-- app header start -->

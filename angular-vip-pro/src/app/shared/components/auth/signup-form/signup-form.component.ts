@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { LabelComponent } from '../../form/label/label.component';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+
 import { CheckboxComponent } from '../../form/input/checkbox.component';
 import { InputFieldComponent } from '../../form/input/input-field.component';
-import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { LabelComponent } from '../../form/label/label.component';
+
 
 
 @Component({

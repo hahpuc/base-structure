@@ -1,7 +1,8 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { appConfig } from './app/app.config';
-import { AppComponent } from './app/app.component';
 import { register as registerSwiperElements } from 'swiper/element/bundle';
+
+import { AppComponent } from './app/app.component';
+import { appConfig } from './app/app.config';
 
 // Save original method
 // const originalAddEventListener = EventTarget.prototype.addEventListener;

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+
 import { ButtonComponent } from '../../../ui/button/button.component';
 
 interface Invoice {
@@ -148,7 +149,7 @@ export class BillingInvoiceTableComponent {
   visiblePages(): number[] {
     const maxVisible: number = 5;
     let start: number = Math.max(1, this.currentPage - Math.floor(maxVisible / 2));
-    let end: number = Math.min(this.totalPages, start + maxVisible - 1);
+    const end: number = Math.min(this.totalPages, start + maxVisible - 1);
     if (end - start + 1 < maxVisible) {
       start = Math.max(1, end - maxVisible + 1);
     }

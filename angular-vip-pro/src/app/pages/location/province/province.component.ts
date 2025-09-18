@@ -1,13 +1,13 @@
 import { Component, Injector, OnInit, ViewChild } from "@angular/core";
+import { NzModalModule } from "ng-zorro-antd/modal";
 
 import { AppBaseComponent } from "@/app/shared/components/base/app.base.component";
+import { PageBreadcrumbComponent } from "@/app/shared/components/common/page-breadcrumb/page-breadcrumb.component";
 import { TableComponent } from "@/app/shared/components/tables/table/table.component";
 import { TableOption } from "@/app/shared/components/tables/table/table.model";
 import { ProvinceService } from "@/app/shared/services/province.service";
 import { ProvinceDto, QueryProvince } from "@/app/shared/types/province";
 
-import { NzModalModule } from "ng-zorro-antd/modal";
-import { PageBreadcrumbComponent } from "@/app/shared/components/common/page-breadcrumb/page-breadcrumb.component";
 
 @Component({
   imports: [TableComponent, NzModalModule, PageBreadcrumbComponent],

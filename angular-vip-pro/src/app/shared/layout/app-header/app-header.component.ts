@@ -1,10 +1,11 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { SidebarService } from '../../services/sidebar.service';
 import { CommonModule } from '@angular/common';
+import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { RouterModule } from '@angular/router';
+
 import { ThemeToggleButtonComponent } from '../../components/common/theme-toggle/theme-toggle-button.component';
 import { NotificationDropdownComponent } from '../../components/header/notification-dropdown/notification-dropdown.component';
 import { UserDropdownComponent } from '../../components/header/user-dropdown/user-dropdown.component';
+import { SidebarService } from '../../services/sidebar.service';
 
 @Component({
   selector: 'app-header',
@@ -17,7 +18,7 @@ import { UserDropdownComponent } from '../../components/header/user-dropdown/use
   ],
   templateUrl: './app-header.component.html',
 })
-export class AppHeaderComponent {
+export class AppHeaderComponent implements AfterViewInit, OnDestroy {
   isApplicationMenuOpen = false;
   readonly isMobileOpen$;
 

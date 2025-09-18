@@ -3,12 +3,12 @@
     <div class="card card-grid h-full min-w-full">
       <!-- Table Filter -->
       @if (option.filterable && option.filters && option.filters.length > 0) {
-      <app-table-filter
-        [filters]="option.filters!"
-        [initialFilterValues]="currentFilters"
-        (filterChange)="onFilterChange($event)"
-        (clearFilter)="onClearFilter()"
-      ></app-table-filter>
+        <app-table-filter
+          [filters]="option.filters!"
+          [initialFilterValues]="currentFilters"
+          (filterChange)="onFilterChange($event)"
+          (clearFilter)="onClearFilter()"
+        ></app-table-filter>
       }
 
       <!-- Dynamic Table Data -->
@@ -35,203 +35,207 @@
           <tr>
             <!-- Expandable Column -->
             @if (isExpandable()) {
-            <th nzWidth="50px" [nzLeft]="getFixedLeft()"></th>
+              <th nzWidth="50px" [nzLeft]="getFixedLeft()"></th>
             }
 
             <!-- Checkbox Column -->
             @if (option.selectable) {
-            <th
-              nzWidth="60px"
-              [nzLeft]="getFixedLeft()"
-              [(nzChecked)]="allChecked"
-              [nzIndeterminate]="indeterminate"
-              (nzCheckedChange)="onAllChecked($event)"
-            ></th>
+              <th
+                nzWidth="60px"
+                [nzLeft]="getFixedLeft()"
+                [(nzChecked)]="allChecked"
+                [nzIndeterminate]="indeterminate"
+                (nzCheckedChange)="onAllChecked($event)"
+              ></th>
             }
 
             <!-- Data Columns -->
             @for (column of getVisibleColumns(); track column.name) {
-            <th
-              [nzWidth]="getColumnWidth(column)"
-              [nzLeft]="column.fixed === 'left'"
-              [nzRight]="column.fixed === 'right'"
-              [nzSortFn]="getSortFn(column)"
-              [nzShowSort]="column.sortable"
-              [nzSortDirections]="['ascend', 'descend', null]"
-              [nzSortOrder]="getSortDirection(column)"
-              (nzSortOrderChange)="onSortChange(column, $event)"
-              [style.text-align]="getColumnAlign(column)"
-            >
-              {{ column.title }}
-            </th>
+              <th
+                [nzWidth]="getColumnWidth(column)"
+                [nzLeft]="column.fixed === 'left'"
+                [nzRight]="column.fixed === 'right'"
+                [nzSortFn]="getSortFn(column)"
+                [nzShowSort]="column.sortable"
+                [nzSortDirections]="['ascend', 'descend', null]"
+                [nzSortOrder]="getSortDirection(column)"
+                (nzSortOrderChange)="onSortChange(column, $event)"
+                [style.text-align]="getColumnAlign(column)"
+              >
+                {{ column.title }}
+              </th>
             }
 
             <!-- Actions Column -->
             @if (hasActions()) {
-            <th nzWidth="120px" [nzRight]="true" style="text-align: center">
-              Actions
-            </th>
+              <th nzWidth="120px" [nzRight]="true" style="text-align: center">Actions</th>
             }
           </tr>
         </thead>
 
         <!-- Table Body -->
         <tbody>
-          @for (row of dynamicTable.data; track getRowKey(row); let i = $index)
-          {
-          <tr>
-            <!-- Expandable Cell -->
-            @if (isExpandable()) {
-            <td [nzLeft]="getFixedLeft()" [(nzExpand)]="row['expand']"></td>
-            }
+          @for (row of dynamicTable.data; track getRowKey(row); let i = $index) {
+            <tr>
+              <!-- Expandable Cell -->
+              @if (isExpandable()) {
+                <td [nzLeft]="getFixedLeft()" [(nzExpand)]="row['expand']"></td>
+              }
 
-            <!-- Checkbox Cell -->
-            @if (option.selectable) {
-            <td [nzLeft]="getFixedLeft()" class="text-center">
-              <label
-                nz-checkbox
-                [(ngModel)]="mapOfCheckedId[getRowKey(row)]"
-                (ngModelChange)="onItemChecked(getRowKey(row), $event)"
-              >
-              </label>
-            </td>
-            }
-
-            <!-- Data Cells -->
-            @for (column of getVisibleColumns(); track column.name) {
-            <td
-              [nzLeft]="column.fixed === 'left'"
-              [nzRight]="column.fixed === 'right'"
-              [style.text-align]="getColumnAlign(column)"
-              [nzEllipsis]="true"
-              [class]="getCellClass(column, row)"
-              (click)="onCellClick(column, row)"
-            >
-              @switch (column.type) { @case ('text') {
-              {{ getCellValue(row, column) }}
-              } @case ('number') {
-              {{ formatNumber(getCellValue(row, column)) }}
-              } @case ('date') {
-              {{ formatDate(getCellValue(row, column)) }}
-              } @case ('datetime') {
-              {{ formatDateTime(getCellValue(row, column)) }}
-              } @case ('time') {
-              {{ formatTime(getCellValue(row, column)) }}
-              } @case ('boolean') { @if (getCellValue(row, column)) {
-              <nz-tag nzColor="green">Yes</nz-tag>
-              } @else {
-              <nz-tag nzColor="red">No</nz-tag>
-              } } @case ('status') { @if (getCellValue(row, column)) {
-              <nz-tag nzColor="green" style="cursor: pointer">Active</nz-tag>
-              } @else {
-              <nz-tag nzColor="red" style="cursor: pointer">Inactive</nz-tag>
-              } } @case ('percent') {
-              {{ formatPercent(getCellValue(row, column)) }}
-              } @case ('long-text') {
-              <span [title]="getCellValue(row, column)">
-                {{ truncateText(getCellValue(row, column), 50) }}
-              </span>
-              } @case ('switch') {
-              <nz-switch
-                [ngModel]="getCellValue(row, column)"
-                [nzDisabled]="isColumnDisabled(column, row)"
-                (ngModelChange)="onSwitchChange(column, row, $event)"
-              ></nz-switch>
-              } @case ('button') {
-              <button
-                nz-button
-                nzType="primary"
-                nzSize="small"
-                [disabled]="isColumnDisabled(column, row)"
-                (click)="onButtonClick(column, row)"
-              >
-                {{ column.title }}
-              </button>
-              } @case ('image') { @if (getCellValue(row, column)) {
-              <img
-                [src]="getCellValue(row, column)"
-                [alt]="column.title"
-                style="
-                  width: 40px;
-                  height: 40px;
-                  object-fit: cover;
-                  border-radius: 4px;
-                "
-              />
-              } @else {
-              <div
-                style="
-                  width: 40px;
-                  height: 40px;
-                  background: #f5f5f5;
-                  border-radius: 4px;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                "
-              >
-                <span style="color: #999; font-size: 12px">No Image</span>
-              </div>
-              } } @case ('custom-render') { @if (column.customRender) {
-              <span [innerHTML]="column.customRender(row)"></span>
-              } @else {
-              {{ getCellValue(row, column) }}
-              } } @default {
-              {{ getCellValue(row, column) }}
-              } }
-            </td>
-            }
-
-            <!-- Actions Cell -->
-            @if (hasActions()) {
-            <td [nzRight]="true" style="text-align: center">
-              <div
-                nz-dropdown
-                [nzDropdownMenu]="actionMenu"
-                nzPlacement="bottomRight"
-              >
-                <button nz-button nzType="text" [nzSize]="'small'">
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
+              <!-- Checkbox Cell -->
+              @if (option.selectable) {
+                <td [nzLeft]="getFixedLeft()" class="text-center">
+                  <label
+                    nz-checkbox
+                    [(ngModel)]="mapOfCheckedId[getRowKey(row)]"
+                    (ngModelChange)="onItemChecked(getRowKey(row), $event)"
                   >
-                    <path
-                      d="M1 19H19M11.7844 3.31171C11.7844 3.31171 11.7844 4.94634 13.419 6.58096C15.0537 8.21559 16.6883 8.21559 16.6883 8.21559M5.31963 15.9881L8.75234 15.4977C9.2475 15.4269 9.70636 15.1975 10.06 14.8438L18.3229 6.58096C19.2257 5.67818 19.2257 4.21449 18.3229 3.31171L16.6883 1.67708C15.7855 0.774305 14.3218 0.774305 13.419 1.67708L5.15616 9.93996C4.80248 10.2936 4.57305 10.7525 4.50231 11.2477L4.01193 14.6804C3.90295 15.4432 4.5568 16.097 5.31963 15.9881Z"
-                      stroke="currentColor"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                    />
-                  </svg>
-                </button>
-              </div>
-              <nz-dropdown-menu #actionMenu="nzDropdownMenu">
-                <ul nz-menu>
-                  @for (action of getVisibleActions(row); track action.label) {
-                  <li nz-menu-item (click)="onActionClick(action, row)">
-                    <span [style.color]="getActionColor(action.color)">{{
-                      action.label
-                    }}</span>
-                  </li>
-                  }
-                </ul>
-              </nz-dropdown-menu>
-            </td>
-            }
-          </tr>
+                  </label>
+                </td>
+              }
 
-          <!-- Expandable Row Content -->
-          @if (isExpandable() && row['expand']) {
-          <tr [nzExpand]="row['expand']">
-            <td [attr.colspan]="getTotalColumnsCount()">
-              <div class="p-4">
-                <span [innerHTML]="getExpandContent(row)"></span>
-              </div>
-            </td>
-          </tr>
-          } }
+              <!-- Data Cells -->
+              @for (column of getVisibleColumns(); track column.name) {
+                <td
+                  [nzLeft]="column.fixed === 'left'"
+                  [nzRight]="column.fixed === 'right'"
+                  [style.text-align]="getColumnAlign(column)"
+                  [nzEllipsis]="true"
+                  [class]="getCellClass(column, row)"
+                  (click)="onCellClick(column, row)"
+                >
+                  @switch (column.type) {
+                    @case ('text') {
+                      {{ getCellValue(row, column) }}
+                    }
+                    @case ('number') {
+                      {{ formatNumber(getCellValue(row, column)) }}
+                    }
+                    @case ('date') {
+                      {{ formatDate(getCellValue(row, column)) }}
+                    }
+                    @case ('datetime') {
+                      {{ formatDateTime(getCellValue(row, column)) }}
+                    }
+                    @case ('time') {
+                      {{ formatTime(getCellValue(row, column)) }}
+                    }
+                    @case ('boolean') {
+                      @if (getCellValue(row, column)) {
+                        <nz-tag nzColor="green">Yes</nz-tag>
+                      } @else {
+                        <nz-tag nzColor="red">No</nz-tag>
+                      }
+                    }
+                    @case ('status') {
+                      @if (getCellValue(row, column)) {
+                        <nz-tag nzColor="green" style="cursor: pointer">Active</nz-tag>
+                      } @else {
+                        <nz-tag nzColor="red" style="cursor: pointer">Inactive</nz-tag>
+                      }
+                    }
+                    @case ('percent') {
+                      {{ formatPercent(getCellValue(row, column)) }}
+                    }
+                    @case ('long-text') {
+                      <span [title]="getCellValue(row, column)">
+                        {{ truncateText(getCellValue(row, column), 50) }}
+                      </span>
+                    }
+                    @case ('switch') {
+                      <nz-switch
+                        [ngModel]="getCellValue(row, column)"
+                        [nzDisabled]="isColumnDisabled(column, row)"
+                        (ngModelChange)="onSwitchChange(column, row, $event)"
+                      ></nz-switch>
+                    }
+                    @case ('button') {
+                      <button
+                        nz-button
+                        nzType="primary"
+                        nzSize="small"
+                        [disabled]="isColumnDisabled(column, row)"
+                        (click)="onButtonClick(column, row)"
+                      >
+                        {{ column.title }}
+                      </button>
+                    }
+                    @case ('image') {
+                      @if (getCellValue(row, column)) {
+                        <img
+                          [src]="getCellValue(row, column)"
+                          [alt]="column.title"
+                          style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px"
+                        />
+                      } @else {
+                        <div
+                          style="
+                            width: 40px;
+                            height: 40px;
+                            background: #f5f5f5;
+                            border-radius: 4px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                          "
+                        >
+                          <span style="color: #999; font-size: 12px">No Image</span>
+                        </div>
+                      }
+                    }
+                    @case ('custom-render') {
+                      @if (column.customRender) {
+                        <span [innerHTML]="column.customRender(row)"></span>
+                      } @else {
+                        {{ getCellValue(row, column) }}
+                      }
+                    }
+                    @default {
+                      {{ getCellValue(row, column) }}
+                    }
+                  }
+                </td>
+              }
+
+              <!-- Actions Cell -->
+              @if (hasActions()) {
+                <td [nzRight]="true" style="text-align: center">
+                  <div nz-dropdown [nzDropdownMenu]="actionMenu" nzPlacement="bottomRight">
+                    <button nz-button nzType="text" [nzSize]="'small'">
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M1 19H19M11.7844 3.31171C11.7844 3.31171 11.7844 4.94634 13.419 6.58096C15.0537 8.21559 16.6883 8.21559 16.6883 8.21559M5.31963 15.9881L8.75234 15.4977C9.2475 15.4269 9.70636 15.1975 10.06 14.8438L18.3229 6.58096C19.2257 5.67818 19.2257 4.21449 18.3229 3.31171L16.6883 1.67708C15.7855 0.774305 14.3218 0.774305 13.419 1.67708L5.15616 9.93996C4.80248 10.2936 4.57305 10.7525 4.50231 11.2477L4.01193 14.6804C3.90295 15.4432 4.5568 16.097 5.31963 15.9881Z"
+                          stroke="currentColor"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                  <nz-dropdown-menu #actionMenu="nzDropdownMenu">
+                    <ul nz-menu>
+                      @for (action of getVisibleActions(row); track action.label) {
+                        <li nz-menu-item (click)="onActionClick(action, row)">
+                          <span [style.color]="getActionColor(action.color)">{{ action.label }}</span>
+                        </li>
+                      }
+                    </ul>
+                  </nz-dropdown-menu>
+                </td>
+              }
+            </tr>
+
+            <!-- Expandable Row Content -->
+            @if (isExpandable() && row['expand']) {
+              <tr [nzExpand]="row['expand']">
+                <td [attr.colspan]="getTotalColumnsCount()">
+                  <div class="p-4">
+                    <span [innerHTML]="getExpandContent(row)"></span>
+                  </div>
+                </td>
+              </tr>
+            }
+          }
         </tbody>
       </nz-table>
     </div>

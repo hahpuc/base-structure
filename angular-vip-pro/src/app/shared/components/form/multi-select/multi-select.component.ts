@@ -14,7 +14,7 @@ export interface Option {
   templateUrl: './multi-select.component.html',
   styles: ``
 })
-export class MultiSelectComponent {
+export class MultiSelectComponent implements OnInit {
 
   @Input() label: string = '';
   @Input() options: Option[] = [];

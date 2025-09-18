@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 
 import { ListPaginate } from "@/app/shared/types/base";
+
 import { FilterParams, TableOption, TableRowData } from "../table.model";
 
 @Injectable({ providedIn: "root" })

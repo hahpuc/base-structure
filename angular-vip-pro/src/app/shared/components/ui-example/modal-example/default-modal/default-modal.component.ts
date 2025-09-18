@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ModalComponent } from '../../../ui/modal/modal.component';
+
 import { ComponentCardComponent } from '../../../common/component-card/component-card.component';
 import { ButtonComponent } from '../../../ui/button/button.component';
+import { ModalComponent } from '../../../ui/modal/modal.component';
 
 @Component({
   selector: 'app-default-modal',

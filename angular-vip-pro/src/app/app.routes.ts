@@ -1,11 +1,13 @@
 import { Routes } from "@angular/router";
+
 import { BlankComponent } from "./pages/blank/blank.component";
 import { BarChartComponent } from "./pages/charts/bar-chart/bar-chart.component";
 import { LineChartComponent } from "./pages/charts/line-chart/line-chart.component";
 import { EcommerceComponent } from "./pages/dashboard/ecommerce/ecommerce.component";
-import { NzDemoFormNormalLoginComponent } from "./pages/forms-antd/forms-antd.component";
 import { FormElementsComponent } from "./pages/forms/form-elements/form-elements.component";
+import { NzDemoFormNormalLoginComponent } from "./pages/forms-antd/forms-antd.component";
 import { InvoicesComponent } from "./pages/invoices/invoices.component";
+import { ProvinceComponent } from "./pages/location/province/province.component";
 import { NotFoundComponent } from "./pages/other-page/not-found/not-found.component";
 import { ProfileComponent } from "./pages/profile/profile.component";
 import { BasicTablesComponent } from "./pages/tables/basic-tables/basic-tables.component";
@@ -15,12 +17,11 @@ import { BadgesComponent } from "./pages/ui-elements/badges/badges.component";
 import { ButtonsComponent } from "./pages/ui-elements/buttons/buttons.component";
 import { ImagesComponent } from "./pages/ui-elements/images/images.component";
 import { VideosComponent } from "./pages/ui-elements/videos/videos.component";
+import { NzDemoTableDynamicSettingsComponent } from "./shared/components/tables/table/table-dynamic-antd.component";
 import { AuthGuard } from "./shared/guards/auth.guard";
 import { PermissionGuard } from "./shared/guards/permission.guard";
 import { AppLayoutComponent } from "./shared/layout/app-layout/app-layout.component";
 import { AuthPageLayoutComponent } from "./shared/layout/auth-page-layout/auth-page-layout.component";
-import { ProvinceComponent } from "./pages/location/province/province.component";
-import { NzDemoTableDynamicSettingsComponent } from "./shared/components/tables/table/table-dynamic-antd.component";
 
 export const routes: Routes = [
   {

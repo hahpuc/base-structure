@@ -1,8 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { NgApexchartsModule } from 'ng-apexcharts';
-
-import {
+import { NgApexchartsModule ,
   ApexAxisChartSeries,
   ApexChart,
   ApexXAxis,
@@ -16,6 +14,7 @@ import {
   ApexLegend,
   ApexOptions
 } from 'ng-apexcharts';
+
 import { ChartTabComponent } from '../../common/chart-tab/chart-tab.component';
 
 @Component({

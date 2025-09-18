@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, HostListener } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+
 import { TableDropdownComponent } from '../../common/table-dropdown/table-dropdown.component';
 
 interface Invoice {
@@ -27,7 +28,7 @@ interface SortState {
   templateUrl: './invoice-list.component.html',
   styles: ``
 })
-export class InvoiceListComponent {
+export class InvoiceListComponent implements OnInit {
 
   invoices: Invoice[] = [
     {
@@ -327,7 +328,7 @@ export class InvoiceListComponent {
   get visiblePages(): number[] {
     const maxVisible = 5;
     let start = Math.max(1, this.currentPage - Math.floor(maxVisible / 2));
-    let end = Math.min(this.totalPages, start + maxVisible - 1);
+    const end = Math.min(this.totalPages, start + maxVisible - 1);
     if (end - start + 1 < maxVisible) {
       start = Math.max(1, end - maxVisible + 1);
     }

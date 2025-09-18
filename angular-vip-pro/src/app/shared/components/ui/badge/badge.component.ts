@@ -1,5 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, HostBinding, Input } from "@angular/core";
+
 import { SafeHtmlPipe } from "../../../pipe/safe-html.pipe";
 
 type BadgeVariant = "light" | "solid";

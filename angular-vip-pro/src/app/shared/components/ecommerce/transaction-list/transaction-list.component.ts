@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { TableDropdownComponent } from '../../common/table-dropdown/table-dropdown.component';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+
+import { TableDropdownComponent } from '../../common/table-dropdown/table-dropdown.component';
 
 interface Transaction {
   id: number;

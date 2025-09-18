@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+
 import { ComponentCardComponent } from '../../../common/component-card/component-card.component';
 import { ModalComponent } from '../../../ui/modal/modal.component';
 

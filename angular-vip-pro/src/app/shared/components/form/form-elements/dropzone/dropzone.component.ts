@@ -1,5 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, Output, EventEmitter, HostListener } from "@angular/core";
+
 import { ComponentCardComponent } from "../../../common/component-card/component-card.component";
 
 @Component({

@@ -1,4 +1,3 @@
-import { environment } from "@/environments/environment";
 import { Injector } from "@angular/core";
 import {
   AbstractControl,
@@ -12,12 +11,14 @@ import {
   Params,
   Router,
 } from "@angular/router";
-import { AuthService } from "@services/auth.service";
-import { PermissionService } from "@services/permission.service";
-import { Dictionary } from "@shared/types/base";
 import dayjs from "dayjs";
 import { DisabledTimeConfig } from "ng-zorro-antd/date-picker";
 import { NzMessageService } from "ng-zorro-antd/message";
+
+import { environment } from "@/environments/environment";
+import { AuthService } from "@services/auth.service";
+import { PermissionService } from "@services/permission.service";
+import { Dictionary } from "@shared/types/base";
 
 export abstract class AppBaseComponent {
   protected readonly router: Router;

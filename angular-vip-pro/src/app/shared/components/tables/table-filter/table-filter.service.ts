@@ -7,6 +7,8 @@ import {
   takeUntil,
 } from "rxjs/operators";
 
+import { BaseQuery, ListPaginate } from "@/app/shared/types/base";
+
 import {
   ActiveFilter,
   FilterOptions,
@@ -15,7 +17,6 @@ import {
   SelectOption,
   TableFilter,
 } from "./table-filter.model";
-import { BaseQuery, ListPaginate } from "@/app/shared/types/base";
 
 @Injectable()
 export class TableFilterService {

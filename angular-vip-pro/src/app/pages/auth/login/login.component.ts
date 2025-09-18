@@ -1,6 +1,3 @@
-import { AppBaseComponent } from "@/app/shared/components/base/app.base.component";
-import { Dictionary } from "@/app/shared/types/base";
-import { diffFromNow } from "@/app/shared/utils/date";
 import { CommonModule } from "@angular/common";
 import { Component, Injector, OnInit } from "@angular/core";
 import {
@@ -14,8 +11,12 @@ import { RouterModule } from "@angular/router";
 import { NzButtonModule } from "ng-zorro-antd/button";
 import { NzCheckboxModule } from "ng-zorro-antd/checkbox";
 import { NzFormModule } from "ng-zorro-antd/form";
-import { NzInputModule } from "ng-zorro-antd/input";
 import { NzIconModule } from "ng-zorro-antd/icon";
+import { NzInputModule } from "ng-zorro-antd/input";
+
+import { AppBaseComponent } from "@/app/shared/components/base/app.base.component";
+import { Dictionary } from "@/app/shared/types/base";
+import { diffFromNow } from "@/app/shared/utils/date";
 
 @Component({
   templateUrl: "./login.component.html",

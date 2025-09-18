@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { RouterModule } from '@angular/router';
+
 import { TableDropdownComponent } from '../../common/table-dropdown/table-dropdown.component';
 import { ButtonComponent } from '../../ui/button/button.component';
-import { RouterModule } from '@angular/router';
 
 interface Product {
   id: number;
@@ -30,7 +31,7 @@ interface Sort {
   templateUrl: './product-list-table.component.html',
   styles: ``
 })
-export class ProductListTableComponent {
+export class ProductListTableComponent implements OnInit {
 
   products = [
     {

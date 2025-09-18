@@ -6,6 +6,7 @@ import {
 } from "@angular/common/http";
 import { PLATFORM_ID, inject } from "@angular/core";
 import { Router } from "@angular/router";
+import { NzMessageService } from "ng-zorro-antd/message";
 import { throwError } from "rxjs";
 import { catchError, finalize } from "rxjs/operators";
 
@@ -13,7 +14,6 @@ import { environment } from "@/environments/environment";
 import { AuthService } from "@services/auth.service";
 import { ProgressBarService } from "@shared/services/progress-bar.service";
 import { Dictionary } from "@shared/types/base";
-import { NzMessageService } from "ng-zorro-antd/message";
 
 export const httpCustomInterceptor: HttpInterceptorFn = (request, next) => {
   const progressBarService = inject(ProgressBarService);

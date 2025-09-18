@@ -1,3 +1,4 @@
+import { CommonModule } from "@angular/common";
 import {
   ChangeDetectorRef,
   Component,
@@ -20,6 +21,8 @@ import {
   tap,
 } from "rxjs";
 
+import { TableFilterDrawerComponent } from "./drawer/table-filter-drawer.component";
+import { TableFilterSearchComponent } from "./search/table-filter-search.component";
 import {
   ActiveFilter,
   FilterOptions,
@@ -30,9 +33,6 @@ import {
   TableFilter,
 } from "./table-filter.model";
 import { TableFilterService } from "./table-filter.service";
-import { CommonModule } from "@angular/common";
-import { TableFilterDrawerComponent } from "./drawer/table-filter-drawer.component";
-import { TableFilterSearchComponent } from "./search/table-filter-search.component";
 import { TableFilterTagsComponent } from "./tags/table-filter-tags.component";
 
 @Component({

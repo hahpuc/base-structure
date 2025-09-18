@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
-import { InputFieldComponent } from './../../form/input/input-field.component';
-import { ModalService } from '../../../services/modal.service';
 import { CommonModule } from '@angular/common';
-import { ModalComponent } from '../../ui/modal/modal.component';
+import { Component } from '@angular/core';
+
+import { ModalService } from '../../../services/modal.service';
 import { ButtonComponent } from '../../ui/button/button.component';
+import { ModalComponent } from '../../ui/modal/modal.component';
+
+import { InputFieldComponent } from './../../form/input/input-field.component';
 
 @Component({
   selector: 'app-user-meta-card',

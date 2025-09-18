@@ -1,7 +1,7 @@
+import { CommonModule } from "@angular/common";
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 
 import { ActiveFilter } from "../table-filter.model";
-import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "app-table-filter-tags",

@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectorRef,
@@ -7,18 +8,28 @@ import {
   OnDestroy,
   OnInit,
   SimpleChanges,
-  TemplateRef,
-} from "@angular/core";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { ActivatedRoute, Router } from "@angular/router";
-import { NzModalService } from "ng-zorro-antd/modal";
-import { Observable, Subject, takeUntil } from "rxjs";
+} from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzPaginationModule } from 'ng-zorro-antd/pagination';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzTagModule } from 'ng-zorro-antd/tag';
+import { Observable, Subject, takeUntil } from 'rxjs';
 
-import { ListPaginate } from "@/app/shared/types/base";
-import { CommonModule } from "@angular/common";
-import { TableDataService } from "./services/table-data.service";
-import { TablePermissionService } from "./services/table-permission.service";
-import { getNestedValue, setNestedValue, truncateText } from "./table-utils";
+import { ListPaginate } from '@/app/shared/types/base';
+
+import { TableFilterComponent } from '../table-filter/table-filter.component';
+
+import { TableDataService } from './services/table-data.service';
+import { TablePermissionService } from './services/table-permission.service';
+import { getNestedValue, setNestedValue, truncateText } from './table-utils';
 import {
   CheckedIdMap,
   FilterParams,
@@ -28,22 +39,11 @@ import {
   TableOption,
   TableQueryParams,
   TableRowData,
-} from "./table.model";
-
-import { NzPaginationModule } from "ng-zorro-antd/pagination";
-import { NzSwitchModule } from "ng-zorro-antd/switch";
-import { NzTagModule } from "ng-zorro-antd/tag";
-import { NzTableModule } from "ng-zorro-antd/table";
-import { NzDropDownModule } from "ng-zorro-antd/dropdown";
-import { NzButtonModule } from "ng-zorro-antd/button";
-import { NzIconModule } from "ng-zorro-antd/icon";
-import { NzMenuModule } from "ng-zorro-antd/menu";
-import { NzCheckboxModule } from "ng-zorro-antd/checkbox";
-import { TableFilterComponent } from "../table-filter/table-filter.component";
+} from './table.model';
 
 @Component({
-  selector: "app-table",
-  templateUrl: "./table.component.html",
+  selector: 'app-table',
+  templateUrl: './table.component.html',
   imports: [
     CommonModule,
     FormsModule,
@@ -79,7 +79,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
 
   // Current filters and sorting
   currentFilters: FilterParams = {};
-  currentSort = "";
+  currentSort = '';
 
   // Column widths for resizing
   columnWidths: { [key: string]: string } = {};
@@ -117,11 +117,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (
-      changes["option"] &&
-      !changes["option"].firstChange &&
-      this.isInitialized
-    ) {
+    if (changes['option'] && !changes['option'].firstChange && this.isInitialized) {
       this.initializeTable();
       this.initializePermissionCache(); // Reinitialize permission cache when options change
     }
@@ -134,7 +130,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
 
   private initializeFromQueryParams() {
     // Get pagination parameters
-    const pageParam = this.getQueryParam("page");
+    const pageParam = this.getQueryParam('page');
     if (pageParam) {
       const page = parseInt(pageParam, 10);
       if (page > 0) {
@@ -142,7 +138,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
       }
     }
 
-    const limitParam = this.getQueryParam("limit");
+    const limitParam = this.getQueryParam('limit');
     if (limitParam) {
       const limit = parseInt(limitParam, 10);
       if (limit > 0 && this.pageSizeOptions.includes(limit)) {
@@ -151,7 +147,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
     }
 
     // Get sorting parameter
-    const sortingParam = this.getQueryParam("sorting");
+    const sortingParam = this.getQueryParam('sorting');
     if (sortingParam) {
       this.currentSort = sortingParam;
     }
@@ -160,30 +156,27 @@ export class TableComponent<T extends TableRowData = TableRowData>
     const filters: FilterParams = {};
 
     // Handle search text parameter (filter)
-    const searchTextParam = this.getQueryParam("filter");
-    if (searchTextParam !== null && searchTextParam !== "") {
-      filters["filter"] = searchTextParam;
+    const searchTextParam = this.getQueryParam('filter');
+    if (searchTextParam !== null && searchTextParam !== '') {
+      filters['filter'] = searchTextParam;
     }
 
     if (this.option.filters) {
-      this.option.filters.forEach((filter) => {
+      this.option.filters.forEach(filter => {
         const filterValue = this.getQueryParam(filter.name);
-        if (filterValue !== null && filterValue !== "") {
+        if (filterValue !== null && filterValue !== '') {
           let convertedValue: string | number | boolean = filterValue;
 
           // Convert to proper type based on filter type and options
-          if (filter.type === "select" && Array.isArray(filter.options)) {
+          if (filter.type === 'select' && Array.isArray(filter.options)) {
             // Find matching option to get the correct type
             const matchingOption = filter.options.find(
-              (option) => String(option.value) === String(filterValue)
+              option => String(option.value) === String(filterValue)
             );
             if (matchingOption) {
-              convertedValue = matchingOption.value as
-                | string
-                | number
-                | boolean;
+              convertedValue = matchingOption.value as string | number | boolean;
             }
-          } else if (filter.type === "number") {
+          } else if (filter.type === 'number') {
             const numValue = Number(filterValue);
             if (!isNaN(numValue)) {
               convertedValue = numValue;
@@ -213,7 +206,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
 
   private initializeColumnWidths() {
     if (this.option?.columns) {
-      this.option.columns.forEach((column) => {
+      this.option.columns.forEach(column => {
         if (column.width && !this.columnWidths[column.name]) {
           this.columnWidths[column.name] = column.width;
         }
@@ -237,27 +230,22 @@ export class TableComponent<T extends TableRowData = TableRowData>
 
     const result = this.tableDataService.loadData(this.option, params);
 
-    if (
-      result &&
-      typeof (result as Observable<ListPaginate<T>>).subscribe === "function"
-    ) {
+    if (result && typeof (result as Observable<ListPaginate<T>>).subscribe === 'function') {
       // Dynamic data (Observable)
-      (result as Observable<ListPaginate<T>>)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response) => {
-            this.tableData = response.data;
-            this.total = response.total_records;
-            this.loading = false;
+      (result as Observable<ListPaginate<T>>).pipe(takeUntil(this.destroy$)).subscribe({
+        next: response => {
+          this.tableData = response.data;
+          this.total = response.total_records;
+          this.loading = false;
 
-            this.updateSelection();
-            this.cdr.detectChanges();
-          },
-          error: () => {
-            this.loading = false;
-            this.cdr.detectChanges();
-          },
-        });
+          this.updateSelection();
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.loading = false;
+          this.cdr.detectChanges();
+        },
+      });
     } else if (result) {
       // Static data (ListPaginate<T>)
       const response = result as ListPaginate<T>;
@@ -326,12 +314,12 @@ export class TableComponent<T extends TableRowData = TableRowData>
     if (!column.sortable) return;
 
     const columnName = column.name;
-    let newSort = "";
+    let newSort = '';
 
     if (this.currentSort === `${columnName} asc`) {
       newSort = `${columnName} desc`;
     } else if (this.currentSort === `${columnName} desc`) {
-      newSort = "";
+      newSort = '';
     } else {
       newSort = `${columnName} asc`;
     }
@@ -342,14 +330,14 @@ export class TableComponent<T extends TableRowData = TableRowData>
     this.loadData();
   }
 
-  getSortDirection(column: TableColumn<T>): "ascend" | "descend" | null {
+  getSortDirection(column: TableColumn<T>): 'ascend' | 'descend' | null {
     if (!column.sortable || !this.currentSort) return null;
 
     const columnName = column.name;
     if (this.currentSort === `${columnName} asc`) {
-      return "ascend";
+      return 'ascend';
     } else if (this.currentSort === `${columnName} desc`) {
-      return "descend";
+      return 'descend';
     }
     return null;
   }
@@ -359,8 +347,8 @@ export class TableComponent<T extends TableRowData = TableRowData>
     return (a: T, b: T) => {
       const aValue = getNestedValue(a, column.name);
       const bValue = getNestedValue(b, column.name);
-      const aStr = String(aValue ?? "");
-      const bStr = String(bValue ?? "");
+      const aStr = String(aValue ?? '');
+      const bStr = String(bValue ?? '');
       if (aStr < bStr) return -1;
       if (aStr > bStr) return 1;
       return 0;
@@ -371,14 +359,14 @@ export class TableComponent<T extends TableRowData = TableRowData>
     if (!column.sortable) return;
 
     const columnName = column.name;
-    let newSort = "";
+    let newSort = '';
 
-    if (sortOrder === "ascend") {
+    if (sortOrder === 'ascend') {
       newSort = `${columnName} asc`;
-    } else if (sortOrder === "descend") {
+    } else if (sortOrder === 'descend') {
       newSort = `${columnName} desc`;
     } else {
-      newSort = "";
+      newSort = '';
     }
 
     this.currentSort = newSort;
@@ -388,7 +376,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
   }
 
   onAllChecked(checked: boolean) {
-    this.tableData.forEach((item) => {
+    this.tableData.forEach(item => {
       this.mapOfCheckedId[item.id] = checked;
     });
     this.updateSelection();
@@ -402,16 +390,13 @@ export class TableComponent<T extends TableRowData = TableRowData>
   }
 
   private updateSelection() {
-    const checkedCount = this.tableData.filter(
-      (item) => this.mapOfCheckedId[item.id]
-    ).length;
+    const checkedCount = this.tableData.filter(item => this.mapOfCheckedId[item.id]).length;
     this.allChecked = checkedCount === this.tableData.length;
-    this.indeterminate =
-      checkedCount > 0 && checkedCount < this.tableData.length;
+    this.indeterminate = checkedCount > 0 && checkedCount < this.tableData.length;
   }
 
   getSelectedItems() {
-    return this.tableData.filter((item) => this.mapOfCheckedId[item.id]);
+    return this.tableData.filter(item => this.mapOfCheckedId[item.id]);
   }
 
   // MARK: PERMISSIONS (delegated to TablePermissionService)
@@ -444,23 +429,23 @@ export class TableComponent<T extends TableRowData = TableRowData>
     const scroll: { x?: string | null; y?: string | null } = {};
 
     if (this.option.resizable) {
-      scroll.x = "100%";
+      scroll.x = '100%';
     }
 
     if (this.option.fixHeader !== false) {
       // Default is false now
-      scroll.y = "400px";
+      scroll.y = '400px';
     }
 
     return scroll;
   }
 
   getScrollX(): string | null {
-    return this.option.resizable ? "100%" : null;
+    return this.option.resizable ? '100%' : null;
   }
 
   getScrollY(): string | null {
-    return this.option.fixHeader !== false ? "400px" : null; // Default is false
+    return this.option.fixHeader !== false ? '400px' : null; // Default is false
   }
 
   getFixedLeft(): boolean {
@@ -476,24 +461,19 @@ export class TableComponent<T extends TableRowData = TableRowData>
   }
 
   hasExpandableRows(): boolean {
-    return (
-      this.isExpandable() &&
-      this.tableData.some((row: any) => row["expand"] !== undefined)
-    );
+    return this.isExpandable() && this.tableData.some((row: any) => row['expand'] !== undefined);
   }
 
   getVisibleColumns(): TableColumn<T>[] {
-    return this.option.columns.filter((column) =>
-      this.isColumnVisibleSync(column)
-    );
+    return this.option.columns.filter(column => this.isColumnVisibleSync(column));
   }
 
   getColumnWidth(column: TableColumn<T>): string {
-    return this.columnWidths[column.name] || column.width || "auto";
+    return this.columnWidths[column.name] || column.width || 'auto';
   }
 
   getColumnAlign(column: TableColumn<T>): string {
-    return column.align || "left";
+    return column.align || 'left';
   }
 
   hasActions(): boolean {
@@ -521,12 +501,12 @@ export class TableComponent<T extends TableRowData = TableRowData>
   }
 
   getCellClass(column: TableColumn<T>, row: T): string {
-    let classes = "";
+    let classes = '';
     if (column.click) {
-      classes += "cursor-pointer ";
+      classes += 'cursor-pointer ';
     }
     if (this.isColumnDisabled(column, row)) {
-      classes += "text-gray-400 ";
+      classes += 'text-gray-400 ';
     }
     return classes.trim();
   }
@@ -543,32 +523,32 @@ export class TableComponent<T extends TableRowData = TableRowData>
 
   // MARK: Formatting methods
   formatNumber(value: any): string {
-    if (value === null || value === undefined) return "";
+    if (value === null || value === undefined) return '';
     return Number(value).toLocaleString();
   }
 
   formatDate(value: any): string {
-    if (!value) return "";
+    if (!value) return '';
     return new Date(value).toLocaleDateString();
   }
 
   formatDateTime(value: any): string {
-    if (!value) return "";
+    if (!value) return '';
     return new Date(value).toLocaleString();
   }
 
   formatTime(value: any): string {
-    if (!value) return "";
+    if (!value) return '';
     return new Date(value).toLocaleTimeString();
   }
 
   formatPercent(value: any): string {
-    if (value === null || value === undefined) return "";
-    return (Number(value) * 100).toFixed(2) + "%";
+    if (value === null || value === undefined) return '';
+    return (Number(value) * 100).toFixed(2) + '%';
   }
 
   truncateText(text: any, length: number): string {
-    return truncateText(String(text || ""), length);
+    return truncateText(String(text || ''), length);
   }
 
   // MARK: Switch and button handlers
@@ -589,9 +569,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
   // MARK: Actions methods
   getVisibleActions(row: T): TableAction<T>[] {
     if (!this.option.actions) return [];
-    return this.option.actions.filter((action) =>
-      this.isActionVisibleSync(action, row)
-    );
+    return this.option.actions.filter(action => this.isActionVisibleSync(action, row));
   }
 
   onActionClick(action: TableAction<T>, row: T): void {
@@ -602,17 +580,17 @@ export class TableComponent<T extends TableRowData = TableRowData>
 
   getActionColor(color?: TableActionColor): string {
     switch (color) {
-      case "danger":
-        return "#ff4d4f";
-      case "success":
-        return "#52c41a";
-      case "warning":
-        return "#faad14";
-      case "secondary":
-        return "#8c8c8c";
-      case "primary":
+      case 'danger':
+        return '#ff4d4f';
+      case 'success':
+        return '#52c41a';
+      case 'warning':
+        return '#faad14';
+      case 'secondary':
+        return '#8c8c8c';
+      case 'primary':
       default:
-        return "#1890ff";
+        return '#1890ff';
     }
   }
 }
