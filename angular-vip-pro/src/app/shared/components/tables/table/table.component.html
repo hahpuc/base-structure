@@ -1,0 +1,18 @@
+<div class="kt-card w-full p-4">
+  <div class="ft-table-container w-full m-0 p-0 grid">
+    <div class="card card-grid h-full min-w-full">
+      <!-- Table Filter -->
+      @if (option.filterable && option.filters && option.filters.length > 0) {
+      <app-table-filter
+        [filters]="option.filters!"
+        [initialFilterValues]="currentFilters"
+        (filterChange)="onFilterChange($event)"
+        (clearFilter)="onClearFilter()"
+      ></app-table-filter>
+      }
+
+      <!-- Responsive Table Container -->
+      <div>Data Table Management</div>
+    </div>
+  </div>
+</div>

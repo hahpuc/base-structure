@@ -19,6 +19,7 @@ import { AuthGuard } from "./shared/guards/auth.guard";
 import { PermissionGuard } from "./shared/guards/permission.guard";
 import { AppLayoutComponent } from "./shared/layout/app-layout/app-layout.component";
 import { AuthPageLayoutComponent } from "./shared/layout/auth-page-layout/auth-page-layout.component";
+import { ProvinceComponent } from "./pages/location/province/province.component";
 
 export const routes: Routes = [
   {
@@ -91,6 +92,10 @@ export const routes: Routes = [
       {
         path: "form-antd",
         component: NzDemoFormNormalLoginComponent,
+      },
+      {
+        path: "province",
+        component: ProvinceComponent,
       },
     ],
   },

@@ -1,0 +1,47 @@
+@if (filters && filters.length > 0) {
+  <div class="table-filter mb-4">
+    <div class="flex flex-col lg:flex-row lg:items-center gap-3 w-full">
+      <div class="flex items-center gap-3 w-full lg:w-auto">
+        <app-table-filter-search
+          [searchText]="searchText"
+          (searchTextChange)="searchText = $event; onSearchTextChange()"
+          (clearSearch)="clearSearchText()"
+          [hasActiveFilters]="hasActiveFilters()"
+          [activeFiltersCount]="activeFilters.length"
+          (toggleDrawer)="openDrawer()"
+        ></app-table-filter-search>
+      </div>
+
+      <!-- Active Filters Display -->
+      @if (hasActiveFilters()) {
+        <app-table-filter-tags
+          [activeFilters]="activeFilters"
+          (remove)="removeActiveFilter($event)"
+          (clearAll)="onClear()"
+        ></app-table-filter-tags>
+      }
+    </div>
+
+    <!-- Table Filter Drawer Component -->
+    <app-table-filter-drawer
+      [visible]="isDrawerVisible"
+      [filters]="filters"
+      [filterForm]="filterForm"
+      [filterOptions]="filterOptions"
+      [isLoadingOptions]="isLoadingOptions"
+      [isLoading]="isLoading"
+      [searchText]="drawerSearchText"
+      [appliedSearchText]="appliedSearchText"
+      [paginatedOptions]="paginatedOptions"
+      [compareSelectValues]="compareSelectValues"
+      (closeDrawer)="closeDrawer()"
+      (onFilter)="onFilter()"
+      (onClear)="onClear()"
+      (searchTextChange)="drawerSearchText = $event; onDrawerSearchTextChange()"
+      (onSelectSearch)="onSelectSearch($event.filterName, $event.searchText)"
+      (onSelectScrollToBottom)="onSelectScrollToBottom($event)"
+      [isPaginatedFilter]="isPaginatedFilter.bind(this)"
+      [isPaginatedLoading]="isPaginatedLoading.bind(this)"
+    ></app-table-filter-drawer>
+  </div>
+}
