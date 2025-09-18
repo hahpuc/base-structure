@@ -1,0 +1,66 @@
+// Import ng-zorro-antd with your custom variables
+@import "ng-zorro-antd/ng-zorro-antd.less";
+
+// Define your custom theme variables
+@primary-color: #1d4ed8; // Custom blue primary color
+@success-color: #52c41a;
+@warning-color: #faad14;
+@error-color: #ff4d4f;
+@info-color: #1d4ed8;
+
+// Border radius
+@border-radius-base: 8px;
+@border-radius-sm: 4px;
+
+// Font sizes
+@font-size-base: 14px;
+@font-size-lg: 16px;
+@font-size-sm: 12px;
+
+// Heights
+@height-base: 40px;
+@height-lg: 48px;
+@height-sm: 32px;
+
+// Export CSS variables for dynamic theming
+:root {
+  --ant-primary-color: @primary-color;
+  --ant-success-color: @success-color;
+  --ant-warning-color: @warning-color;
+  --ant-error-color: @error-color;
+  --ant-info-color: @info-color;
+  --ant-border-radius-base: @border-radius-base;
+  --ant-border-radius-sm: @border-radius-sm;
+  --ant-font-size-base: @font-size-base;
+  --ant-height-base: @height-base;
+  --ant-height-lg: @height-lg;
+  --ant-height-sm: @height-sm;
+}
+
+// Dark theme variables
+[data-theme="dark"] {
+  --ant-primary-color: #ff7875;
+  --ant-success-color: #73d13d;
+  --ant-warning-color: #ffc53d;
+  --ant-error-color: #ff7875;
+  --ant-info-color: #40a9ff;
+}
+
+.ant-btn {
+  border-radius: 0.5rem !important;
+  height: calc(var(--spacing) * 10);
+
+  background-color: var(--ant-primary-color);
+}
+
+.ant-input {
+  border-radius: 0.5rem !important;
+  // border: 1px solid #d1d5db !important;
+  // box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  min-height: calc(var(--spacing) * 10);
+
+  // &:focus {
+  //     border-color: var(--ant-primary-color) !important;
+  //     box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2) !important;
+  // }
+}
