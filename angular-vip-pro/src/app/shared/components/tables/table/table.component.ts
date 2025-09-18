@@ -34,11 +34,38 @@ import { NzPaginationModule } from "ng-zorro-antd/pagination";
 import { NzSwitchModule } from "ng-zorro-antd/switch";
 import { NzTagModule } from "ng-zorro-antd/tag";
 import { NzTableModule } from "ng-zorro-antd/table";
+import { NzDropDownModule } from "ng-zorro-antd/dropdown";
+import { NzButtonModule } from "ng-zorro-antd/button";
+import { NzIconModule } from "ng-zorro-antd/icon";
+import { NzMenuModule } from "ng-zorro-antd/menu";
+import { NzCheckboxModule } from "ng-zorro-antd/checkbox";
 import { TableFilterComponent } from "../table-filter/table-filter.component";
 
 @Component({
   selector: "app-table",
   templateUrl: "./table.component.html",
+  styles: [
+    `
+      .cursor-pointer {
+        cursor: pointer;
+      }
+      .text-gray-400 {
+        color: #9ca3af;
+      }
+      .kt-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+      }
+      .ft-table-container {
+        overflow: hidden;
+      }
+      .card-grid {
+        border: 1px solid #f0f0f0;
+        border-radius: 6px;
+      }
+    `,
+  ],
   imports: [
     CommonModule,
     FormsModule,
@@ -47,6 +74,11 @@ import { TableFilterComponent } from "../table-filter/table-filter.component";
     NzSwitchModule,
     NzTagModule,
     NzTableModule,
+    NzDropDownModule,
+    NzButtonModule,
+    NzIconModule,
+    NzMenuModule,
+    NzCheckboxModule,
 
     TableFilterComponent,
   ],
@@ -240,6 +272,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
             this.tableData = response.data;
             this.total = response.total_records;
             this.loading = false;
+
             this.updateSelection();
             this.cdr.detectChanges();
           },
@@ -254,6 +287,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
       this.tableData = response.data;
       this.total = response.total_records;
       this.loading = false;
+
       this.updateSelection();
       this.cdr.detectChanges();
     }
@@ -426,5 +460,182 @@ export class TableComponent<T extends TableRowData = TableRowData>
 
   isActionVisibleSync(action: TableAction<T>, row: T): boolean {
     return this.tablePermissionService.isActionVisibleSync(action, row);
+  }
+
+  // MARK: Table configuration and display methods
+  getTableScroll(): { x?: string | null; y?: string | null } {
+    const scroll: { x?: string | null; y?: string | null } = {};
+
+    if (this.option.resizable) {
+      scroll.x = "100%";
+    }
+
+    if (this.option.fixHeader !== false) {
+      // Default is false now
+      scroll.y = "400px";
+    }
+
+    return scroll;
+  }
+
+  getScrollX(): string | null {
+    return this.option.resizable ? "100%" : null;
+  }
+
+  getScrollY(): string | null {
+    return this.option.fixHeader !== false ? "400px" : null; // Default is false
+  }
+
+  getFixedLeft(): boolean {
+    return this.option.fixHeader !== false; // Default is false
+  }
+
+  isExpandable(): boolean {
+    return this.option.expandable === true;
+  }
+
+  onCurrentPageDataChange(listOfCurrentPageData: readonly T[]): void {
+    // Handle current page data change if needed
+  }
+
+  hasExpandableRows(): boolean {
+    return (
+      this.isExpandable() &&
+      this.tableData.some((row: any) => row["expand"] !== undefined)
+    );
+  }
+
+  getVisibleColumns(): TableColumn<T>[] {
+    return this.option.columns.filter((column) =>
+      this.isColumnVisibleSync(column)
+    );
+  }
+
+  getColumnWidth(column: TableColumn<T>): string {
+    return this.columnWidths[column.name] || column.width || "auto";
+  }
+
+  getColumnAlign(column: TableColumn<T>): string {
+    return column.align || "left";
+  }
+
+  hasActions(): boolean {
+    return !!(this.option.actions && this.option.actions.length > 0);
+  }
+
+  getRowKey(row: T): string {
+    return String(row.id);
+  }
+
+  getExpandContent(row: T): string {
+    return (row as any).description || "";
+  }
+
+  getTotalColumnsCount(): number {
+    let count = this.getVisibleColumns().length;
+    if (this.isExpandable()) count++;
+    if (this.option.selectable) count++;
+    if (this.hasActions()) count++;
+    return count;
+  }
+
+  getCellValue(row: T, column: TableColumn<T>): any {
+    return getNestedValue(row as Record<string, unknown>, column.name);
+  }
+
+  getCellClass(column: TableColumn<T>, row: T): string {
+    let classes = "";
+    if (column.click) {
+      classes += "cursor-pointer ";
+    }
+    if (this.isColumnDisabled(column, row)) {
+      classes += "text-gray-400 ";
+    }
+    return classes.trim();
+  }
+
+  onCellClick(column: TableColumn<T>, row: T): void {
+    if (column.click && !this.isColumnDisabled(column, row)) {
+      column.click(row);
+    }
+  }
+
+  isColumnDisabled(column: TableColumn<T>, row: T): boolean {
+    return column.disable ? column.disable(row) : false;
+  }
+
+  // MARK: Formatting methods
+  formatNumber(value: any): string {
+    if (value === null || value === undefined) return "";
+    return Number(value).toLocaleString();
+  }
+
+  formatDate(value: any): string {
+    if (!value) return "";
+    return new Date(value).toLocaleDateString();
+  }
+
+  formatDateTime(value: any): string {
+    if (!value) return "";
+    return new Date(value).toLocaleString();
+  }
+
+  formatTime(value: any): string {
+    if (!value) return "";
+    return new Date(value).toLocaleTimeString();
+  }
+
+  formatPercent(value: any): string {
+    if (value === null || value === undefined) return "";
+    return (Number(value) * 100).toFixed(2) + "%";
+  }
+
+  truncateText(text: any, length: number): string {
+    return truncateText(String(text || ""), length);
+  }
+
+  // MARK: Switch and button handlers
+  onSwitchChange(column: TableColumn<T>, row: T, value: boolean): void {
+    if (column.click) {
+      // Update the row data
+      setNestedValue(row as Record<string, unknown>, column.name, value);
+      column.click(row);
+    }
+  }
+
+  onButtonClick(column: TableColumn<T>, row: T): void {
+    if (column.click) {
+      column.click(row);
+    }
+  }
+
+  // MARK: Actions methods
+  getVisibleActions(row: T): TableAction<T>[] {
+    if (!this.option.actions) return [];
+    return this.option.actions.filter((action) =>
+      this.isActionVisibleSync(action, row)
+    );
+  }
+
+  onActionClick(action: TableAction<T>, row: T): void {
+    if (action.handler) {
+      action.handler(row);
+    }
+  }
+
+  getActionColor(color?: TableActionColor): string {
+    switch (color) {
+      case "danger":
+        return "#ff4d4f";
+      case "success":
+        return "#52c41a";
+      case "warning":
+        return "#faad14";
+      case "secondary":
+        return "#8c8c8c";
+      case "primary":
+      default:
+        return "#1890ff";
+    }
   }
 }

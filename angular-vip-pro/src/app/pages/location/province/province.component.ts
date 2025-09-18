@@ -20,7 +20,10 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
     title: "Province List",
     sortable: true,
     filterable: true,
-    selectable: true,
+    selectable: false,
+    expandable: true, // Set to true if you want to test expandable rows
+    fixHeader: false, // Default is false now
+    resizable: true,
     pageSize: 10,
     pageSizeOptions: [10, 20, 50, 100],
     data: (input: QueryProvince) => {
@@ -110,7 +113,13 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
     super(injector);
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // To test expandable rows, uncomment the following:
+    // this.tableOptions.expandable = true;
+    // And modify your data service to include 'expand' and 'description' properties in the row data
+    // To enable fixed header, set:
+    // this.tableOptions.fixHeader = true;
+  }
 
   // Action handlers
   editProvince(province: ProvinceDto): void {

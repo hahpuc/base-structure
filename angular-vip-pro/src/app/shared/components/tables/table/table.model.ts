@@ -89,6 +89,8 @@ export type TableOption<T = TableRowData> = {
   filterable?: boolean;
   selectable?: boolean;
   resizable?: boolean;
+  expandable?: boolean;
+  fixHeader?: boolean;
   pageSize?: number;
   pageSizeOptions?: number[];
   showTotal?: boolean;

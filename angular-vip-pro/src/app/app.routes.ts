@@ -20,6 +20,7 @@ import { PermissionGuard } from "./shared/guards/permission.guard";
 import { AppLayoutComponent } from "./shared/layout/app-layout/app-layout.component";
 import { AuthPageLayoutComponent } from "./shared/layout/auth-page-layout/auth-page-layout.component";
 import { ProvinceComponent } from "./pages/location/province/province.component";
+import { NzDemoTableDynamicSettingsComponent } from "./shared/components/tables/table/table-dynamic-antd.component";
 
 export const routes: Routes = [
   {
@@ -97,13 +98,17 @@ export const routes: Routes = [
         path: "province",
         component: ProvinceComponent,
       },
+      {
+        path: "ward",
+        component: NzDemoTableDynamicSettingsComponent,
+      },
     ],
   },
   {
     path: "",
     component: AuthPageLayoutComponent,
     loadChildren: () =>
-      import("./pages/auth/auth.routes").then((m) => m.default),
+      import("./pages/auth/auth.routes").then((m) => m.AUTH_ROUTES),
   },
   // error pages
   {

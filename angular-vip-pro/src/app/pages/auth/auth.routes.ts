@@ -3,7 +3,7 @@ import { LoginComponent } from "./login/login.component";
 import { RegisterComponent } from "./register/register.component";
 import { ForgotPasswordComponent } from "./forgot-password/forgot-password.component";
 
-const authRoutes: Routes = [
+const routes: Routes = [
   {
     path: "login",
     component: LoginComponent,
@@ -18,4 +18,4 @@ const authRoutes: Routes = [
   },
 ];
 
-export default authRoutes;
+export const AUTH_ROUTES = routes;
