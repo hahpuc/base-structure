@@ -20,7 +20,7 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
     title: "Province List",
     sortable: true,
     filterable: true,
-    selectable: false,
+    selectable: true,
     expandable: true, // Set to true if you want to test expandable rows
     fixHeader: false, // Default is false now
     resizable: true,
@@ -58,17 +58,20 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
         title: "Name",
         name: "name",
         type: "text",
+        width: "300px",
         sortable: true,
       },
       {
         title: "Created Date",
         name: "created_at",
+        width: "300px",
         type: "date",
       },
       {
         title: "Updated Date",
         name: "updated_at",
         type: "datetime",
+        width: "300px",
       },
       {
         title: "Status",
@@ -85,7 +88,6 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
     actions: [
       {
         label: "Edit",
-        iconClass: "ki-filled ki-pencil",
         color: "primary",
         handler: (row) => {
           this.redirect(`edit/${row.id}`);
@@ -95,7 +97,6 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
       },
       {
         label: "Delete",
-        iconClass: "ki-filled ki-trash",
         color: "danger",
         handler: (row) => {
           this.deleteProvince(row);

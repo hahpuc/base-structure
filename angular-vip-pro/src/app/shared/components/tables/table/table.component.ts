@@ -44,28 +44,6 @@ import { TableFilterComponent } from "../table-filter/table-filter.component";
 @Component({
   selector: "app-table",
   templateUrl: "./table.component.html",
-  styles: [
-    `
-      .cursor-pointer {
-        cursor: pointer;
-      }
-      .text-gray-400 {
-        color: #9ca3af;
-      }
-      .kt-card {
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-      }
-      .ft-table-container {
-        overflow: hidden;
-      }
-      .card-grid {
-        border: 1px solid #f0f0f0;
-        border-radius: 6px;
-      }
-    `,
-  ],
   imports: [
     CommonModule,
     FormsModule,
@@ -79,7 +57,6 @@ import { TableFilterComponent } from "../table-filter/table-filter.component";
     NzIconModule,
     NzMenuModule,
     NzCheckboxModule,
-
     TableFilterComponent,
   ],
 })
@@ -528,7 +505,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
   }
 
   getExpandContent(row: T): string {
-    return (row as any).description || "";
+    return `<div>${JSON.stringify(row, null, 2)}</div>`;
   }
 
   getTotalColumnsCount(): number {

@@ -56,6 +56,7 @@
               [nzLeft]="column.fixed === 'left'"
               [nzRight]="column.fixed === 'right'"
               [nzSortFn]="getSortFn(column)"
+              [nzShowSort]="column.sortable"
               [nzSortDirections]="['ascend', 'descend', null]"
               [nzSortOrder]="getSortDirection(column)"
               (nzSortOrderChange)="onSortChange(column, $event)"
@@ -86,7 +87,7 @@
 
             <!-- Checkbox Cell -->
             @if (option.selectable) {
-            <td [nzLeft]="getFixedLeft()">
+            <td [nzLeft]="getFixedLeft()" class="text-center">
               <label
                 nz-checkbox
                 [(ngModel)]="mapOfCheckedId[getRowKey(row)]"
@@ -187,20 +188,29 @@
               <div
                 nz-dropdown
                 [nzDropdownMenu]="actionMenu"
-                nzTrigger="click"
                 nzPlacement="bottomRight"
               >
-                <button nz-button nzType="text">
-                  <i nz-icon nzType="more" nzTheme="outline"></i>
+                <button nz-button nzType="text" [nzSize]="'small'">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M1 19H19M11.7844 3.31171C11.7844 3.31171 11.7844 4.94634 13.419 6.58096C15.0537 8.21559 16.6883 8.21559 16.6883 8.21559M5.31963 15.9881L8.75234 15.4977C9.2475 15.4269 9.70636 15.1975 10.06 14.8438L18.3229 6.58096C19.2257 5.67818 19.2257 4.21449 18.3229 3.31171L16.6883 1.67708C15.7855 0.774305 14.3218 0.774305 13.419 1.67708L5.15616 9.93996C4.80248 10.2936 4.57305 10.7525 4.50231 11.2477L4.01193 14.6804C3.90295 15.4432 4.5568 16.097 5.31963 15.9881Z"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                    />
+                  </svg>
                 </button>
               </div>
               <nz-dropdown-menu #actionMenu="nzDropdownMenu">
                 <ul nz-menu>
                   @for (action of getVisibleActions(row); track action.label) {
                   <li nz-menu-item (click)="onActionClick(action, row)">
-                    @if (action.iconClass) {
-                    <i [class]="action.iconClass" style="margin-right: 8px"></i>
-                    }
                     <span [style.color]="getActionColor(action.color)">{{
                       action.label
                     }}</span>
@@ -216,8 +226,8 @@
           @if (isExpandable() && row['expand']) {
           <tr [nzExpand]="row['expand']">
             <td [attr.colspan]="getTotalColumnsCount()">
-              <div style="padding: 16px">
-                {{ getExpandContent(row) }}
+              <div class="p-4">
+                <span [innerHTML]="getExpandContent(row)"></span>
               </div>
             </td>
           </tr>
