@@ -1,8 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap")
 layer(base);
 
-@import "./themes/ant-design-overrides.css";
-
 @import "tailwindcss";
 @import "swiper/css/bundle";
 
