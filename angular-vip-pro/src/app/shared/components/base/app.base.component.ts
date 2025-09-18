@@ -14,7 +14,6 @@ import {
 } from "@angular/router";
 import { AuthService } from "@services/auth.service";
 import { PermissionService } from "@services/permission.service";
-import { ToastService } from "@services/toast.service";
 import { Dictionary } from "@shared/types/base";
 import dayjs from "dayjs";
 import { DisabledTimeConfig } from "ng-zorro-antd/date-picker";
@@ -25,7 +24,6 @@ export abstract class AppBaseComponent {
   protected readonly activeRoute: ActivatedRoute;
   protected readonly authService: AuthService;
   protected readonly msgService: NzMessageService;
-  protected readonly toastService: ToastService;
   protected readonly permissionService: PermissionService;
   // protected readonly translateService: TranslateService;
 
@@ -44,7 +42,6 @@ export abstract class AppBaseComponent {
     this.authService = injector.get(AuthService);
     this.permissionService = injector.get(PermissionService);
     this.msgService = injector.get(NzMessageService);
-    this.toastService = injector.get(ToastService);
     // this.translateService = injector.get(TranslateService);
   }
 

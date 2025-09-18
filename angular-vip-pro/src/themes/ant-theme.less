@@ -1,5 +1,6 @@
 // Import ng-zorro-antd with your custom variables
 @import "ng-zorro-antd/ng-zorro-antd.less";
+@import "./ant-design-overrides.less";
 
 // Define your custom theme variables
 @primary-color: #1d4ed8; // Custom blue primary color
@@ -46,6 +47,10 @@
   --ant-info-color: #40a9ff;
 }
 
+html, body {
+    font-family: 'Outfit', sans-serif;
+}
+
 .ant-btn {
   border-radius: 0.5rem !important;
   height: calc(var(--spacing) * 10);
@@ -65,5 +70,3 @@
   // }
 }
 
-
-@import "./ant-design-overrides.less";
