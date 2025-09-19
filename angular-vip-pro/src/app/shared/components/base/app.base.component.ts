@@ -1,24 +1,16 @@
-import { Injector } from "@angular/core";
-import {
-  AbstractControl,
-  FormArray,
-  FormControl,
-  FormGroup,
-} from "@angular/forms";
-import {
-  ActivatedRoute,
-  NavigationExtras,
-  Params,
-  Router,
-} from "@angular/router";
-import dayjs from "dayjs";
-import { DisabledTimeConfig } from "ng-zorro-antd/date-picker";
-import { NzMessageService } from "ng-zorro-antd/message";
+import { Injector } from '@angular/core';
+import { AbstractControl, FormArray, FormControl, FormGroup } from '@angular/forms';
+import { ActivatedRoute, NavigationExtras, Params, Router } from '@angular/router';
+import dayjs from 'dayjs';
+import { DisabledTimeConfig } from 'ng-zorro-antd/date-picker';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
-import { environment } from "@/environments/environment";
-import { AuthService } from "@services/auth.service";
-import { PermissionService } from "@services/permission.service";
-import { Dictionary } from "@shared/types/base";
+import { environment } from '@/environments/environment';
+import { AuthService } from '@services/auth.service';
+import { BreadCrumbService } from '@shared/services/bread-crumb.service';
+import { PermissionService } from '@shared/services/permission.service';
+import { Dictionary } from '@shared/types/base';
+import { BreadCrumbButton } from '@shared/types/bread-crumb';
 
 export abstract class AppBaseComponent {
   protected readonly router: Router;
@@ -26,12 +18,13 @@ export abstract class AppBaseComponent {
   protected readonly authService: AuthService;
   protected readonly msgService: NzMessageService;
   protected readonly permissionService: PermissionService;
+  protected readonly breadCrumbService: BreadCrumbService;
   // protected readonly translateService: TranslateService;
 
   protected isValidating = false;
 
-  nzErrorRequire = "This field is required.";
-  nzInvalidType = "Invalid data type.";
+  nzErrorRequire = 'This field is required.';
+  nzInvalidType = 'Invalid data type.';
 
   get isLoggedIn(): boolean {
     return this.authService.isLoggedIn();
@@ -42,6 +35,7 @@ export abstract class AppBaseComponent {
     this.activeRoute = injector.get(ActivatedRoute);
     this.authService = injector.get(AuthService);
     this.permissionService = injector.get(PermissionService);
+    this.breadCrumbService = injector.get(BreadCrumbService);
     this.msgService = injector.get(NzMessageService);
     // this.translateService = injector.get(TranslateService);
   }
@@ -56,17 +50,13 @@ export abstract class AppBaseComponent {
     this.router.navigate([url], navigationExtras).then();
   }
 
-  protected redirectOpenNewTab(
-    url: string,
-    params: Params = {},
-    isRelative = true
-  ) {
+  protected redirectOpenNewTab(url: string, params: Params = {}, isRelative = true) {
     const urlTree = this.router.createUrlTree([url], {
       relativeTo: isRelative ? this.activeRoute : null,
       queryParams: params,
     });
     const fullUrl = this.router.serializeUrl(urlTree);
-    window.open(fullUrl, "_blank");
+    window.open(fullUrl, '_blank');
   }
 
   // MARK: Query Params
@@ -75,7 +65,7 @@ export abstract class AppBaseComponent {
       .navigate([], {
         relativeTo: this.activeRoute,
         queryParams: { ...params },
-        queryParamsHandling: "merge",
+        queryParamsHandling: 'merge',
       })
       .then();
   }
@@ -99,22 +89,19 @@ export abstract class AppBaseComponent {
   // MARK: Form Utilities
   protected compareObject(a: Dictionary, b: Dictionary): boolean {
     const keysToCompare = Object.keys({ ...a, ...b }).filter(
-      (key) =>
+      key =>
         ![null, undefined].includes(a[key] as null | undefined) ||
         ![null, undefined].includes(b[key] as null | undefined)
     );
 
-    return keysToCompare.every((key) => a[key] == b[key]);
+    return keysToCompare.every(key => a[key] == b[key]);
   }
 
   protected isFieldError(field: FormControl): boolean {
     return field.invalid && (field.dirty || field.touched);
   }
 
-  protected formControlCompareWith(
-    otherControlName: string,
-    isEqual?: boolean
-  ) {
+  protected formControlCompareWith(otherControlName: string, isEqual?: boolean) {
     return (control: AbstractControl): { [key: string]: boolean } | null => {
       if (!control.parent) {
         return null;
@@ -123,9 +110,7 @@ export abstract class AppBaseComponent {
       const otherControl = control.parent.get(otherControlName);
       const otherValue = otherControl?.value;
 
-      const isMismatch = isEqual
-        ? thisValue === otherValue
-        : thisValue !== otherValue;
+      const isMismatch = isEqual ? thisValue === otherValue : thisValue !== otherValue;
 
       if (isMismatch) {
         return { confirm: true, error: true };
@@ -164,32 +149,32 @@ export abstract class AppBaseComponent {
 
   protected getFormControlError(control: AbstractControl | null): string {
     const errorMessages = {
-      required: "This field is required",
-      minlength: "Minimum length is ",
-      maxlength: "Maximum length is ",
-      email: "Please enter a valid email address",
-      pattern: "Please match the required pattern",
-      annoyingInvalid: "Selected time must be between 6:00 and 21:59.",
-      pastDate: "The date and time cannot be in the past",
-      minArrayLength: "At least one option is required",
-      isParam: "Invalid parameter format",
+      required: 'This field is required',
+      minlength: 'Minimum length is ',
+      maxlength: 'Maximum length is ',
+      email: 'Please enter a valid email address',
+      pattern: 'Please match the required pattern',
+      annoyingInvalid: 'Selected time must be between 6:00 and 21:59.',
+      pastDate: 'The date and time cannot be in the past',
+      minArrayLength: 'At least one option is required',
+      isParam: 'Invalid parameter format',
     };
 
     if (control?.errors) {
       for (const [key, message] of Object.entries(errorMessages)) {
         if (control.errors[key]) {
-          if (key === "minlength" || key === "maxlength") {
+          if (key === 'minlength' || key === 'maxlength') {
             return `${message}${control.errors[key].requiredLength}`;
           }
-          if (key === "minArrayLength") {
-            const { requiredLength } = control.errors["minArrayLength"];
+          if (key === 'minArrayLength') {
+            const { requiredLength } = control.errors['minArrayLength'];
             return `At least ${requiredLength} item(s) are required.`;
           }
           return message;
         }
       }
     }
-    return "";
+    return '';
   }
 
   protected validateParameter() {
@@ -204,10 +189,10 @@ export abstract class AppBaseComponent {
 
   private isParamValid(value: string): boolean {
     if (
-      value.includes("< ") ||
-      value.includes(" >") ||
-      value.includes("<>") ||
-      value.endsWith("<") ||
+      value.includes('< ') ||
+      value.includes(' >') ||
+      value.includes('<>') ||
+      value.endsWith('<') ||
       /<[^>]*$/.test(value) ||
       /^(.+)\s+([^<]+)>$/.test(value)
     ) {
@@ -216,9 +201,7 @@ export abstract class AppBaseComponent {
 
     const paramMatches = value.match(/<([^>]+)>/g);
     if (paramMatches) {
-      return paramMatches.every((match) =>
-        /^[a-z][a-zA-Z0-9_]*$/.test(match.slice(1, -1))
-      );
+      return paramMatches.every(match => /^[a-z][a-zA-Z0-9_]*$/.test(match.slice(1, -1)));
     }
 
     return true;
@@ -226,7 +209,7 @@ export abstract class AppBaseComponent {
 
   // MARK: Date Utilities
   protected disabledDateLessThanCurrent = (value: Date) => {
-    return dayjs().diff(value, "days") > 0;
+    return dayjs().diff(value, 'days') > 0;
   };
 
   protected disabledDateTime = (
@@ -245,11 +228,9 @@ export abstract class AppBaseComponent {
     return {
       nzDisabledDate: (date: Date): boolean =>
         isLessThan
-          ? dayjs(date).isBefore(compareDayjs, "day")
-          : dayjs(date).isAfter(compareDayjs, "day"),
-      nzDisabledTime: (
-        current: Date | Date[]
-      ): DisabledTimeConfig | undefined => {
+          ? dayjs(date).isBefore(compareDayjs, 'day')
+          : dayjs(date).isAfter(compareDayjs, 'day'),
+      nzDisabledTime: (current: Date | Date[]): DisabledTimeConfig | undefined => {
         if (!current || Array.isArray(current)) {
           return undefined;
         }
@@ -259,39 +240,30 @@ export abstract class AppBaseComponent {
         if (disableDisturb && isInDisturbRange(currentDayjs.hour())) {
           return {
             nzDisabledHours: () =>
-              Array.from({ length: 24 }, (_, i) => i).filter((hour) =>
-                isInDisturbRange(hour)
-              ),
+              Array.from({ length: 24 }, (_, i) => i).filter(hour => isInDisturbRange(hour)),
             nzDisabledMinutes: () => Array.from({ length: 60 }, (_, i) => i),
             nzDisabledSeconds: () => Array.from({ length: 60 }, (_, i) => i),
           };
         }
 
-        if (currentDayjs.isSame(compareDayjs, "day")) {
+        if (currentDayjs.isSame(compareDayjs, 'day')) {
           return {
             nzDisabledHours: () =>
-              Array.from({ length: 24 }, (_, i) => i).filter((hour) =>
+              Array.from({ length: 24 }, (_, i) => i).filter(hour =>
                 isLessThan
-                  ? hour < compareDayjs.hour() ||
-                    (disableDisturb && isInDisturbRange(hour))
-                  : hour > compareDayjs.hour() ||
-                    (disableDisturb && isInDisturbRange(hour))
+                  ? hour < compareDayjs.hour() || (disableDisturb && isInDisturbRange(hour))
+                  : hour > compareDayjs.hour() || (disableDisturb && isInDisturbRange(hour))
               ),
             nzDisabledMinutes: (selectedHour: number) =>
               selectedHour === compareDayjs.hour()
-                ? Array.from({ length: 60 }, (_, i) => i).filter((min) =>
-                    isLessThan
-                      ? min < compareDayjs.minute()
-                      : min > compareDayjs.minute()
+                ? Array.from({ length: 60 }, (_, i) => i).filter(min =>
+                    isLessThan ? min < compareDayjs.minute() : min > compareDayjs.minute()
                   )
                 : [],
             nzDisabledSeconds: (selectedHour: number, selectedMinute: number) =>
-              selectedHour === compareDayjs.hour() &&
-              selectedMinute === compareDayjs.minute()
-                ? Array.from({ length: 60 }, (_, i) => i).filter((sec) =>
-                    isLessThan
-                      ? sec < compareDayjs.second()
-                      : sec > compareDayjs.second()
+              selectedHour === compareDayjs.hour() && selectedMinute === compareDayjs.minute()
+                ? Array.from({ length: 60 }, (_, i) => i).filter(sec =>
+                    isLessThan ? sec < compareDayjs.second() : sec > compareDayjs.second()
                   )
                 : [],
           };
@@ -306,18 +278,16 @@ export abstract class AppBaseComponent {
     compareTime: Date = new Date(),
     disableDisturb: boolean = false,
     disturbTimeRange: [number, number] = [22, 6]
-  ) =>
-    this.disabledDateTime(compareTime, true, disableDisturb, disturbTimeRange);
+  ) => this.disabledDateTime(compareTime, true, disableDisturb, disturbTimeRange);
 
   protected disabledDateTimeMoreThan = (
     compareTime: Date = new Date(),
     disableDisturb: boolean = false,
     disturbTimeRange: [number, number] = [22, 6]
-  ) =>
-    this.disabledDateTime(compareTime, false, disableDisturb, disturbTimeRange);
+  ) => this.disabledDateTime(compareTime, false, disableDisturb, disturbTimeRange);
 
   protected getFileUrl(key: string): string {
-    if (key.startsWith("http")) {
+    if (key.startsWith('http')) {
       return key;
     }
 
@@ -333,13 +303,13 @@ export abstract class AppBaseComponent {
   }
 
   // MARK: Header Functions
-  // protected setPageTitle(title: string) {
-  //   this.headerService.setTitle(title);
-  // }
+  protected setPageTitle(title: string) {
+    this.breadCrumbService.setTitle(title);
+  }
 
-  // protected setHeaderButtons(buttons: HeaderButton[]) {
-  //   this.headerService.setButtons(buttons.filter((x) => x) || []);
-  // }
+  protected setHeaderButtons(buttons: BreadCrumbButton[]) {
+    this.breadCrumbService.setActions(buttons);
+  }
 
   // protected l(key: string): string {
   //   return this.translateService.instant(key);

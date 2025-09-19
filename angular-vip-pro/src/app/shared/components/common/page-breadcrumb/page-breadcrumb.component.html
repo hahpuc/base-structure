@@ -1,36 +1,54 @@
-<div class="flex flex-wrap items-center justify-between gap-3 mb-6">
-  <h2 class="text-xl font-semibold text-gray-800 dark:text-white/90">
-    {{ pageTitle }}
-  </h2>
-  <nav>
-    <ol class="flex items-center gap-1.5">
-      <li>
-        <a
-          class="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400"
-          routerLink="/"
+<!-- Desktop Layout -->
+<div class="hidden lg:flex items-center justify-between gap-3 mb-6">
+  <h2 class="text-xl font-semibold text-gray-800 dark:text-white/90">{{ title() }}</h2>
+
+  <!-- Desktop Action Buttons -->
+  <div class="flex items-center flex-wrap gap-2">
+    @for (action of actions(); track $index) {
+      @if (isButtonVisible(action)) {
+        <button
+          nz-button
+          [nzType]="getButtonConfig(action).class.includes('primary') ? 'primary' : 'default'"
+          [disabled]="isButtonDisabled(action)"
+          (click)="onButtonClick(action)"
+          [nzSize]="'small'"
+          class="flex items-center gap-2"
         >
-          Home
-          <svg
-            class="stroke-current"
-            width="17"
-            height="16"
-            viewBox="0 0 17 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M6.0765 12.667L10.2432 8.50033L6.0765 4.33366"
-              stroke=""
-              stroke-width="1.2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </a>
-      </li>
-      <li class="text-sm text-gray-800 dark:text-white/90">
-        {{ pageTitle }}
-      </li>
-    </ol>
-  </nav>
+          <span nz-icon [nzType]="getButtonConfig(action).icon"></span>
+          {{ getButtonConfig(action).title }}
+        </button>
+      }
+    }
+  </div>
+</div>
+
+<!-- Mobile Layout -->
+<div class="lg:hidden">
+  <div class="mb-4">
+    <h2 class="text-xl font-semibold text-gray-800 dark:text-white/90">{{ title() }}</h2>
+  </div>
+
+  @if (actions().length > 0) {
+    <div
+      class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4 z-50"
+    >
+      <div class="flex items-center justify-center gap-2 overflow-x-auto">
+        @for (action of actions(); track $index) {
+          @if (isButtonVisible(action)) {
+            <button
+              nz-button
+              [nzType]="getButtonConfig(action).class.includes('primary') ? 'primary' : 'default'"
+              [disabled]="isButtonDisabled(action)"
+              [nzSize]="'small'"
+              (click)="onButtonClick(action)"
+              class="flex items-center gap-2 flex-shrink-0"
+            >
+              <span nz-icon [nzType]="getButtonConfig(action).icon"></span>
+              <span class="hidden sm:inline">{{ getButtonConfig(action).title }}</span>
+            </button>
+          }
+        }
+      </div>
+    </div>
+  }
 </div>

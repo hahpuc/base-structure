@@ -469,7 +469,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
   }
 
   getColumnWidth(column: TableColumn<T>): string {
-    return this.columnWidths[column.name] || column.width || 'auto';
+    return this.columnWidths[column.name] || column.width || '150px';
   }
 
   getColumnAlign(column: TableColumn<T>): string {

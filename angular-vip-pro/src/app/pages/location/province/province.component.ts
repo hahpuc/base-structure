@@ -2,14 +2,13 @@ import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 
 import { AppBaseComponent } from '@/app/shared/components/base/app.base.component';
-import { PageBreadcrumbComponent } from '@/app/shared/components/common/page-breadcrumb/page-breadcrumb.component';
 import { TableComponent } from '@/app/shared/components/tables/table/table.component';
 import { TableOption } from '@/app/shared/components/tables/table/table.model';
 import { ProvinceService } from '@/app/shared/services/province.service';
 import { ProvinceDto, QueryProvince } from '@/app/shared/types/province';
 
 @Component({
-  imports: [TableComponent, NzModalModule, PageBreadcrumbComponent],
+  imports: [TableComponent, NzModalModule],
   templateUrl: './province.component.html',
 })
 export class ProvinceComponent extends AppBaseComponent implements OnInit {
@@ -110,7 +109,37 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
     super(injector);
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.setPageTitle('Province Management');
+    this.setHeaderButtons([
+      {
+        title: 'Create',
+        type: 'create',
+        click: () => {
+          this.redirect('create');
+        },
+        permission: 'province_manage_create',
+      },
+      {
+        title: 'Export',
+        type: 'export',
+        click: async () => {
+          this.showInfoMessage('Exporting province data...');
+          // Add your export logic here
+        },
+        permission: 'province_manage_read',
+      },
+      {
+        title: 'Import',
+        type: 'import',
+        click: async () => {
+          this.showInfoMessage('Opening import dialog...');
+          // Add your import logic here
+        },
+        permission: 'province_manage_read',
+      },
+    ]);
+  }
 
   // Action handlers
   editProvince(province: ProvinceDto): void {
