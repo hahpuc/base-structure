@@ -1,20 +1,14 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, signal, computed } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProgressBarService {
-  private loadingSubject = new BehaviorSubject<boolean>(false);
+  private loading = signal(false);
   private requestCount = 0;
 
-  get isLoading$(): Observable<boolean> {
-    return this.loadingSubject.asObservable();
-  }
-
-  get isLoading(): boolean {
-    return this.loadingSubject.value;
-  }
+  // Computed signal for loading state
+  readonly isLoading = computed(() => this.loading());
 
   /**
    * Start loading - increment request counter
@@ -22,7 +16,7 @@ export class ProgressBarService {
   start(): void {
     this.requestCount++;
     if (this.requestCount === 1) {
-      this.loadingSubject.next(true);
+      this.loading.set(true);
     }
   }
 
@@ -32,7 +26,7 @@ export class ProgressBarService {
   stop(): void {
     this.requestCount = Math.max(0, this.requestCount - 1);
     if (this.requestCount === 0) {
-      this.loadingSubject.next(false);
+      this.loading.set(false);
     }
   }
 
@@ -41,6 +35,6 @@ export class ProgressBarService {
    */
   forceStop(): void {
     this.requestCount = 0;
-    this.loadingSubject.next(false);
+    this.loading.set(false);
   }
 }

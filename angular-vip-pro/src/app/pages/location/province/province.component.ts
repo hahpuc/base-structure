@@ -1,23 +1,22 @@
-import { Component, Injector, OnInit, ViewChild } from "@angular/core";
-import { NzModalModule } from "ng-zorro-antd/modal";
+import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 
-import { AppBaseComponent } from "@/app/shared/components/base/app.base.component";
-import { PageBreadcrumbComponent } from "@/app/shared/components/common/page-breadcrumb/page-breadcrumb.component";
-import { TableComponent } from "@/app/shared/components/tables/table/table.component";
-import { TableOption } from "@/app/shared/components/tables/table/table.model";
-import { ProvinceService } from "@/app/shared/services/province.service";
-import { ProvinceDto, QueryProvince } from "@/app/shared/types/province";
-
+import { AppBaseComponent } from '@/app/shared/components/base/app.base.component';
+import { PageBreadcrumbComponent } from '@/app/shared/components/common/page-breadcrumb/page-breadcrumb.component';
+import { TableComponent } from '@/app/shared/components/tables/table/table.component';
+import { TableOption } from '@/app/shared/components/tables/table/table.model';
+import { ProvinceService } from '@/app/shared/services/province.service';
+import { ProvinceDto, QueryProvince } from '@/app/shared/types/province';
 
 @Component({
   imports: [TableComponent, NzModalModule, PageBreadcrumbComponent],
-  templateUrl: "./province.component.html",
+  templateUrl: './province.component.html',
 })
 export class ProvinceComponent extends AppBaseComponent implements OnInit {
-  @ViewChild("ftTable") ftTable!: TableComponent;
+  @ViewChild('ftTable') ftTable!: TableComponent;
 
   tableOptions: TableOption<ProvinceDto> = {
-    title: "Province List",
+    title: 'Province List',
     sortable: true,
     filterable: true,
     selectable: true,
@@ -31,78 +30,75 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
     },
     filters: [
       {
-        type: "select",
-        name: "status",
-        label: "Status",
+        type: 'select',
+        name: 'status',
+        label: 'Status',
         options: [
-          { label: "Active", value: 1 },
-          { label: "Inactive", value: 0 },
+          { label: 'Active', value: 1 },
+          { label: 'Inactive', value: 0 },
         ],
       },
     ],
     columns: [
       {
-        title: "#",
-        name: "",
-        type: "custom-render",
-        customRender: (row) => {
+        title: '#',
+        name: '',
+        type: 'custom-render',
+        customRender: row => {
           return `<span class="text-blue-500 font-semibold">#${row.id}</span>`;
         },
       },
       {
-        title: "ID",
-        name: "id",
-        type: "number",
+        title: 'ID',
+        name: 'id',
+        type: 'number',
       },
       {
-        title: "Name",
-        name: "name",
-        type: "text",
-        width: "300px",
+        title: 'Name',
+        name: 'name',
+        type: 'text',
         sortable: true,
       },
       {
-        title: "Created Date",
-        name: "created_at",
-        width: "300px",
-        type: "date",
+        title: 'Created Date',
+        name: 'created_at',
+        type: 'date',
       },
       {
-        title: "Updated Date",
-        name: "updated_at",
-        type: "datetime",
-        width: "300px",
+        title: 'Updated Date',
+        name: 'updated_at',
+        type: 'datetime',
       },
       {
-        title: "Status",
-        name: "status",
-        type: "status",
-        click: (row) => {
+        title: 'Status',
+        name: 'status',
+        type: 'status',
+        click: row => {
           this.provinceService.toggleStatus(+row.id).subscribe(() => {
             this.ftTable.refresh();
-            this.showSuccessMessage("Status updated successfully");
+            this.showSuccessMessage('Status updated successfully');
           });
         },
       },
     ],
     actions: [
       {
-        label: "Edit",
-        color: "primary",
-        handler: (row) => {
+        label: 'Edit',
+        color: 'primary',
+        handler: row => {
           this.redirect(`edit/${row.id}`);
         },
         visible: () => true,
-        permission: "province_manage_update",
+        permission: 'province_manage_update',
       },
       {
-        label: "Delete",
-        color: "danger",
-        handler: (row) => {
+        label: 'Delete',
+        color: 'danger',
+        handler: row => {
           this.deleteProvince(row);
         },
-        visible: (row) => true,
-        permission: "province_manage_delete",
+        visible: row => true,
+        permission: 'province_manage_delete',
       },
     ],
   };
@@ -114,13 +110,7 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
     super(injector);
   }
 
-  ngOnInit(): void {
-    // To test expandable rows, uncomment the following:
-    // this.tableOptions.expandable = true;
-    // And modify your data service to include 'expand' and 'description' properties in the row data
-    // To enable fixed header, set:
-    // this.tableOptions.fixHeader = true;
-  }
+  ngOnInit(): void {}
 
   // Action handlers
   editProvince(province: ProvinceDto): void {

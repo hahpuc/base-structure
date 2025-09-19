@@ -1,119 +1,124 @@
-import { Routes } from "@angular/router";
+import { Routes } from '@angular/router';
 
-import { BlankComponent } from "./pages/blank/blank.component";
-import { BarChartComponent } from "./pages/charts/bar-chart/bar-chart.component";
-import { LineChartComponent } from "./pages/charts/line-chart/line-chart.component";
-import { EcommerceComponent } from "./pages/dashboard/ecommerce/ecommerce.component";
-import { FormElementsComponent } from "./pages/forms/form-elements/form-elements.component";
-import { NzDemoFormNormalLoginComponent } from "./pages/forms-antd/forms-antd.component";
-import { InvoicesComponent } from "./pages/invoices/invoices.component";
-import { ProvinceComponent } from "./pages/location/province/province.component";
-import { NotFoundComponent } from "./pages/other-page/not-found/not-found.component";
-import { ProfileComponent } from "./pages/profile/profile.component";
-import { BasicTablesComponent } from "./pages/tables/basic-tables/basic-tables.component";
-import { AlertsComponent } from "./pages/ui-elements/alerts/alerts.component";
-import { AvatarElementComponent } from "./pages/ui-elements/avatar-element/avatar-element.component";
-import { BadgesComponent } from "./pages/ui-elements/badges/badges.component";
-import { ButtonsComponent } from "./pages/ui-elements/buttons/buttons.component";
-import { ImagesComponent } from "./pages/ui-elements/images/images.component";
-import { VideosComponent } from "./pages/ui-elements/videos/videos.component";
-import { NzDemoTableDynamicSettingsComponent } from "./shared/components/tables/table/table-dynamic-antd.component";
-import { AuthGuard } from "./shared/guards/auth.guard";
-import { PermissionGuard } from "./shared/guards/permission.guard";
-import { AppLayoutComponent } from "./shared/layout/app-layout/app-layout.component";
-import { AuthPageLayoutComponent } from "./shared/layout/auth-page-layout/auth-page-layout.component";
+import { BlankComponent } from './pages/blank/blank.component';
+import { BarChartComponent } from './pages/charts/bar-chart/bar-chart.component';
+import { LineChartComponent } from './pages/charts/line-chart/line-chart.component';
+import { EcommerceComponent } from './pages/dashboard/ecommerce/ecommerce.component';
+import { LoadingExampleComponent } from './pages/example/example.component';
+import { FormElementsComponent } from './pages/forms/form-elements/form-elements.component';
+import { NzDemoFormNormalLoginComponent } from './pages/forms-antd/forms-antd.component';
+import { InvoicesComponent } from './pages/invoices/invoices.component';
+import { ProvinceComponent } from './pages/location/province/province.component';
+import { NotFoundComponent } from './pages/other-page/not-found/not-found.component';
+import { ProfileComponent } from './pages/profile/profile.component';
+import { BasicTablesComponent } from './pages/tables/basic-tables/basic-tables.component';
+import { AlertsComponent } from './pages/ui-elements/alerts/alerts.component';
+import { AvatarElementComponent } from './pages/ui-elements/avatar-element/avatar-element.component';
+import { BadgesComponent } from './pages/ui-elements/badges/badges.component';
+import { ButtonsComponent } from './pages/ui-elements/buttons/buttons.component';
+import { ImagesComponent } from './pages/ui-elements/images/images.component';
+import { VideosComponent } from './pages/ui-elements/videos/videos.component';
+import { NzDemoTableDynamicSettingsComponent } from './shared/components/tables/table/table-dynamic-antd.component';
+import { AuthGuard } from './shared/guards/auth.guard';
+import { PermissionGuard } from './shared/guards/permission.guard';
+import { AppLayoutComponent } from './shared/layout/app-layout/app-layout.component';
+import { AuthPageLayoutComponent } from './shared/layout/auth-page-layout/auth-page-layout.component';
 
 export const routes: Routes = [
   {
-    path: "",
-    redirectTo: "/dashboard",
-    pathMatch: "full",
+    path: '',
+    redirectTo: '/dashboard',
+    pathMatch: 'full',
   },
   {
-    path: "",
+    path: '',
     component: AppLayoutComponent,
     canActivateChild: [AuthGuard, PermissionGuard],
     children: [
       {
-        path: "dashboard",
+        path: 'dashboard',
         component: EcommerceComponent,
       },
+
       {
-        path: "profile",
+        path: 'profile',
         component: ProfileComponent,
       },
       {
-        path: "form-elements",
+        path: 'form-elements',
         component: FormElementsComponent,
       },
       {
-        path: "basic-tables",
+        path: 'basic-tables',
         component: BasicTablesComponent,
       },
       {
-        path: "blank",
+        path: 'blank',
         component: BlankComponent,
       },
       // UI Components
       {
-        path: "invoice",
+        path: 'invoice',
         component: InvoicesComponent,
       },
       {
-        path: "line-chart",
+        path: 'line-chart',
         component: LineChartComponent,
       },
       {
-        path: "bar-chart",
+        path: 'bar-chart',
         component: BarChartComponent,
       },
       {
-        path: "alerts",
+        path: 'alerts',
         component: AlertsComponent,
       },
       {
-        path: "avatars",
+        path: 'avatars',
         component: AvatarElementComponent,
       },
       {
-        path: "badge",
+        path: 'badge',
         component: BadgesComponent,
       },
       {
-        path: "buttons",
+        path: 'buttons',
         component: ButtonsComponent,
       },
       {
-        path: "images",
+        path: 'images',
         component: ImagesComponent,
       },
       {
-        path: "videos",
+        path: 'videos',
         component: VideosComponent,
       },
       {
-        path: "form-antd",
+        path: 'form-antd',
         component: NzDemoFormNormalLoginComponent,
       },
       {
-        path: "province",
+        path: 'loading',
+        component: LoadingExampleComponent,
+      },
+      {
+        path: 'province',
         component: ProvinceComponent,
       },
       {
-        path: "ward",
+        path: 'ward',
         component: NzDemoTableDynamicSettingsComponent,
       },
     ],
   },
   {
-    path: "",
+    path: '',
     component: AuthPageLayoutComponent,
-    loadChildren: () =>
-      import("./pages/auth/auth.routes").then((m) => m.AUTH_ROUTES),
+    loadChildren: () => import('./pages/auth/auth.routes').then(m => m.AUTH_ROUTES),
   },
   // error pages
   {
-    path: "**",
+    path: '**',
     component: NotFoundComponent,
   },
 ];

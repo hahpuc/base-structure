@@ -1,12 +1,12 @@
-import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
-import { ActiveFilter } from "../table-filter.model";
+import { ActiveFilter } from '../table-filter.model';
 
 @Component({
-  selector: "app-table-filter-tags",
+  selector: 'app-table-filter-tags',
   imports: [CommonModule],
-  templateUrl: "./table-filter-tags.component.html",
+  templateUrl: './table-filter-tags.component.html',
 })
 export class TableFilterTagsComponent {
   @Input() activeFilters: ActiveFilter[] = [];
@@ -14,6 +14,6 @@ export class TableFilterTagsComponent {
   @Output() clearAll = new EventEmitter<void>();
 
   trackByFilter(filter: ActiveFilter) {
-    return filter.filter.name + ":" + filter.value;
+    return filter.filter.name + ':' + filter.value;
   }
 }
