@@ -36,29 +36,25 @@ export class CreateEditProvinceComponent extends AppBaseComponent implements OnI
   }
 
   ngOnInit(): void {
-    // this.setPageTitle(this.id ? 'Edit Province' : 'Create Province');
-    // this.setHeaderButtons([
-    //   {
-    //     title: 'Cancel',
-    //     icon: 'ki-outline ki-arrow-left',
-    //     type: 'danger',
-    //     visible: true,
-    //     disable: () => this.isSubmitting,
-    //     click: () => {
-    //       this.redirect('/province');
-    //     },
-    //   },
-    //   {
-    //     title: () => (this.isSubmitting ? 'Saving...' : 'Save'),
-    //     icon: () => (this.isSubmitting ? 'ki-outline ki-loading' : 'ki-outline ki-check'),
-    //     type: 'primary',
-    //     visible: true,
-    //     disable: () => this.isSubmitting,
-    //     click: () => {
-    //       this.handleSubmit();
-    //     },
-    //   },
-    // ]);
+    this.setPageTitle(this.id ? 'Edit Province' : 'Create Province');
+    this.setHeaderButtons([
+      {
+        title: 'Back',
+        type: 'back',
+        click: () => {
+          this.redirect('/province');
+        },
+      },
+      {
+        title: () => (this.isSubmitting ? 'Saving...' : 'Save'),
+        type: 'create',
+        disable: () => this.isSubmitting,
+        click: () => {
+          this.handleSubmit();
+        },
+        permission: 'province_manage_create',
+      },
+    ]);
 
     this.setupFormOptions();
 

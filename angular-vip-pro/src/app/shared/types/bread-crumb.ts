@@ -2,7 +2,7 @@ export type BreadCrumb = {
   label: string;
   url: string;
 };
-export type BreadCrumbButtonType = 'create' | 'export' | 'import' | 'custom';
+export type BreadCrumbButtonType = 'create' | 'export' | 'import' | 'back' | 'custom';
 
 export type BreadCrumbButton = {
   title?: string | (() => string);

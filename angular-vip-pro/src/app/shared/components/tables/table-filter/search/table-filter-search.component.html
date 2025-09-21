@@ -11,12 +11,7 @@
     </nz-input-group>
     <ng-template #inputClearTpl>
       @if (searchText && searchText.trim()) {
-      <nz-icon
-        class="ant-input-clear-icon"
-        nzTheme="fill"
-        nzType="close-circle"
-        (click)="onClear()"
-      />
+        <nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle" (click)="onClear()" />
       }
     </ng-template>
   </div>
@@ -24,22 +19,11 @@
   <!--Filter Drawer Toggle Button Icon-->
 
   <nz-badge [nzCount]="activeFiltersCount">
-    <button
-      nz-button
-      nzType="primary"
-      [nzSize]="'default'"
-      (click)="onToggleDrawer()"
-    >
-      <svg
-        width="20"
-        height="22"
-        viewBox="0 0 20 22"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
+    <button nz-button nzType="primary" [nzSize]="'default'" (click)="onToggleDrawer()">
+      <svg width="1rem" height="1rem" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path
-          d="M16.8188 1H3.18117C1.442 1 0.404657 2.91555 1.36937 4.34564L7.09107 11.8274C7.56799 12.5344 7.82249 13.3651 7.82249 14.2148V19.9219C7.82249 20.8805 8.99523 21.3605 9.68111 20.6827L11.8586 18.5307C12.0628 18.329 12.1775 18.0553 12.1775 17.7699V14.2148C12.1775 13.3651 12.432 12.5344 12.9089 11.8274L18.6306 4.34564C19.5953 2.91555 18.558 1 16.8188 1Z"
-          stroke="#FFFFFF"
+          d="M18.8188 2H5.18117C3.442 2 2.40466 3.91555 3.36937 5.34564L9.09107 12.8274C9.56799 13.5344 9.82249 14.3651 9.82249 15.2148V20.9219C9.82249 21.8805 10.9952 22.3605 11.6811 21.6827L13.8586 19.5307C14.0628 19.329 14.1775 19.0553 14.1775 18.7699V15.2148C14.1775 14.3651 14.432 13.5344 14.9089 12.8274L20.6306 5.34564C21.5953 3.91555 20.558 2 18.8188 2Z"
+          stroke="currentColor"
           stroke-width="1.5"
           stroke-linecap="round"
           stroke-linejoin="round"

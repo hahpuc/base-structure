@@ -1,6 +1,6 @@
 // Import ng-zorro-antd with your custom variables
-@import "ng-zorro-antd/ng-zorro-antd.less";
-@import "./ant-design-overrides.less";
+@import 'ng-zorro-antd/ng-zorro-antd.less';
+@import './ant-design-overrides.less';
 
 // Define your custom theme variables
 @primary-color: #1d4ed8; // Custom blue primary color
@@ -39,7 +39,7 @@
 }
 
 // Dark theme variables
-[data-theme="dark"] {
+[data-theme='dark'] {
   --ant-primary-color: #ff7875;
   --ant-success-color: #73d13d;
   --ant-warning-color: #ffc53d;
@@ -49,7 +49,7 @@
 
 html,
 body {
-  font-family: "Outfit", sans-serif;
+  font-family: 'Outfit', sans-serif;
 }
 
 .ant-btn {
@@ -58,6 +58,11 @@ body {
 
 .ant-btn-primary {
   background-color: var(--color-brand-500) !important;
+}
+
+.ant-btn-default {
+  border: 1px solid var(--color-gray-300) !important;
+  color: var(--color-gray-700) !important;
 }
 
 .ant-input {

@@ -67,6 +67,7 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
         title: 'Updated Date',
         name: 'updated_at',
         type: 'datetime',
+        width: '200px',
       },
       {
         title: 'Status',

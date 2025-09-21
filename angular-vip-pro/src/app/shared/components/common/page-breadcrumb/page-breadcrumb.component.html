@@ -7,14 +7,13 @@
     @for (action of actions(); track $index) {
       @if (isButtonVisible(action)) {
         <button
-          nz-button
-          [nzType]="getButtonConfig(action).class.includes('primary') ? 'primary' : 'default'"
+          type="button"
+          class="inline-flex items-center justify-center gap-2 rounded-lg transition px-4 py-2"
+          [ngClass]="getButtonConfig(action).class"
           [disabled]="isButtonDisabled(action)"
           (click)="onButtonClick(action)"
-          [nzSize]="'small'"
-          class="flex items-center gap-2"
         >
-          <span nz-icon [nzType]="getButtonConfig(action).icon"></span>
+          <span class="flex items-center" [innerHTML]="getButtonConfig(action).icon | safeHtml"></span>
           {{ getButtonConfig(action).title }}
         </button>
       }
@@ -36,15 +35,14 @@
         @for (action of actions(); track $index) {
           @if (isButtonVisible(action)) {
             <button
-              nz-button
-              [nzType]="getButtonConfig(action).class.includes('primary') ? 'primary' : 'default'"
+              type="button"
+              class="inline-flex items-center justify-center gap-2 rounded-lg transition px-4 py-2"
+              [ngClass]="getButtonConfig(action).class"
               [disabled]="isButtonDisabled(action)"
-              [nzSize]="'small'"
               (click)="onButtonClick(action)"
-              class="flex items-center gap-2 flex-shrink-0"
             >
-              <span nz-icon [nzType]="getButtonConfig(action).icon"></span>
-              <span class="hidden sm:inline">{{ getButtonConfig(action).title }}</span>
+              <span class="flex items-center" [innerHTML]="getButtonConfig(action).icon | safeHtml"></span>
+              <!-- {{ getButtonConfig(action).title }} -->
             </button>
           }
         }
