@@ -1,5 +1,4 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
-import { NzModalModule } from 'ng-zorro-antd/modal';
 
 import { AppBaseComponent } from '@/app/shared/components/base/app.base.component';
 import { TableComponent } from '@/app/shared/components/tables/table/table.component';
@@ -8,7 +7,7 @@ import { ProvinceService } from '@/app/shared/services/province.service';
 import { ProvinceDto, QueryProvince } from '@/app/shared/types/province';
 
 @Component({
-  imports: [TableComponent, NzModalModule],
+  imports: [TableComponent],
   templateUrl: './province.component.html',
 })
 export class ProvinceComponent extends AppBaseComponent implements OnInit {

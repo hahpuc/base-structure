@@ -103,6 +103,10 @@ export const routes: Routes = [
         path: '',
         loadChildren: () => import('./pages/location/location.routes'),
       },
+      {
+        path: '',
+        loadChildren: () => import('./pages/user/user.routes'),
+      },
     ],
   },
   {
