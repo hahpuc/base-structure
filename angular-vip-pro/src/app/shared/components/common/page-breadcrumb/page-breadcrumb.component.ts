@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, effect } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -31,10 +31,15 @@ export class PageBreadcrumbComponent {
   });
 
   actions = computed(() => {
-    const actions = this.breadCrumbService.actions();
-    this.checkAllPermissions(actions);
-    return actions;
+    return this.breadCrumbService.actions();
   });
+
+  constructor() {
+    effect(() => {
+      const actions = this.actions();
+      this.checkAllPermissions(actions);
+    });
+  }
 
   // Check permissions for all buttons when actions change
   private async checkAllPermissions(actions: BreadCrumbButton[]) {

@@ -72,8 +72,8 @@
                     <button
                       (click)="toggleSubmenu(section.id, i)"
                       class="menu-item group cursor-pointer"
-                      [class.menu-item-active]="openSubmenu === section.id + '-' + i"
-                      [class.menu-item-inactive]="openSubmenu !== section.id + '-' + i"
+                      [class.menu-item-active]="isParentActive(nav)"
+                      [class.menu-item-inactive]="!isParentActive(nav)"
                       [ngClass]="{
                         'xl:justify-center': !((isExpanded$ | async) || (isHovered$ | async)),
                         'xl:justify-start': (isExpanded$ | async) || (isHovered$ | async),
@@ -82,8 +82,8 @@
                       <span
                         class="menu-item-icon-size"
                         [ngClass]="{
-                          'menu-item-icon-active': openSubmenu === section.id + '-' + i,
-                          'menu-item-icon-inactive': openSubmenu !== section.id + '-' + i,
+                          'menu-item-icon-active': isParentActive(nav),
+                          'menu-item-icon-inactive': !isParentActive(nav),
                         }"
                         [innerHTML]="nav.icon | safeHtml"
                       >
@@ -148,8 +148,8 @@
                               (click)="onSubmenuClick()"
                               class="menu-dropdown-item"
                               [ngClass]="{
-                                'menu-dropdown-item-inactive': !isActive(subItem.path),
-                                'menu-dropdown-item-active': isActive(subItem.path),
+                                'menu-dropdown-item-inactive': !isActiveRoute(subItem?.path ?? ''),
+                                'menu-dropdown-item-active': isActiveRoute(subItem?.path ?? ''),
                               }"
                             >
                               {{ subItem.label }}
@@ -158,8 +158,8 @@
                                   <span
                                     class="menu-dropdown-badge"
                                     [ngClass]="{
-                                      'menu-dropdown-badge-active': isActive(subItem.path),
-                                      'menu-dropdown-badge-inactive': !isActive(subItem.path),
+                                      'menu-dropdown-badge-active': isActiveRoute(subItem?.path ?? ''),
+                                      'menu-dropdown-badge-inactive': !isActiveRoute(subItem?.path ?? ''),
                                     }"
                                   >
                                     new
@@ -169,8 +169,8 @@
                                   <span
                                     class="ml-auto menu-dropdown-badge-pro"
                                     [ngClass]="{
-                                      'menu-dropdown-badge-pro-active': isActive(subItem.path),
-                                      'menu-dropdown-badge-pro-inactive': !isActive(subItem.path),
+                                      'menu-dropdown-badge-pro-active': isActiveRoute(subItem?.path ?? ''),
+                                      'menu-dropdown-badge-pro-inactive': !isActiveRoute(subItem?.path ?? ''),
                                     }"
                                   >
                                     pro
@@ -188,13 +188,13 @@
                         [routerLink]="nav.path"
                         routerLinkActive="menu-item-active"
                         class="menu-item group"
-                        [ngClass]="{ 'menu-item-inactive': !isActive(nav.path) }"
+                        [ngClass]="{ 'menu-item-inactive': !isActiveRoute(nav.path) }"
                       >
                         <span
                           class="menu-item-icon-size"
                           [ngClass]="{
-                            'menu-item-icon-active': isActive(nav.path),
-                            'menu-item-icon-inactive': !isActive(nav.path),
+                            'menu-item-icon-active': isActiveRoute(nav.path),
+                            'menu-item-icon-inactive': !isActiveRoute(nav.path),
                           }"
                           [innerHTML]="nav.icon | safeHtml"
                         >

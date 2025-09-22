@@ -462,7 +462,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
   }
 
   hasExpandableRows(): boolean {
-    return this.isExpandable() && this.tableData.some((row: any) => row['expand'] !== undefined);
+    return this.isExpandable() && this.tableData.some((row: T) => row['expand'] !== undefined);
   }
 
   getVisibleColumns(): TableColumn<T>[] {
@@ -497,7 +497,7 @@ export class TableComponent<T extends TableRowData = TableRowData>
     return count;
   }
 
-  getCellValue(row: T, column: TableColumn<T>): any {
+  getCellValue(row: T, column: TableColumn<T>): unknown {
     return getNestedValue(row as Record<string, unknown>, column.name);
   }
 
@@ -523,32 +523,32 @@ export class TableComponent<T extends TableRowData = TableRowData>
   }
 
   // MARK: Formatting methods
-  formatNumber(value: any): string {
+  formatNumber(value: unknown): string {
     if (value === null || value === undefined) return '';
     return Number(value).toLocaleString();
   }
 
-  formatDate(value: any): string {
+  formatDate(value: unknown): string {
     if (!value) return '';
-    return new Date(value).toLocaleDateString();
+    return new Date(value as string | number | Date).toLocaleDateString();
   }
 
-  formatDateTime(value: any): string {
+  formatDateTime(value: unknown): string {
     if (!value) return '';
-    return new Date(value).toLocaleString();
+    return new Date(value as string | number | Date).toLocaleString();
   }
 
-  formatTime(value: any): string {
+  formatTime(value: unknown): string {
     if (!value) return '';
-    return new Date(value).toLocaleTimeString();
+    return new Date(value as string | number | Date).toLocaleTimeString();
   }
 
-  formatPercent(value: any): string {
+  formatPercent(value: unknown): string {
     if (value === null || value === undefined) return '';
     return (Number(value) * 100).toFixed(2) + '%';
   }
 
-  truncateText(text: any, length: number): string {
+  truncateText(text: unknown, length: number): string {
     return truncateText(String(text || ''), length);
   }
 
