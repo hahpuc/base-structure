@@ -2,14 +2,8 @@
   <div class="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
     <div>
       <div class="mb-5 sm:mb-8">
-        <h1
-          class="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md"
-        >
-          Sign In
-        </h1>
-        <p class="text-sm text-gray-500 dark:text-gray-400">
-          Enter your email and password to sign in!
-        </p>
+        <h1 class="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">Sign In</h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Enter your email and password to sign in!</p>
       </div>
 
       <!-- OAuth Buttons -->
@@ -17,13 +11,7 @@
         <button
           class="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10"
         >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
               d="M18.7511 10.1944C18.7511 9.47495 18.6915 8.94995 18.5626 8.40552H10.1797V11.6527H15.1003C15.0011 12.4597 14.4654 13.675 13.2749 14.4916L13.2582 14.6003L15.9087 16.6126L16.0924 16.6305C17.7788 15.1041 18.7511 12.8583 18.7511 10.1944Z"
               fill="#4285F4"
@@ -65,16 +53,10 @@
       <!-- Divider -->
       <div class="relative py-3 sm:py-5">
         <div class="absolute inset-0 flex items-center">
-          <div
-            class="w-full border-t border-gray-200 dark:border-gray-800"
-          ></div>
+          <div class="w-full border-t border-gray-200 dark:border-gray-800"></div>
         </div>
         <div class="relative flex justify-center text-sm">
-          <span
-            class="p-2 text-gray-400 bg-white dark:bg-gray-900 sm:px-5 sm:py-2"
-          >
-            Or
-          </span>
+          <span class="p-2 text-gray-400 bg-white dark:bg-gray-900 sm:px-5 sm:py-2"> Or </span>
         </div>
       </div>
 
@@ -89,9 +71,7 @@
       >
         <nz-form-item>
           <nz-form-label nzRequired nzFor="userName">Username</nz-form-label>
-          <nz-form-control
-            [nzErrorTip]="!validateForm.value.username ? nzErrorRequire : ''"
-          >
+          <nz-form-control [nzErrorTip]="!validateForm.value.username ? nzErrorRequire : ''">
             <nz-input-group [nzPrefix]="prefixUser">
               <input
                 type="text"
@@ -106,9 +86,7 @@
         </nz-form-item>
         <nz-form-item class="relative">
           <nz-form-label nzRequired nzFor="password">Password</nz-form-label>
-          <nz-form-control
-            [nzErrorTip]="!validateForm.value.password ? nzErrorRequire : ''"
-          >
+          <nz-form-control [nzErrorTip]="!validateForm.value.password ? nzErrorRequire : ''">
             <nz-input-group [nzPrefix]="prefixLock" [nzSuffix]="suffixVisible">
               <input
                 [type]="isVisiblePassword ? 'text' : 'password'"
@@ -144,40 +122,76 @@
 
         <nz-form-item>
           <nz-form-control>
-            <button
-              nz-button
-              class="w-full login-form-button"
-              [nzType]="'primary'"
-            >
-              Login
-            </button>
+            <button nz-button class="w-full login-form-button" [nzType]="'primary'">Login</button>
           </nz-form-control>
         </nz-form-item>
       </form>
-      <ng-template #prefixUser><i class="ki-filled ki-user"></i></ng-template>
-      <ng-template #prefixLock><i class="ki-filled ki-lock"></i></ng-template>
-      <ng-template #suffixVisible>
-        <i
-          tabindex="0"
-          nz-icon
-          [nzType]="isVisiblePassword ? 'eye-invisible' : 'eye'"
-          (click)="isVisiblePassword = !isVisiblePassword"
-        ></i>
-      </ng-template>
     </div>
 
     <div class="mt-3">
-      <p
-        class="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start"
-      >
+      <p class="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
         Don't have an account?
-        <a
-          routerLink="/register"
-          class="text-brand-500 hover:text-brand-600 dark:text-brand-400"
-        >
-          Sign Up
-        </a>
+        <a routerLink="/register" class="text-brand-500 hover:text-brand-600 dark:text-brand-400"> Sign Up </a>
       </p>
     </div>
   </div>
 </div>
+
+<!-- Icon -->
+<ng-template #prefixUser
+  ><svg width="1rem" height="1rem" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="12" cy="17.5" rx="7" ry="3.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+    <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+  </svg>
+</ng-template>
+<ng-template #prefixLock
+  ><svg width="1rem" height="1rem" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M16 8H8M16 8C18.2091 8 20 9.79086 20 12V18C20 20.2091 18.2091 22 16 22H8C5.79086 22 4 20.2091 4 18V12C4 9.79086 5.79086 8 8 8M16 8V6C16 3.79086 14.2091 2 12 2C9.79086 2 8 3.79086 8 6V8M12 16V14"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+    />
+  </svg>
+</ng-template>
+<ng-template #eyeIcon>
+  <svg width="1rem" height="1rem" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M21.1303 9.8531C22.2899 11.0732 22.2899 12.9268 21.1303 14.1469C19.1745 16.2047 15.8155 19 12 19C8.18448 19 4.82549 16.2047 2.86971 14.1469C1.7101 12.9268 1.7101 11.0732 2.86971 9.8531C4.82549 7.79533 8.18448 5 12 5C15.8155 5 19.1745 7.79533 21.1303 9.8531Z"
+      stroke="currentColor"
+      stroke-width="1.5"
+    />
+    <path
+      d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z"
+      stroke="currentColor"
+      stroke-width="1.5"
+    />
+  </svg>
+</ng-template>
+<ng-template #eyeDisable>
+  <svg width="1rem" height="1rem" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M4.00006 4L20.0001 20M14.0001 14.2361C13.4693 14.7111 12.7684 15 12.0001 15C10.3432 15 9.00006 13.6569 9.00006 12C9.00006 11.2316 9.28891 10.5308 9.76395 10M19.6078 15.6077C20.1792 15.1103 20.6903 14.6099 21.1304 14.1469C22.29 12.9268 22.29 11.0732 21.1304 9.8531C19.1746 7.79533 15.8156 5 12.0001 5C11.1087 5 10.2422 5.15256 9.41276 5.41264M6.50006 6.80338C5.0415 7.73444 3.7977 8.87678 2.86977 9.8531C1.71016 11.0732 1.71016 12.9268 2.86977 14.1469C4.82555 16.2047 8.18455 19 12.0001 19C13.8681 19 15.6268 18.3299 17.1649 17.4044"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+    />
+  </svg>
+</ng-template>
+
+<!-- Password Field -->
+<ng-template #suffixVisible>
+  <button
+    type="button"
+    tabindex="0"
+    (click)="isVisiblePassword = !isVisiblePassword"
+    class="focus:outline-none bg-transparent border-0 p-0 m-0 flex items-center justify-center"
+    [attr.aria-label]="isVisiblePassword ? 'Hide password' : 'Show password'"
+  >
+    @if (isVisiblePassword) {
+      <ng-template [ngTemplateOutlet]="eyeDisable"></ng-template>
+    } @else {
+      <ng-template [ngTemplateOutlet]="eyeIcon"></ng-template>
+    }
+  </button>
+</ng-template>

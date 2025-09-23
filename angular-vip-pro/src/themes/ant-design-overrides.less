@@ -1,26 +1,35 @@
 // MARK: Side Bar Menu - Light Theme
 aside.app-sidebar {
-  a[class*="menu-dropdown-item-inactive"] {
+  // Ensure menu item text inherits color from parent
+  .menu-item-text {
+    color: inherit !important;
+  }
+
+  a[class*='menu-dropdown-item-inactive'] {
     color: var(--color-gray-600) !important;
     transition: color 0.3s ease !important;
   }
 
-  a[class*="menu-item-inactive"] {
+  a[class*='menu-item-inactive'] {
     color: var(--color-gray-600) !important;
     transition: color 0.3s ease !important;
   }
 
-  button[class*="menu-item-inactive"] {
+  button[class*='menu-item-inactive'] {
     color: var(--color-gray-600) !important;
     transition: color 0.3s ease !important;
   }
 
-  button[class*="menu-item-active"] {
+  button[class*='menu-item-active'] {
     color: var(--color-brand-500) !important;
     transition: color 0.3s ease !important;
+
+    .menu-item-text {
+      color: inherit !important;
+    }
   }
 
-  a[class*="menu-dropdown-item-active"] {
+  a[class*='menu-dropdown-item-active'] {
     color: var(--color-brand-500) !important;
     transition: color 0.3s ease !important;
   }
@@ -33,24 +42,33 @@ aside.app-sidebar {
     background-color: var(--color-gray-900) !important;
     border-right: 1px solid var(--color-gray-800) !important;
 
-    a[class*="menu-dropdown-item-inactive"] {
+    // Ensure menu item text inherits color in dark mode
+    .menu-item-text {
+      color: inherit !important;
+    }
+
+    a[class*='menu-dropdown-item-inactive'] {
       color: var(--color-gray-300) !important;
     }
 
-    a[class*="menu-item-inactive"] {
+    a[class*='menu-item-inactive'] {
       color: var(--color-gray-300) !important;
     }
 
-    button[class*="menu-item-inactive"] {
+    button[class*='menu-item-inactive'] {
       color: var(--color-gray-300) !important;
     }
 
-    button[class*="menu-item-active"] {
+    button[class*='menu-item-active'] {
       color: var(--color-brand-400) !important;
       background-color: rgba(99, 102, 241, 0.1) !important;
+
+      .menu-item-text {
+        color: inherit !important;
+      }
     }
 
-    a[class*="menu-dropdown-item-active"] {
+    a[class*='menu-dropdown-item-active'] {
       color: var(--color-brand-400) !important;
     }
   }
@@ -58,8 +76,8 @@ aside.app-sidebar {
 
 // MARK: Menu item hover effects
 aside.app-sidebar {
-  a[class*="menu-item"],
-  button[class*="menu-item"] {
+  a[class*='menu-item'],
+  button[class*='menu-item'] {
     &:hover {
       background-color: var(--color-gray-100) !important;
       color: var(--color-brand-600) !important;
@@ -70,8 +88,8 @@ aside.app-sidebar {
 [data-theme='dark'],
 .dark {
   aside.app-sidebar {
-    a[class*="menu-item"],
-    button[class*="menu-item"] {
+    a[class*='menu-item'],
+    button[class*='menu-item'] {
       &:hover {
         background-color: var(--color-gray-800) !important;
         color: var(--color-brand-300) !important;
@@ -82,7 +100,7 @@ aside.app-sidebar {
 
 // MARK: Menu icons
 aside.app-sidebar {
-  [class*="menu-item-icon"] {
+  [class*='menu-item-icon'] {
     transition: color 0.3s ease !important;
   }
 }
@@ -90,11 +108,11 @@ aside.app-sidebar {
 [data-theme='dark'],
 .dark {
   aside.app-sidebar {
-    [class*="menu-item-icon-inactive"] {
+    [class*='menu-item-icon-inactive'] {
       color: var(--color-gray-400) !important;
     }
 
-    [class*="menu-item-icon-active"] {
+    [class*='menu-item-icon-active'] {
       color: var(--color-brand-400) !important;
     }
   }
@@ -119,11 +137,18 @@ aside.app-sidebar {
 // MARK: Text and heading improvements for dark mode
 [data-theme='dark'],
 .dark {
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     color: var(--color-gray-100) !important;
   }
 
-  p, span, div {
+  p,
+  span,
+  div {
     color: var(--color-gray-200) !important;
   }
 }
@@ -163,14 +188,17 @@ aside.app-sidebar {
   .shadow-sm,
   .shadow-md,
   .shadow-lg {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.3),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
   }
 }
 
 // MARK: Table Actions Dark Mode Fix
 // Table action buttons and icons
 .ant-table {
-  td, th {
+  td,
+  th {
     .ant-btn-text {
       color: var(--color-gray-600) !important;
       transition: all 0.3s ease !important;
@@ -186,7 +214,8 @@ aside.app-sidebar {
 [data-theme='dark'],
 .dark {
   .ant-table {
-    td, th {
+    td,
+    th {
       .ant-btn-text {
         color: var(--color-gray-400) !important;
 
@@ -229,7 +258,6 @@ aside.app-sidebar {
 .dark {
   .ant-dropdown-menu {
     background-color: var(--color-gray-800) !important;
-    border: 1px solid var(--color-gray-700) !important;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4) !important;
 
     .ant-dropdown-menu-item {
@@ -243,11 +271,11 @@ aside.app-sidebar {
   }
 }
 
-
 // MARK: Tables
 .ant-table,
 nz-table {
-  td, th {
+  td,
+  th {
     svg {
       color: var(--ant-text-color-secondary, currentColor) !important;
       transition: color 0.3s ease !important;
@@ -265,7 +293,8 @@ nz-table {
 .dark {
   .ant-table,
   nz-table {
-    td, th {
+    td,
+    th {
       svg {
         color: var(--color-gray-400) !important;
       }
@@ -457,4 +486,3 @@ nz-table {
     }
   }
 }
-
