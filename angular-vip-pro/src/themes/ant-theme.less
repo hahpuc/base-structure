@@ -235,26 +235,26 @@ body {
 .ant-btn-primary {
   background-color: var(--ant-primary-color) !important;
   border-color: var(--ant-primary-color) !important;
-  color: #ffffff !important;
-}
+  color: #fff !important;
 
-.ant-btn-primary:hover,
-.ant-btn-primary:focus {
-  background-color: var(--ant-primary-color) !important;
-  border-color: var(--ant-primary-color) !important;
-  opacity: 0.8;
+  &:hover,
+  &:focus {
+    background-color: var(--ant-primary-color) !important;
+    border-color: var(--ant-primary-color) !important;
+    opacity: 0.8;
+  }
 }
 
 .ant-btn-default {
   border: 1px solid var(--ant-border-color-base) !important;
   color: var(--ant-text-color) !important;
   background-color: var(--ant-component-background) !important;
-}
 
-.ant-btn-default:hover,
-.ant-btn-default:focus {
-  border-color: var(--ant-primary-color) !important;
-  color: var(--ant-primary-color) !important;
+  &:hover,
+  &:focus {
+    border-color: var(--ant-primary-color) !important;
+    color: var(--ant-primary-color) !important;
+  }
 }
 
 // MARK: Input styles
@@ -287,12 +287,14 @@ body {
 }
 
 // MARK: Input Error States
-.ant-form-item-has-error .ant-input,
-.ant-form-item-has-error .ant-input-affix-wrapper,
-.ant-form-item-has-error .ant-picker,
-.ant-form-item-has-error .ant-select-selector,
-.ant-form-item-has-error .ant-input-number {
-  border-color: var(--ant-error-color) !important;
+.ant-form-item-has-error {
+  .ant-input,
+  .ant-input-affix-wrapper,
+  .ant-picker,
+  .ant-select-selector,
+  .ant-input-number {
+    border-color: var(--ant-error-color) !important;
+  }
 }
 
 // Fix for input-affix-wrapper error background
@@ -307,21 +309,23 @@ body {
   }
 }
 
-.ant-form-item-has-error .ant-input:hover,
-.ant-form-item-has-error .ant-input-affix-wrapper:hover,
-.ant-form-item-has-error .ant-picker:hover,
-.ant-form-item-has-error .ant-select-selector:hover,
-.ant-form-item-has-error .ant-input-number:hover {
-  border-color: var(--ant-error-color) !important;
-}
+.ant-form-item-has-error {
+  .ant-input:hover,
+  .ant-input-affix-wrapper:hover,
+  .ant-picker:hover,
+  .ant-select-selector:hover,
+  .ant-input-number:hover {
+    border-color: var(--ant-error-color) !important;
+  }
 
-.ant-form-item-has-error .ant-input:focus,
-.ant-form-item-has-error .ant-input-affix-wrapper-focused,
-.ant-form-item-has-error .ant-picker-focused,
-.ant-form-item-has-error .ant-select-focused .ant-select-selector,
-.ant-form-item-has-error .ant-input-number-focused {
-  border-color: var(--ant-error-color) !important;
-  box-shadow: 0 0 0 2px var(--ant-error-background) !important;
+  .ant-input:focus,
+  .ant-input-affix-wrapper-focused,
+  .ant-picker-focused,
+  .ant-select-focused .ant-select-selector,
+  .ant-input-number-focused {
+    border-color: var(--ant-error-color) !important;
+    box-shadow: 0 0 0 2px var(--ant-error-background) !important;
+  }
 }
 
 // Fix focus state for input-affix-wrapper to prevent inner border
@@ -402,19 +406,28 @@ body {
   color: var(--ant-text-color) !important;
 }
 
-.ant-table-thead > tr > th {
-  background-color: var(--ant-background-color-light) !important;
-  color: var(--ant-text-color) !important;
-  border-bottom: 1px solid var(--ant-border-color-split) !important;
+.ant-table-thead {
+  > tr {
+    > th {
+      background-color: var(--ant-background-color-light) !important;
+      color: var(--ant-text-color) !important;
+      border-bottom: 1px solid var(--ant-border-color-split) !important;
+    }
+  }
 }
 
-.ant-table-tbody > tr > td {
-  border-bottom: 1px solid var(--ant-border-color-split) !important;
-  color: var(--ant-text-color) !important;
-}
-
-.ant-table-tbody > tr:hover > td {
-  background-color: var(--ant-background-color-light) !important;
+.ant-table-tbody {
+  > tr {
+    > td {
+      border-bottom: 1px solid var(--ant-border-color-split) !important;
+      color: var(--ant-text-color) !important;
+    }
+    &:hover {
+      > td {
+        background-color: var(--ant-background-color-light) !important;
+      }
+    }
+  }
 }
 
 // MARK: Modal
@@ -551,80 +564,40 @@ ul.ant-dropdown-menu li:hover {
     transition: all 0.3s ease !important;
   }
 
-  .ant-checkbox-input:focus + .ant-checkbox-inner {
+  &:hover .ant-checkbox-inner {
     border-color: var(--ant-primary-color) !important;
-    box-shadow: 0 0 0 2px var(--ant-primary-focus-shadow) !important;
   }
-}
 
-.ant-checkbox:hover .ant-checkbox-inner {
-  border-color: var(--ant-primary-color) !important;
-}
+  &-checked .ant-checkbox-inner {
+    background-color: var(--ant-primary-color) !important;
+    border-color: var(--ant-primary-color) !important;
 
-.ant-checkbox-checked .ant-checkbox-inner {
-  background-color: var(--ant-primary-color) !important;
-  border-color: var(--ant-primary-color) !important;
-}
+    &::after {
+      border-color: #ffffff !important;
+    }
+  }
 
-.ant-checkbox-checked .ant-checkbox-inner::after {
-  border-color: #ffffff !important;
-}
+  &-disabled .ant-checkbox-inner {
+    background-color: var(--ant-background-color-light) !important;
+    border-color: var(--ant-border-color-base) !important;
+    cursor: not-allowed !important;
+  }
 
-.ant-checkbox-disabled .ant-checkbox-inner {
-  background-color: var(--ant-background-color-light) !important;
-  border-color: var(--ant-border-color-base) !important;
-  cursor: not-allowed !important;
-}
+  &-disabled + span {
+    color: var(--ant-text-color-secondary) !important;
+    cursor: not-allowed !important;
+  }
 
-.ant-checkbox-disabled + span {
-  color: var(--ant-text-color-secondary) !important;
-  cursor: not-allowed !important;
-}
-
-// Indeterminate state
-.ant-checkbox-indeterminate .ant-checkbox-inner {
-  background-color: var(--ant-primary-color) !important;
-  border-color: var(--ant-primary-color) !important;
-}
-
-.ant-checkbox-indeterminate .ant-checkbox-inner::after {
-  background-color: #ffffff !important;
-}
-
-// Dark mode specific overrides
-[data-theme='dark'] .ant-checkbox,
-.dark .ant-checkbox {
-  .ant-checkbox-inner {
-    background-color: var(--color-gray-800) !important;
-    border-color: var(--color-gray-600) !important;
+  &-indeterminate .ant-checkbox-inner {
+    &::after {
+      background-color: var(--ant-primary-color) !important;
+    }
   }
 
   .ant-checkbox-input:focus + .ant-checkbox-inner {
     border-color: var(--ant-primary-color) !important;
     box-shadow: 0 0 0 2px var(--ant-primary-focus-shadow) !important;
   }
-}
-
-[data-theme='dark'] .ant-checkbox:hover .ant-checkbox-inner,
-.dark .ant-checkbox:hover .ant-checkbox-inner {
-  border-color: var(--ant-primary-color) !important;
-}
-
-[data-theme='dark'] .ant-checkbox-checked .ant-checkbox-inner,
-.dark .ant-checkbox-checked .ant-checkbox-inner {
-  background-color: var(--ant-primary-color) !important;
-  border-color: var(--ant-primary-color) !important;
-}
-
-[data-theme='dark'] .ant-checkbox-disabled .ant-checkbox-inner,
-.dark .ant-checkbox-disabled .ant-checkbox-inner {
-  background-color: var(--color-gray-900) !important;
-  border-color: var(--color-gray-700) !important;
-}
-
-[data-theme='dark'] .ant-checkbox-disabled + span,
-.dark .ant-checkbox-disabled + span {
-  color: var(--color-gray-500) !important;
 }
 
 // Checkbox group
@@ -639,161 +612,135 @@ ul.ant-dropdown-menu li:hover {
 // MARK: Pagination
 .ant-pagination {
   color: var(--ant-text-color) !important;
-}
 
-.ant-pagination li {
-  background-color: var(--ant-component-background) !important;
-}
+  li {
+    background-color: var(--ant-component-background) !important;
 
-.ant-pagination li a {
-  color: var(--ant-text-color) !important;
-  background-color: transparent !important;
-}
+    a {
+      color: var(--ant-text-color) !important;
+      background-color: transparent !important;
+    }
 
-.ant-pagination li:hover {
-  border-color: var(--ant-primary-color) !important;
-}
+    &:hover {
+      border-color: var(--ant-primary-color) !important;
 
-.ant-pagination li:hover a {
-  color: var(--ant-primary-color) !important;
-}
+      a {
+        color: var(--ant-primary-color) !important;
+      }
+    }
 
-.ant-pagination li.ant-pagination-item-active {
-  background-color: var(--ant-primary-color) !important;
-  border-color: var(--ant-primary-color) !important;
-}
+    &.ant-pagination-item-active {
+      background-color: var(--ant-primary-color) !important;
+      border-color: var(--ant-primary-color) !important;
 
-.ant-pagination li.ant-pagination-item-active a {
-  color: #ffffff !important;
-}
+      a {
+        color: #ffffff !important;
+      }
+    }
+  }
 
-.ant-pagination .ant-pagination-prev,
-.ant-pagination .ant-pagination-next {
-  color: var(--ant-text-color) !important;
-}
+  .ant-pagination-prev,
+  .ant-pagination-next {
+    color: var(--ant-text-color) !important;
+    border: 1px solid var(--ant-border-color-base) !important;
+    background-color: var(--ant-component-background) !important;
 
-.ant-pagination .ant-pagination-prev:hover,
-.ant-pagination .ant-pagination-next:hover {
-  color: var(--ant-primary-color) !important;
-  border-color: var(--ant-primary-color) !important;
-}
+    .ant-pagination-item-link {
+      background-color: transparent !important;
+      border: none !important;
+      color: var(--ant-text-color) !important;
+    }
 
-.ant-pagination .ant-pagination-disabled {
-  color: var(--ant-text-color-secondary) !important;
-  border-color: var(--ant-border-color-base) !important;
-}
+    &:hover {
+      color: var(--ant-primary-color) !important;
+      border-color: var(--ant-primary-color) !important;
 
-.ant-pagination .ant-pagination-disabled:hover {
-  color: var(--ant-text-color-secondary) !important;
-  border-color: var(--ant-border-color-base) !important;
-}
+      .ant-pagination-item-link {
+        color: var(--ant-primary-color) !important;
+      }
+    }
 
-// Pagination options selector
-.ant-pagination .ant-pagination-options {
-  color: var(--ant-text-color) !important;
-}
+    &.ant-pagination-disabled {
+      border-color: var(--ant-border-color-base) !important;
+      background-color: var(--ant-component-background) !important;
 
-.ant-pagination .ant-pagination-options .ant-select {
-  color: var(--ant-text-color) !important;
-}
+      .ant-pagination-item-link {
+        color: var(--ant-text-color-secondary) !important;
+        cursor: not-allowed !important;
+      }
 
-.ant-pagination .ant-pagination-options .ant-select-selector {
-  background-color: var(--ant-component-background) !important;
-  border-color: var(--ant-border-color-base) !important;
-  color: var(--ant-text-color) !important;
-}
+      &:hover {
+        border-color: var(--ant-border-color-base) !important;
 
-// Pagination total info
-.ant-pagination .ant-pagination-total-text {
-  color: var(--ant-text-color) !important;
-}
+        .ant-pagination-item-link {
+          color: var(--ant-text-color-secondary) !important;
+        }
+      }
+    }
 
-// Jump to page input
-.ant-pagination .ant-pagination-simple .ant-pagination-simple-pager input {
-  background-color: var(--ant-component-background) !important;
-  border-color: var(--ant-border-color-base) !important;
-  color: var(--ant-text-color) !important;
-}
+    .anticon,
+    .anticon svg {
+      color: inherit !important;
+      fill: currentColor !important;
+    }
+  }
 
-// Pagination ellipsis
-.ant-pagination .ant-pagination-jump-prev,
-.ant-pagination .ant-pagination-jump-next {
-  color: var(--ant-text-color-secondary) !important;
-}
+  .ant-pagination-disabled {
+    color: var(--ant-text-color-secondary) !important;
+    border-color: var(--ant-border-color-base) !important;
 
-.ant-pagination .ant-pagination-jump-prev:hover,
-.ant-pagination .ant-pagination-jump-next:hover {
-  color: var(--ant-primary-color) !important;
-}
+    &:hover {
+      color: var(--ant-text-color-secondary) !important;
+      border-color: var(--ant-border-color-base) !important;
+    }
+  }
 
-// MARK: Pagination Navigation Buttons (Prev/Next)
-.ant-pagination .ant-pagination-prev,
-.ant-pagination .ant-pagination-next {
-  border: 1px solid var(--ant-border-color-base) !important;
-  background-color: var(--ant-component-background) !important;
-}
+  .ant-pagination-options {
+    color: var(--ant-text-color) !important;
 
-.ant-pagination .ant-pagination-prev .ant-pagination-item-link,
-.ant-pagination .ant-pagination-next .ant-pagination-item-link {
-  background-color: transparent !important;
-  border: none !important;
-  color: var(--ant-text-color) !important;
-}
+    .ant-select {
+      color: var(--ant-text-color) !important;
 
-.ant-pagination .ant-pagination-prev:hover,
-.ant-pagination .ant-pagination-next:hover {
-  border-color: var(--ant-primary-color) !important;
-}
+      .ant-select-selector {
+        background-color: var(--ant-component-background) !important;
+        border-color: var(--ant-border-color-base) !important;
+        color: var(--ant-text-color) !important;
+      }
+    }
+  }
 
-.ant-pagination .ant-pagination-prev:hover .ant-pagination-item-link,
-.ant-pagination .ant-pagination-next:hover .ant-pagination-item-link {
-  color: var(--ant-primary-color) !important;
-}
+  .ant-pagination-total-text {
+    color: var(--ant-text-color) !important;
+  }
 
-// Disabled navigation buttons
-.ant-pagination .ant-pagination-prev.ant-pagination-disabled,
-.ant-pagination .ant-pagination-next.ant-pagination-disabled {
-  border-color: var(--ant-border-color-base) !important;
-  background-color: var(--ant-component-background) !important;
-}
+  .ant-pagination-simple {
+    .ant-pagination-simple-pager {
+      input {
+        background-color: var(--ant-component-background) !important;
+        border-color: var(--ant-border-color-base) !important;
+        color: var(--ant-text-color) !important;
+      }
+    }
+  }
 
-.ant-pagination .ant-pagination-prev.ant-pagination-disabled .ant-pagination-item-link,
-.ant-pagination .ant-pagination-next.ant-pagination-disabled .ant-pagination-item-link {
-  color: var(--ant-text-color-secondary) !important;
-  cursor: not-allowed !important;
-}
+  .ant-pagination-jump-prev,
+  .ant-pagination-jump-next {
+    color: var(--ant-text-color-secondary) !important;
 
-.ant-pagination .ant-pagination-prev.ant-pagination-disabled:hover,
-.ant-pagination .ant-pagination-next.ant-pagination-disabled:hover {
-  border-color: var(--ant-border-color-base) !important;
-}
+    &:hover {
+      color: var(--ant-primary-color) !important;
+    }
+  }
 
-.ant-pagination .ant-pagination-prev.ant-pagination-disabled:hover .ant-pagination-item-link,
-.ant-pagination .ant-pagination-next.ant-pagination-disabled:hover .ant-pagination-item-link {
-  color: var(--ant-text-color-secondary) !important;
-}
+  button.ant-pagination-item-link {
+    background-color: transparent !important;
+    border: none !important;
+    color: inherit !important;
+    cursor: pointer !important;
 
-// Navigation button icons (nz-icon)
-.ant-pagination .ant-pagination-prev .anticon,
-.ant-pagination .ant-pagination-next .anticon {
-  color: inherit !important;
-}
-
-.ant-pagination .ant-pagination-prev .anticon svg,
-.ant-pagination .ant-pagination-next .anticon svg {
-  fill: currentColor !important;
-  color: inherit !important;
-}
-
-// Fix for button element inside pagination items
-.ant-pagination button.ant-pagination-item-link {
-  background-color: transparent !important;
-  border: none !important;
-  color: inherit !important;
-  cursor: pointer !important;
-}
-
-.ant-pagination button.ant-pagination-item-link:disabled {
-  color: var(--ant-text-color-secondary) !important;
-  cursor: not-allowed !important;
+    &:disabled {
+      color: var(--ant-text-color-secondary) !important;
+      cursor: not-allowed !important;
+    }
+  }
 }
