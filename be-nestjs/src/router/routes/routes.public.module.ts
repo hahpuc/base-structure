@@ -1,3 +1,5 @@
+import { CategoryModule } from '@modules/category/category.module';
+import { CategoryPublicController } from '@modules/category/controllers/category.public.controller';
 import { ProvincePublicController } from '@modules/location/controllers/province.public.controller';
 import { WardPublicController } from '@modules/location/controllers/ward.public.controller';
 import { LocationModule } from '@modules/location/location.module';
@@ -17,6 +19,7 @@ import { HealthPublicController } from 'src/health/controllers/health.public.con
     UserPublicController,
     ProvincePublicController,
     WardPublicController,
+    CategoryPublicController,
   ],
   providers: [],
   exports: [],
@@ -26,6 +29,7 @@ import { HealthPublicController } from 'src/health/controllers/health.public.con
     UserModule,
     PermissionModule,
     LocationModule,
+    CategoryModule,
   ],
 })
 export class RoutesPublicModule {}
