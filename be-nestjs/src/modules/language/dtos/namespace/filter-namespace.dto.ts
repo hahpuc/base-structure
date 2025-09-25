@@ -1,3 +1,3 @@
 import { BaseFilterParamDto } from '@common/base/dtos/base-filter.dto';
 
-export class FilterNameSpaceDto extends BaseFilterParamDto {}
+export class FilterNamespaceDto extends BaseFilterParamDto {}

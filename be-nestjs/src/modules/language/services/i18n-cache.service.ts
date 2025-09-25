@@ -98,7 +98,11 @@ export class I18nCacheService implements OnModuleInit {
       let activeTranslations: Translation[];
 
       try {
-        allTranslations = await this.translationRepository.findAll();
+        allTranslations = await this.translationRepository.find({
+          relations: ['namespace', 'language'],
+          where: { status: EStatus.active },
+        });
+
         activeTranslations = allTranslations.filter(
           (t) => t?.status === EStatus.active,
         );

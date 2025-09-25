@@ -1,9 +1,16 @@
 import { registerLocaleData } from '@angular/common';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import en from '@angular/common/locales/en';
-import { ApplicationConfig, inject, LOCALE_ID, provideZoneChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  inject,
+  LOCALE_ID,
+  provideZoneChangeDetection,
+  importProvidersFrom,
+} from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { en_US, NZ_I18N } from 'ng-zorro-antd/i18n';
 
 import { routes } from './app.routes';
@@ -17,6 +24,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideAnimations(),
+    importProvidersFrom(TranslateModule.forRoot()),
 
     {
       provide: NZ_I18N,

@@ -107,6 +107,10 @@ export const routes: Routes = [
         path: '',
         loadChildren: () => import('./pages/user/user.routes'),
       },
+      {
+        path: '',
+        loadChildren: () => import('./pages/languages/language.routes'),
+      },
     ],
   },
   {

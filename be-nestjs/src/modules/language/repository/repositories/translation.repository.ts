@@ -1,23 +1,57 @@
 import { EStatus } from '@app/constant/app.enum';
+import {
+  applyQueryPaging,
+  applyQuerySorting,
+} from '@common/database/helper/query.helper';
+import { FilterTranslationDto } from '@modules/language/dtos/translation/filter-translation.dto';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { Translation } from '../entities/translation.entity';
 
 @Injectable()
-export class TranslationRepository {
-  constructor(
-    @InjectRepository(Translation)
-    private readonly repository: Repository<Translation>,
-  ) {}
+export class TranslationRepository extends Repository<Translation> {
+  constructor(dataSource: DataSource) {
+    super(Translation, dataSource.createEntityManager());
+  }
+
+  async getList(
+    params: FilterTranslationDto,
+  ): Promise<[Translation[], number]> {
+    const query = this.createQueryBuilder('translation')
+      .leftJoinAndSelect('translation.namespace', 'namespace')
+      .leftJoinAndSelect('translation.language', 'language');
+
+    if (params.language_id) {
+      query.andWhere('translation.language = :language_id', {
+        language_id: params.language_id,
+      });
+    }
+
+    if (params.namespace_id) {
+      query.andWhere('translation.namespace = :namespace_id', {
+        namespace_id: params.namespace_id,
+      });
+    }
+
+    if (params.filter) {
+      query.andWhere(
+        '(translation.key LIKE :filter OR translation.value LIKE :filter)',
+        { filter: `%${params.filter}%` },
+      );
+    }
+
+    applyQuerySorting('id ASC', query, 'translation');
+    applyQueryPaging(params, query);
+
+    return await query.getManyAndCount();
+  }
 
   async findByLanguageAndNamespace(
     language: string,
     namespace: string,
   ): Promise<Translation[]> {
-    const query = this.repository
-      .createQueryBuilder('translation')
+    const query = this.createQueryBuilder('translation')
       .leftJoinAndSelect('translation.namespace', 'namespace')
       .leftJoinAndSelect('translation.language', 'language')
       .where('language.code = :language', { language })
@@ -34,8 +68,7 @@ export class TranslationRepository {
     language: string,
     namespace?: string,
   ): Promise<Translation | null> {
-    const queryBuilder = this.repository
-      .createQueryBuilder('translation')
+    const queryBuilder = this.createQueryBuilder('translation')
       .leftJoinAndSelect('translation.namespace', 'namespace')
       .where('translation.key = :key', { key })
       .andWhere('translation.language = :language', { language })
@@ -50,41 +83,12 @@ export class TranslationRepository {
   }
 
   async findLanguages(): Promise<string[]> {
-    const result = await this.repository
-      .createQueryBuilder('translation')
+    const result = await this.createQueryBuilder('translation')
       .select('DISTINCT translation.language', 'language')
       .where('translation.status = :isActive', { isActive: EStatus.active })
       .orderBy('translation.language', 'ASC')
       .getRawMany();
 
     return result.map((item) => item.language);
-  }
-
-  async bulkUpsert(translations: Partial<Translation>[]): Promise<void> {
-    await this.repository.save(translations);
-  }
-
-  async findAll(): Promise<Translation[]> {
-    return this.repository.find({
-      relations: ['namespace', 'language'],
-      where: { status: EStatus.active },
-    });
-  }
-
-  async create(translation: Partial<Translation>): Promise<Translation> {
-    const entity = this.repository.create(translation);
-    return this.repository.save(entity);
-  }
-
-  async update(
-    id: number,
-    translation: Partial<Translation>,
-  ): Promise<Translation> {
-    await this.repository.update(id, translation);
-    return this.repository.findOne({ where: { id }, relations: ['namespace'] });
-  }
-
-  async delete(id: number): Promise<void> {
-    await this.repository.softDelete(id);
   }
 }

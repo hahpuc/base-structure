@@ -1,31 +1,23 @@
 import { EStatus } from '@app/constant/app.enum';
 import { IsEnumValue } from '@common/request/validations/request.enum-value.validation';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateTranslationDto {
-  @ApiProperty({ example: 'common' })
-  @IsString()
+  @ApiProperty({ example: 1 })
+  @IsNumber()
   @IsNotEmpty()
-  namespace_id: string;
+  namespace_id: number;
 
   @ApiProperty({ example: 'hello_world' })
   @IsString()
   @IsNotEmpty()
   key: string;
 
-  @ApiProperty({ example: 'en' })
-  @IsString()
+  @ApiProperty({ example: 1 })
+  @IsNumber()
   @IsNotEmpty()
-  @MinLength(2)
-  @MaxLength(10)
-  language: string;
+  language_id: number;
 
   @ApiProperty({ example: 'Hello World!' })
   @IsString()

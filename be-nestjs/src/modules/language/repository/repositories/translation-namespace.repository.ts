@@ -1,46 +1,27 @@
-import { EStatus } from '@app/constant/app.enum';
+import {
+  applyQueryPaging,
+  applyQuerySorting,
+} from '@common/database/helper/query.helper';
+import { FilterNamespaceDto } from '@modules/language/dtos/namespace/filter-namespace.dto';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { TranslationNamespace } from '../entities/translation-namespace.entity';
 
 @Injectable()
-export class TranslationNamespaceRepository {
-  constructor(
-    @InjectRepository(TranslationNamespace)
-    private readonly repository: Repository<TranslationNamespace>,
-  ) {}
-
-  async findAll(): Promise<TranslationNamespace[]> {
-    return this.repository.find({
-      where: { status: EStatus.active },
-      order: { name: 'ASC' },
-    });
+export class TranslationNamespaceRepository extends Repository<TranslationNamespace> {
+  constructor(dataSource: DataSource) {
+    super(TranslationNamespace, dataSource.createEntityManager());
   }
 
-  async findByName(name: string): Promise<TranslationNamespace | null> {
-    return this.repository.findOne({
-      where: { name, status: EStatus.active },
-    });
-  }
+  async getList(
+    params: FilterNamespaceDto,
+  ): Promise<[TranslationNamespace[], number]> {
+    const query = this.createQueryBuilder('translation_namespace');
 
-  async create(
-    namespace: Partial<TranslationNamespace>,
-  ): Promise<TranslationNamespace> {
-    const entity = this.repository.create(namespace);
-    return this.repository.save(entity);
-  }
+    applyQuerySorting(params.sorting, query, 'translation_namespace');
+    applyQueryPaging(params, query);
 
-  async update(
-    id: number,
-    namespace: Partial<TranslationNamespace>,
-  ): Promise<TranslationNamespace> {
-    await this.repository.update(id, namespace);
-    return this.repository.findOne({ where: { id } });
-  }
-
-  async delete(id: string): Promise<void> {
-    await this.repository.softDelete(id);
+    return await query.getManyAndCount();
   }
 }

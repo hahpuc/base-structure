@@ -3,7 +3,8 @@ import { BlogPostAdminController } from '@modules/blog-post/controllers/blog-pos
 import { CategoryModule } from '@modules/category/category.module';
 import { CategoryAdminController } from '@modules/category/controllers/category.admin.controller';
 import { LanguageAdminController } from '@modules/language/controllers/language.admin.controller';
-import { TranslationAdminController } from '@modules/language/controllers/translate.admin.controller';
+import { NamespaceAdminController } from '@modules/language/controllers/namespace.admin.controller';
+import { TranslationAdminController } from '@modules/language/controllers/translation.admin.controller';
 import { ProvinceAdminController } from '@modules/location/controllers/province.admin.controller';
 import { WardAdminController } from '@modules/location/controllers/ward.admin.controller';
 import { LocationModule } from '@modules/location/location.module';
@@ -34,6 +35,7 @@ import { Module } from '@nestjs/common';
     SampleAdminController,
     BlogPostAdminController,
     LanguageAdminController,
+    NamespaceAdminController,
     TranslationAdminController,
   ],
   providers: [],

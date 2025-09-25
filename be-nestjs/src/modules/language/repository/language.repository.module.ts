@@ -10,14 +10,14 @@ import { TranslationNamespaceRepository } from './repositories/translation-names
 
 @Module({
   providers: [
+    LanguageRepository,
     TranslationNamespaceRepository,
     TranslationRepository,
-    LanguageRepository,
   ],
   exports: [
+    LanguageRepository,
     TranslationNamespaceRepository,
     TranslationRepository,
-    LanguageRepository,
   ],
   imports: [
     TypeOrmModule.forFeature([Language, TranslationNamespace, Translation]),

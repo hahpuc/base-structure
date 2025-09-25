@@ -140,7 +140,11 @@ export class I18nService {
       }
 
       // Load all translations for the language from database
-      const allTranslations = await this.translationRepository.findAll();
+      const allTranslations = await this.translationRepository.find({
+        relations: ['namespace', 'language'],
+        where: { status: EStatus.active },
+      });
+
       const languageTranslations = allTranslations.filter(
         (t) => t.language.code === lang && t.status === EStatus.active,
       );
