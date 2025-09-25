@@ -19,6 +19,7 @@ export class NamespacesComponent extends AppBaseComponent implements OnInit {
 
   tableOptions: TableOption<TranslationNamespaceDto> = {
     title: 'Namespace List',
+    fixHeader: false,
     pageSize: 10,
     pageSizeOptions: [10, 20, 50, 100],
     data: (input: QueryTranslationNamespace) => {

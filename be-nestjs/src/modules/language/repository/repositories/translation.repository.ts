@@ -41,6 +41,10 @@ export class TranslationRepository extends Repository<Translation> {
       );
     }
 
+    if (!isNaN(params.status)) {
+      query.andWhere('translation.status = :status', { status: params.status });
+    }
+
     applyQuerySorting('id ASC', query, 'translation');
     applyQueryPaging(params, query);
 

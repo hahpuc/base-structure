@@ -1,10 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ElementRef,
+  ViewChild,
+  AfterViewInit,
+  OnDestroy,
+} from '@angular/core';
 
 @Component({
   selector: 'app-dropdown',
   templateUrl: './dropdown.component.html',
-  imports:[CommonModule]
+  imports: [CommonModule],
 })
 export class DropdownComponent implements AfterViewInit, OnDestroy {
   @Input() isOpen = false;
@@ -16,8 +25,7 @@ export class DropdownComponent implements AfterViewInit, OnDestroy {
   private handleClickOutside = (event: MouseEvent) => {
     if (
       this.isOpen &&
-      this.dropdownRef &&
-      this.dropdownRef.nativeElement &&
+      this.dropdownRef?.nativeElement &&
       !this.dropdownRef.nativeElement.contains(event.target as Node) &&
       !(event.target as HTMLElement).closest('.dropdown-toggle')
     ) {

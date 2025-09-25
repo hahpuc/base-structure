@@ -19,6 +19,7 @@ export class LanguagesComponent extends AppBaseComponent implements OnInit {
 
   tableOptions: TableOption<LanguageDto> = {
     title: 'Language List',
+    fixHeader: false,
     pageSize: 10,
     pageSizeOptions: [10, 20, 50, 100],
     data: (input: QueryLanguage) => {
