@@ -5,6 +5,7 @@ import { REQUEST } from '@nestjs/core';
 import { Cache } from 'cache-manager';
 import { Request } from 'express';
 
+import { I18N_CACHE_KEY, I18N_CACHE_TTL } from '../const/i18n.const';
 import { Translation } from '../repository/entities/translation.entity';
 import { LanguageRepository } from '../repository/repositories/language.repository';
 import { TranslationRepository } from '../repository/repositories/translation.repository';
@@ -14,8 +15,8 @@ import { CachedTranslations, TranslationCacheKey } from '../types/i18n.type';
   scope: Scope.REQUEST,
 })
 export class I18nService {
-  private readonly CACHE_KEY = 'i18n_translations';
-  private readonly CACHE_TTL = 60 * 60 * 1000;
+  private readonly CACHE_KEY = I18N_CACHE_KEY;
+  private readonly CACHE_TTL = I18N_CACHE_TTL;
 
   constructor(
     private readonly translationRepository: TranslationRepository,
@@ -136,6 +137,7 @@ export class I18nService {
         await this.cacheManager.get(cacheKey);
 
       if (cachedData) {
+        this.logger.debug(`All translations retrieved from cache for ${lang}`);
         return cachedData;
       }
 
@@ -202,6 +204,9 @@ export class I18nService {
       const cachedLanguages: string[] = await this.cacheManager.get(cacheKey);
 
       if (cachedLanguages) {
+        this.logger.debug(
+          `Cache hit for languages: ${cachedLanguages.join(', ')}`,
+        );
         return cachedLanguages;
       }
 
@@ -220,6 +225,40 @@ export class I18nService {
     } catch (error) {
       this.logger.error('Error loading available languages', error);
       return [this.request['locale'] || 'en']; // Fallback to request locale or 'en'
+    }
+  }
+
+  /**
+   * Get all translations for all languages combined (for admin management)
+   * Returns data in format: { "en": {...}, "vi": {...} }
+   */
+  async getAllTranslationsForAdmin(): Promise<
+    Record<string, CachedTranslations>
+  > {
+    try {
+      const availableLanguages = await this.getAvailableLanguages();
+      const combinedTranslations: Record<string, CachedTranslations> = {};
+
+      // Use Promise.all for better performance when fetching multiple languages
+      const translationPromises = availableLanguages.map(async (lang) => {
+        const translations = await this.getAllTranslations(lang);
+        return { lang, translations };
+      });
+
+      const results = await Promise.all(translationPromises);
+
+      results.forEach(({ lang, translations }) => {
+        combinedTranslations[lang] = translations;
+      });
+
+      this.logger.debug(
+        `Retrieved all translations for admin: ${availableLanguages.length} languages`,
+      );
+
+      return combinedTranslations;
+    } catch (error) {
+      this.logger.error('Error getting all translations for admin:', error);
+      return {};
     }
   }
 

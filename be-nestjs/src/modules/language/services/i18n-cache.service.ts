@@ -4,6 +4,7 @@ import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Cache } from 'cache-manager';
 
+import { I18N_CACHE_KEY, I18N_CACHE_TTL } from '../const/i18n.const';
 import { Translation } from '../repository/entities/translation.entity';
 import { LanguageRepository } from '../repository/repositories/language.repository';
 import { TranslationRepository } from '../repository/repositories/translation.repository';
@@ -11,8 +12,8 @@ import { CachedTranslations, TranslationCacheKey } from '../types/i18n.type';
 
 @Injectable()
 export class I18nCacheService implements OnModuleInit {
-  private readonly CACHE_KEY = 'i18n_translations';
-  private readonly CACHE_TTL = 60 * 60 * 1000;
+  private readonly CACHE_KEY = I18N_CACHE_KEY;
+  private readonly CACHE_TTL = I18N_CACHE_TTL;
 
   constructor(
     private readonly logger: Logger,
@@ -94,18 +95,13 @@ export class I18nCacheService implements OnModuleInit {
       });
 
       // Get all translations grouped by language
-      let allTranslations: Translation[];
       let activeTranslations: Translation[];
 
       try {
-        allTranslations = await this.translationRepository.find({
+        activeTranslations = await this.translationRepository.find({
           relations: ['namespace', 'language'],
           where: { status: EStatus.active },
         });
-
-        activeTranslations = allTranslations.filter(
-          (t) => t?.status === EStatus.active,
-        );
       } catch (error) {
         this.logger.error('Failed to fetch translations from database:', error);
         throw new Error(`Database query failed: ${error.message}`);
@@ -121,7 +117,6 @@ export class I18nCacheService implements OnModuleInit {
 
       activeTranslations.forEach((translation) => {
         try {
-          // Safety checks for null/undefined values
           if (
             !translation?.language?.code ||
             !translation?.namespace?.name ||
@@ -236,10 +231,8 @@ export class I18nCacheService implements OnModuleInit {
     try {
       this.logger.log('Starting cache refresh...');
 
-      // Clear all i18n cache
       await this.clearCacheByPattern(`${this.CACHE_KEY}:*`);
 
-      // Warm up cache again
       await this.warmUpCache();
 
       this.logger.log('Cache refresh completed successfully');

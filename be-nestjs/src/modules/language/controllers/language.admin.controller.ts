@@ -16,12 +16,12 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { CreateLanguageDto } from '../dtos/language/create-language.dto';
 import { FilterLanguageDto } from '../dtos/language/filter-language.dto';
-import { GetLanguageDto } from '../dtos/language/language.dto';
 import { UpdateLanguageDto } from '../dtos/language/update-language.dto';
 import { Language } from '../repository/entities/language.entity';
 import { I18nService } from '../services/i18n.service';
 import { I18nCacheService } from '../services/i18n-cache.service';
 import { LanguageService } from '../services/language.service';
+import { CachedTranslations } from '../types/i18n.type';
 
 @Controller('languages')
 @ApiTags('Languages')
@@ -40,12 +40,6 @@ export class LanguageAdminController {
     @Query() param: FilterLanguageDto,
   ): Promise<ListPaginate<Language>> {
     return await this.languageService.getList(param);
-  }
-
-  @Get('/all')
-  @HttpCode(HttpStatus.OK)
-  async getAll(): Promise<GetLanguageDto[]> {
-    return await this.languageService.getAll();
   }
 
   @Post()
@@ -128,5 +122,32 @@ export class LanguageAdminController {
     @Param('namespace') namespace: string,
   ): Promise<void> {
     await this.i18nService.reloadTranslations(language, namespace);
+  }
+
+  // MARK: Public
+  // {
+  //   "en": {
+  //     "common": {
+  //       "hello": "Hello",
+  //       "world": "World"
+  //     },
+  //     "admin": {
+  //       "dashboard": "Dashboard"
+  //     }
+  //   },
+  //   "vi": {
+  //     "common": {
+  //       "hello": "Xin chào",
+  //       "world": "Thế giới"
+  //     },
+  //     "admin": {
+  //       "dashboard": "Bảng điều khiển"
+  //     }
+  //   }
+  // }
+  @Get('/translations/all')
+  @HttpCode(HttpStatus.OK)
+  async getAllTranslations(): Promise<Record<string, CachedTranslations>> {
+    return await this.i18nService.getAllTranslationsForAdmin();
   }
 }
