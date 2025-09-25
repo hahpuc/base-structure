@@ -31,4 +31,13 @@ export class CategoryPublicController {
   async getById(@Param('id') id: number): Promise<Category> {
     return await this.service.getById(id);
   }
+
+  @Get('test/i18n')
+  @HttpCode(HttpStatus.OK)
+  async testI18n(
+    @Query('key') key: string,
+    @Query('namespace') namespace: string,
+  ): Promise<any> {
+    return this.service.testI18n(key, namespace);
+  }
 }

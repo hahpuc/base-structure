@@ -2,6 +2,7 @@ import { ExcelModule } from '@common/excel/excel.module';
 import { QueueConfigModule } from '@common/queue/queue.module';
 import { S3Module } from '@common/s3/s3.module';
 import configs from '@configs/index';
+import { LanguageModule } from '@modules/language/language.module';
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
@@ -39,6 +40,7 @@ import { RequestModule } from './request/request.module';
     QueueConfigModule,
     ExcelModule,
     S3Module,
+    LanguageModule,
   ],
 })
 export class CommonModule {}

@@ -4,7 +4,6 @@ import { CategoryModule } from '@modules/category/category.module';
 import { CategoryAdminController } from '@modules/category/controllers/category.admin.controller';
 import { LanguageAdminController } from '@modules/language/controllers/language.admin.controller';
 import { TranslationAdminController } from '@modules/language/controllers/translate.admin.controller';
-import { LanguageModule } from '@modules/language/language.module';
 import { ProvinceAdminController } from '@modules/location/controllers/province.admin.controller';
 import { WardAdminController } from '@modules/location/controllers/ward.admin.controller';
 import { LocationModule } from '@modules/location/location.module';
@@ -49,7 +48,7 @@ import { Module } from '@nestjs/common';
     CategoryModule,
     SampleModule,
     BlogPostModule,
-    LanguageModule,
+    // LanguageModule removed - now global via CommonModule
   ],
 })
 export class RoutesAdminModule {}

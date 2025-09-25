@@ -22,24 +22,10 @@ export class CustomMessageService {
     const namespace = context ?? this._context;
 
     return await this.i18n.t(key, {
-      lang: lang ?? 'en', // Default language
+      lang: lang,
       namespace: namespace.toLowerCase(),
       args: options,
-      defaultValue: key, // Fallback to key if translation not found
+      defaultValue: key,
     });
-  }
-
-  /**
-   * Synchronous version that returns the key if no translation is immediately available
-   * This is for backward compatibility with existing sync code
-   */
-  getSync(
-    key: string,
-    context?: string,
-    options?: Record<string, string | number>,
-  ): string {
-    // For sync calls, return the key as fallback
-    // In a real implementation, you might want to cache translations
-    return key;
   }
 }

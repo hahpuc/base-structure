@@ -78,18 +78,14 @@ export class LanguageAdminController {
   // MARK: Cache Management
   @Post('/cache/refresh')
   @HttpCode(HttpStatus.OK)
-  @Auth({ permissions: 'language_manage_cache' })
-  async refreshCache(): Promise<{
-    success: boolean;
-    message: string;
-    stats?: any;
-  }> {
+  @Auth({ permissions: 'language_manage_update' })
+  async refreshCache(): Promise<void> {
     return await this.i18nCacheService.manualRefresh();
   }
 
   @Get('/cache/stats')
   @HttpCode(HttpStatus.OK)
-  @Auth({ permissions: 'language_manage_view' })
+  @Auth({ permissions: 'language_manage_read' })
   async getCacheStats(): Promise<{
     languages: number;
     namespaces: Record<string, number>;
@@ -101,10 +97,10 @@ export class LanguageAdminController {
 
   @Post('/cache/warm-up')
   @HttpCode(HttpStatus.OK)
-  @Auth({ permissions: 'language_manage_cache' })
+  @Auth({ permissions: 'language_manage_update' })
   async warmUpCache(): Promise<{ success: boolean; message: string }> {
     try {
-      await this.i18nService.warmUpCache();
+      await this.i18nCacheService.warmUpCache();
       return {
         success: true,
         message: 'Cache warmed up successfully',
@@ -119,14 +115,14 @@ export class LanguageAdminController {
 
   @Delete('/cache/:language')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Auth({ permissions: 'language_manage_cache' })
+  @Auth({ permissions: 'language_manage_update' })
   async clearLanguageCache(@Param('language') language: string): Promise<void> {
     await this.i18nService.reloadTranslations(language);
   }
 
   @Delete('/cache/:language/:namespace')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Auth({ permissions: 'language_manage_cache' })
+  @Auth({ permissions: 'language_manage_update' })
   async clearNamespaceCache(
     @Param('language') language: string,
     @Param('namespace') namespace: string,

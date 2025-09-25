@@ -66,7 +66,7 @@ export class TranslationRepository {
 
   async findAll(): Promise<Translation[]> {
     return this.repository.find({
-      relations: ['namespace'],
+      relations: ['namespace', 'language'],
       where: { status: EStatus.active },
     });
   }

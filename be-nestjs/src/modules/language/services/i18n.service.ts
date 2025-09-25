@@ -1,24 +1,28 @@
 import { EStatus } from '@app/constant/app.enum';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger, Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { Cache } from 'cache-manager';
+import { Request } from 'express';
 
 import { Translation } from '../repository/entities/translation.entity';
 import { LanguageRepository } from '../repository/repositories/language.repository';
 import { TranslationRepository } from '../repository/repositories/translation.repository';
 import { CachedTranslations, TranslationCacheKey } from '../types/i18n.type';
 
-@Injectable()
+@Injectable({
+  scope: Scope.REQUEST,
+})
 export class I18nService {
-  private readonly logger = new Logger(I18nService.name);
   private readonly CACHE_KEY = 'i18n_translations';
-  private readonly CACHE_TTL = 3600; // 1 hour
-  private readonly DEFAULT_LANGUAGE = 'en';
+  private readonly CACHE_TTL = 60 * 60 * 1000;
 
   constructor(
     private readonly translationRepository: TranslationRepository,
     private readonly languageRepository: LanguageRepository,
+    private readonly logger: Logger,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    @Inject(REQUEST) private readonly request: Request,
   ) {}
 
   /**
@@ -37,7 +41,7 @@ export class I18nService {
     } = {},
   ): Promise<string> {
     const {
-      lang = this.DEFAULT_LANGUAGE,
+      lang = this.request['locale'] || 'en',
       namespace = 'common',
       args = {},
       defaultValue = key,
@@ -69,7 +73,7 @@ export class I18nService {
    */
   async getTranslations(
     namespace: string = 'common',
-    lang: string = this.DEFAULT_LANGUAGE,
+    lang: string = this.request['locale'] || 'en',
   ): Promise<Record<string, string>> {
     try {
       const cacheKey = this.getCacheKey({ language: lang, namespace });
@@ -79,10 +83,16 @@ export class I18nService {
         await this.cacheManager.get(cacheKey);
 
       if (cachedTranslations) {
+        this.logger.debug(
+          `Translations retrieved from cache for ${namespace}:${lang}`,
+        );
         return cachedTranslations;
       }
 
       // Load from database
+      this.logger.debug(
+        `Loading translations from database for ${namespace}:${lang}`,
+      );
       const translations =
         await this.translationRepository.findByLanguageAndNamespace(
           lang,
@@ -95,6 +105,9 @@ export class I18nService {
       });
 
       // Cache the translations
+      this.logger.debug(
+        `Caching ${Object.keys(translationsMap).length} translations for ${namespace}:${lang}`,
+      );
       await this.cacheManager.set(cacheKey, translationsMap, this.CACHE_TTL);
 
       return translationsMap;
@@ -113,7 +126,7 @@ export class I18nService {
    * @returns Nested object with all translations organized by namespace
    */
   async getAllTranslations(
-    lang: string = this.DEFAULT_LANGUAGE,
+    lang: string = this.request['locale'] || 'en',
   ): Promise<CachedTranslations> {
     try {
       const cacheKey = `${this.CACHE_KEY}:all:${lang}`;
@@ -161,7 +174,7 @@ export class I18nService {
    */
   async exists(
     key: string,
-    lang: string = this.DEFAULT_LANGUAGE,
+    lang: string = this.request['locale'] || 'en',
     namespace: string = 'common',
   ): Promise<boolean> {
     try {
@@ -202,127 +215,7 @@ export class I18nService {
       return languageCodes;
     } catch (error) {
       this.logger.error('Error loading available languages', error);
-      return [this.DEFAULT_LANGUAGE];
-    }
-  }
-
-  /**
-   * Warm up cache by preloading all active translations
-   * Should be called on application startup
-   */
-  async warmUpCache(): Promise<void> {
-    try {
-      this.logger.log('Starting cache warm-up...');
-      const startTime = Date.now();
-
-      // Get all active languages
-      const languages = await this.languageRepository.find({
-        where: { status: EStatus.active },
-        select: ['code'],
-      });
-
-      // Get all translations grouped by language
-      const allTranslations = await this.translationRepository.findAll();
-      const activeTranslations = allTranslations.filter(
-        (t) => t.status === EStatus.active,
-      );
-
-      // Group translations by language and namespace
-      const translationsByLang: Record<string, CachedTranslations> = {};
-      const namespacesByLang: Record<string, Set<string>> = {};
-
-      activeTranslations.forEach((translation) => {
-        const langCode = translation.language.code;
-        const namespaceName = translation.namespace.name;
-
-        if (!translationsByLang[langCode]) {
-          translationsByLang[langCode] = {};
-          namespacesByLang[langCode] = new Set();
-        }
-
-        if (!translationsByLang[langCode][namespaceName]) {
-          translationsByLang[langCode][namespaceName] = {};
-        }
-
-        translationsByLang[langCode][namespaceName][translation.key] =
-          translation.value;
-        namespacesByLang[langCode].add(namespaceName);
-      });
-
-      // Cache all translations
-      const cachePromises: Promise<void>[] = [];
-
-      for (const [langCode, namespaces] of Object.entries(translationsByLang)) {
-        // Cache all translations for the language
-        const allLangCacheKey = `${this.CACHE_KEY}:all:${langCode}`;
-        cachePromises.push(
-          this.cacheManager.set(allLangCacheKey, namespaces, this.CACHE_TTL),
-        );
-
-        // Cache each namespace separately
-        for (const [namespaceName, translations] of Object.entries(
-          namespaces,
-        )) {
-          const namespaceCacheKey = this.getCacheKey({
-            language: langCode,
-            namespace: namespaceName,
-          });
-          cachePromises.push(
-            this.cacheManager.set(
-              namespaceCacheKey,
-              translations,
-              this.CACHE_TTL,
-            ),
-          );
-        }
-      }
-
-      // Cache available languages
-      const languageCodes = languages.map((lang) => lang.code);
-      const languagesCacheKey = `${this.CACHE_KEY}:languages`;
-      cachePromises.push(
-        this.cacheManager.set(languagesCacheKey, languageCodes, this.CACHE_TTL),
-      );
-
-      // Wait for all cache operations to complete
-      await Promise.all(cachePromises);
-
-      const endTime = Date.now();
-      const totalLanguages = Object.keys(translationsByLang).length;
-      const totalNamespaces = Object.values(namespacesByLang).reduce(
-        (sum, namespaces) => sum + namespaces.size,
-        0,
-      );
-      const totalTranslations = activeTranslations.length;
-
-      this.logger.log(
-        `Cache warm-up completed in ${endTime - startTime}ms. ` +
-          `Cached ${totalTranslations} translations across ${totalNamespaces} namespaces ` +
-          `in ${totalLanguages} languages.`,
-      );
-    } catch (error) {
-      this.logger.error('Error during cache warm-up:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Refresh cache periodically or on-demand
-   * This method can be called by a cron job or scheduler
-   */
-  async refreshCache(): Promise<void> {
-    try {
-      this.logger.log('Starting cache refresh...');
-
-      // Clear all i18n cache
-      await this.clearCacheByPattern(`${this.CACHE_KEY}:*`);
-
-      // Warm up cache again
-      await this.warmUpCache();
-
-      this.logger.log('Cache refresh completed successfully');
-    } catch (error) {
-      this.logger.error('Error during cache refresh:', error);
+      return [this.request['locale'] || 'en']; // Fallback to request locale or 'en'
     }
   }
 

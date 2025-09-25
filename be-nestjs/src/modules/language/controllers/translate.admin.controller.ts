@@ -47,21 +47,21 @@ export class TranslationAdminController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @Auth({ permissions: 'translation_manage_create' })
+  @Auth({ permissions: 'language_manage_create' })
   async create(@Body() body: CreateTranslationDto): Promise<void> {
     return await this.translationService.create(body);
   }
 
   @Put()
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Auth({ permissions: 'translation_manage_update' })
+  @Auth({ permissions: 'language_manage_update' })
   async update(@Body() body: UpdateTranslationDto): Promise<void> {
     return await this.translationService.update(body);
   }
 
   @Delete(':id([0-9]+)')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Auth({ permissions: 'translation_manage_delete' })
+  @Auth({ permissions: 'language_manage_delete' })
   async delete(@Param('id') id: number): Promise<void> {
     return await this.translationService.delete(id);
   }
@@ -69,7 +69,7 @@ export class TranslationAdminController {
   // MARK: Bulk Operations
   @Post('/bulk-import')
   @HttpCode(HttpStatus.CREATED)
-  @Auth({ permissions: 'translation_manage_create' })
+  @Auth({ permissions: 'language_manage_create' })
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('file'))
   async bulkImport(
@@ -93,7 +93,7 @@ export class TranslationAdminController {
 
   @Post('/bulk-import-json')
   @HttpCode(HttpStatus.CREATED)
-  @Auth({ permissions: 'translation_manage_create' })
+  @Auth({ permissions: 'language_manage_create' })
   async bulkImportJson(
     @Body()
     body: {

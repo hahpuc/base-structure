@@ -21,7 +21,7 @@ export class TranslationService {
   private readonly logger = new Logger(TranslationService.name);
   private translationMessage: MessageService;
   private readonly CACHE_KEY = 'translations';
-  private readonly CACHE_TTL = 3600; // 1 hour
+  private readonly CACHE_TTL = 36000; // 1 hour
 
   constructor(
     private readonly translationRepository: TranslationRepository,

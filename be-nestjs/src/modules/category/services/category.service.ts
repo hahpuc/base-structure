@@ -1,9 +1,9 @@
 import { ListPaginate } from '@common/database/types/database.type';
 import CustomError from '@common/error/exceptions/custom-error.exception';
-import { MessageService } from '@common/message/services/message.service';
 import { wrapPagination } from '@common/utils/object.util';
+import { CustomMessageService } from '@modules/language/services/custom-message.service';
+import { I18nService } from '@modules/language/services/i18n.service';
 import { Injectable } from '@nestjs/common';
-import { I18nService } from 'nestjs-i18n';
 
 import { CreateCategoryDto } from '../dtos/create-category.dto';
 import { FilterCategoryDto } from '../dtos/filter-category.dto';
@@ -13,13 +13,16 @@ import { CategoryRepository } from '../repository/repositories/category.reposito
 
 @Injectable()
 export class CategoryService {
-  private categoryMessage: MessageService;
+  private customMessageService: CustomMessageService;
 
   constructor(
     private readonly categoryRepository: CategoryRepository,
-    i18nService: I18nService,
+    private readonly i18nService: I18nService,
   ) {
-    this.categoryMessage = new MessageService(i18nService, 'category');
+    this.customMessageService = new CustomMessageService(
+      i18nService,
+      'category',
+    );
   }
 
   async create(input: CreateCategoryDto): Promise<void> {
@@ -37,13 +40,18 @@ export class CategoryService {
   async getById(id: number): Promise<Category> {
     const app = await this.categoryRepository.findOneBy({ id });
     if (!app) {
-      throw new CustomError(
-        404,
-        'NOT_FOUND',
-        this.categoryMessage.get('NOT_FOUND'),
-      );
+      const message = await this.customMessageService.get('NOT_FOUND');
+      throw new CustomError(404, 'NOT_FOUND', message);
     }
     return app;
+  }
+
+  async testI18n(key: string, namespace: string): Promise<any> {
+    const hello = await this.i18nService.t(key, {
+      namespace: namespace,
+    });
+
+    return hello;
   }
 
   async getAll(): Promise<Category[]> {
@@ -75,11 +83,8 @@ export class CategoryService {
     const category = await this.categoryRepository.findByIdOrSlug(idOrSlug);
 
     if (!category) {
-      throw new CustomError(
-        404,
-        'NOT_FOUND',
-        this.categoryMessage.get('NOT_FOUND'),
-      );
+      const message = await this.customMessageService.get('NOT_FOUND');
+      throw new CustomError(404, 'NOT_FOUND', message);
     }
 
     return category;
@@ -90,11 +95,8 @@ export class CategoryService {
 
     if (category) {
       if (!id || category.id !== id) {
-        throw new CustomError(
-          400,
-          'SLUG_INVALID',
-          this.categoryMessage.get('SLUG_INVALID'),
-        );
+        const message = await this.customMessageService.get('SLUG_INVALID');
+        throw new CustomError(400, 'SLUG_INVALID', message);
       }
     }
   }
