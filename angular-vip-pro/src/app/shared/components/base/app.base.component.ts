@@ -9,6 +9,7 @@ import { environment } from '@/environments/environment';
 import { AuthService } from '@services/auth.service';
 import { BreadCrumbService } from '@shared/services/bread-crumb.service';
 import { PermissionService } from '@shared/services/permission.service';
+import { TranslateService } from '@shared/services/translate.service';
 import { Dictionary } from '@shared/types/base';
 import { BreadCrumbButton } from '@shared/types/bread-crumb';
 
@@ -19,7 +20,7 @@ export abstract class AppBaseComponent {
   protected readonly msgService: NzMessageService;
   protected readonly permissionService: PermissionService;
   protected readonly breadCrumbService: BreadCrumbService;
-  // protected readonly translateService: TranslateService;
+  protected readonly translateService: TranslateService;
 
   protected isValidating = false;
 
@@ -37,7 +38,7 @@ export abstract class AppBaseComponent {
     this.permissionService = injector.get(PermissionService);
     this.breadCrumbService = injector.get(BreadCrumbService);
     this.msgService = injector.get(NzMessageService);
-    // this.translateService = injector.get(TranslateService);
+    this.translateService = injector.get(TranslateService);
   }
 
   // MARK: Navigations
@@ -311,7 +312,24 @@ export abstract class AppBaseComponent {
     this.breadCrumbService.setActions(buttons);
   }
 
-  // protected l(key: string): string {
-  //   return this.translateService.instant(key);
-  // }
+  /**
+   * Get translation for a key using the default context
+   * @param key Translation key
+   * @param params Optional parameters for interpolation
+   * @returns Translated string
+   */
+  protected t(key: string, params?: Record<string, string | number>): string {
+    return this.translateService.instant(key, params);
+  }
+
+  /**
+   * Get translation for a key with specific namespace
+   * @param namespace Namespace to use
+   * @param key Translation key
+   * @param params Optional parameters for interpolation
+   * @returns Translated string
+   */
+  protected tNs(namespace: string, key: string, params?: Record<string, string | number>): string {
+    return this.translateService.get(namespace, key, params);
+  }
 }

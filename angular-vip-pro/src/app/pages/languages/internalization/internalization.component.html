@@ -1,0 +1,174 @@
+<div class="container mx-auto p-6">
+  <div class="bg-white dark:bg-gray-800 rounded-lg border p-6">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Internationalization Test Page</h1>
+      <p class="text-gray-600 dark:text-gray-400">Test translation functionality and language switching</p>
+    </div>
+
+    <!-- Language Selector -->
+    <div class="mb-8">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Language Selector</h2>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        @for (language of availableLanguages; track language.code) {
+          <button
+            (click)="selectLanguage(language)"
+            class="flex items-center gap-3 p-3 border rounded-lg transition-colors duration-200"
+            [ngClass]="{
+              'border-blue-500 bg-blue-50 dark:bg-blue-900/20': currentLanguage === language.code,
+              'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600':
+                currentLanguage !== language.code,
+            }"
+          >
+            <img
+              [src]="language.flag_icon || 'https://flagcdn.com/' + language.flag_code.toLowerCase() + '.svg'"
+              [alt]="language.name + ' Flag'"
+              class="w-6 h-4 rounded object-cover"
+            />
+            <div class="text-left">
+              <div class="font-medium text-gray-900 dark:text-white text-sm">
+                {{ language.name }}
+              </div>
+              <div class="text-xs text-gray-500 dark:text-gray-400">
+                {{ language.code }}
+              </div>
+            </div>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Current Language Info -->
+    <div class="mb-8 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+      <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Current Language: {{ currentLanguage }}</h3>
+      <div class="text-sm text-gray-600 dark:text-gray-400">
+        Selected: {{ getCurrentLanguageDetails()?.name }} ({{ getCurrentLanguageDetails()?.native_name }})
+      </div>
+    </div>
+
+    <!-- Translation Testing -->
+    <div class="mb-8">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Translation Testing</h2>
+      <div class="grid gap-4">
+        <!-- Test Common Translations -->
+        <div class="p-4 border rounded-lg dark:border-gray-700">
+          <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-3">Common Translations</h3>
+          <div class="grid gap-2 text-sm">
+            <div class="flex justify-between">
+              <span class="text-gray-600 dark:text-gray-400">HELLO:</span>
+              <span class="font-medium text-gray-900 dark:text-white">{{ t('HELLO') }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600 dark:text-gray-400">WELCOME:</span>
+              <span class="font-medium text-gray-900 dark:text-white">{{ t('WELCOME') }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600 dark:text-gray-400">THANK_YOU:</span>
+              <span class="font-medium text-gray-900 dark:text-white">{{ t('THANK_YOU') }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600 dark:text-gray-400">SAVE:</span>
+              <span class="font-medium text-gray-900 dark:text-white">{{ t('SAVE') }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600 dark:text-gray-400">CANCEL:</span>
+              <span class="font-medium text-gray-900 dark:text-white">{{ t('CANCEL') }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Test Auth Translations -->
+        <div class="p-4 border rounded-lg dark:border-gray-700">
+          <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-3">Auth Translations</h3>
+          <div class="grid gap-2 text-sm">
+            <div class="flex justify-between">
+              <span class="text-gray-600 dark:text-gray-400">LOGIN:</span>
+              <span class="font-medium text-gray-900 dark:text-white">{{ tNs('auth', 'LOGIN') }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600 dark:text-gray-400">LOGOUT:</span>
+              <span class="font-medium text-gray-900 dark:text-white">{{ tNs('auth', 'LOGOUT') }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600 dark:text-gray-400">EMAIL:</span>
+              <span class="font-medium text-gray-900 dark:text-white">{{ tNs('auth', 'EMAIL') }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600 dark:text-gray-400">PASSWORD:</span>
+              <span class="font-medium text-gray-900 dark:text-white">{{ tNs('auth', 'PASSWORD') }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- All Namespaces with Translations -->
+    <div class="mb-8">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">All Namespaces ({{ currentLanguage }})</h2>
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        @for (namespace of getNamespaces(); track namespace) {
+          <div class="border rounded-lg dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+            <!-- Namespace Header -->
+            <div
+              class="p-4 border-b dark:border-gray-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-t-lg"
+            >
+              <h3 class="font-semibold text-gray-900 dark:text-white text-lg">
+                {{ namespace }}
+              </h3>
+              <p class="text-sm text-blue-600 dark:text-blue-400 mt-1">
+                {{ getTranslationCount(namespace) }} translation keys
+              </p>
+            </div>
+
+            <!-- Translations List -->
+            <div class="p-4 max-h-80 overflow-y-auto">
+              <div class="space-y-3">
+                @for (item of getTranslationsForNamespace(namespace) | keyvalue; track item.key) {
+                  <div class="border-l-2 border-gray-200 dark:border-gray-700 pl-3 py-1">
+                    <div class="text-xs text-gray-500 dark:text-gray-400 font-mono uppercase tracking-wide mb-1">
+                      {{ item.key }}
+                    </div>
+                    <div class="text-sm text-gray-900 dark:text-white">
+                      {{ item.value }}
+                    </div>
+                  </div>
+                }
+                @if (getTranslationCount(namespace) === 0) {
+                  <div class="text-center py-4 text-gray-500 dark:text-gray-400 text-sm italic">
+                    No translations available
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+        @if (getNamespaces().length === 0) {
+          <div class="col-span-full text-center py-8 text-gray-500 dark:text-gray-400">
+            <div class="text-lg mb-2">📝</div>
+            <div>No namespaces available for {{ currentLanguage }}</div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Cache Information -->
+    <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+      <h3 class="text-lg font-medium text-blue-900 dark:text-blue-200 mb-2">Cache Information</h3>
+      <div class="text-sm text-blue-800 dark:text-blue-300 space-y-1">
+        <div>Available Languages: {{ availableLanguages.length }}</div>
+        <div>Total Namespaces: {{ getTotalNamespaces() }}</div>
+        <div>Total Translation Keys: {{ getTotalTranslationKeys() }}</div>
+        <div>Cache Status: {{ getCacheStatus() }}</div>
+      </div>
+      <button
+        nz-button
+        nzType="primary"
+        (click)="refreshCache()"
+        class="mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+        [disabled]="isRefreshing"
+      >
+        {{ isRefreshing ? 'Refreshing...' : 'Refresh Cache' }}
+      </button>
+    </div>
+  </div>
+</div>

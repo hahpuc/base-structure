@@ -34,7 +34,7 @@ export class BarChartOneComponent {
   ];
 
   public chart: ApexChart = {
-    fontFamily: 'Outfit, sans-serif',
+    fontFamily: 'Open Sans, sans-serif',
     type: 'bar',
     height: 180,
     toolbar: {
@@ -86,7 +86,7 @@ export class BarChartOneComponent {
     show: true,
     position: 'top',
     horizontalAlign: 'left',
-    fontFamily: 'Outfit',
+    fontFamily: 'Open Sans',
   };
 
   public grid: ApexGrid = {

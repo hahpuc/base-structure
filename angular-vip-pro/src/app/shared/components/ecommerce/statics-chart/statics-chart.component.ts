@@ -35,7 +35,7 @@ export class StatisticsChartComponent {
   ];
 
   public chart: ApexChart = {
-    fontFamily: 'Outfit, sans-serif',
+    fontFamily: 'Open Sans, sans-serif',
     height: 310,
     type: 'area',
     toolbar: { show: false }

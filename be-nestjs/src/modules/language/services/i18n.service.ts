@@ -6,6 +6,7 @@ import { Cache } from 'cache-manager';
 import { Request } from 'express';
 
 import { I18N_CACHE_KEY, I18N_CACHE_TTL } from '../const/i18n.const';
+import { Language } from '../repository/entities/language.entity';
 import { Translation } from '../repository/entities/translation.entity';
 import { LanguageRepository } from '../repository/repositories/language.repository';
 import { TranslationRepository } from '../repository/repositories/translation.repository';
@@ -198,7 +199,7 @@ export class I18nService {
    */
   async getAvailableLanguages(): Promise<string[]> {
     try {
-      const cacheKey = `${this.CACHE_KEY}:languages`;
+      const cacheKey = `${this.CACHE_KEY}:languages:code`;
 
       // Try to get from cache first
       const cachedLanguages: string[] = await this.cacheManager.get(cacheKey);
@@ -225,6 +226,32 @@ export class I18nService {
     } catch (error) {
       this.logger.error('Error loading available languages', error);
       return [this.request['locale'] || 'en']; // Fallback to request locale or 'en'
+    }
+  }
+
+  async getAllLanguages(): Promise<Language[]> {
+    try {
+      const cacheKey = `${this.CACHE_KEY}:languages:data`;
+
+      // Try to get from cache first
+      const cachedLanguages: Language[] = await this.cacheManager.get(cacheKey);
+
+      if (cachedLanguages) {
+        return cachedLanguages;
+      }
+
+      // Load from database
+      const languages = await this.languageRepository.find({
+        where: { status: EStatus.active },
+      });
+
+      // Cache the languages
+      await this.cacheManager.set(cacheKey, languages, this.CACHE_TTL);
+
+      return languages;
+    } catch (error) {
+      this.logger.error('Error getting all languages:', error);
+      return [];
     }
   }
 

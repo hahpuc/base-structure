@@ -24,7 +24,7 @@ export class MonthlySalesChartComponent {
     },
   ];
   public chart: ApexChart = {
-    fontFamily: 'Outfit, sans-serif',
+    fontFamily: 'Open Sans, sans-serif',
     type: 'bar',
     height: 180,
     toolbar: { show: false },
@@ -55,7 +55,7 @@ export class MonthlySalesChartComponent {
     show: true,
     position: 'top',
     horizontalAlign: 'left',
-    fontFamily: 'Outfit',
+    fontFamily: 'Open Sans',
   };
   public yaxis: ApexYAxis = { title: { text: undefined } };
   public grid: ApexGrid = { yaxis: { lines: { show: true } } };

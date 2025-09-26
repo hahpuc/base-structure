@@ -125,6 +125,12 @@ export class LanguageAdminController {
   }
 
   // MARK: Public
+  @Get('/all')
+  @HttpCode(HttpStatus.OK)
+  async getAllLanguages(): Promise<Language[]> {
+    return await this.i18nService.getAllLanguages();
+  }
+
   // {
   //   "en": {
   //     "common": {

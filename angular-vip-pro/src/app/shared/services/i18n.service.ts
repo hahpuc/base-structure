@@ -1,30 +1,57 @@
-import { Injectable } from "@angular/core";
-import { TranslateService } from "@ngx-translate/core";
-import { en_US, vi_VN, NzI18nService } from "ng-zorro-antd/i18n";
-import { BehaviorSubject } from "rxjs";
+import { Injectable, signal } from '@angular/core';
+import { en_US, vi_VN, NzI18nInterface } from 'ng-zorro-antd/i18n';
+import { BehaviorSubject, Observable } from 'rxjs';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class LocaleService {
-  private currentLang: BehaviorSubject<string>;
+  private currentLanguage = signal<string>('en');
+  private languageSubject = new BehaviorSubject<string>('en');
 
-  constructor(
-    private nzI18nService: NzI18nService,
-    private translateService: TranslateService
-  ) {
-    const lang = localStorage.getItem("lang") || "en";
-    this.currentLang = new BehaviorSubject<string>(lang);
-    this.nzI18nService.setLocale(lang === "vi" ? vi_VN : en_US);
-    this.translateService.use(lang);
+  // Observable for components to subscribe to language changes
+  public language$ = this.languageSubject.asObservable();
+
+  // Map language codes to ng-zorro locales
+  private nzLocaleMap: Record<string, NzI18nInterface> = {
+    en: en_US,
+    vi: vi_VN,
+  };
+
+  constructor() {
+    // Initialize language from localStorage or default to 'en'
+    const savedLanguage = this.getStoredLanguage();
+    if (savedLanguage) {
+      this.setLanguage(savedLanguage);
+    }
   }
 
-  setLanguage(lang: string) {
-    localStorage.setItem("lang", lang);
-    this.currentLang.next(lang);
-    this.nzI18nService.setLocale(lang === "vi" ? vi_VN : en_US);
-    this.translateService.use(lang);
+  setLanguage(lang: string): void {
+    this.currentLanguage.set(lang);
+    this.languageSubject.next(lang);
+    this.storeLanguage(lang);
   }
 
   getLanguage(): string {
-    return this.currentLang.value;
+    return this.currentLanguage();
+  }
+
+  getCurrentLanguageSignal() {
+    return this.currentLanguage;
+  }
+
+  getNzLocale(): NzI18nInterface {
+    return this.nzLocaleMap[this.getLanguage()] || en_US;
+  }
+
+  private storeLanguage(lang: string): void {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('selected_language', lang);
+    }
+  }
+
+  private getStoredLanguage(): string | null {
+    if (typeof localStorage !== 'undefined') {
+      return localStorage.getItem('selected_language');
+    }
+    return null;
   }
 }

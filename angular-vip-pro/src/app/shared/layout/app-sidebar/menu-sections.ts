@@ -214,6 +214,12 @@ export const MenuSections: MenuSection[] = [
             icon: '',
             permissions: ['language_manage_read'],
           },
+          {
+            label: 'Internalization',
+            path: '/internalization',
+            icon: '',
+            permissions: ['language_manage_read'],
+          },
         ],
       },
       {

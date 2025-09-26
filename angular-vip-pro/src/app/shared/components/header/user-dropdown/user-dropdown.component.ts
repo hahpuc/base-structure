@@ -1,62 +1,76 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
+import { AppInitializationService } from '../../../services/app-initialization.service';
+import { LocaleService } from '../../../services/i18n.service';
+import { LanguageDto } from '../../../types/language';
 import { DropdownComponent } from '../../ui/dropdown/dropdown.component';
-
-interface Language {
-  code: string;
-  name: string;
-  flag: string;
-}
 
 @Component({
   selector: 'app-user-dropdown',
   templateUrl: './user-dropdown.component.html',
   imports: [CommonModule, RouterModule, DropdownComponent],
 })
-export class UserDropdownComponent {
+export class UserDropdownComponent implements OnInit, OnDestroy {
   isOpen = false;
   isLanguageDropdownOpen = false;
+  private destroy$ = new Subject<void>();
 
-  selectedLanguage: Language = {
-    code: 'en',
-    name: 'English',
-    flag: 'https://flagcdn.com/us.svg',
-  };
+  selectedLanguage: LanguageDto | null = null;
+  languages: LanguageDto[] = [];
 
-  languages: Language[] = [
-    { code: 'vi', name: 'Vietnam', flag: 'https://flagcdn.com/vn.svg' },
-    { code: 'en', name: 'English', flag: 'https://flagcdn.com/us.svg' },
-    { code: 'fr', name: 'Français', flag: 'https://flagcdn.com/fr.svg' },
-    { code: 'de', name: 'Deutsch', flag: 'https://flagcdn.com/de.svg' },
-    { code: 'it', name: 'Italiano', flag: 'https://flagcdn.com/it.svg' },
-    { code: 'pt', name: 'Português', flag: 'https://flagcdn.com/pt.svg' },
-    { code: 'ja', name: '日本語', flag: 'https://flagcdn.com/jp.svg' },
-    { code: 'ko', name: '한국어', flag: 'https://flagcdn.com/kr.svg' },
-    { code: 'zh', name: '中文', flag: 'https://flagcdn.com/cn.svg' },
-  ];
+  constructor(
+    private appInitializationService: AppInitializationService,
+    private localeService: LocaleService
+  ) {}
 
-  toggleDropdown() {
+  ngOnInit(): void {
+    this.loadLanguages();
+    this.subscribeToLanguageChanges();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  toggleDropdown(): void {
     this.isOpen = !this.isOpen;
   }
 
-  closeDropdown() {
+  closeDropdown(): void {
     this.isOpen = false;
     this.isLanguageDropdownOpen = false;
   }
 
-  toggleLanguageDropdown() {
+  toggleLanguageDropdown(): void {
     this.isLanguageDropdownOpen = !this.isLanguageDropdownOpen;
   }
 
-  selectLanguage(language: Language) {
-    this.selectedLanguage = language;
+  selectLanguage(language: LanguageDto): void {
+    this.localeService.setLanguage(language.code);
     this.isLanguageDropdownOpen = false;
-    // Here you can add logic to actually change the application language
   }
 
-  trackByLanguageCode(index: number, language: Language): string {
+  trackByLanguageCode(index: number, language: LanguageDto): string {
     return language.code;
+  }
+
+  private loadLanguages(): void {
+    // Load languages from cache
+    this.languages = this.appInitializationService.getCachedLanguages();
+
+    // Set initial selected language
+    const currentLangCode = this.localeService.getLanguage();
+    this.selectedLanguage = this.languages.find(lang => lang.code === currentLangCode) || null;
+  }
+
+  private subscribeToLanguageChanges(): void {
+    this.localeService.language$.pipe(takeUntil(this.destroy$)).subscribe(langCode => {
+      this.selectedLanguage = this.languages.find(lang => lang.code === langCode) || null;
+    });
   }
 }

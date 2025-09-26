@@ -55,11 +55,14 @@
 
           <span
             class="flex items-center gap-2 ml-auto rounded px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-xs font-medium"
+            *ngIf="selectedLanguage"
           >
             <img
               class="w-4 h-3 rounded-sm object-cover"
               [alt]="selectedLanguage.name + ' Flag'"
-              [src]="selectedLanguage.flag"
+              [src]="
+                selectedLanguage.flag_icon || 'https://flagcdn.com/' + selectedLanguage.flag_code.toLowerCase() + '.svg'
+              "
             />
             {{ selectedLanguage.name }}
           </span>
@@ -78,18 +81,18 @@
               *ngFor="let language of languages; trackBy: trackByLanguageCode"
               class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300 cursor-pointer transition-colors duration-150"
               [ngClass]="{
-                'bg-gray-100 dark:bg-white/5': selectedLanguage.code === language.code,
+                'bg-gray-100 dark:bg-white/5': selectedLanguage?.code === language.code,
               }"
               (click)="selectLanguage(language)"
             >
               <img
                 class="w-5 h-4 rounded-sm object-cover flex-shrink-0"
                 [alt]="language.name + ' Flag'"
-                [src]="language.flag"
+                [src]="language.flag_icon || 'https://flagcdn.com/' + language.flag_code.toLowerCase() + '.svg'"
               />
               <span class="truncate">{{ language.name }}</span>
               <svg
-                *ngIf="selectedLanguage.code === language.code"
+                *ngIf="selectedLanguage?.code === language.code"
                 class="w-4 h-4 ml-auto text-blue-500 flex-shrink-0"
                 fill="currentColor"
                 viewBox="0 0 20 20"

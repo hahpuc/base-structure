@@ -91,8 +91,17 @@ export class I18nCacheService implements OnModuleInit {
       // Get all active languages
       const languages = await this.languageRepository.find({
         where: { status: EStatus.active },
-        select: ['code'],
       });
+
+      // Cache all translations
+      const cachePromises: Promise<void>[] = [];
+
+      const cachedLanguagesData = `${this.CACHE_KEY}:languages:data`;
+
+      cachePromises.push(
+        this.cacheManager.set(cachedLanguagesData, languages, this.CACHE_TTL),
+      );
+      this.logger.log(`Cached ${languages.length} active languages data`);
 
       // Get all translations grouped by language
       let activeTranslations: Translation[];
@@ -158,9 +167,6 @@ export class I18nCacheService implements OnModuleInit {
         `Grouped ${activeTranslations.length} translations by language and namespace`,
       );
 
-      // Cache all translations
-      const cachePromises: Promise<void>[] = [];
-
       for (const [langCode, namespaces] of Object.entries(translationsByLang)) {
         // Cache all translations for the language
         const allLangCacheKey = `${this.CACHE_KEY}:all:${langCode}`;
@@ -190,7 +196,7 @@ export class I18nCacheService implements OnModuleInit {
 
       // Cache available languages
       const languageCodes = languages.map((lang) => lang.code);
-      const languagesCacheKey = `${this.CACHE_KEY}:languages`;
+      const languagesCacheKey = `${this.CACHE_KEY}:languages:code`;
       cachePromises.push(
         this.cacheManager.set(languagesCacheKey, languageCodes, this.CACHE_TTL),
       );
