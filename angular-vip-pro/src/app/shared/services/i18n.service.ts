@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class LocaleService {
-  private currentLanguage = signal<string>('en');
+  // private currentLanguage = signal<string>('en');
   private languageSubject = new BehaviorSubject<string>('en');
 
   // Observable for components to subscribe to language changes
@@ -25,17 +25,13 @@ export class LocaleService {
   }
 
   setLanguage(lang: string): void {
-    this.currentLanguage.set(lang);
+    // this.currentLanguage.set(lang);
     this.languageSubject.next(lang);
     this.storeLanguage(lang);
   }
 
   getLanguage(): string {
-    return this.currentLanguage();
-  }
-
-  getCurrentLanguageSignal() {
-    return this.currentLanguage;
+    return this.languageSubject.getValue();
   }
 
   getNzLocale(): NzI18nInterface {

@@ -130,7 +130,7 @@ export class AppInitializationService {
 
   private isCacheValid(): boolean {
     const cacheAge = Date.now() - this.getCacheTimestamp();
-    const maxCacheAge = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+    const maxCacheAge =  60 * 60 * 1000;
 
     const hasLanguages = this.getCachedLanguages().length > 0;
     const hasTranslations = Object.keys(this.getCachedTranslations()).length > 0;
