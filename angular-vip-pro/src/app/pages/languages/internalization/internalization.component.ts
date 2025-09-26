@@ -32,6 +32,8 @@ export class InternalizationComponent extends AppBaseComponent implements OnInit
 
   ngOnInit(): void {
     this.setPageTitle('Internationalization Test');
+    this.setHeaderButtons([]);
+
     this.loadData();
     this.subscribeToLanguageChanges();
   }

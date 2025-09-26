@@ -17,6 +17,7 @@ export type CreateLanguage = {
   name: string;
   native_name: string;
   flag_code: string;
+  flag_icon?: string;
   is_rtl: boolean;
   status: EStatus;
 };

@@ -50,7 +50,10 @@ export class LanguagesComponent extends AppBaseComponent implements OnInit {
       {
         title: 'Flag',
         name: 'flag_icon',
-        type: 'image',
+        type: 'custom-render',
+        customRender: row => {
+          return `<img src="${row.flag_icon}" alt="flag" class="w-[48px] h-auto inline-block" />`;
+        },
       },
       {
         title: 'Right to Left',
@@ -63,7 +66,17 @@ export class LanguagesComponent extends AppBaseComponent implements OnInit {
         type: 'status',
       },
     ],
-    actions: [],
+    actions: [
+      {
+        label: 'Edit',
+        color: 'primary',
+        handler: row => {
+          this.redirect(`edit/${row.id}`);
+        },
+        visible: () => true,
+        permission: 'language_manage_update',
+      },
+    ],
   };
 
   constructor(
@@ -75,5 +88,15 @@ export class LanguagesComponent extends AppBaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.setPageTitle('Languages');
+    this.setHeaderButtons([
+      {
+        title: 'Create',
+        type: 'create',
+        click: () => {
+          this.redirect('create');
+        },
+        permission: 'language_manage_create',
+      },
+    ]);
   }
 }

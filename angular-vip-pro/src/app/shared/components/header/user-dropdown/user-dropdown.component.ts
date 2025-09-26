@@ -53,6 +53,8 @@ export class UserDropdownComponent implements OnInit, OnDestroy {
   selectLanguage(language: LanguageDto): void {
     this.localeService.setLanguage(language.code);
     this.isLanguageDropdownOpen = false;
+
+    window.location.reload();
   }
 
   trackByLanguageCode(index: number, language: LanguageDto): string {

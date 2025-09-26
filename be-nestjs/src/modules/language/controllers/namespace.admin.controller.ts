@@ -1,5 +1,6 @@
 import { Auth } from '@auth/decorators/auth.jwt.decorator';
 import { ListPaginate } from '@common/database/types/database.type';
+import { BaseOption } from '@common/response/types/base.reponse.type';
 import {
   Body,
   Controller,
@@ -32,6 +33,13 @@ export class NamespaceAdminController {
     @Query() param: FilterNamespaceDto,
   ): Promise<ListPaginate<TranslationNamespace>> {
     return await this.service.getList(param);
+  }
+
+  @Get('/options')
+  @HttpCode(HttpStatus.OK)
+  @Auth({ permissions: 'language_manage_read' })
+  async getOptions(): Promise<BaseOption[]> {
+    return await this.service.getOptions();
   }
 
   @Get(':id([0-9]+)')

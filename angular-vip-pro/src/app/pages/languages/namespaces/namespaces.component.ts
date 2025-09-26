@@ -47,7 +47,17 @@ export class NamespacesComponent extends AppBaseComponent implements OnInit {
         type: 'status',
       },
     ],
-    actions: [],
+    actions: [
+      {
+        label: 'Edit',
+        color: 'primary',
+        handler: row => {
+          this.redirect(`edit/${row.id}`);
+        },
+        visible: () => true,
+        permission: 'language_manage_update',
+      },
+    ],
   };
 
   constructor(
@@ -59,5 +69,15 @@ export class NamespacesComponent extends AppBaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.setPageTitle('Namespaces');
+    this.setHeaderButtons([
+      {
+        title: 'Create',
+        type: 'create',
+        click: () => {
+          this.redirect('create');
+        },
+        permission: 'language_manage_create',
+      },
+    ]);
   }
 }

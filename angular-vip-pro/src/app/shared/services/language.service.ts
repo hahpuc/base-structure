@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 import { environment } from '@/environments/environment';
 
+import { BaseOption } from '../types/base';
 import { CreateLanguage, EditLanguage, LanguageDto, QueryLanguage } from '../types/language';
 import { TranslationData } from '../types/translation';
 
@@ -21,6 +22,10 @@ export class LanguageService extends AppBaseService<
 > {
   constructor(httpClient: HttpClient) {
     super(httpClient, environment.apis.default.apiPrefix, 'languages');
+  }
+
+  getOptions(): Observable<BaseOption[]> {
+    return this.httpClient.get<BaseOption[]>(`${this.apiUrl}/options`);
   }
 
   getAllLanguages(): Observable<LanguageDto[]> {

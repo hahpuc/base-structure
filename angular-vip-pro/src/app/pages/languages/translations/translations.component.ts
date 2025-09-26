@@ -1,8 +1,11 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { map } from 'rxjs';
 
 import { AppBaseComponent } from '@/app/shared/components/base/app.base.component';
 import { TableComponent } from '@/app/shared/components/tables/table/table.component';
 import { TableOption } from '@/app/shared/components/tables/table/table.model';
+import { LanguageService } from '@/app/shared/services/language.service';
+import { TranslationNamespaceService } from '@/app/shared/services/translation-namespace.service';
 import { TranslationService } from '@/app/shared/services/translation.service';
 import { QueryTranslation, TranslationDto } from '@/app/shared/types/translation';
 
@@ -36,6 +39,24 @@ export class TranslationsComponent extends AppBaseComponent implements OnInit {
           { label: 'Active', value: 1 },
           { label: 'Inactive', value: 0 },
         ],
+      },
+      {
+        type: 'select',
+        options: () =>
+          this.languageService
+            .getOptions()
+            .pipe(map(opt => opt.map(c => ({ label: c.label, value: c.value })))),
+        name: 'language_id',
+        label: 'Language',
+      },
+      {
+        type: 'select',
+        options: () =>
+          this.namespaceService
+            .getOptions()
+            .pipe(map(opt => opt.map(c => ({ label: c.label, value: c.value })))),
+        name: 'namespace_id',
+        label: 'Namespace',
       },
     ],
     columns: [
@@ -80,17 +101,39 @@ export class TranslationsComponent extends AppBaseComponent implements OnInit {
         type: 'status',
       },
     ],
-    actions: [],
+    actions: [
+      {
+        label: 'Edit',
+        color: 'primary',
+        handler: row => {
+          this.redirect(`edit/${row.id}`);
+        },
+        visible: () => true,
+        permission: 'language_manage_update',
+      },
+    ],
   };
 
   constructor(
     injector: Injector,
-    private readonly service: TranslationService
+    private readonly service: TranslationService,
+    private readonly languageService: LanguageService,
+    private readonly namespaceService: TranslationNamespaceService
   ) {
     super(injector);
   }
 
   ngOnInit(): void {
     this.setPageTitle('Translations');
+    this.setHeaderButtons([
+      {
+        title: 'Create',
+        type: 'create',
+        click: () => {
+          this.redirect('create');
+        },
+        permission: 'language_manage_create',
+      },
+    ]);
   }
 }

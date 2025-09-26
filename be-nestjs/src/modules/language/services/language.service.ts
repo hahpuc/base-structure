@@ -1,5 +1,7 @@
+import { EStatus } from '@app/constant/app.enum';
 import { ListPaginate } from '@common/database/types/database.type';
 import CustomError from '@common/error/exceptions/custom-error.exception';
+import { BaseOption } from '@common/response/types/base.reponse.type';
 import { wrapPagination } from '@common/utils/object.util';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable, Logger } from '@nestjs/common';
@@ -24,6 +26,18 @@ export class LanguageService {
     const [data, count] = await this.languageRepository.getList(params);
 
     return wrapPagination<Language>(data, count, params);
+  }
+
+  async getOptions(): Promise<BaseOption[]> {
+    const languages = await this.languageRepository.find({
+      where: { status: EStatus.active },
+      order: { name: 'ASC' },
+    });
+
+    return languages.map((lang) => ({
+      label: lang.name,
+      value: lang.id,
+    }));
   }
 
   async create(input: CreateLanguageDto): Promise<void> {

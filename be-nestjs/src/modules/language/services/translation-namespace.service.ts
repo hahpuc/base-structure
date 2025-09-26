@@ -1,5 +1,7 @@
+import { EStatus } from '@app/constant/app.enum';
 import { ListPaginate } from '@common/database/types/database.type';
 import CustomError from '@common/error/exceptions/custom-error.exception';
+import { BaseOption } from '@common/response/types/base.reponse.type';
 import { wrapPagination } from '@common/utils/object.util';
 import { Injectable } from '@nestjs/common';
 
@@ -45,6 +47,18 @@ export class TranslationNamespaceService {
     const [data, count] = await this.namespaceRepository.getList(params);
 
     return wrapPagination<TranslationNamespace>(data, count, params);
+  }
+
+  async getOptions(): Promise<BaseOption[]> {
+    const namespaces = await this.namespaceRepository.find({
+      where: { status: EStatus.active },
+      order: { name: 'ASC' },
+    });
+
+    return namespaces.map((ns) => ({
+      label: ns.name,
+      value: ns.id,
+    }));
   }
 
   async update(input: UpdateNamespaceDto): Promise<void> {
