@@ -1,5 +1,10 @@
 import { Auth } from '@auth/decorators/auth.jwt.decorator';
 import { ListPaginate } from '@common/database/types/database.type';
+import { BaseImportDto } from '@common/request/dtos/import.dto';
+import {
+  BaseImportResponse,
+  ExportResponse,
+} from '@common/response/types/base.reponse.type';
 import {
   Body,
   Controller,
@@ -53,5 +58,19 @@ export class TranslationAdminController {
   @Auth({ permissions: 'language_manage_update' })
   async update(@Body() body: UpdateTranslationDto): Promise<void> {
     return await this.service.update(body);
+  }
+
+  @Get('/export')
+  @HttpCode(HttpStatus.OK)
+  @Auth({ permissions: 'language_manage_read' })
+  async export(@Query() param: FilterTranslationDto): Promise<ExportResponse> {
+    return this.service.export(param);
+  }
+
+  @Post('/import')
+  @HttpCode(HttpStatus.OK)
+  @Auth({ permissions: 'language_manage_update' })
+  async import(@Body() body: BaseImportDto): Promise<BaseImportResponse> {
+    return this.service.import(body);
   }
 }

@@ -100,6 +100,7 @@ export class S3Service {
 
       return key;
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error uploading file to S3:', error);
       throw error;
     }
@@ -148,6 +149,8 @@ export class S3Service {
     uploadId: string,
     partNumber: number
   ): Promise<CompletedPart> {
+    // For multipart uploads, we can use Blob directly as it's supported
+    // But for regular uploads, we need Uint8Array to avoid streaming issues
     const params: UploadPartRequest = {
       Bucket: this.bucketName,
       Key: key,
@@ -177,15 +180,35 @@ export class S3Service {
   }
 
   private async _uploadFile(file: File, key: string, isPublic: boolean): Promise<void> {
+    // Convert File to Uint8Array to avoid AWS SDK streaming issues
+    const fileBuffer = await this.fileToUint8Array(file);
+
     const params: PutObjectCommandInput = {
       Bucket: this.bucketName,
       Key: key,
-      Body: file,
+      Body: fileBuffer,
+      ContentType: file.type,
+      ContentLength: file.size,
     };
     if (isPublic) {
       params.ACL = 'public-read';
     }
     await this.s3.send(new PutObjectCommand(params));
+  }
+
+  private async fileToUint8Array(file: File): Promise<Uint8Array> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (reader.result instanceof ArrayBuffer) {
+          resolve(new Uint8Array(reader.result));
+        } else {
+          reject(new Error('Failed to read file as ArrayBuffer'));
+        }
+      };
+      reader.onerror = () => reject(reader.error);
+      reader.readAsArrayBuffer(file);
+    });
   }
 
   private _getFileKey(file: File): string {

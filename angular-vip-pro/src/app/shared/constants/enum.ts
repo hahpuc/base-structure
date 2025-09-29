@@ -12,7 +12,9 @@ export enum ESystemType {
 }
 
 export enum EUploadType {
-  image = 'image/png, image/jpeg',
+  image = 'image/png,image/jpeg,image/bmp',
+  document = 'application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,video/mp4',
+  video = 'video/mp4,video/mkv',
 }
 
 export enum ELocale {

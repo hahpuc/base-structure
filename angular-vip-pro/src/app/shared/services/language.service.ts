@@ -24,6 +24,10 @@ export class LanguageService extends AppBaseService<
     super(httpClient, environment.apis.default.apiPrefix, 'languages');
   }
 
+  createDefaultTranslations(body: CreateLanguage): Observable<void> {
+    return this.httpClient.post<void>(this.apiUrl + `/create-default-translations`, body);
+  }
+
   getOptions(): Observable<BaseOption[]> {
     return this.httpClient.get<BaseOption[]>(`${this.apiUrl}/options`);
   }

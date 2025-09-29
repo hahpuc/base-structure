@@ -37,9 +37,10 @@ export class ExcelService {
     key: string,
     validHeaders: StringDict,
   ): Promise<Worksheet> {
-    const stream = await this.s3Service.getFile(key);
+    const fileData = await this.s3Service.getFile(key);
     const workbook = new Excel.Workbook();
-    await workbook.xlsx.load(stream.buffer);
+    const buffer = Buffer.from(fileData);
+    await workbook.xlsx.load(buffer as any);
 
     const worksheet = workbook.getWorksheet(1);
 

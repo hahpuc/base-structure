@@ -102,7 +102,7 @@ export class CreateEditLanguageComponent extends AppBaseComponent implements OnI
       status: (formValue['status'] as boolean) ? EStatus.active : EStatus.inactive,
     };
 
-    await firstValueFrom(this.service.create(createData));
+    await firstValueFrom(this.service.createDefaultTranslations(createData));
     this.msgService.success(this.t('SUCCESS'));
   }
 

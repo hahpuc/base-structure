@@ -95,4 +95,21 @@ export class TranslationRepository extends Repository<Translation> {
 
     return result.map((item) => item.language);
   }
+
+  async getListExport(params: FilterTranslationDto) {
+    const query = this.createQueryBuilder('translation')
+      .leftJoinAndSelect('translation.namespace', 'namespace')
+      .leftJoinAndSelect('translation.language', 'language');
+
+    if (params.language_id) {
+      query.andWhere('translation.language = :language_id', {
+        language_id: params.language_id,
+      });
+    }
+
+    applyQuerySorting('id ASC', query, 'translation');
+    applyQueryPaging(params, query);
+
+    return await query.getRawMany();
+  }
 }

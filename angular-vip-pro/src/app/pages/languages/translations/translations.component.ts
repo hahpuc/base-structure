@@ -9,16 +9,24 @@ import { TranslationNamespaceService } from '@/app/shared/services/translation-n
 import { TranslationService } from '@/app/shared/services/translation.service';
 import { QueryTranslation, TranslationDto } from '@/app/shared/types/translation';
 
+import { ImportModalTranslationComponent } from './import/import-modal.translation.component';
+
 @Component({
-  imports: [TableComponent],
+  imports: [TableComponent, ImportModalTranslationComponent],
   template: `
     <div class="container-fluid">
       <app-table #ftTable [option]="tableOptions"></app-table>
+      <app-import-modal-translation
+        [isVisible]="isImportModalVisible"
+        (visibleChange)="isImportModalVisible = $event"
+      ></app-import-modal-translation>
     </div>
   `,
 })
 export class TranslationsComponent extends AppBaseComponent implements OnInit {
   @ViewChild('ftTable') ftTable!: TableComponent;
+
+  isImportModalVisible = false;
 
   tableOptions: TableOption<TranslationDto> = {
     title: 'Translation List',
@@ -131,6 +139,14 @@ export class TranslationsComponent extends AppBaseComponent implements OnInit {
         type: 'create',
         click: () => {
           this.redirect('create');
+        },
+        permission: 'language_manage_create',
+      },
+      {
+        title: 'Import',
+        type: 'import',
+        click: () => {
+          this.isImportModalVisible = true;
         },
         permission: 'language_manage_create',
       },

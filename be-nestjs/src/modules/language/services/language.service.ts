@@ -12,11 +12,13 @@ import { FilterLanguageDto } from '../dtos/language/filter-language.dto';
 import { UpdateLanguageDto } from '../dtos/language/update-language.dto';
 import { Language } from '../repository/entities/language.entity';
 import { LanguageRepository } from '../repository/repositories/language.repository';
+import { TranslationService } from './translation.service';
 
 @Injectable()
 export class LanguageService {
   constructor(
     private readonly languageRepository: LanguageRepository,
+    private readonly translationService: TranslationService,
     private readonly logger: Logger,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
@@ -50,6 +52,22 @@ export class LanguageService {
     });
 
     await this.languageRepository.save(language);
+  }
+
+  async createDefaultTranslations(input: CreateLanguageDto): Promise<void> {
+    await this._checkCodeExist(input.code);
+
+    const language = new Language();
+
+    Object.assign(language, {
+      ...input,
+    });
+
+    const result = await this.languageRepository.save(language);
+
+    if (result) {
+      await this.translationService.createDefaultTranslations(result.id);
+    }
   }
 
   async update(input: UpdateLanguageDto): Promise<void> {

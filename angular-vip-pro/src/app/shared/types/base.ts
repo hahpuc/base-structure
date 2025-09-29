@@ -34,3 +34,9 @@ export type BaseOption = {
 export type ExportDto = {
   key: string;
 };
+
+export type BaseImportDto = {
+  key: string;
+};
+
+export type BaseImportResponse = { error_key: string; message: string };

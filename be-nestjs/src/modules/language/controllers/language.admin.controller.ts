@@ -57,6 +57,15 @@ export class LanguageAdminController {
     return this.languageService.create(body);
   }
 
+  @Post('/create-default-translations')
+  @HttpCode(HttpStatus.CREATED)
+  @Auth({ permissions: 'language_manage_create' })
+  async createDefaultTranslations(
+    @Body() body: CreateLanguageDto,
+  ): Promise<void> {
+    return this.languageService.createDefaultTranslations(body);
+  }
+
   @Get(':id([0-9]+)')
   @HttpCode(HttpStatus.OK)
   async getById(@Param('id') id: number): Promise<Language> {
