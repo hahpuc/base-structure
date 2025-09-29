@@ -1,4 +1,4 @@
-import { CommonModule } from "@angular/common";
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -9,8 +9,8 @@ import {
   OnInit,
   Output,
   SimpleChanges,
-} from "@angular/core";
-import { FormBuilder, FormGroup, FormsModule } from "@angular/forms";
+} from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
 import {
   Observable,
   Subject,
@@ -19,10 +19,10 @@ import {
   forkJoin,
   takeUntil,
   tap,
-} from "rxjs";
+} from 'rxjs';
 
-import { TableFilterDrawerComponent } from "./drawer/table-filter-drawer.component";
-import { TableFilterSearchComponent } from "./search/table-filter-search.component";
+import { TableFilterDrawerComponent } from './drawer/table-filter-drawer.component';
+import { TableFilterSearchComponent } from './search/table-filter-search.component';
 import {
   ActiveFilter,
   FilterOptions,
@@ -31,14 +31,14 @@ import {
   PaginatedSelectOptions,
   SelectOption,
   TableFilter,
-} from "./table-filter.model";
-import { TableFilterService } from "./table-filter.service";
-import { TableFilterTagsComponent } from "./tags/table-filter-tags.component";
+} from './table-filter.model';
+import { TableFilterService } from './table-filter.service';
+import { TableFilterTagsComponent } from './tags/table-filter-tags.component';
 
 @Component({
-  selector: "app-table-filter",
-  templateUrl: "./table-filter.component.html",
-  styleUrls: ["./table-filter.component.css"],
+  selector: 'app-table-filter',
+  templateUrl: './table-filter.component.html',
+  styleUrls: ['./table-filter.component.css'],
   imports: [
     CommonModule,
     FormsModule,
@@ -59,10 +59,10 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
   isLoadingOptions: LoadingStates = {};
   isLoading = false;
 
-  searchText = "";
-  drawerSearchText = "";
+  searchText = '';
+  drawerSearchText = '';
   activeFilters: ActiveFilter[] = [];
-  appliedSearchText = "";
+  appliedSearchText = '';
   appliedFilters: FilterValues = {};
   isDrawerVisible = false;
 
@@ -95,10 +95,7 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (
-      changes["initialFilterValues"] &&
-      !changes["initialFilterValues"].firstChange
-    ) {
+    if (changes['initialFilterValues'] && !changes['initialFilterValues'].firstChange) {
       this.updateFormWithInitialValues();
       this.initializeSearchText();
 
@@ -122,20 +119,17 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
     return (
       this.initialFilterValues &&
       Object.keys(this.initialFilterValues).some(
-        (key) =>
+        key =>
           this.initialFilterValues[key] !== null &&
           this.initialFilterValues[key] !== undefined &&
-          this.initialFilterValues[key] !== ""
+          this.initialFilterValues[key] !== ''
       )
     );
   }
 
   private initializeForm() {
     const { formControls, filterOptions, isLoadingOptions } =
-      this.filterService.initializeFormControls(
-        this.filters,
-        this.initialFilterValues
-      );
+      this.filterService.initializeFormControls(this.filters, this.initialFilterValues);
     this.filterForm = this.fb.group(formControls);
     this.filterOptions = filterOptions;
     this.isLoadingOptions = isLoadingOptions;
@@ -143,21 +137,21 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
 
   private updateFormWithInitialValues() {
     if (this.filterForm && this.initialFilterValues) {
-      Object.keys(this.initialFilterValues).forEach((key) => {
+      Object.keys(this.initialFilterValues).forEach(key => {
         const control = this.filterForm.get(key);
         if (control) {
           let value: unknown = this.initialFilterValues[key];
 
           // Convert string values to proper types for select filters
-          const filter = this.filters.find((f) => f.name === key);
+          const filter = this.filters.find(f => f.name === key);
           if (
             filter &&
             value !== null &&
-            filter.type === "select" &&
+            filter.type === 'select' &&
             Array.isArray(filter.options)
           ) {
             const matchingOption = filter.options.find(
-              (option) => String(option.value) === String(value)
+              option => String(option.value) === String(value)
             );
             if (matchingOption) {
               value = matchingOption.value;
@@ -175,8 +169,8 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private initializeSearchText() {
-    const filterValue = this.initialFilterValues?.["filter"];
-    if (filterValue && typeof filterValue === "string") {
+    const filterValue = this.initialFilterValues?.['filter'];
+    if (filterValue && typeof filterValue === 'string') {
       this.searchText = filterValue;
       this.drawerSearchText = filterValue;
       this.cdr.detectChanges(); // Trigger change detection
@@ -184,22 +178,20 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private setupFormChanges() {
-    this.filters.forEach((filter) => {
+    this.filters.forEach(filter => {
       if (filter.parent) {
         const parentControl = this.filterForm.get(filter.parent.filterName);
         const childControl = this.filterForm.get(filter.name);
 
         if (parentControl && childControl) {
-          parentControl.valueChanges
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((parentValue) => {
-              childControl.setValue(null);
-              if (parentValue) {
-                this.loadDependentOptions(filter, parentValue);
-              } else {
-                this.filterOptions[filter.name] = [];
-              }
-            });
+          parentControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(parentValue => {
+            childControl.setValue(null);
+            if (parentValue) {
+              this.loadDependentOptions(filter, parentValue);
+            } else {
+              this.filterOptions[filter.name] = [];
+            }
+          });
         }
       }
     });
@@ -210,19 +202,17 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
     // Collect all async option loading observables
     const asyncLoaders: Observable<SelectOption[]>[] = [];
 
-    this.filters.forEach((filter) => {
-      if (filter.type === "select" && filter.options && !filter.parent) {
-        if (typeof filter.options === "function") {
+    this.filters.forEach(filter => {
+      if (filter.type === 'select' && filter.options && !filter.parent) {
+        if (typeof filter.options === 'function') {
           // Use service for async loader
           asyncLoaders.push(
-            this.filterService
-              .loadOptionsForFilterAsync(filter, this.destroy$)
-              .pipe(
-                tap((options) => {
-                  this.filterOptions[filter.name] = options;
-                  this.isLoadingOptions[filter.name] = false;
-                })
-              )
+            this.filterService.loadOptionsForFilterAsync(filter, this.destroy$).pipe(
+              tap(options => {
+                this.filterOptions[filter.name] = options;
+                this.isLoadingOptions[filter.name] = false;
+              })
+            )
           );
           this.isLoadingOptions[filter.name] = true;
         } else if (Array.isArray(filter.options)) {
@@ -252,18 +242,16 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
 
   private loadPaginatedOptions(
     filter: TableFilter,
-    searchText = "",
+    searchText = '',
     page = 1
   ): Observable<SelectOption[]> {
-    return this.filterService
-      .loadPaginatedOptions(filter, searchText, page, this.destroy$)
-      .pipe(
-        tap((options) => {
-          // You may want to update paginatedOptions state here if needed
-          this.filterOptions[filter.name] = options;
-          this.isLoadingOptions[filter.name] = false;
-        })
-      );
+    return this.filterService.loadPaginatedOptions(filter, searchText, page, this.destroy$).pipe(
+      tap(options => {
+        // You may want to update paginatedOptions state here if needed
+        this.filterOptions[filter.name] = options;
+        this.isLoadingOptions[filter.name] = false;
+      })
+    );
   }
 
   private applyInitialValuesAfterOptionsLoad() {
@@ -280,27 +268,17 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
   }
   private setupSearchDebounce() {
     // Main search text - auto debounce and call API
-    this.filterService.setupDebounce(
-      this.searchSubject$,
-      500,
-      this.destroy$,
-      () => {
-        this.drawerSearchText = this.searchText;
-        this.appliedSearchText = this.searchText;
-        this.updateActiveFilters();
-        this.onFilter();
-      }
-    );
+    this.filterService.setupDebounce(this.searchSubject$, 500, this.destroy$, () => {
+      this.drawerSearchText = this.searchText;
+      this.appliedSearchText = this.searchText;
+      this.updateActiveFilters();
+      this.onFilter();
+    });
 
     // Drawer search text - no auto apply, only update when Apply button is clicked
-    this.filterService.setupDebounce(
-      this.drawerSearchSubject$,
-      300,
-      this.destroy$,
-      () => {
-        // No automatic updates - only when Apply is clicked
-      }
-    );
+    this.filterService.setupDebounce(this.drawerSearchSubject$, 300, this.destroy$, () => {
+      // No automatic updates - only when Apply is clicked
+    });
   }
 
   private loadDependentOptions(filter: TableFilter, parentValue: unknown) {
@@ -308,10 +286,10 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
       filter,
       parentValue,
       this.destroy$,
-      (options) => {
+      options => {
         this.filterOptions[filter.name] = options;
       },
-      (loading) => {
+      loading => {
         this.isLoadingOptions[filter.name] = loading;
       }
     );
@@ -324,18 +302,14 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
 
     // When applying from drawer, use drawer search text explicitly
     // Don't fall back to main search text if drawer search is empty
-    const searchTextToUse = this.drawerSearchText?.trim() || "";
+    const searchTextToUse = this.drawerSearchText?.trim() || '';
 
     if (searchTextToUse) {
-      filterParams["filter"] = searchTextToUse;
+      filterParams['filter'] = searchTextToUse;
     }
 
-    Object.keys(formValue).forEach((key) => {
-      if (
-        formValue[key] !== null &&
-        formValue[key] !== undefined &&
-        formValue[key] !== ""
-      ) {
+    Object.keys(formValue).forEach(key => {
+      if (formValue[key] !== null && formValue[key] !== undefined && formValue[key] !== '') {
         filterParams[key] = formValue[key];
       }
     });
@@ -358,9 +332,9 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
 
   onClear() {
     this.filterForm.reset();
-    this.searchText = "";
-    this.drawerSearchText = "";
-    this.appliedSearchText = "";
+    this.searchText = '';
+    this.drawerSearchText = '';
+    this.appliedSearchText = '';
     this.appliedFilters = {};
     this.activeFilters = [];
 
@@ -383,16 +357,16 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   clearSearchText() {
-    this.searchText = "";
+    this.searchText = '';
     // Auto-apply when clearing main search
-    this.drawerSearchText = "";
-    this.appliedSearchText = "";
+    this.drawerSearchText = '';
+    this.appliedSearchText = '';
     this.updateActiveFilters();
     this.onFilter();
   }
 
   clearDrawerSearchText() {
-    this.drawerSearchText = "";
+    this.drawerSearchText = '';
     // Don't auto-apply when clearing drawer search - wait for Apply button
     this.cdr.detectChanges();
   }
@@ -408,11 +382,11 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   removeActiveFilter(filterToRemove: ActiveFilter) {
-    if (filterToRemove.filter.name === "filter") {
+    if (filterToRemove.filter.name === 'filter') {
       // Clear both applied and current search texts
-      this.appliedSearchText = "";
-      this.searchText = "";
-      this.drawerSearchText = "";
+      this.appliedSearchText = '';
+      this.searchText = '';
+      this.drawerSearchText = '';
     } else {
       // Clear both applied filter and form control
       delete this.appliedFilters[filterToRemove.filter.name];
@@ -433,7 +407,7 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
 
   // MARK: - Pagination Methods for Ant Design Select
   onSelectSearch(filterName: string, searchText: string): void {
-    const filter = this.filters.find((f) => f.name === filterName);
+    const filter = this.filters.find(f => f.name === filterName);
     if (!filter?.usePagination) {
       return;
     }
@@ -442,12 +416,8 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
     if (!this.searchSubjects[filterName]) {
       this.searchSubjects[filterName] = new Subject<string>();
       this.searchSubjects[filterName]
-        .pipe(
-          debounceTime(300),
-          distinctUntilChanged(),
-          takeUntil(this.destroy$)
-        )
-        .subscribe((search) => {
+        .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
+        .subscribe(search => {
           this.loadPaginatedOptions(filter, search, 1).subscribe();
         });
     }
@@ -456,7 +426,7 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onSelectScrollToBottom(filterName: string): void {
-    const filter = this.filters.find((f) => f.name === filterName);
+    const filter = this.filters.find(f => f.name === filterName);
     if (!filter?.usePagination) {
       return;
     }
@@ -468,16 +438,12 @@ export class TableFilterComponent implements OnInit, OnChanges, OnDestroy {
 
     // Load next page
     const nextPage = paginatedState.currentPage + 1;
-    this.loadPaginatedOptions(
-      filter,
-      paginatedState.searchText || "",
-      nextPage
-    ).subscribe();
+    this.loadPaginatedOptions(filter, paginatedState.searchText || '', nextPage).subscribe();
   }
 
   // Check if a filter uses pagination
   isPaginatedFilter(filterName: string): boolean {
-    const filter = this.filters.find((f) => f.name === filterName);
+    const filter = this.filters.find(f => f.name === filterName);
     return filter?.usePagination === true;
   }
 

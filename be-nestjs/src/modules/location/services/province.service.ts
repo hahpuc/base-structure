@@ -1,4 +1,5 @@
 import { EStatus } from '@app/constant/app.enum';
+import { StringDict } from '@app/types/app.type';
 import { ListPaginate } from '@common/database/types/database.type';
 import CustomError from '@common/error/exceptions/custom-error.exception';
 import { ExcelService } from '@common/excel/services/excel.service';
@@ -77,8 +78,32 @@ export class ProvinceService {
   }
 
   async export(params: FilterProvinceDto): Promise<ExportResponse> {
+    const header: StringDict = {
+      province_name: 'Name',
+      province_status: 'Status',
+    };
+
+    const workbook = await this.excelService.exportDataToExcel(
+      async (page, limit) => {
+        params.page = page;
+        params.limit = limit;
+
+        const data = await this.provinceRepository.getListExport(params);
+
+        const formatData = data.map((item) => ({
+          ...item,
+          province_status:
+            item.province_status === EStatus.active ? 'Active' : 'Inactive',
+        }));
+
+        return [formatData, 0];
+      },
+      header,
+      'Province Report',
+    );
+
     return {
-      key: 'Not implemented',
+      key: await this.excelService.uploadWorkBookToS3(workbook, 'province'),
     };
   }
 

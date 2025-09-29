@@ -14,4 +14,12 @@ export const environment = {
     apiPrefix: '/media',
     publishUrl: 'http://localhost:3000/media',
   },
+  s3: {
+    access_key: 'AKIAT3JGYCEJBU2TZJXX',
+    region: 'ap-southeast-1',
+    bucket: 'johnsonbaby-game',
+    public_url: 'https://johnsonbaby-game.s3.ap-southeast-1.amazonaws.com',
+    access_secret: '0HWVoi4Znk8ypwotupoe9TXf1iSgQuqNHcDanPGg',
+    end_point: 'https://s3.ap-southeast-1.amazonaws.com',
+  },
 };

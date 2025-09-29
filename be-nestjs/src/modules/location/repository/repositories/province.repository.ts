@@ -32,6 +32,17 @@ export class ProvinceRepository extends Repository<Province> {
     return await query.getManyAndCount();
   }
 
+  async getListExport(params: FilterProvinceDto): Promise<any[]> {
+    const query = this.createQueryBuilder('province');
+
+    this._applyQueryBase(params, query);
+    applyQuerySorting(params.sorting, query, 'province');
+    applyQuerySorting(`id desc`, query, 'province', true);
+    applyQueryPaging(params, query, true);
+
+    return await query.getRawMany();
+  }
+
   private _applyQueryBase(
     params: FilterProvinceDto,
     query: SelectQueryBuilder<Province>,

@@ -158,7 +158,7 @@ export class ExcelService {
       workbook = new Excel.Workbook();
       worksheet = workbook.addWorksheet(workSheetName);
       const columns = !data?.[0]?.['errors']
-        ? [{ header: 'STT', key: 'no', width: 50 }]
+        ? [{ header: 'No', key: 'no', width: 50 }]
         : [];
 
       Object.entries(header).forEach(([key, value]) => {

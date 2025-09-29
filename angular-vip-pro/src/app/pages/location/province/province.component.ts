@@ -4,6 +4,7 @@ import { AppBaseComponent } from '@/app/shared/components/base/app.base.componen
 import { TableComponent } from '@/app/shared/components/tables/table/table.component';
 import { TableOption } from '@/app/shared/components/tables/table/table.model';
 import { ProvinceService } from '@/app/shared/services/province.service';
+import { S3Service } from '@/app/shared/services/s3.service';
 import { ProvinceDto, QueryProvince } from '@/app/shared/types/province';
 
 @Component({
@@ -104,7 +105,8 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
 
   constructor(
     injector: Injector,
-    private readonly provinceService: ProvinceService
+    private readonly provinceService: ProvinceService,
+    private readonly s3Service: S3Service
   ) {
     super(injector);
   }
@@ -123,10 +125,7 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
       {
         title: 'Export',
         type: 'export',
-        click: async () => {
-          this.showInfoMessage('Exporting province data...');
-          // Add your export logic here
-        },
+        click: () => this.export(),
         permission: 'province_manage_read',
       },
       {
@@ -142,6 +141,14 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
   }
 
   // Action handlers
+  export(): void {
+    this.provinceService
+      .export(this.ftTable.getFiltersForExport() as QueryProvince)
+      .subscribe(res => {
+        this.s3Service.downloadS3File(res.key, 'provinces_export.xlsx');
+      });
+  }
+
   editProvince(province: ProvinceDto): void {
     // Navigate to edit page or open modal
     this.showInfoMessage(`Edit province: ${province.name}`);

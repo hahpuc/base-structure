@@ -30,3 +30,7 @@ export type BaseOption = {
   value: number | string | boolean;
   status?: EStatus;
 };
+
+export type ExportDto = {
+  key: string;
+};

@@ -594,4 +594,31 @@ export class TableComponent<T extends TableRowData = TableRowData>
         return '#1890ff';
     }
   }
+
+  // MARK: PUBLIC EXPOSED
+  getFilters(): TableQueryParams {
+    const params: TableQueryParams = {
+      page: this.currentPage,
+      limit: this.pageSize,
+      ...this.currentFilters,
+    };
+
+    if (this.currentSort) {
+      params.sorting = this.currentSort;
+    }
+
+    return params;
+  }
+
+  getFiltersForExport(): FilterParams & { sorting?: string } {
+    const params: FilterParams & { sorting?: string } = {
+      ...this.currentFilters,
+    };
+
+    if (this.currentSort) {
+      params.sorting = this.currentSort;
+    }
+
+    return params;
+  }
 }

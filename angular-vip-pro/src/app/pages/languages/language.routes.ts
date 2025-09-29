@@ -5,8 +5,8 @@ import { CreateEditLanguageComponent } from './languages/create-edit/create-edit
 import { LanguagesComponent } from './languages/languages.component';
 import { CreateEditNamespaceComponent } from './namespaces/create-edit/create-edit.namespace.component';
 import { NamespacesComponent } from './namespaces/namespaces.component';
-import { TranslationsComponent } from './translations/translations.component';
 import { CreateEditTranslationsComponent } from './translations/create-edit/create-edit.translation.component';
+import { TranslationsComponent } from './translations/translations.component';
 
 const routes: Routes = [
   {

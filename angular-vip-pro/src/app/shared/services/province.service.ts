@@ -4,7 +4,9 @@ import { Observable } from 'rxjs';
 
 import { environment } from '@/environments/environment';
 
+import { ExportDto } from '../types/base';
 import { CreateProvince, EditProvince, ProvinceDto, QueryProvince } from '../types/province';
+import { getUrlParams } from '../utils/common-helper';
 
 import { AppBaseService } from './app-base.service';
 
@@ -24,5 +26,9 @@ export class ProvinceService extends AppBaseService<
 
   getAll(): Observable<ProvinceDto[]> {
     return this.httpClient.get<ProvinceDto[]>(this.apiUrl + `/all`);
+  }
+
+  export(params: QueryProvince): Observable<ExportDto> {
+    return this.httpClient.get<ExportDto>(`${this.apiUrl}/export` + getUrlParams(params));
   }
 }
