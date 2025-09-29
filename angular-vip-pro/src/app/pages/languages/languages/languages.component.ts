@@ -90,7 +90,7 @@ export class LanguagesComponent extends AppBaseComponent implements OnInit {
     this.setPageTitle('Languages');
     this.setHeaderButtons([
       {
-        title: 'Create',
+        title: this.t('CREATE'),
         type: 'create',
         click: () => {
           this.redirect('create');

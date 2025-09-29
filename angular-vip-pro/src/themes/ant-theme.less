@@ -744,3 +744,65 @@ ul.ant-dropdown-menu li:hover {
     }
   }
 }
+
+// MARK: Upload Component Base Styles
+.ant-upload {
+  &-btn {
+    border-radius: 0.5rem !important;
+    background-color: var(--ant-component-background) !important;
+    border-color: var(--ant-border-color-base) !important;
+    color: var(--ant-text-color) !important;
+    transition: all 0.3s ease !important;
+
+    &:hover {
+      border-color: var(--ant-primary-color) !important;
+      color: var(--ant-primary-color) !important;
+    }
+  }
+
+  &-drag {
+    border-radius: 0.75rem !important;
+    background-color: var(--ant-component-background) !important;
+    border-color: var(--ant-border-color-base) !important;
+    transition: all 0.3s ease !important;
+
+    &:hover {
+      border-color: var(--ant-primary-color) !important;
+    }
+
+    .ant-upload-drag-icon {
+      color: var(--ant-text-color-secondary) !important;
+    }
+
+    .ant-upload-text {
+      color: var(--ant-text-color) !important;
+    }
+
+    .ant-upload-hint {
+      color: var(--ant-text-color-secondary) !important;
+    }
+  }
+
+  &-list {
+    &-item {
+      border-radius: 0.5rem !important;
+      background-color: var(--ant-component-background) !important;
+      border-color: var(--ant-border-color-base) !important;
+
+      .ant-upload-list-item-name {
+        color: var(--ant-text-color) !important;
+      }
+
+      .ant-upload-list-item-card-actions {
+        .anticon {
+          color: var(--ant-text-color-secondary) !important;
+          transition: color 0.3s ease !important;
+
+          &:hover {
+            color: var(--ant-primary-color) !important;
+          }
+        }
+      }
+    }
+  }
+}

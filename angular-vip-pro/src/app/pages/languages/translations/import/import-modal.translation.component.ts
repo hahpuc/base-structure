@@ -53,16 +53,30 @@ interface FileLikeObject {
       }
 
       .upload-area ::ng-deep .ant-upload-drag {
-        border: 2px dashed #d9d9d9;
+        border: 2px dashed var(--ant-border-color-base, #d9d9d9);
         border-radius: 6px;
-        background: #fafafa;
+        background: var(--ant-background-color-light, #fafafa);
         text-align: center;
         padding: 20px;
         transition: border-color 0.3s;
       }
 
       .upload-area ::ng-deep .ant-upload-drag:hover {
-        border-color: #1890ff;
+        border-color: var(--ant-primary-color, #1890ff);
+      }
+
+      /* Dark mode specific overrides */
+      [data-theme='dark'] .upload-area ::ng-deep .ant-upload-drag,
+      .dark .upload-area ::ng-deep .ant-upload-drag {
+        border-color: var(--color-gray-600);
+        background: var(--color-gray-800);
+        color: var(--color-gray-200);
+      }
+
+      [data-theme='dark'] .upload-area ::ng-deep .ant-upload-drag:hover,
+      .dark .upload-area ::ng-deep .ant-upload-drag:hover {
+        border-color: var(--color-brand-400);
+        background: var(--color-gray-700);
       }
     `,
   ],

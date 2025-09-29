@@ -71,7 +71,7 @@ export class NamespacesComponent extends AppBaseComponent implements OnInit {
     this.setPageTitle('Namespaces');
     this.setHeaderButtons([
       {
-        title: 'Create',
+        title: this.t('CREATE'),
         type: 'create',
         click: () => {
           this.redirect('create');

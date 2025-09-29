@@ -135,7 +135,7 @@ export class TranslationsComponent extends AppBaseComponent implements OnInit {
     this.setPageTitle('Translations');
     this.setHeaderButtons([
       {
-        title: 'Create',
+        title: this.t('CREATE'),
         type: 'create',
         click: () => {
           this.redirect('create');
@@ -143,7 +143,7 @@ export class TranslationsComponent extends AppBaseComponent implements OnInit {
         permission: 'language_manage_create',
       },
       {
-        title: 'Import',
+        title: this.t('IMPORT'),
         type: 'import',
         click: () => {
           this.isImportModalVisible = true;

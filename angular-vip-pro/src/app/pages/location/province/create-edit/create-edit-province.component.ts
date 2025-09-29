@@ -39,14 +39,14 @@ export class CreateEditProvinceComponent extends AppBaseComponent implements OnI
     this.setPageTitle(this.id ? 'Edit Province' : 'Create Province');
     this.setHeaderButtons([
       {
-        title: 'Back',
+        title: this.t('CANCEL'),
         type: 'back',
         click: () => {
           this.redirect('/province');
         },
       },
       {
-        title: () => (this.isSubmitting ? 'Saving...' : 'Save'),
+        title: () => (this.isSubmitting ? this.t('LOADING') : this.t('SAVE')),
         type: 'create',
         disable: () => this.isSubmitting,
         click: () => {

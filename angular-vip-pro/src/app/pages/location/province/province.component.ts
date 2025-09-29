@@ -115,7 +115,7 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
     this.setPageTitle('Province Management');
     this.setHeaderButtons([
       {
-        title: 'Create',
+        title: this.t('CREATE'),
         type: 'create',
         click: () => {
           this.redirect('create');
@@ -123,13 +123,13 @@ export class ProvinceComponent extends AppBaseComponent implements OnInit {
         permission: 'province_manage_create',
       },
       {
-        title: 'Export',
+        title: this.t('EXPORT'),
         type: 'export',
         click: () => this.export(),
         permission: 'province_manage_read',
       },
       {
-        title: 'Import',
+        title: this.t('IMPORT'),
         type: 'import',
         click: async () => {
           this.showInfoMessage('Opening import dialog...');
