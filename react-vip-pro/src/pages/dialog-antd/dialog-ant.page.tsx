@@ -1,36 +1,36 @@
-import React, { useState } from "react";
 import {
-  Button,
-  Space,
-  Typography,
-  Card,
-  Row,
-  Col,
-  Modal,
-  Drawer,
-  message,
-  notification,
-  Popconfirm,
-  Alert,
-  Form,
-  Input,
-  Select,
-  DatePicker,
-  List,
-  Avatar,
-  Divider,
-  Steps,
-} from "antd";
-import {
-  ExclamationCircleOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  UserOutlined,
-  MailOutlined,
-  PhoneOutlined,
-  HomeOutlined,
-  StarOutlined,
+    DeleteOutlined,
+    EditOutlined,
+    ExclamationCircleOutlined,
+    HomeOutlined,
+    MailOutlined,
+    PhoneOutlined,
+    StarOutlined,
+    UserOutlined,
 } from "@ant-design/icons";
+import {
+    Alert,
+    Avatar,
+    Button,
+    Card,
+    Col,
+    DatePicker,
+    Divider,
+    Drawer,
+    Form,
+    Input,
+    List,
+    message,
+    Modal,
+    notification,
+    Popconfirm,
+    Row,
+    Select,
+    Space,
+    Steps,
+    Typography,
+} from "antd";
+import React, { useState } from "react";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -161,7 +161,9 @@ const DialogAntPage: React.FC = () => {
   ];
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
+      <div className="p-6 space-y-8">
+        
       <div className="mb-8">
         <Title level={2}>Dialog Components Showcase</Title>
         <Text type="secondary">
@@ -788,6 +790,7 @@ const DialogAntPage: React.FC = () => {
           </div>
         </Drawer>
       </Drawer>
+      </div>
     </div>
   );
 };

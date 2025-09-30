@@ -1,0 +1,176 @@
+// Base theme variables for Ant Design components
+// This file defines shared variables used by both light and dark themes
+
+// =============================================================================
+// COLOR PALETTE - Base colors used across all themes
+// =============================================================================
+
+// Primary colors
+@primary-1: #f0f5ff;
+@primary-2: #d6e4ff;
+@primary-3: #adc6ff;
+@primary-4: #85a5ff;
+@primary-5: #597ef7;
+@primary-6: #2f54eb;
+@primary-7: #1d39c4;
+@primary-8: #10239e;
+@primary-9: #061178;
+@primary-10: #030852;
+
+// Success colors
+@success-1: #f6ffed;
+@success-2: #d9f7be;
+@success-3: #b7eb8f;
+@success-4: #95de64;
+@success-5: #73d13d;
+@success-6: #52c41a;
+@success-7: #389e0d;
+@success-8: #237804;
+@success-9: #135200;
+@success-10: #092b00;
+
+// Warning colors
+@warning-1: #fffbe6;
+@warning-2: #fff1b8;
+@warning-3: #ffe58f;
+@warning-4: #ffd666;
+@warning-5: #ffc53d;
+@warning-6: #faad14;
+@warning-7: #d48806;
+@warning-8: #ad6800;
+@warning-9: #874d00;
+@warning-10: #613400;
+
+// Error colors
+@error-1: #fff2f0;
+@error-2: #ffccc7;
+@error-3: #ffa39e;
+@error-4: #ff7875;
+@error-5: #ff4d4f;
+@error-6: #f5222d;
+@error-7: #cf1322;
+@error-8: #a8071a;
+@error-9: #820014;
+@error-10: #5c0011;
+
+// Neutral colors
+@gray-1: #ffffff;
+@gray-2: #fafafa;
+@gray-3: #f5f5f5;
+@gray-4: #f0f0f0;
+@gray-5: #d9d9d9;
+@gray-6: #bfbfbf;
+@gray-7: #8c8c8c;
+@gray-8: #595959;
+@gray-9: #434343;
+@gray-10: #262626;
+@gray-11: #1f1f1f;
+@gray-12: #141414;
+@gray-13: #000000;
+
+// =============================================================================
+// COMPONENT SIZES
+// =============================================================================
+
+@font-size-base: 14px;
+@font-size-lg: 16px;
+@font-size-sm: 12px;
+@font-size-xl: 20px;
+
+@height-base: 32px;
+@height-lg: 40px;
+@height-sm: 24px;
+
+@border-radius-base: 6px;
+@border-radius-sm: 4px;
+@border-radius-lg: 8px;
+
+@border-width-base: 1px;
+@box-shadow-base: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+
+// =============================================================================
+// SPACING
+// =============================================================================
+
+@padding-lg: 24px;
+@padding-md: 16px;
+@padding-sm: 12px;
+@padding-xs: 8px;
+@padding-xss: 4px;
+
+@margin-lg: 24px;
+@margin-md: 16px;
+@margin-sm: 12px;
+@margin-xs: 8px;
+@margin-xss: 4px;
+
+// =============================================================================
+// ANIMATION & TRANSITIONS
+// =============================================================================
+
+@ease-base-out: cubic-bezier(0.7, 0.3, 0.1, 1);
+@ease-base-in: cubic-bezier(0.9, 0, 0.3, 0.7);
+@ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+@ease-in: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+@ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1);
+
+@animation-duration-slow: 0.3s;
+@animation-duration-base: 0.2s;
+@animation-duration-fast: 0.1s;
+
+// =============================================================================
+// Z-INDEX VALUES
+// =============================================================================
+
+@zindex-base: 0;
+@zindex-affix: 10;
+@zindex-back-top: 10;
+@zindex-badge: 10;
+@zindex-picker-panel: 10;
+@zindex-popup-close: 10;
+@zindex-modal: 1000;
+@zindex-notification: 1010;
+@zindex-message: 1010;
+@zindex-popover: 1030;
+@zindex-dropdown: 1050;
+@zindex-tooltip: 1060;
+
+// =============================================================================
+// COMPONENT SPECIFIC VARIABLES
+// =============================================================================
+
+// Button specific
+@btn-font-weight: 400;
+@btn-border-radius-base: @border-radius-base;
+@btn-border-radius-sm: @border-radius-sm;
+@btn-border-width: @border-width-base;
+@btn-border-style: solid;
+@btn-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
+@btn-primary-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+@btn-text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
+
+// Form specific
+@form-item-margin-bottom: 24px;
+@form-item-trailing-colon: true;
+@form-vertical-label-padding: 0 0 8px;
+@form-vertical-label-margin: 0;
+@form-error-input-bg: @gray-1;
+
+// Modal specific
+@modal-body-padding: 24px;
+@modal-header-padding-vertical: 16px;
+@modal-header-padding-horizontal: 24px;
+@modal-footer-padding-vertical: 10px;
+@modal-footer-padding-horizontal: 16px;
+@modal-mask-bg: rgba(0, 0, 0, 0.45);
+
+// Drawer specific
+@drawer-body-padding: 24px;
+@drawer-header-padding: 16px 24px;
+@drawer-footer-padding-vertical: 10px;
+@drawer-footer-padding-horizontal: 16px;
+
+// Message & Notification specific
+@message-notice-content-padding: 10px 16px;
+@notification-padding-vertical: 16px;
+@notification-padding-horizontal: 24px;

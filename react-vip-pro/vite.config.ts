@@ -15,4 +15,17 @@ export default defineConfig({
       },
     }),
   ],
+  css: {
+    preprocessorOptions: {
+      less: {
+        javascriptEnabled: true,
+        // Additional LESS options
+        modifyVars: {
+          // You can override Ant Design variables here
+          // '@primary-color': '#1DA57A',
+          // '@border-radius-base': '2px',
+        },
+      },
+    },
+  },
 });

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
 import type {
   CascaderProps,
   FormItemProps,
@@ -23,7 +23,7 @@ import {
   message,
 } from "antd";
 import type { DefaultOptionType } from "antd/es/select";
-import { UploadOutlined, InboxOutlined } from "@ant-design/icons";
+import React, { useState } from "react";
 
 const { Option } = Select;
 
@@ -156,18 +156,20 @@ const FormsAntDPage: React.FC = () => {
   const { RangePicker } = DatePicker;
 
   return (
-    <Form
-      {...formItemLayout}
-      form={form}
-      name="register"
-      onFinish={onFinish}
-      initialValues={{
-        residence: ["zhejiang", "hangzhou", "xihu"],
-        prefix: "86",
-      }}
-      style={{ maxWidth: 600 }}
-      scrollToFirstError
-    >
+    <div className="p-6 bg-white dark:bg-gray-900 min-h-screen transition-colors duration-200">      
+      <Form
+        {...formItemLayout}
+        form={form}
+        name="register"
+        onFinish={onFinish}
+        initialValues={{
+          residence: ["zhejiang", "hangzhou", "xihu"],
+          prefix: "86",
+        }}
+        style={{ maxWidth: 600 }}
+        scrollToFirstError
+        className="bg-white dark:bg-gray-800 p-6 rounded-lg border dark:border-gray-700"
+      >
       <Form.Item
         name="email"
         label="E-mail"
@@ -465,6 +467,7 @@ const FormsAntDPage: React.FC = () => {
         </Button>
       </Form.Item>
     </Form>
+    </div>
   );
 };
 

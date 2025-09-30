@@ -1,39 +1,39 @@
-import React, { useState } from "react";
 import {
-  Button,
-  Space,
-  Typography,
-  Row,
-  Col,
-  Card,
-  Dropdown,
-  Tooltip,
-  ConfigProvider,
-} from "antd";
+    DeleteOutlined,
+    DownloadOutlined,
+    DownOutlined,
+    EditOutlined,
+    HeartOutlined,
+    HomeOutlined,
+    LeftOutlined,
+    LikeOutlined,
+    PlusOutlined,
+    PoweroffOutlined,
+    ReloadOutlined,
+    RightOutlined,
+    SaveOutlined,
+    SearchOutlined,
+    SettingOutlined,
+    ShareAltOutlined,
+    StarOutlined,
+    UploadOutlined,
+    UserOutlined,
+} from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import {
-  DownOutlined,
-  SearchOutlined,
-  PoweroffOutlined,
-  DownloadOutlined,
-  LeftOutlined,
-  RightOutlined,
-  ReloadOutlined,
-  EditOutlined,
-  SaveOutlined,
-  DeleteOutlined,
-  PlusOutlined,
-  UploadOutlined,
-  UserOutlined,
-  SettingOutlined,
-  HomeOutlined,
-  HeartOutlined,
-  StarOutlined,
-  LikeOutlined,
-  ShareAltOutlined,
-} from "@ant-design/icons";
+    Button,
+    Card,
+    Col,
+    ConfigProvider,
+    Dropdown,
+    Row,
+    Space,
+    Tooltip,
+    Typography,
+} from "antd";
+import React, { useState } from "react";
 
-const { Title, Text } = Typography;
+const {  Text } = Typography;
 
 const ButtonAntDPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -85,13 +85,8 @@ const ButtonAntDPage: React.FC = () => {
   };
 
   return (
-    <div className="p-6 space-y-8">
-      <div className="mb-8">
-        <Title level={2}>Ant Design Button Showcase</Title>
-        <Text type="secondary">
-          Comprehensive demonstration of all Ant Design button types and styles
-        </Text>
-      </div>
+    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
+      <div className="p-6 space-y-8">
 
       {/* Basic Button Types */}
       <Card title="Basic Button Types" className="mb-6">
@@ -638,6 +633,7 @@ const ButtonAntDPage: React.FC = () => {
           </div>
         </div>
       </Card>
+      </div>
     </div>
   );
 };
