@@ -168,7 +168,7 @@ const FormsAntDPage: React.FC = () => {
         }}
         style={{ maxWidth: 600 }}
         scrollToFirstError
-        className="bg-white dark:bg-gray-800 p-6 rounded-lg border dark:border-gray-700"
+        className="bg-white dark:bg-white/[0.03] p-6 rounded-lg border dark:border-gray-700"
       >
       <Form.Item
         name="email"
