@@ -18,6 +18,10 @@ import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
+import FormsAntDPage from "./pages/forms-antd/forms-antd.page";
+import TableAntDPage from "./pages/table-antd/table-antd.page";
+import ButtonAntDPage from "./pages/button-antd/button-antd.page";
+import DialogAntPage from "./pages/dialog-antd/dialog-ant.page";
 
 export default function App() {
   return (
@@ -36,9 +40,15 @@ export default function App() {
 
             {/* Forms */}
             <Route path="/form-elements" element={<FormElements />} />
+            <Route path="/form-antd" element={<FormsAntDPage />} />
 
             {/* Tables */}
             <Route path="/basic-tables" element={<BasicTables />} />
+
+            {/* Ant Design */}
+            <Route path="/table-antd" element={<TableAntDPage />} />
+            <Route path="/buttons-antd" element={<ButtonAntDPage />} />
+            <Route path="/dialogs-antd" element={<DialogAntPage />} />
 
             {/* Ui Elements */}
             <Route path="/alerts" element={<Alerts />} />

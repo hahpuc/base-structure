@@ -47,6 +47,28 @@ const navItems: NavItem[] = [
     subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
   },
   {
+    name: "Ant Design",
+    icon: <ListIcon />,
+    subItems: [
+      { name: "Form AntD", path: "/form-antd", pro: true },
+      {
+        name: "Table AntD",
+        path: "/table-antd",
+        pro: true,
+      },
+      {
+        name: "Buttons Antd",
+        path: "/buttons-antd",
+        pro: true,
+      },
+      {
+        name: "Dialogs Antd",
+        path: "/dialogs-antd",
+        pro: true,
+      },
+    ],
+  },
+  {
     name: "Tables",
     icon: <TableIcon />,
     subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],

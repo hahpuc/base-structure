@@ -20,10 +20,15 @@ export default function UserDropdown() {
         className="flex items-center text-gray-700 dropdown-toggle dark:text-gray-400"
       >
         <span className="mr-3 overflow-hidden rounded-full h-11 w-11">
-          <img src="/images/user/owner.jpg" alt="User" />
+          <img
+            src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQhpN0pYTIO1SkLNYLLNFNU1U0q7QBVvrPd2E6UDHO3mUpEYFJ1OK6VRdvACFhmZrIRq1cUFJvuBX2DPLVeZEP94j0xErL06jL8hSP7Cw"
+            alt="User"
+          />
         </span>
 
-        <span className="block mr-1 font-medium text-theme-sm">Musharof</span>
+        <span className="block mr-1 font-medium text-theme-sm">
+          React Vjp Pr0
+        </span>
         <svg
           className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""
