@@ -1,44 +1,57 @@
-// import { Directive, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
-// import { Subject } from 'rxjs';
-// import { takeUntil } from 'rxjs/operators';
+import { Directive, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
+import { Subject, takeUntil } from 'rxjs';
 
-// import { AppTranslationService } from '../services/translation/app-translation.service';
+import { LocaleService } from '../services/i18n.service';
+import { TranslateService } from '../services/translate.service';
 
-// @Directive({
-//   selector: '[appTranslate]',
-//   standalone: true,
-// })
-// export class TranslateDirective implements OnInit, OnDestroy {
-//   @Input('appTranslate') key!: string;
-//   @Input() translateParams?: Record<string, unknown>;
+@Directive({
+  selector: '[appTranslate]',
+  standalone: true,
+})
+export class TranslateDirective implements OnInit, OnDestroy {
+  @Input('appTranslate') key!: string;
+  @Input() translateParams?: Record<string, string | number>;
+  @Input() translateNamespace?: string;
 
-//   private destroy$ = new Subject<void>();
+  private destroy$ = new Subject<void>();
 
-//   constructor(
-//     private elementRef: ElementRef,
-//     private translationService: AppTranslationService
-//   ) {}
+  constructor(
+    private el: ElementRef,
+    private translateService: TranslateService,
+    private localeService: LocaleService
+  ) {}
 
-//   ngOnInit(): void {
-//     this.updateTranslation();
+  ngOnInit() {
+    this.updateTranslation();
 
-//     // Listen for language changes
-//     this.translationService.currentLanguage$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-//       this.updateTranslation();
-//     });
-//   }
+    // Subscribe to language changes to update translations automatically
+    this.localeService.language$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.updateTranslation();
+    });
+  }
 
-//   ngOnDestroy(): void {
-//     this.destroy$.next();
-//     this.destroy$.complete();
-//   }
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
-//   private updateTranslation(): void {
-//     this.translationService
-//       .translate(this.key, this.translateParams)
-//       .pipe(takeUntil(this.destroy$))
-//       .subscribe(translation => {
-//         this.elementRef.nativeElement.textContent = translation;
-//       });
-//   }
-// }
+  private updateTranslation() {
+    if (!this.key) {
+      return;
+    }
+
+    let translatedText: string;
+
+    if (this.translateNamespace) {
+      translatedText = this.translateService.get(
+        this.translateNamespace,
+        this.key,
+        this.translateParams
+      );
+    } else {
+      translatedText = this.translateService.instant(this.key, this.translateParams);
+    }
+
+    this.el.nativeElement.textContent = translatedText;
+  }
+}

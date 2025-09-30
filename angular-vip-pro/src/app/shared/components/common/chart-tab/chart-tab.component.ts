@@ -1,13 +1,14 @@
-
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+
+import { TranslateDirective } from '@/app/shared/directives/translate.directive';
 
 type TabOption = 'optionOne' | 'optionTwo' | 'optionThree';
 
 @Component({
   selector: 'app-chart-tab',
-  imports: [CommonModule],
-  templateUrl: './chart-tab.component.html'
+  imports: [CommonModule, TranslateDirective],
+  templateUrl: './chart-tab.component.html',
 })
 export class ChartTabComponent {
   selected: TabOption = 'optionOne';

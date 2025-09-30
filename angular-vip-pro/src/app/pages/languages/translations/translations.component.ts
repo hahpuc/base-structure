@@ -42,10 +42,10 @@ export class TranslationsComponent extends AppBaseComponent implements OnInit {
       {
         type: 'select',
         name: 'status',
-        label: 'Status',
+        label: this.t('STATUS'),
         options: [
-          { label: 'Active', value: 1 },
-          { label: 'Inactive', value: 0 },
+          { label: this.t('STATUS_ACTIVE'), value: 1 },
+          { label: this.t('STATUS_INACTIVE'), value: 0 },
         ],
       },
       {
@@ -55,7 +55,7 @@ export class TranslationsComponent extends AppBaseComponent implements OnInit {
             .getOptions()
             .pipe(map(opt => opt.map(c => ({ label: c.label, value: c.value })))),
         name: 'language_id',
-        label: 'Language',
+        label: this.tNs('admin', 'LANGUAGE'),
       },
       {
         type: 'select',
@@ -64,7 +64,7 @@ export class TranslationsComponent extends AppBaseComponent implements OnInit {
             .getOptions()
             .pipe(map(opt => opt.map(c => ({ label: c.label, value: c.value })))),
         name: 'namespace_id',
-        label: 'Namespace',
+        label: this.tNs('admin', 'NAMESPACE'),
       },
     ],
     columns: [
@@ -77,41 +77,41 @@ export class TranslationsComponent extends AppBaseComponent implements OnInit {
         },
       },
       {
-        title: 'Language',
+        title: this.tNs('admin', 'LANGUAGE'),
         name: 'language.code',
         type: 'text',
       },
       {
-        title: 'Namespace',
+        title: this.tNs('admin', 'NAMESPACE'),
         name: 'namespace.name',
         type: 'text',
       },
       {
-        title: 'Key',
+        title: this.tNs('admin', 'LANGUAGE_KEY'),
         name: 'key',
         type: 'text',
         width: '250px',
       },
       {
-        title: 'Value',
+        title: this.tNs('admin', 'LANGUAGE_VALUE'),
         name: 'value',
         type: 'text',
         width: '300px',
       },
       {
-        title: 'Description',
+        title: this.tNs('admin', 'DESCRIPTION'),
         name: 'description',
         type: 'text',
       },
       {
-        title: 'Status',
+        title: this.t('STATUS'),
         name: 'status',
         type: 'status',
       },
     ],
     actions: [
       {
-        label: 'Edit',
+        label: this.t('EDIT'),
         color: 'primary',
         handler: row => {
           this.redirect(`edit/${row.id}`);
@@ -132,7 +132,7 @@ export class TranslationsComponent extends AppBaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.setPageTitle('Translations');
+    this.setPageTitle(this.tNs('admin', 'MENU_TRANSLATION'));
     this.setHeaderButtons([
       {
         title: this.t('CREATE'),

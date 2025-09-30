@@ -47,7 +47,9 @@ export class CreateEditTranslationsComponent extends AppBaseComponent implements
 
   ngOnInit(): void {
     this.setPageTitle(
-      this.id ? `${this.t('EDIT')} Translation` : `${this.t('CREATE')} Translation`
+      this.id
+        ? `${this.t('EDIT')} ${this.tNs('admin', 'MENU_TRANSLATION')}`
+        : `${this.t('CREATE')} ${this.tNs('admin', 'MENU_TRANSLATION')}`
     );
     this.setHeaderButtons([
       {
@@ -143,10 +145,10 @@ export class CreateEditTranslationsComponent extends AppBaseComponent implements
       controls: [
         {
           name: 'language_id',
-          label: 'Language',
+          label: this.tNs('admin', 'LANGUAGE'),
           type: 'select',
           required: true,
-          placeholder: 'Select language',
+          placeholder: this.t('SELECT') + ' ' + this.tNs('admin', 'LANGUAGE'),
           span: 12,
           validators: [Validators.required],
           errorMessages: {
@@ -159,10 +161,10 @@ export class CreateEditTranslationsComponent extends AppBaseComponent implements
         },
         {
           name: 'namespace_id',
-          label: 'Namespace',
+          label: this.tNs('admin', 'NAMESPACE'),
           type: 'select',
           required: true,
-          placeholder: 'Select namespace',
+          placeholder: this.t('SELECT') + ' ' + this.tNs('admin', 'NAMESPACE'),
           span: 12,
           validators: [Validators.required],
           errorMessages: {
@@ -175,7 +177,7 @@ export class CreateEditTranslationsComponent extends AppBaseComponent implements
         },
         {
           name: 'key',
-          label: 'Key',
+          label: this.tNs('admin', 'LANGUAGE_KEY'),
           type: 'text',
           required: true,
           onChange: (value: unknown, formValue: Record<string, unknown>) => {
@@ -186,7 +188,7 @@ export class CreateEditTranslationsComponent extends AppBaseComponent implements
               { emitEvent: false }
             );
           },
-          placeholder: 'Enter key',
+          placeholder: this.t('ENTER') + ' ' + this.tNs('admin', 'LANGUAGE_KEY'),
           validators: [Validators.required, Validators.minLength(2), Validators.maxLength(100)],
           errorMessages: {
             required: this.tNs('validation', 'REQUIRED'),
@@ -197,10 +199,10 @@ export class CreateEditTranslationsComponent extends AppBaseComponent implements
         },
         {
           name: 'value',
-          label: 'Value',
+          label: this.tNs('admin', 'LANGUAGE_VALUE'),
           type: 'text',
           required: true,
-          placeholder: 'Enter value',
+          placeholder: this.t('ENTER') + ' ' + this.tNs('admin', 'LANGUAGE_VALUE'),
           validators: [Validators.required, Validators.minLength(1)],
           errorMessages: {
             required: this.tNs('validation', 'REQUIRED'),
@@ -210,15 +212,15 @@ export class CreateEditTranslationsComponent extends AppBaseComponent implements
         },
         {
           name: 'description',
-          label: 'Description',
+          label: this.tNs('admin', 'DESCRIPTION'),
           type: 'textarea',
           required: false,
-          placeholder: 'Enter description',
+          placeholder: this.t('ENTER') + ' ' + this.tNs('admin', 'DESCRIPTION'),
           span: 12,
         },
         {
           name: 'status',
-          label: 'Status',
+          label: this.t('STATUS'),
           type: 'switch',
           required: true,
           defaultValue: true,

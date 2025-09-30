@@ -8,6 +8,7 @@ import { AppInitializationService } from '../../../services/app-initialization.s
 import { LocaleService } from '../../../services/i18n.service';
 import { LanguageDto } from '../../../types/language';
 import { DropdownComponent } from '../../ui/dropdown/dropdown.component';
+import { AuthService } from '@/app/shared/services/auth.service';
 
 @Component({
   selector: 'app-user-dropdown',
@@ -24,6 +25,7 @@ export class UserDropdownComponent implements OnInit, OnDestroy {
 
   constructor(
     private appInitializationService: AppInitializationService,
+    private authService: AuthService,
     private localeService: LocaleService
   ) {}
 
@@ -59,6 +61,13 @@ export class UserDropdownComponent implements OnInit, OnDestroy {
 
   trackByLanguageCode(index: number, language: LanguageDto): string {
     return language.code;
+  }
+
+  logout(): void {
+    this.authService.logout().subscribe(() => {
+      this.closeDropdown();
+      window.location.href = '/login';
+    });
   }
 
   private loadLanguages(): void {

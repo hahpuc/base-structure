@@ -17,16 +17,7 @@ export class AppInitializationService {
     private localeService: LocaleService
   ) {}
 
-  /**
-   * Initialize the application by loading languages and translations
-   * This should be called during app startup
-   */
   initializeApp(): Observable<boolean> {
-    // Check if data is already cached and fresh
-    if (this.isCacheValid()) {
-      return of(true);
-    }
-
     return forkJoin({
       languages: this.loadLanguages(),
       translations: this.loadTranslations(),
@@ -35,7 +26,6 @@ export class AppInitializationService {
         // Cache the data with timestamp
         this.cacheLanguages(languages);
         this.cacheTranslations(translations);
-        this.setCacheTimestamp();
 
         // Set initial language based on cached preference or first available language
         const savedLanguage = this.localeService.getLanguage();
@@ -56,17 +46,11 @@ export class AppInitializationService {
     );
   }
 
-  /**
-   * Refresh language and translation data from APIs
-   */
   refreshLanguageData(): Observable<boolean> {
     this.clearCache();
     return this.initializeApp();
   }
 
-  /**
-   * Get cached languages from localStorage
-   */
   getCachedLanguages(): LanguageDto[] {
     if (typeof localStorage !== 'undefined') {
       const cached = localStorage.getItem('app_languages');
@@ -75,9 +59,6 @@ export class AppInitializationService {
     return [];
   }
 
-  /**
-   * Get cached translations from localStorage
-   */
   getCachedTranslations(): Record<string, TranslationData> {
     if (typeof localStorage !== 'undefined') {
       const cached = localStorage.getItem('app_translations');
@@ -114,35 +95,10 @@ export class AppInitializationService {
     }
   }
 
-  private setCacheTimestamp(): void {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('app_cache_timestamp', Date.now().toString());
-    }
-  }
-
-  private getCacheTimestamp(): number {
-    if (typeof localStorage !== 'undefined') {
-      const timestamp = localStorage.getItem('app_cache_timestamp');
-      return timestamp ? parseInt(timestamp, 10) : 0;
-    }
-    return 0;
-  }
-
-  private isCacheValid(): boolean {
-    const cacheAge = Date.now() - this.getCacheTimestamp();
-    const maxCacheAge =  60 * 60 * 1000;
-
-    const hasLanguages = this.getCachedLanguages().length > 0;
-    const hasTranslations = Object.keys(this.getCachedTranslations()).length > 0;
-
-    return cacheAge < maxCacheAge && hasLanguages && hasTranslations;
-  }
-
   private clearCache(): void {
     if (typeof localStorage !== 'undefined') {
       localStorage.removeItem('app_languages');
       localStorage.removeItem('app_translations');
-      localStorage.removeItem('app_cache_timestamp');
     }
   }
 }

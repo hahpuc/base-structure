@@ -4,6 +4,7 @@ import CustomError from '@common/error/exceptions/custom-error.exception';
 import { BaseOption } from '@common/response/types/base.reponse.type';
 import { wrapPagination } from '@common/utils/object.util';
 import { Injectable } from '@nestjs/common';
+import { In } from 'typeorm';
 
 import { CreateNamespaceDto } from '../dtos/namespace/create-namespace.dto';
 import { FilterNamespaceDto } from '../dtos/namespace/filter-namespace.dto';
@@ -47,6 +48,19 @@ export class TranslationNamespaceService {
     const [data, count] = await this.namespaceRepository.getList(params);
 
     return wrapPagination<TranslationNamespace>(data, count, params);
+  }
+
+  async getByNames(names: string[]): Promise<TranslationNamespace[]> {
+    if (!names || names.length === 0) {
+      return [];
+    }
+
+    return await this.namespaceRepository.find({
+      where: {
+        name: In(names),
+        status: EStatus.active,
+      },
+    });
   }
 
   async getOptions(): Promise<BaseOption[]> {

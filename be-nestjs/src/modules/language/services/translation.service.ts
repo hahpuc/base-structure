@@ -7,20 +7,22 @@ import {
   BaseImportResponse,
   ExportResponse,
 } from '@common/response/types/base.reponse.type';
-import { S3Service } from '@common/s3/services/s3.service';
 import { wrapPagination } from '@common/utils/object.util';
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { HttpStatusCode } from 'axios';
 
 import { CreateTranslationDto } from '../dtos/translation/create-translation.dto';
 import { FilterTranslationDto } from '../dtos/translation/filter-translation.dto';
 import { ImportTranslationDto } from '../dtos/translation/import-translation.dto';
 import { UpdateTranslationDto } from '../dtos/translation/update-translation.dto';
-import { Language } from '../repository/entities/language.entity';
 import { Translation } from '../repository/entities/translation.entity';
+import { TranslationNamespace } from '../repository/entities/translation-namespace.entity';
 import { TranslationRepository } from '../repository/repositories/translation.repository';
 import { CustomMessageService } from './custom-message.service';
 import { I18nService } from './i18n.service';
+import { I18nCacheService } from './i18n-cache.service';
+import { LanguageService } from './language.service';
+import { TranslationNamespaceService } from './translation-namespace.service';
 
 @Injectable()
 export class TranslationService {
@@ -28,8 +30,11 @@ export class TranslationService {
 
   constructor(
     private readonly translationRepository: TranslationRepository,
+    private readonly translationNamespaceService: TranslationNamespaceService,
+    @Inject(forwardRef(() => LanguageService))
+    private readonly languageService: LanguageService,
     private readonly excelService: ExcelService,
-    private readonly s3Service: S3Service,
+    private readonly i18nCacheService: I18nCacheService,
     i18nService: I18nService,
   ) {
     this.customMessageService = new CustomMessageService(
@@ -114,6 +119,7 @@ export class TranslationService {
       translation_id: 'ID',
       language_code: 'Language Code',
       language_name: 'Language Name',
+      namespace_name: 'Namespace',
       translation_key: 'Key',
       translation_value: 'Value',
       translation_description: 'Description',
@@ -151,6 +157,7 @@ export class TranslationService {
         translation_id: 'ID',
         language_code: 'Language Code',
         language_name: 'Language Name',
+        namespace_name: 'Namespace',
         translation_key: 'Key',
         translation_value: 'Value',
         translation_description: 'Description',
@@ -172,7 +179,7 @@ export class TranslationService {
             asyncValidValues: {
               language_code: {
                 dataSource: async (codes) =>
-                  await this._getLanguagesByCode(codes),
+                  await this.languageService.getLanguagesByCode(codes),
                 prop: 'code',
                 customValidate: (data, languages) => {
                   return languages.some(
@@ -202,13 +209,15 @@ export class TranslationService {
       // Step 5: return result
       const successMessage =
         await this.customMessageService.get('IMPORT_SUCCESS');
+
+      // Step 6: Refresh cache
+      await this.i18nCacheService.manualRefresh();
+
       return {
         error_key: error_key || '',
         message: `${successMessage}. Created: ${results.created}, Updated: ${results.updated}, Errors: ${errorData.length}`,
       };
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Import Translation Error: ', error);
       const message = await this.customMessageService.get('IMPORT_FAILED');
       throw new CustomError(
         HttpStatusCode.BadRequest,
@@ -220,24 +229,56 @@ export class TranslationService {
 
   // MARK: Import Helpers
 
-  private async _getLanguagesByCode(codes: string[]): Promise<Language[]> {
-    const uniqueCodes = [...new Set(codes)];
-    const results = await this.translationRepository
-      .createQueryBuilder('translation')
-      .leftJoinAndSelect('translation.language', 'language')
-      .where('language.code IN (:...codes)', { codes: uniqueCodes })
-      .andWhere('language.status = :status', { status: 1 }) // Active status
-      .getMany();
+  /**
+   * Gets existing namespaces by names and creates new ones if they don't exist
+   */
+  private async _getOrCreateNamespaces(
+    namespaceNames: string[],
+  ): Promise<{ [key: string]: TranslationNamespace }> {
+    const uniqueNames = [
+      ...new Set(namespaceNames.filter((name) => name && name.trim())),
+    ];
 
-    // Extract unique languages from the results
-    const languageMap = new Map<string, Language>();
-    results.forEach((translation) => {
-      if (translation.language) {
-        languageMap.set(translation.language.code, translation.language);
-      }
+    if (uniqueNames.length === 0) {
+      return {};
+    }
+
+    // Find existing namespaces (validation is handled by class-validator decorators)
+    const existingNamespaces =
+      await this.translationNamespaceService.getByNames(uniqueNames);
+    const existingNamespaceMap = new Map<string, TranslationNamespace>();
+    existingNamespaces.forEach((ns) => {
+      existingNamespaceMap.set(ns.name, ns);
     });
 
-    return Array.from(languageMap.values());
+    // Find missing namespaces and create them
+    const missingNames = uniqueNames.filter(
+      (name) => !existingNamespaceMap.has(name),
+    );
+
+    if (missingNames.length > 0) {
+      // Create missing namespaces
+      for (const name of missingNames) {
+        const newNamespaceId = await this.translationNamespaceService.create({
+          name: name,
+          description: `Auto-created namespace: ${name}`,
+          status: 1, // EStatus.active
+        });
+
+        // Get the created namespace and add to map
+        const newNamespace =
+          await this.translationNamespaceService.getById(newNamespaceId);
+        existingNamespaceMap.set(name, newNamespace);
+      }
+    }
+
+    // Convert Map to object for return
+    const result: { [key: string]: TranslationNamespace } = {};
+    existingNamespaceMap.forEach((namespace, name) => {
+      result[name] = namespace;
+    });
+
+    return result;
   }
 
   private async _processTranslationData(
@@ -311,7 +352,19 @@ export class TranslationService {
     createsData: ImportTranslationDto[],
     validationDict: any,
   ): Promise<number> {
-    // Build lookup conditions for duplicate checking
+    // Step 1: Handle namespaces - get or create them
+    const namespaceNames = createsData
+      .map((item) => item.namespace_name)
+      .filter((name) => name && name.trim());
+
+    let namespaceDict: { [key: string]: TranslationNamespace } = {};
+
+    if (namespaceNames.length > 0) {
+      // Get or create namespaces with validation
+      namespaceDict = await this._getOrCreateNamespaces(namespaceNames);
+    }
+
+    // Step 2: Build lookup conditions for duplicate checking
     const lookupConditions = createsData.map((item) => {
       const language = validationDict.language_code[item.language_code];
       return {
@@ -320,7 +373,7 @@ export class TranslationService {
       };
     });
 
-    // Check for existing translations in one query
+    // Step 3: Check for existing translations in one query
     const existingTranslations = await this.translationRepository
       .createQueryBuilder('translation')
       .where(
@@ -338,14 +391,14 @@ export class TranslationService {
       )
       .getMany();
 
-    // Create set of existing key-language combinations for fast lookup
+    // Step 4: Create set of existing key-language combinations for fast lookup
     const existingCombinations = new Set<string>();
     existingTranslations.forEach((translation) => {
       const combination = `${translation.key}-${translation.language_id}`;
       existingCombinations.add(combination);
     });
 
-    // Prepare new translations (filter out duplicates)
+    // Step 5: Prepare new translations (filter out duplicates)
     const newTranslations: Translation[] = [];
     createsData.forEach((item) => {
       const language = validationDict.language_code[item.language_code];
@@ -357,13 +410,20 @@ export class TranslationService {
         newTranslation.value = item.translation_value;
         newTranslation.description = item.translation_description;
         newTranslation.language_id = language.id;
-        newTranslation.namespace_id = 1; // You may need to adjust this
+
+        // Handle namespace assignment
+        if (item.namespace_name && item.namespace_name.trim()) {
+          const namespace = namespaceDict[item.namespace_name.trim()];
+          newTranslation.namespace_id = namespace ? namespace.id : 1; // Default to 1 if not found
+        } else {
+          newTranslation.namespace_id = 1; // Default namespace_id = 1
+        }
 
         newTranslations.push(newTranslation);
       }
     });
 
-    // Batch insert all new translations
+    // Step 6: Batch insert all new translations
     if (newTranslations.length > 0) {
       await this.translationRepository.insert(newTranslations);
     }

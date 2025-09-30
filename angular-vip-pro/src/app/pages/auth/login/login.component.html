@@ -2,8 +2,10 @@
   <div class="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
     <div>
       <div class="mb-5 sm:mb-8">
-        <h1 class="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">Sign In</h1>
-        <p class="text-sm text-gray-500 dark:text-gray-400">Enter your email and password to sign in!</p>
+        <h1 class="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
+          {{ this.tNs('auth', 'SIGN_IN') }}
+        </h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400">{{ this.tNs('auth', 'SIGN_IN_DESCRIPTION') }}</p>
       </div>
 
       <!-- OAuth Buttons -->
@@ -56,7 +58,7 @@
           <div class="w-full border-t border-gray-200 dark:border-gray-800"></div>
         </div>
         <div class="relative flex justify-center text-sm">
-          <span class="p-2 text-gray-400 bg-white dark:bg-gray-900 sm:px-5 sm:py-2"> Or </span>
+          <span class="p-2 text-gray-400 bg-white dark:bg-gray-900 sm:px-5 sm:py-2"> {{ this.t('OR') }} </span>
         </div>
       </div>
 
@@ -70,14 +72,14 @@
         (ngSubmit)="login()"
       >
         <nz-form-item>
-          <nz-form-label nzRequired nzFor="userName">Username</nz-form-label>
+          <nz-form-label nzRequired nzFor="userName">{{ this.tNs('auth', 'EMAIL') }}</nz-form-label>
           <nz-form-control [nzErrorTip]="!validateForm.value.username ? nzErrorRequire : ''">
             <nz-input-group [nzPrefix]="prefixUser">
               <input
                 type="text"
                 nz-input
                 formControlName="username"
-                placeholder="Username"
+                placeholder="{{ this.tNs('auth', 'EMAIL') }}"
                 autocomplete="off"
                 required
               />
@@ -85,14 +87,14 @@
           </nz-form-control>
         </nz-form-item>
         <nz-form-item class="relative">
-          <nz-form-label nzRequired nzFor="password">Password</nz-form-label>
+          <nz-form-label nzRequired nzFor="password">{{ this.tNs('auth', 'PASSWORD') }}</nz-form-label>
           <nz-form-control [nzErrorTip]="!validateForm.value.password ? nzErrorRequire : ''">
             <nz-input-group [nzPrefix]="prefixLock" [nzSuffix]="suffixVisible">
               <input
                 [type]="isVisiblePassword ? 'text' : 'password'"
                 nz-input
                 formControlName="password"
-                placeholder="Password"
+                placeholder="{{ this.tNs('auth', 'PASSWORD') }}"
                 name="password"
                 required
               />
@@ -109,12 +111,12 @@
                 [(ngModel)]="rememberMe"
                 [ngModelOptions]="{ standalone: true }"
               >
-                Remember login information.
+                {{ this.tNs('auth', 'SIGN_IN_REMEMBER') }}
               </label>
               <a
                 [routerLink]="['/forgot-password']"
                 class="text-brand-500 hover:text-brand-600 dark:text-brand-400 text-sm"
-                >Forgot password?</a
+                >{{ this.tNs('auth', 'FORGOT_PASSWORD') }}</a
               >
             </div>
           </nz-form-control>
@@ -122,7 +124,9 @@
 
         <nz-form-item>
           <nz-form-control>
-            <button nz-button class="w-full login-form-button" [nzType]="'primary'">Login</button>
+            <button nz-button class="w-full login-form-button" [nzType]="'primary'">
+              {{ this.tNs('auth', 'SIGN_IN') }}
+            </button>
           </nz-form-control>
         </nz-form-item>
       </form>
@@ -130,8 +134,10 @@
 
     <div class="mt-3">
       <p class="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-        Don't have an account?
-        <a routerLink="/register" class="text-brand-500 hover:text-brand-600 dark:text-brand-400"> Sign Up </a>
+        {{ this.tNs('auth', 'SIGN_IN_REGISTER_QUESION') }}
+        <a routerLink="/register" class="text-brand-500 hover:text-brand-600 dark:text-brand-400">
+          {{ this.tNs('auth', 'REGISTER') }}
+        </a>
       </p>
     </div>
   </div>

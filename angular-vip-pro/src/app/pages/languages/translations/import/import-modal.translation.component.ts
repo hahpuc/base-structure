@@ -12,6 +12,7 @@ import { firstValueFrom, Observable } from 'rxjs';
 import { AppBaseComponent } from '@/app/shared/components/base/app.base.component';
 import { UploadComponent } from '@/app/shared/components/forms/controls/upload-file/upload.component';
 import { EUploadType } from '@/app/shared/constants/enum';
+import { AppInitializationService } from '@/app/shared/services/app-initialization.service';
 import { LanguageService } from '@/app/shared/services/language.service';
 import { S3Service } from '@/app/shared/services/s3.service';
 import { TranslationService } from '@/app/shared/services/translation.service';
@@ -107,6 +108,7 @@ export class ImportModalTranslationComponent extends AppBaseComponent implements
     injector: Injector,
     private readonly languageService: LanguageService,
     private readonly translationService: TranslationService,
+    private readonly appInitService: AppInitializationService,
     private readonly s3Service: S3Service
   ) {
     super(injector);
@@ -254,6 +256,7 @@ export class ImportModalTranslationComponent extends AppBaseComponent implements
           this.msgService.warning('Import completed with errors. Please check the error file.');
         } else {
           this.msgService.success('Import completed successfully!');
+          this.appInitService.refreshLanguageData().subscribe();
         }
       }
     } catch (error: unknown) {
@@ -334,8 +337,6 @@ export class ImportModalTranslationComponent extends AppBaseComponent implements
       if (uploadFile.name && uploadFile.size !== undefined) {
         try {
           // This is a fallback that might work in some cases
-          // eslint-disable-next-line no-console
-          console.warn('Using fallback File creation method');
           const blob = new Blob([], {
             type:
               uploadFile.type ||

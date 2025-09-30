@@ -10,6 +10,8 @@ import {
   NgApexchartsModule,
 } from 'ng-apexcharts';
 
+import { TranslateDirective } from '@/app/shared/directives/translate.directive';
+
 import { DropdownItemComponent } from '../../ui/dropdown/dropdown-item/dropdown-item.component';
 import { DropdownComponent } from '../../ui/dropdown/dropdown.component';
 
@@ -20,6 +22,7 @@ import { DropdownComponent } from '../../ui/dropdown/dropdown.component';
     NgApexchartsModule,
     DropdownComponent,
     DropdownItemComponent,
+    TranslateDirective,
   ],
   templateUrl: './monthly-target.component.html',
 })

@@ -68,7 +68,7 @@ export class NamespacesComponent extends AppBaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.setPageTitle('Namespaces');
+    this.setPageTitle(this.tNs('admin', 'MENU_NAMESPACE'));
     this.setHeaderButtons([
       {
         title: this.t('CREATE'),

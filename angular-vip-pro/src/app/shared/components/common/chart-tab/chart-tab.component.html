@@ -3,6 +3,8 @@
     (click)="setSelected('optionOne')"
     class="px-3 py-2 font-medium w-full rounded-md text-theme-sm hover:text-gray-900 dark:hover:text-white"
     [ngClass]="getButtonClass('optionOne')"
+    appTranslate="MONTHLY"
+    translateNamespace="admin"
   >
     Monthly
   </button>
@@ -11,6 +13,8 @@
     (click)="setSelected('optionTwo')"
     class="px-3 py-2 font-medium w-full rounded-md text-theme-sm hover:text-gray-900 dark:hover:text-white"
     [ngClass]="getButtonClass('optionTwo')"
+    appTranslate="QUATERLY"
+    translateNamespace="admin"
   >
     Quarterly
   </button>
@@ -19,6 +23,8 @@
     (click)="setSelected('optionThree')"
     class="px-3 py-2 font-medium w-full rounded-md text-theme-sm hover:text-gray-900 dark:hover:text-white"
     [ngClass]="getButtonClass('optionThree')"
+    appTranslate="ANNUALLY"
+    translateNamespace="admin"
   >
     Annually
   </button>

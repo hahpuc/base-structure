@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 
+import { TranslateDirective } from '@/app/shared/directives/translate.directive';
+
 import { DropdownItemComponent } from '../../ui/dropdown/dropdown-item/dropdown-item.component';
 import { DropdownComponent } from '../../ui/dropdown/dropdown.component';
 import { CountryMapComponent } from '../country-map/country-map.component';
@@ -12,6 +14,7 @@ import { CountryMapComponent } from '../country-map/country-map.component';
     CountryMapComponent,
     DropdownComponent,
     DropdownItemComponent,
+    TranslateDirective,
   ],
   templateUrl: './demographic-card.component.html',
 })

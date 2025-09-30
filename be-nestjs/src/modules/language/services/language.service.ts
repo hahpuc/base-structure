@@ -4,21 +4,25 @@ import CustomError from '@common/error/exceptions/custom-error.exception';
 import { BaseOption } from '@common/response/types/base.reponse.type';
 import { wrapPagination } from '@common/utils/object.util';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { Cache } from 'cache-manager';
+import { In } from 'typeorm';
 
 import { CreateLanguageDto } from '../dtos/language/create-language.dto';
 import { FilterLanguageDto } from '../dtos/language/filter-language.dto';
 import { UpdateLanguageDto } from '../dtos/language/update-language.dto';
 import { Language } from '../repository/entities/language.entity';
 import { LanguageRepository } from '../repository/repositories/language.repository';
+import { I18nCacheService } from './i18n-cache.service';
 import { TranslationService } from './translation.service';
 
 @Injectable()
 export class LanguageService {
   constructor(
     private readonly languageRepository: LanguageRepository,
+    @Inject(forwardRef(() => TranslationService))
     private readonly translationService: TranslationService,
+    private readonly i18nCacheService: I18nCacheService,
     private readonly logger: Logger,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
@@ -28,6 +32,22 @@ export class LanguageService {
     const [data, count] = await this.languageRepository.getList(params);
 
     return wrapPagination<Language>(data, count, params);
+  }
+
+  async getLanguagesByCode(codes: string[]): Promise<Language[]> {
+    if (!codes || codes.length === 0) {
+      return [];
+    }
+
+    const uniqueCodes = [...new Set(codes)];
+    const languages = await this.languageRepository.find({
+      where: {
+        code: In(uniqueCodes),
+        status: EStatus.active,
+      },
+    });
+
+    return languages;
   }
 
   async getOptions(): Promise<BaseOption[]> {
@@ -68,6 +88,8 @@ export class LanguageService {
     if (result) {
       await this.translationService.createDefaultTranslations(result.id);
     }
+
+    await this.i18nCacheService.manualRefresh();
   }
 
   async update(input: UpdateLanguageDto): Promise<void> {

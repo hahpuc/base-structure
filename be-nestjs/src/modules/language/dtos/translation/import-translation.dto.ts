@@ -4,6 +4,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  Matches,
   MaxLength,
 } from 'class-validator';
 
@@ -27,6 +28,16 @@ export class ImportTranslationDto {
   @IsString({ message: 'Language Name must be a string' })
   @MaxLength(100, { message: 'Language Name must not exceed 100 characters' })
   language_name: string;
+
+  @IsOptional()
+  @IsString({ message: 'Namespace Name must be a string' })
+  @MaxLength(100, { message: 'Namespace Name must not exceed 100 characters' })
+  @Matches(/^[a-z][a-z0-9]*(_[a-z0-9]+)*$/, {
+    message:
+      'Namespace Name must be in snake_case format (lowercase letters, numbers, and underscores only, cannot start/end with underscore, no consecutive underscores)',
+  })
+  @Transform(({ value }) => value?.toString().trim() || null)
+  namespace_name?: string;
 
   @IsNotEmpty({ message: 'Key is required' })
   @IsString({ message: 'Key must be a string' })

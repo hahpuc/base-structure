@@ -1,6 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { NgApexchartsModule, ApexAxisChartSeries, ApexChart, ApexXAxis, ApexPlotOptions, ApexDataLabels, ApexStroke, ApexLegend, ApexYAxis, ApexGrid, ApexFill, ApexTooltip } from 'ng-apexcharts';
+import {
+  NgApexchartsModule,
+  ApexAxisChartSeries,
+  ApexChart,
+  ApexXAxis,
+  ApexPlotOptions,
+  ApexDataLabels,
+  ApexStroke,
+  ApexLegend,
+  ApexYAxis,
+  ApexGrid,
+  ApexFill,
+  ApexTooltip,
+} from 'ng-apexcharts';
+
+import { TranslateDirective } from '@/app/shared/directives/translate.directive';
 
 import { DropdownItemComponent } from '../../ui/dropdown/dropdown-item/dropdown-item.component';
 import { DropdownComponent } from '../../ui/dropdown/dropdown.component';
@@ -13,8 +28,9 @@ import { DropdownComponent } from '../../ui/dropdown/dropdown.component';
     NgApexchartsModule,
     DropdownComponent,
     DropdownItemComponent,
+    TranslateDirective,
   ],
-  templateUrl: './monthly-sales-chart.component.html'
+  templateUrl: './monthly-sales-chart.component.html',
 })
 export class MonthlySalesChartComponent {
   public series: ApexAxisChartSeries = [
@@ -31,8 +47,18 @@ export class MonthlySalesChartComponent {
   };
   public xaxis: ApexXAxis = {
     categories: [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ],
     axisBorder: { show: false },
     axisTicks: { show: false },

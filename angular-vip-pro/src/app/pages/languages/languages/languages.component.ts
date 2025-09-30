@@ -87,7 +87,7 @@ export class LanguagesComponent extends AppBaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.setPageTitle('Languages');
+    this.setPageTitle(this.tNs('admin', 'MENU_LANGUAGE'));
     this.setHeaderButtons([
       {
         title: this.t('CREATE'),

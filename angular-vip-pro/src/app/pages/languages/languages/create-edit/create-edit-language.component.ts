@@ -38,7 +38,11 @@ export class CreateEditLanguageComponent extends AppBaseComponent implements OnI
   }
 
   ngOnInit(): void {
-    this.setPageTitle(this.id ? `${this.t('EDIT')} Language` : `${this.t('CREATE')} Language`);
+    this.setPageTitle(
+      this.id
+        ? `${this.t('EDIT')} ${this.tNs('admin', 'MENU_LANGUAGE')}`
+        : `${this.t('CREATE')} ${this.tNs('admin', 'MENU_LANGUAGE')}`
+    );
     this.setHeaderButtons([
       {
         title: this.t('CANCEL'),
@@ -134,10 +138,10 @@ export class CreateEditLanguageComponent extends AppBaseComponent implements OnI
       controls: [
         {
           name: 'name',
-          label: 'Name',
+          label: this.tNs('admin', 'NAME'),
           type: 'text',
           required: true,
-          placeholder: 'Enter name',
+          placeholder: this.t('ENTER') + ' ' + this.tNs('admin', 'NAME'),
           validators: [Validators.required, Validators.minLength(2), Validators.maxLength(100)],
           errorMessages: {
             required: this.tNs('validation', 'REQUIRED'),
@@ -151,7 +155,7 @@ export class CreateEditLanguageComponent extends AppBaseComponent implements OnI
           label: 'Code',
           type: 'text',
           required: true,
-          placeholder: 'Enter code',
+          placeholder: this.t('ENTER') + ' Code',
           validators: [Validators.required, Validators.minLength(2), Validators.maxLength(10)],
           errorMessages: {
             required: this.tNs('validation', 'REQUIRED'),
@@ -162,10 +166,10 @@ export class CreateEditLanguageComponent extends AppBaseComponent implements OnI
         },
         {
           name: 'native_name',
-          label: 'Native Name',
+          label: this.tNs('admin', 'NATIVE_NAME'),
           type: 'text',
           required: true,
-          placeholder: 'Enter native name',
+          placeholder: this.t('ENTER') + ' ' + this.tNs('admin', 'NATIVE_NAME'),
           validators: [Validators.required, Validators.minLength(2), Validators.maxLength(100)],
           errorMessages: {
             required: this.tNs('validation', 'REQUIRED'),
@@ -179,7 +183,7 @@ export class CreateEditLanguageComponent extends AppBaseComponent implements OnI
           label: 'Flag Code',
           type: 'text',
           required: true,
-          placeholder: 'Enter flag code (e.g., us, fr, de)',
+          placeholder: this.t('ENTER') + ' Flag Code (e.g., us, fr, de)',
           validators: [Validators.required, Validators.minLength(2), Validators.maxLength(10)],
           errorMessages: {
             required: this.tNs('validation', 'REQUIRED'),
@@ -214,7 +218,7 @@ export class CreateEditLanguageComponent extends AppBaseComponent implements OnI
 
         {
           name: 'status',
-          label: 'Status',
+          label: this.t('STATUS'),
           type: 'switch',
           required: true,
           defaultValue: true,

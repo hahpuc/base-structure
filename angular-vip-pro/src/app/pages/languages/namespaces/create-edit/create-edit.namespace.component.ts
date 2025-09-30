@@ -42,7 +42,11 @@ export class CreateEditNamespaceComponent extends AppBaseComponent implements On
   }
 
   ngOnInit(): void {
-    this.setPageTitle(this.id ? `${this.t('EDIT')} Namespace` : `${this.t('CREATE')} Namespace`);
+    this.setPageTitle(
+      this.id
+        ? `${this.t('EDIT')} ${this.tNs('admin', 'MENU_NAMESPACE')}`
+        : `${this.t('CREATE')} ${this.tNs('admin', 'MENU_NAMESPACE')}`
+    );
     this.setHeaderButtons([
       {
         title: this.t('CANCEL'),
@@ -131,10 +135,10 @@ export class CreateEditNamespaceComponent extends AppBaseComponent implements On
       controls: [
         {
           name: 'name',
-          label: 'Name',
+          label: this.tNs('admin', 'NAME'),
           type: 'text',
           required: true,
-          placeholder: 'Enter name',
+          placeholder: this.t('ENTER') + ' ' + this.tNs('admin', 'NAME'),
           validators: [Validators.required, Validators.minLength(2), Validators.maxLength(100)],
           errorMessages: {
             required: this.tNs('validation', 'REQUIRED'),
@@ -145,15 +149,15 @@ export class CreateEditNamespaceComponent extends AppBaseComponent implements On
         },
         {
           name: 'description',
-          label: 'Description',
+          label: this.tNs('admin', 'DESCRIPTION'),
           type: 'textarea',
           required: false,
-          placeholder: 'Enter description',
+          placeholder: this.t('ENTER') + ' ' + this.tNs('admin', 'DESCRIPTION'),
           span: 12,
         },
         {
           name: 'status',
-          label: 'Status',
+          label: this.t('STATUS'),
           type: 'switch',
           required: true,
           defaultValue: true,
