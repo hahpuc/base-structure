@@ -1,4 +1,4 @@
-import { BaseQuery, Dictionary, ListPaginate } from "@/types/base";
+import { Dictionary } from "@/types/base";
 
 export declare type TableColumnFilterType =
   | "text"
@@ -8,47 +8,26 @@ export declare type TableColumnFilterType =
 
 export type SelectOption = {
   label: string;
-  value: unknown;
+  value: string | number;
 };
 
 export type FilterValues = Dictionary;
-export type FilterOptions = { [key: string]: SelectOption[] };
-export type LoadingStates = { [key: string]: boolean };
 
-export type ActiveFilter = {
-  filter: TableFilter;
-  value: unknown;
-  displayValue: string;
-};
-
-// Use for paginated select options
-export type PaginatedSelectOptions = {
-  options: SelectOption[];
-  hasMore: boolean;
-  currentPage: number;
-  pageSize: number;
-  total: number;
-  loading: boolean;
-  searchText?: string;
-};
+// Simplified options type - either static array or async function
+export type FilterOptionsType =
+  | SelectOption[] // Static options
+  | (() => Promise<SelectOption[]>) // Load all options (for parent filters)
+  | ((parentValue: string | number) => Promise<SelectOption[]>); // Load options based on parent value (for child filters)
 
 export type TableFilter = {
   type: TableColumnFilterType;
   name: string;
   label: string;
-  options?:
-    | SelectOption[] // Static options array
-    | (() => Promise<SelectOption[]>) // getAll() API - no parameters
-    | ((input: BaseQuery) => ListPaginate<unknown>) // getByPaged() API - with query parameters
-    | ((parentValue: unknown) => Promise<SelectOption[]>); // Dynamic API with parent value parameter
-
-  // Configuration for select loading behavior
-  usePagination?: boolean; // If true, use paginated API; if false/undefined, use getAll() API
-  searchable?: boolean; // Whether this filter supports search
-  pageSize?: number; // Page size for pagination (default: 20)
-
+  options?: FilterOptionsType;
   note?: string;
+
+  // For child filters that depend on a parent filter
   parent?: {
-    filterName: string;
+    filterName: string; // The name of the parent filter
   };
 };

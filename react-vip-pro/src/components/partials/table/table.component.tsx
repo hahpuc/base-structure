@@ -1,23 +1,30 @@
-import type { GetProp, TablePaginationConfig } from 'antd';
-import { message, Table, TableProps } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router';
+import type { GetProp, TablePaginationConfig } from "antd";
+import { message, Table, TableProps } from "antd";
+import React, { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "react-router";
 
-import { ListPaginate } from '../../../types/base';
+import { ListPaginate } from "../../../types/base";
 
-import ActionColumn from './action-column';
-import { TableOption, TableQueryParams, TableRowData } from './models/table.model';
-import { TableFilter } from './table-filter.component';
-import { getNestedValue } from './utils/table-utils';
+import ActionColumn from "./action-column";
+import {
+  TableOption,
+  TableQueryParams,
+  TableRowData,
+} from "./models/table.model";
+import { TableFilter } from "./table-filter.component";
+import { getNestedValue } from "./utils/table-utils";
 
-type ColumnsType<T extends object> = GetProp<TableProps<T>, 'columns'>;
+type ColumnsType<T extends object> = GetProp<TableProps<T>, "columns">;
 
 interface AppTableProps<T extends TableRowData> {
   option: TableOption<T>;
   className?: string;
 }
 
-function AppTable<T extends TableRowData>({ option, className }: AppTableProps<T>) {
+function AppTable<T extends TableRowData>({
+  option,
+  className,
+}: AppTableProps<T>) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<T[]>([]);
@@ -27,20 +34,21 @@ function AppTable<T extends TableRowData>({ option, className }: AppTableProps<T
     total: 0,
     showSizeChanger: true,
     showQuickJumper: true,
-    showTotal: (total: number, range: number[]) => `${range[0]}-${range[1]} of ${total} items`,
-    pageSizeOptions: option.pageSizeOptions || ['10', '20', '50', '100'],
+    showTotal: (total: number, range: number[]) =>
+      `${range[0]}-${range[1]} of ${total} items`,
+    pageSizeOptions: option.pageSizeOptions || ["10", "20", "50", "100"],
   });
 
   // Parse URL params to query params - now handles all URL parameters dynamically
   const getQueryParamsFromUrl = useCallback((): TableQueryParams => {
     const params: TableQueryParams = {
-      page: parseInt(searchParams.get('page') || '1'),
-      limit: parseInt(searchParams.get('limit') || `${option.pageSize || 10}`),
+      page: parseInt(searchParams.get("page") || "1"),
+      limit: parseInt(searchParams.get("limit") || `${option.pageSize || 10}`),
     };
 
     // Add all other parameters from URL dynamically
     searchParams.forEach((value, key) => {
-      if (!['page', 'limit'].includes(key) && value) {
+      if (!["page", "limit"].includes(key) && value) {
         params[key] = value;
       }
     });
@@ -63,11 +71,11 @@ function AppTable<T extends TableRowData>({ option, className }: AppTableProps<T
       }
 
       // Remove empty/undefined values
-      Object.keys(updatedParams).forEach(key => {
+      Object.keys(updatedParams).forEach((key) => {
         if (
           updatedParams[key] === undefined ||
           updatedParams[key] === null ||
-          updatedParams[key] === ''
+          updatedParams[key] === ""
         ) {
           delete updatedParams[key];
         }
@@ -89,14 +97,14 @@ function AppTable<T extends TableRowData>({ option, className }: AppTableProps<T
 
   // Fetch data
   const fetchData = useCallback(async () => {
-    if (typeof option.data === 'function') {
+    if (typeof option.data === "function") {
       setLoading(true);
       try {
         const queryParams = getQueryParamsFromUrl();
         const response = (await option.data(queryParams)) as ListPaginate<T>;
 
         setData(response.data || []);
-        setPagination(prev => ({
+        setPagination((prev) => ({
           ...prev,
           current: response.page || 1,
           total: response.total_records || 0,
@@ -104,7 +112,7 @@ function AppTable<T extends TableRowData>({ option, className }: AppTableProps<T
         }));
       } catch (error) {
         // Handle error appropriately in production
-        const errorMessage = error || 'An error occurred';
+        const errorMessage = error || "An error occurred";
         message.error(String(errorMessage));
         setData([]);
       } finally {
@@ -135,7 +143,9 @@ function AppTable<T extends TableRowData>({ option, className }: AppTableProps<T
     if (sorter && !Array.isArray(sorter)) {
       const sorterObj = sorter as Record<string, unknown>;
       if (sorterObj.order) {
-        newParams.sorting = `${sorterObj.field} ${sorterObj.order === 'ascend' ? 'asc' : 'desc'}`;
+        newParams.sorting = `${sorterObj.field} ${
+          sorterObj.order === "ascend" ? "asc" : "desc"
+        }`;
       } else {
         newParams.sorting = undefined;
       }
@@ -157,7 +167,7 @@ function AppTable<T extends TableRowData>({ option, className }: AppTableProps<T
     const systemParams: Record<string, unknown> = {};
 
     // Preserve sorting if it exists
-    const sortValue = searchParams.get('sorting');
+    const sortValue = searchParams.get("sorting");
     if (sortValue) systemParams.sorting = sortValue;
 
     // Combine system params with new filter params and replace all
@@ -174,18 +184,20 @@ function AppTable<T extends TableRowData>({ option, className }: AppTableProps<T
   let actionColumn: ColumnsType<T>[number] | null = null;
   if (option.actions && option.actions.length > 0) {
     actionColumn = {
-      title: 'Actions',
-      key: 'actions',
-      dataIndex: 'actions',
+      title: "Actions",
+      key: "actions",
+      dataIndex: "actions",
       width: Math.max(100, option.actions.length * 48),
-      fixed: 'left',
-      align: 'center',
-      render: (_: unknown, record: T) => <ActionColumn actions={option.actions} record={record} />,
+      fixed: "left",
+      align: "center",
+      render: (_: unknown, record: T) => (
+        <ActionColumn actions={option.actions} record={record} />
+      ),
     };
   }
 
   // Convert columns to Ant Design format
-  let antdColumns: ColumnsType<T> = option.columns.map(col => {
+  let antdColumns: ColumnsType<T> = option.columns.map((col) => {
     const column: Record<string, unknown> = {
       title: col.title,
       dataIndex: col.name,
@@ -203,32 +215,46 @@ function AppTable<T extends TableRowData>({ option, className }: AppTableProps<T
         const fieldValue = getNestedValue(record, col.name);
 
         switch (col.type) {
-          case 'date':
-            return fieldValue ? new Date(fieldValue as string).toLocaleDateString() : '';
-          case 'datetime':
-            return fieldValue ? new Date(fieldValue as string).toLocaleString() : '';
-          case 'boolean':
-            return fieldValue ? 'Yes' : 'No';
-          case 'number':
-            return typeof fieldValue === 'number'
+          case "date":
+            return fieldValue
+              ? new Date(fieldValue as string).toLocaleDateString()
+              : "";
+          case "datetime":
+            return fieldValue
+              ? new Date(fieldValue as string).toLocaleString()
+              : "";
+          case "boolean":
+            return fieldValue ? "Yes" : "No";
+          case "number":
+            return typeof fieldValue === "number"
               ? fieldValue.toLocaleString()
-              : String(fieldValue || '');
-          case 'image':
-            return <img className="max-w-[150px]" src={fieldValue as string} alt="Thumbnail" />;
+              : String(fieldValue || "");
+          case "image":
+            return (
+              <img
+                className="max-w-[150px]"
+                src={fieldValue as string}
+                alt="Thumbnail"
+              />
+            );
           default:
-            return String(fieldValue || '');
+            return String(fieldValue || "");
         }
       },
     };
 
     // Handle sorting state from URL
     if (col.sortable) {
-      const sortingParam = searchParams.get('sorting');
+      const sortingParam = searchParams.get("sorting");
       if (sortingParam) {
-        const [sortField, sortOrder] = sortingParam.split(' ');
+        const [sortField, sortOrder] = sortingParam.split(" ");
         if (sortField === col.name) {
           column.sortOrder =
-            sortOrder === 'asc' ? 'ascend' : sortOrder === 'desc' ? 'descend' : null;
+            sortOrder === "asc"
+              ? "ascend"
+              : sortOrder === "desc"
+              ? "descend"
+              : null;
         }
       }
     }
@@ -246,17 +272,17 @@ function AppTable<T extends TableRowData>({ option, className }: AppTableProps<T
     loading: loading || option.loading,
     pagination: {
       ...pagination,
-      position: ['bottomRight'],
+      position: ["bottomRight"],
     },
     onChange: handleTableChange,
-    rowKey: 'id',
+    rowKey: "id",
     bordered: true,
-    scroll: { x: 'max-content', y: option.resizable ? 500 : undefined },
+    scroll: { x: "max-content", y: option.resizable ? 500 : undefined },
     showHeader: true,
-    size: 'middle',
+    size: "middle",
     rowSelection: option.selectable
       ? {
-          type: 'checkbox',
+          type: "checkbox",
           onChange: (_selectedRowKeys, _selectedRows) => {
             // Handle selection change - implement as needed
           },
@@ -264,7 +290,7 @@ function AppTable<T extends TableRowData>({ option, className }: AppTableProps<T
       : undefined,
     expandable: option.selectable
       ? {
-          expandedRowRender: record => (
+          expandedRowRender: (record) => (
             <div style={{ margin: 0 }}>
               <pre>{JSON.stringify(record, null, 2)}</pre>
             </div>

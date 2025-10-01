@@ -14,21 +14,13 @@ import {
   Space,
   Tag,
 } from "antd";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   FilterValues,
   SelectOption,
   TableFilter as TableFilterType,
 } from "./models/table-filter.model";
-
-type DynamicOptions = {
-  [filterName: string]: SelectOption[];
-};
-
-type LoadingStates = {
-  [filterName: string]: boolean;
-};
 
 const { Search } = Input;
 
@@ -48,136 +40,127 @@ export const TableFilter: React.FC<TableFilterProps> = ({
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [form] = Form.useForm();
   const [searchValue, setSearchValue] = useState("");
-  const [dynamicOptions, setDynamicOptions] = useState<DynamicOptions>({});
-  const [loadingStates, setLoadingStates] = useState<LoadingStates>({});
-  const [optionsInitialized, setOptionsInitialized] = useState(false);
 
-  // Load dynamic options for a filter
-  const loadDynamicOptions = useCallback(
-    async (filter: TableFilterType, parentValue?: unknown) => {
-      if (!filter.options || Array.isArray(filter.options)) {
-        return; // Skip static options
-      }
-
-      const filterKey = filter.parent
-        ? `${filter.name}_${parentValue}`
-        : filter.name;
-
-      setLoadingStates((prev: LoadingStates) => ({
-        ...prev,
-        [filterKey]: true,
-      }));
-
-      try {
-        let options: SelectOption[] = [];
-
-        if (typeof filter.options === "function") {
-          let result;
-          if (filter.parent && parentValue !== undefined) {
-            result = await (
-              filter.options as (
-                parentValue: unknown
-              ) => Promise<SelectOption[]>
-            )(parentValue);
-          } else {
-            result = await (filter.options as () => Promise<SelectOption[]>)();
-          }
-          options = Array.isArray(result) ? result : [];
-        }
-
-        setDynamicOptions((prev: DynamicOptions) => ({
-          ...prev,
-          [filterKey]: options,
-        }));
-      } catch (error) {
-        console.error(`Failed to load options for ${filter.name}:`, error);
-        setDynamicOptions((prev: DynamicOptions) => ({
-          ...prev,
-          [filterKey]: [],
-        }));
-      } finally {
-        setLoadingStates((prev: LoadingStates) => ({
-          ...prev,
-          [filterKey]: false,
-        }));
-      }
-    },
-    []
+  // Store options for each filter (keyed by filter name or filterName_parentValue for child filters)
+  const [filterOptions, setFilterOptions] = useState<
+    Record<string, SelectOption[]>
+  >({});
+  const [loadingFilters, setLoadingFilters] = useState<Record<string, boolean>>(
+    {}
   );
 
-  // Get current filter values function
-  const getCurrentFilterValues = useCallback((): FilterValues => {
+  // Get current filter values from URL
+  const getCurrentFilterValues = (): FilterValues => {
     const values: FilterValues = {};
-
-    // Add search filter
     const searchValue = searchParams.get("filter");
-    if (searchValue) {
-      values.filter = searchValue;
-    }
+    if (searchValue) values.filter = searchValue;
 
     filters.forEach((filter) => {
       const value = searchParams.get(filter.name);
       if (value) {
-        // For select filters, convert string back to proper type
+        // Convert to number if the filter has numeric options
         if (filter.type === "select" && Array.isArray(filter.options)) {
-          // Try to find matching option by value and use the original value type
           const option = filter.options.find(
             (opt) => String(opt.value) === value
           );
           values[filter.name] = option ? option.value : value;
         } else {
-          values[filter.name] = value;
+          // For dynamic options, try to parse as number if possible
+          const numValue = Number(value);
+          values[filter.name] = isNaN(numValue) ? value : numValue;
         }
       }
     });
     return values;
-  }, [searchParams, filters]);
+  };
 
-  // Initialize all parent filter options on component mount
-  useEffect(() => {
-    const initializeOptions = async () => {
-      // Load all parent filters (filters without dependencies)
-      const parentFilters = filters.filter(
-        (filter) =>
-          filter.options && !Array.isArray(filter.options) && !filter.parent
-      );
+  // Load options for a specific filter
+  const loadFilterOptions = async (
+    filter: TableFilterType,
+    parentValue?: string | number
+  ) => {
+    if (Array.isArray(filter.options)) return; // Static options, no need to load
 
-      for (const filter of parentFilters) {
-        await loadDynamicOptions(filter);
+    const filterKey = filter.parent
+      ? `${filter.name}_${parentValue}`
+      : filter.name;
+
+    setLoadingFilters((prev) => ({ ...prev, [filterKey]: true }));
+
+    try {
+      if (typeof filter.options === "function") {
+        const result =
+          filter.parent && parentValue !== undefined
+            ? await (
+                filter.options as (
+                  parentValue: string | number
+                ) => Promise<SelectOption[]>
+              )(parentValue)
+            : await (filter.options as () => Promise<SelectOption[]>)();
+
+        setFilterOptions((prev) => ({ ...prev, [filterKey]: result }));
       }
+    } catch (error) {
+      console.error(`Failed to load options for ${filter.name}:`, error);
+      setFilterOptions((prev) => ({ ...prev, [filterKey]: [] }));
+    } finally {
+      setLoadingFilters((prev) => ({ ...prev, [filterKey]: false }));
+    }
+  };
 
-      // Load child filters if we have values in URL
-      const currentValues = getCurrentFilterValues();
-      const childFilters = filters.filter(
-        (filter) =>
-          filter.options && !Array.isArray(filter.options) && filter.parent
-      );
-
-      for (const filter of childFilters) {
-        const parentValue = currentValues[filter.parent!.filterName];
+  // Initialize: Load all parent filters and child filters if URL has parent values
+  useEffect(() => {
+    const initFilters = async () => {
+      // Load parent filters
+      for (const filter of filters) {
         if (
-          parentValue !== undefined &&
-          parentValue !== null &&
-          parentValue !== ""
+          filter.options &&
+          !Array.isArray(filter.options) &&
+          !filter.parent
         ) {
-          await loadDynamicOptions(filter, parentValue);
+          await loadFilterOptions(filter);
         }
       }
 
-      setOptionsInitialized(true);
+      // Load child filters if parent values exist in URL
+      const currentValues = getCurrentFilterValues();
+      for (const filter of filters) {
+        if (filter.parent) {
+          const parentValue = currentValues[filter.parent.filterName];
+          if (
+            parentValue !== undefined &&
+            parentValue !== null &&
+            parentValue !== ""
+          ) {
+            // Ensure parentValue is string or number
+            const normalizedValue =
+              typeof parentValue === "string" || typeof parentValue === "number"
+                ? parentValue
+                : String(parentValue);
+            await loadFilterOptions(filter, normalizedValue);
+          }
+        }
+      }
     };
 
-    initializeOptions();
-  }, [filters, loadDynamicOptions, getCurrentFilterValues]);
+    initFilters();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
 
-  // Sync search values between main search and drawer search
+  // Sync URL values to form when drawer opens
+  useEffect(() => {
+    if (drawerVisible) {
+      const currentValues = getCurrentFilterValues();
+      form.setFieldsValue(currentValues);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [drawerVisible]);
+
+  // Sync search value
   useEffect(() => {
     const urlSearchValue = searchParams.get("filter") || "";
-
     setSearchValue(urlSearchValue);
-
-    form.setFieldValue("filter", urlSearchValue);
-  }, [searchParams, form]);
+  }, [searchParams]);
 
   const handleSearch = (value: string) => {
     setSearchValue(value);
@@ -185,19 +168,14 @@ export const TableFilter: React.FC<TableFilterProps> = ({
   };
 
   const handleFilterSubmit = (values: FilterValues) => {
-    // Remove empty values and include all filters (including search)
     const cleanedValues = Object.entries(values).reduce((acc, [key, value]) => {
       if (value !== undefined && value !== null && value !== "") {
         acc[key] = value;
-        // Also update search value state if it's the filter field
-        if (key === "filter") {
-          setSearchValue(String(value));
-        }
+        if (key === "filter") setSearchValue(String(value));
       }
       return acc;
     }, {} as Record<string, unknown>);
 
-    // Send all filter params including search to parent
     onFilterChange(cleanedValues);
     setDrawerVisible(false);
   };
@@ -210,67 +188,56 @@ export const TableFilter: React.FC<TableFilterProps> = ({
     setDrawerVisible(false);
   };
 
-  // Remove individual filter
   const handleRemoveFilter = (filterName: string) => {
+    const currentValues = getCurrentFilterValues();
+    const { [filterName]: _, ...remainingFilters } = currentValues;
+
+    // If removing a parent filter, also remove all dependent child filters
+    const childFiltersToRemove = filters.filter(
+      (f) => f.parent?.filterName === filterName
+    );
+
+    // Remove child filters from remainingFilters
+    childFiltersToRemove.forEach((childFilter) => {
+      delete remainingFilters[childFilter.name];
+      form.setFieldValue(childFilter.name, undefined);
+    });
+
     if (filterName === "filter") {
       setSearchValue("");
       onSearch("");
-      // Get current values and remove only the search filter
-      const currentValues = getCurrentFilterValues();
-
-      const { filter: _removed, ...remainingFilters } = currentValues;
-      onFilterChange(remainingFilters);
-      return;
     }
 
-    const currentValues = getCurrentFilterValues();
-
-    const { [filterName]: _removed, ...remainingFilters } = currentValues;
     onFilterChange(remainingFilters);
-
-    if (form.getFieldValue(filterName) !== undefined) {
-      form.setFieldValue(filterName, undefined);
-    }
+    form.setFieldValue(filterName, undefined);
   };
 
-  // Remove all filters
   const handleClearAllFilters = () => {
-    // Clear search filter and all other filters by passing empty object
     form.resetFields();
     setSearchValue("");
     onSearch("");
     onFilterChange({});
   };
 
-  // Get display value for filter
+  // Get display value for a filter
   const getFilterDisplayValue = (
     filter: TableFilterType,
     value: unknown
   ): string => {
     if (filter.type === "select") {
       if (Array.isArray(filter.options)) {
-        // Static options
         const option = filter.options.find(
           (opt) => String(opt.value) === String(value)
         );
         return option ? option.label : String(value);
       } else {
-        // Dynamic options - search in dynamicOptions state
+        // Dynamic options
         const currentValues = getCurrentFilterValues();
-        let filterKey = filter.name;
+        const filterKey = filter.parent
+          ? `${filter.name}_${currentValues[filter.parent.filterName]}`
+          : filter.name;
 
-        if (filter.parent) {
-          const parentValue = currentValues[filter.parent.filterName];
-          if (
-            parentValue !== undefined &&
-            parentValue !== null &&
-            parentValue !== ""
-          ) {
-            filterKey = `${filter.name}_${parentValue}`;
-          }
-        }
-
-        const options = dynamicOptions[filterKey] || [];
+        const options = filterOptions[filterKey] || [];
         const option = options.find(
           (opt) => String(opt.value) === String(value)
         );
@@ -295,7 +262,6 @@ export const TableFilter: React.FC<TableFilterProps> = ({
       displayValue: string;
     }> = [];
 
-    // Add search filter if present
     const searchValue = searchParams.get("filter");
     if (searchValue) {
       activeFilters.push({
@@ -306,7 +272,6 @@ export const TableFilter: React.FC<TableFilterProps> = ({
       });
     }
 
-    // Add other filters
     filters.forEach((filter) => {
       const value = currentValues[filter.name];
       if (value !== undefined && value !== null && value !== "") {
@@ -322,32 +287,23 @@ export const TableFilter: React.FC<TableFilterProps> = ({
     return activeFilters;
   };
 
-  // Get active filters count (excluding search)
   const getActiveFiltersCount = (): number => {
-    const currentValues = getCurrentFilterValues();
-
-    let count = filters.filter((filter) => {
-      const value = currentValues[filter.name];
-      return value !== undefined && value !== null && value !== "";
-    }).length;
-
-    if (
-      currentValues.filter !== undefined &&
-      currentValues.filter !== null &&
-      currentValues.filter !== ""
-    ) {
-      count += 1;
-    }
-    return count;
+    return getActiveFilters().length;
   };
 
   const renderFilterInput = (filter: TableFilterType) => {
     switch (filter.type) {
       case "text":
-        return <Input placeholder={`Enter ${filter.label}`} />;
+        return <Input placeholder={`Enter ${filter.label}`} allowClear />;
 
       case "number":
-        return <Input type="number" placeholder={`Enter ${filter.label}`} />;
+        return (
+          <Input
+            type="number"
+            placeholder={`Enter ${filter.label}`}
+            allowClear
+          />
+        );
 
       case "date":
         return <DatePicker style={{ width: "100%" }} />;
@@ -360,23 +316,15 @@ export const TableFilter: React.FC<TableFilterProps> = ({
               placeholder={`Select ${filter.label}`}
               allowClear
               showSearch
-              optionFilterProp="children"
-              filterOption={(input, option) =>
-                String(option?.children || "")
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-            >
-              {filter.options.map((option: SelectOption) => (
-                <Select.Option key={String(option.value)} value={option.value}>
-                  {option.label}
-                </Select.Option>
-              ))}
-            </Select>
+              optionFilterProp="label"
+              options={filter.options}
+            />
           );
         } else {
           // Dynamic options
-          const currentValues = form.getFieldsValue();
+          const formValues = form.getFieldsValue();
+          const currentValues = { ...getCurrentFilterValues(), ...formValues };
+
           let filterKey = filter.name;
           let options: SelectOption[] = [];
           let isLoading = false;
@@ -390,14 +338,14 @@ export const TableFilter: React.FC<TableFilterProps> = ({
               parentValue !== ""
             ) {
               filterKey = `${filter.name}_${parentValue}`;
-              options = dynamicOptions[filterKey] || [];
-              isLoading = loadingStates[filterKey] || false;
+              options = filterOptions[filterKey] || [];
+              isLoading = loadingFilters[filterKey] || false;
             } else {
-              isDisabled = true; // Disable child filter if parent is not selected
+              isDisabled = true;
             }
           } else {
-            options = dynamicOptions[filterKey] || [];
-            isLoading = loadingStates[filterKey] || false;
+            options = filterOptions[filterKey] || [];
+            isLoading = loadingFilters[filterKey] || false;
           }
 
           return (
@@ -411,60 +359,30 @@ export const TableFilter: React.FC<TableFilterProps> = ({
               showSearch
               loading={isLoading}
               disabled={isDisabled}
-              optionFilterProp="children"
-              filterOption={(input, option) =>
-                String(option?.children || "")
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
+              optionFilterProp="label"
+              options={options}
               onChange={(value) => {
-                // Update the form field value
                 form.setFieldValue(filter.name, value);
 
-                // If this is a parent filter, clear child filters and reload their options
+                // If this is a parent filter, clear and reload child filters
                 const childFilters = filters.filter(
                   (f) => f.parent?.filterName === filter.name
                 );
                 if (childFilters.length > 0) {
-                  // Clear child filter values
-                  const fieldsToUpdate = childFilters.reduce((acc, child) => {
-                    acc[child.name] = undefined;
-                    return acc;
-                  }, {} as Record<string, unknown>);
-
-                  form.setFieldsValue(fieldsToUpdate);
-
-                  // Load options for child filters with new parent value
-                  if (value !== undefined && value !== null && value !== "") {
-                    childFilters.forEach((childFilter) => {
-                      loadDynamicOptions(childFilter, value);
-                    });
-                  } else {
-                    // Clear dynamic options for child filters when parent is cleared
-                    childFilters.forEach((childFilter) => {
-                      const filterKey = `${childFilter.name}_${
-                        value || "empty"
-                      }`;
-                      setDynamicOptions((prev: DynamicOptions) => ({
-                        ...prev,
-                        [filterKey]: [],
-                      }));
-                    });
-                  }
+                  childFilters.forEach((childFilter) => {
+                    form.setFieldValue(childFilter.name, undefined);
+                    if (value !== undefined && value !== null && value !== "") {
+                      loadFilterOptions(childFilter, value);
+                    }
+                  });
                 }
               }}
-            >
-              {options.map((option: SelectOption) => (
-                <Select.Option key={String(option.value)} value={option.value}>
-                  {option.label}
-                </Select.Option>
-              ))}
-            </Select>
+            />
           );
         }
 
       default:
-        return <Input placeholder={`Enter ${filter.label}`} />;
+        return <Input placeholder={`Enter ${filter.label}`} allowClear />;
     }
   };
 
@@ -472,7 +390,6 @@ export const TableFilter: React.FC<TableFilterProps> = ({
     <div style={{ marginBottom: 16 }}>
       <div className="flex items-center flex-wrap gap-2">
         <Space>
-          {/* Table Search */}
           <Search
             placeholder="Search..."
             allowClear
@@ -481,23 +398,19 @@ export const TableFilter: React.FC<TableFilterProps> = ({
             onSearch={handleSearch}
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            width={300}
+            style={{ width: 300 }}
           />
-
-          {/* Filter Button with Badge */}
 
           <Badge size="default" count={getActiveFiltersCount()}>
             <Button
               type="default"
               variant="outlined"
               icon={<FilterOutlined />}
-              loading={!optionsInitialized}
               onClick={() => setDrawerVisible(true)}
-            ></Button>
+            />
           </Badge>
         </Space>
 
-        {/* Active Filter Tags */}
         {getActiveFilters().length > 0 && (
           <div>
             <Space wrap>
@@ -521,27 +434,19 @@ export const TableFilter: React.FC<TableFilterProps> = ({
                   icon={<DeleteOutlined />}
                   onClick={handleClearAllFilters}
                   className="px-2 py-1 h-auto text-[#ff4d4f] text-xs"
-                ></Button>
+                />
               )}
             </Space>
           </div>
         )}
       </div>
 
-      {/* Filter Drawer */}
       <Drawer
         title="Filter Options"
         placement="right"
         width={400}
         onClose={() => setDrawerVisible(false)}
         open={drawerVisible}
-        afterOpenChange={(open) => {
-          if (open && optionsInitialized) {
-            // Simply set form values when drawer opens
-            const currentValues = getCurrentFilterValues();
-            form.setFieldsValue(currentValues);
-          }
-        }}
         extra={
           <Space>
             <Button onClick={handleFilterReset}>Reset</Button>
@@ -551,14 +456,8 @@ export const TableFilter: React.FC<TableFilterProps> = ({
           </Space>
         }
       >
-        <Form
-          className="p-6"
-          form={form}
-          layout="vertical"
-          onFinish={handleFilterSubmit}
-        >
-          {/* Table Search */}
-          <Form.Item className="mb-4" name="filter" label="Search">
+        <Form form={form} layout="vertical" onFinish={handleFilterSubmit}>
+          <Form.Item name="filter" label="Search">
             <Input
               placeholder="Enter search text"
               allowClear
