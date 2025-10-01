@@ -1,9 +1,10 @@
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Navigate, Route, Routes } from "react-router";
-import AppLayout from "./layouts/app.layout";
-import { AuthLayout } from "./layouts/auth-page.layout";
+import { useAppDispatch, useAppSelector } from "./hooks/redux.hooks";
+import AppLayout from "./layouts/main/app.layout";
+import { AuthLayout } from "./layouts/auth/auth-page.layout";
 import { LoginInPage } from "./pages/auth/login-in.page";
+import { RegisterPage } from "./pages/auth/sign-up.page";
 import Blank from "./pages/blank.page";
 import ButtonAntDPage from "./pages/button-antd/button-antd.page";
 import BarChart from "./pages/charts/BarChart";
@@ -21,13 +22,12 @@ import Images from "./pages/ui-elements/Images";
 import Videos from "./pages/ui-elements/Videos";
 import UserProfiles from "./pages/user-profile.page";
 import AuthProvider from "./providers/auth.provider";
-import { AppDispatch, RootState } from "./store";
+import { RootState } from "./store";
 import { fetchPermissions } from "./store/slices/permissions.slice";
-import { RegisterPage } from "./pages/auth/sign-up.page";
 
 export default function App() {
-  const dispatch = useDispatch<AppDispatch>();
-  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const dispatch = useAppDispatch();
+  const { isAuthenticated } = useAppSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     if (isAuthenticated) {

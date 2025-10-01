@@ -1,10 +1,10 @@
 import { Button, Checkbox, Form, Input, message } from "antd";
 
-import { AppDispatch, RootState } from "@/store";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux.hooks";
+import { RootState } from "@/store";
 import { clearError, loginAsync } from "@/store/slices/auth.slice";
 import { LoginRequest } from "@/types/auth";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Link, Navigate, useLocation } from "react-router";
 
 interface LocationState {
@@ -14,9 +14,10 @@ interface LocationState {
 }
 
 export const LoginInPage: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
-  const { loading, error, isAuthenticated } = useSelector(
+
+  const dispatch = useAppDispatch();
+  const { loading, error, isAuthenticated } = useAppSelector(
     (state: RootState) => state.auth
   );
   const [rememberMe, setRememberMe] = useState(false);

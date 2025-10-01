@@ -1,8 +1,8 @@
 import React from "react";
-import GridShape from "../components/common/grid-shape";
+import GridShape from "../../components/common/grid-shape";
 import { Link, Outlet } from "react-router";
 
-import { ThemeToggleButton } from "../components/common/theme-toggle-button";
+import { ThemeToggleButton } from "../../components/common/theme-toggle-button";
 
 export const AuthLayout: React.FC = () => {
   return (
