@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router";
 import { useAppDispatch, useAppSelector } from "./hooks/redux.hooks";
-import AppLayout from "./layouts/main/app.layout";
 import { AuthLayout } from "./layouts/auth/auth-page.layout";
+import AppLayout from "./layouts/main/app.layout";
 import { LoginInPage } from "./pages/auth/login-in.page";
 import { RegisterPage } from "./pages/auth/sign-up.page";
 import Blank from "./pages/blank.page";
@@ -13,6 +13,8 @@ import Home from "./pages/dashboard/Home";
 import DialogAntPage from "./pages/dialog-antd/dialog-ant.page";
 import FormsAntDPage from "./pages/forms-antd/forms-antd.page";
 import FormElements from "./pages/forms/FormElements";
+import ProvincePage from "./pages/locations/province/province.page";
+import WardPage from "./pages/locations/ward/ward.page";
 import TableAntDPage from "./pages/table-antd/table-antd.page";
 import Alerts from "./pages/ui-elements/Alerts";
 import Avatars from "./pages/ui-elements/Avatars";
@@ -78,6 +80,10 @@ export default function App() {
         {/* Charts */}
         <Route path="line-chart" element={<LineChart />} />
         <Route path="bar-chart" element={<BarChart />} />
+
+        {/* Location */}
+        <Route path="province" element={<ProvincePage />} />
+        <Route path="ward" element={<WardPage />} />
 
         <Route path="" element={<Navigate to="/home" replace />} />
       </Route>
