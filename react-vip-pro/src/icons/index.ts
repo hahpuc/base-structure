@@ -54,11 +54,53 @@ import { ReactComponent as ChatIcon } from "./chat.svg?react";
 import { ReactComponent as MoreDotIcon } from "./moredot.svg?react";
 import { ReactComponent as AlertHexaIcon } from "./alert-hexa.svg?react";
 import { ReactComponent as ErrorHexaIcon } from "./info-hexa.svg?react";
+import { ReactComponent as EditorBold } from "./editor-bold.svg?react";
+import { ReactComponent as EditorItalic } from "./editor-italic.svg?react";
+import { ReactComponent as EditorStrike } from "./editor-strike.svg?react";
+import { ReactComponent as EditorUnderline } from "./editor-underline.svg?react";
+import { ReactComponent as EditorImage } from "./editor-image.svg?react";
+import { ReactComponent as EditorOrderedList } from "./editor-ordered-list.svg?react";
+import { ReactComponent as EditorUnorderedList } from "./editor-unordered-list.svg?react";
+import { ReactComponent as EditorOutdent } from "./editor-outdent.svg?react";
+import { ReactComponent as EditorIndent } from "./editor-indent.svg?react";
+import { ReactComponent as EditorUndo } from "./editor-undo.svg?react";
+import { ReactComponent as EditorRedo } from "./editor-redo.svg?react";
+import { ReactComponent as EditorCode } from "./editor-code.svg?react";
+import { ReactComponent as EditorBlockQuote } from "./editor-block-quote.svg?react";
+import { ReactComponent as EditorClearFormat } from "./editor-clear-format.svg?react";
+import { ReactComponent as EditorParagraph } from "./editor-paragraph.svg?react";
+import { ReactComponent as EditorHorizontalLine } from "./editor-horizontal-line.svg?react";
+import { ReactComponent as EditorPageBreak } from "./editor-page-break.svg?react";
+import { ReactComponent as EditorTable } from "./editor-table.svg?react";
+import { ReactComponent as EditorTableHeader } from "./editor-table-header.svg?react";
+import { ReactComponent as EditorTableMergeColumn } from "./editor-table-merge-column.svg?react";
+import { ReactComponent as EditorTableMergeRow } from "./editor-table-merge-row.svg?react";
 
 export {
   ErrorHexaIcon,
   AlertHexaIcon,
   MoreDotIcon,
+  EditorBold,
+  EditorItalic,
+  EditorStrike,
+  EditorUnderline,
+  EditorClearFormat,
+  EditorImage,
+  EditorOrderedList,
+  EditorUnorderedList,
+  EditorOutdent,
+  EditorIndent,
+  EditorUndo,
+  EditorRedo,
+  EditorCode,
+  EditorBlockQuote,
+  EditorParagraph,
+  EditorHorizontalLine,
+  EditorPageBreak,
+  EditorTable,
+  EditorTableHeader,
+  EditorTableMergeColumn,
+  EditorTableMergeRow,
   DownloadIcon,
   FileIcon,
   GridIcon,

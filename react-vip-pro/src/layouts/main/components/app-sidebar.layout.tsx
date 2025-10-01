@@ -86,6 +86,10 @@ const otherItems: MenuItem[] = [
         path: "/dialogs-antd",
         pro: true,
       },
+      {
+        name: "Editor",
+        path: "/editors",
+      },
     ],
   },
   {

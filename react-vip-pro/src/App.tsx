@@ -24,6 +24,7 @@ import UserProfiles from "./pages/user-profile.page";
 import AuthProvider from "./providers/auth.provider";
 import { RootState } from "./store";
 import { fetchPermissions } from "./store/slices/permissions.slice";
+import { TipTapPage } from "./pages/tiptap/tiptap.page";
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -61,6 +62,7 @@ export default function App() {
         {/* Forms */}
         <Route path="form-elements" element={<FormElements />} />
         <Route path="form-antd" element={<FormsAntDPage />} />
+        <Route path="editors" element={<TipTapPage />} />
 
         {/* Ant Design */}
         <Route path="table-antd" element={<TableAntDPage />} />

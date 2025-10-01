@@ -15,7 +15,6 @@ import { BrowserRouter } from "react-router";
 import "./index.css";
 import { setUpAxios } from "./services/client/axios-setup.ts";
 import { store } from "./store";
-import "./styles/antd-theme.less";
 
 const queryClient = new QueryClient({
   defaultOptions: {
