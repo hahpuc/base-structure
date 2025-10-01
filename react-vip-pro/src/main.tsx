@@ -7,11 +7,15 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "swiper/swiper-bundle.css";
 import App from "./App.tsx";
-import { AppWrapper } from "./components/common/PageMeta.tsx";
-import { ThemeProvider } from "./context/ThemeContext.tsx";
-import { ThemeAwareConfigProvider } from "./providers/ThemeAwareConfigProvider.tsx";
+import { ThemeProvider } from "./context/theme.context.tsx";
+import { ThemeAntDConfigProvider } from "./providers/theme-antd-config.provider.tsx";
 
+import axios from "axios";
+import { Provider } from "react-redux";
+import { BrowserRouter } from "react-router";
 import "./index.css";
+import { setUpAxios } from "./services/client/axios-setup.ts";
+import { store } from "./store";
 import "./styles/antd-theme.less";
 
 const queryClient = new QueryClient({
@@ -24,18 +28,22 @@ const queryClient = new QueryClient({
   },
 });
 
+setUpAxios(axios);
+
 createRoot(document.getElementById("root")!).render(
   <StyleProvider layer>
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <ThemeAwareConfigProvider>
-            <AppWrapper>
-              <App />
-            </AppWrapper>
-          </ThemeAwareConfigProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
+      <Provider store={store}>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider>
+            <ThemeAntDConfigProvider>
+              <BrowserRouter>
+                <App />
+              </BrowserRouter>
+            </ThemeAntDConfigProvider>
+          </ThemeProvider>
+        </QueryClientProvider>
+      </Provider>
     </StrictMode>
   </StyleProvider>
 );

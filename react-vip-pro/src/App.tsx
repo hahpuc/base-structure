@@ -1,76 +1,93 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router";
-import SignIn from "./pages/AuthPages/SignIn";
-import SignUp from "./pages/AuthPages/SignUp";
-import NotFound from "./pages/OtherPage/NotFound";
-import UserProfiles from "./pages/UserProfiles";
-import Videos from "./pages/UiElements/Videos";
-import Images from "./pages/UiElements/Images";
-import Alerts from "./pages/UiElements/Alerts";
-import Badges from "./pages/UiElements/Badges";
-import Avatars from "./pages/UiElements/Avatars";
-import Buttons from "./pages/UiElements/Buttons";
-import LineChart from "./pages/Charts/LineChart";
-import BarChart from "./pages/Charts/BarChart";
-import Calendar from "./pages/Calendar";
-import BasicTables from "./pages/Tables/BasicTables";
-import FormElements from "./pages/Forms/FormElements";
-import Blank from "./pages/Blank";
-import AppLayout from "./layout/AppLayout";
-import { ScrollToTop } from "./components/common/ScrollToTop";
-import Home from "./pages/Dashboard/Home";
-import FormsAntDPage from "./pages/forms-antd/forms-antd.page";
-import TableAntDPage from "./pages/table-antd/table-antd.page";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Navigate, Route, Routes } from "react-router";
+import AppLayout from "./layouts/app.layout";
+import { AuthLayout } from "./layouts/auth-page.layout";
+import { LoginInPage } from "./pages/auth/login-in.page";
+import Blank from "./pages/blank.page";
 import ButtonAntDPage from "./pages/button-antd/button-antd.page";
+import BarChart from "./pages/charts/BarChart";
+import LineChart from "./pages/charts/LineChart";
+import Home from "./pages/dashboard/Home";
 import DialogAntPage from "./pages/dialog-antd/dialog-ant.page";
+import FormsAntDPage from "./pages/forms-antd/forms-antd.page";
+import FormElements from "./pages/forms/FormElements";
+import TableAntDPage from "./pages/table-antd/table-antd.page";
+import Alerts from "./pages/ui-elements/Alerts";
+import Avatars from "./pages/ui-elements/Avatars";
+import Badges from "./pages/ui-elements/Badges";
+import Buttons from "./pages/ui-elements/Buttons";
+import Images from "./pages/ui-elements/Images";
+import Videos from "./pages/ui-elements/Videos";
+import UserProfiles from "./pages/user-profile.page";
+import AuthProvider from "./providers/auth.provider";
+import { AppDispatch, RootState } from "./store";
+import { fetchPermissions } from "./store/slices/permissions.slice";
+import { RegisterPage } from "./pages/auth/sign-up.page";
 
 export default function App() {
+  const dispatch = useDispatch<AppDispatch>();
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchPermissions());
+    }
+  }, [isAuthenticated, dispatch]);
+
   return (
-    <>
-      <Router>
-        <ScrollToTop />
-        <Routes>
-          {/* Dashboard Layout */}
-          <Route element={<AppLayout />}>
-            <Route index path="/" element={<Home />} />
+    <Routes>
+      {/* Auth Routes */}
+      <Route path="/auth/*" element={<AuthLayout />}>
+        <Route path="login" element={<LoginInPage />} />
+        <Route path="register" element={<RegisterPage />} />
+        <Route path="" element={<Navigate to="/auth/login" replace />} />
+      </Route>
+      {/* Protected Routes */}
+      <Route
+        path="/*"
+        element={
+          <AuthProvider>
+            <AppLayout />
+          </AuthProvider>
+        }
+      >
+        {/* <Route path="dashbard" element={<div>HOME PAGE</div>} /> */}
 
-            {/* Others Page */}
-            <Route path="/profile" element={<UserProfiles />} />
-            <Route path="/calendar" element={<Calendar />} />
-            <Route path="/blank" element={<Blank />} />
+        <Route path="home" element={<Home />} />
+        <Route path="profile" element={<UserProfiles />} />
+        <Route path="blank" element={<Blank />} />
 
-            {/* Forms */}
-            <Route path="/form-elements" element={<FormElements />} />
-            <Route path="/form-antd" element={<FormsAntDPage />} />
+        {/* Forms */}
+        <Route path="form-elements" element={<FormElements />} />
+        <Route path="form-antd" element={<FormsAntDPage />} />
 
-            {/* Tables */}
-            <Route path="/basic-tables" element={<BasicTables />} />
+        {/* Ant Design */}
+        <Route path="table-antd" element={<TableAntDPage />} />
+        <Route path="buttons-antd" element={<ButtonAntDPage />} />
+        <Route path="dialogs-antd" element={<DialogAntPage />} />
 
-            {/* Ant Design */}
-            <Route path="/table-antd" element={<TableAntDPage />} />
-            <Route path="/buttons-antd" element={<ButtonAntDPage />} />
-            <Route path="/dialogs-antd" element={<DialogAntPage />} />
+        {/* Ui Elements */}
+        <Route path="alerts" element={<Alerts />} />
+        <Route path="avatars" element={<Avatars />} />
+        <Route path="badge" element={<Badges />} />
+        <Route path="buttons" element={<Buttons />} />
+        <Route path="images" element={<Images />} />
+        <Route path="videos" element={<Videos />} />
 
-            {/* Ui Elements */}
-            <Route path="/alerts" element={<Alerts />} />
-            <Route path="/avatars" element={<Avatars />} />
-            <Route path="/badge" element={<Badges />} />
-            <Route path="/buttons" element={<Buttons />} />
-            <Route path="/images" element={<Images />} />
-            <Route path="/videos" element={<Videos />} />
+        {/* Charts */}
+        <Route path="line-chart" element={<LineChart />} />
+        <Route path="bar-chart" element={<BarChart />} />
 
-            {/* Charts */}
-            <Route path="/line-chart" element={<LineChart />} />
-            <Route path="/bar-chart" element={<BarChart />} />
-          </Route>
+        <Route path="" element={<Navigate to="/home" replace />} />
+      </Route>
+      {/* Fallback Route */}
+      {/* <Route path="*" element={<NotFound />} /> */}
 
-          {/* Auth Layout */}
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
-
-          {/* Fallback Route */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Router>
-    </>
+      {/* Redirect unauthenticated users to login */}
+      {!isAuthenticated && (
+        <Route path="*" element={<Navigate to="/auth/login" replace />} />
+      )}
+    </Routes>
   );
 }

@@ -1,4 +1,4 @@
-import ComponentCard from "../../common/ComponentCard";
+import ComponentCard from "../../common/card.component";
 import Label from "../Label";
 import Input from "../input/InputField";
 import { EnvelopeIcon } from "../../../icons";

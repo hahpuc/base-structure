@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ComponentCard from "../../common/ComponentCard";
+import ComponentCard from "../../common/card.component.tsx";
 import Label from "../Label";
 import Input from "../input/InputField";
 import Select from "../Select";
