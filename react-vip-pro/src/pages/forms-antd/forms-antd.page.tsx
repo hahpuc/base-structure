@@ -156,7 +156,7 @@ const FormsAntDPage: React.FC = () => {
   const { RangePicker } = DatePicker;
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-900 min-h-screen transition-colors duration-200">      
+    <div className="p-6 bg-white dark:bg-gray-900 min-h-screen transition-colors duration-200">
       <Form
         {...formItemLayout}
         form={form}
@@ -166,307 +166,310 @@ const FormsAntDPage: React.FC = () => {
           residence: ["zhejiang", "hangzhou", "xihu"],
           prefix: "86",
         }}
-        style={{ maxWidth: 600 }}
         scrollToFirstError
         className="bg-white dark:bg-white/[0.03] p-6 rounded-lg border dark:border-gray-700"
       >
-      <Form.Item
-        name="email"
-        label="E-mail"
-        rules={[
-          {
-            type: "email",
-            message: "The input is not valid E-mail!",
-          },
-          {
-            required: true,
-            message: "Please input your E-mail!",
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-
-      <Form.Item
-        name="password"
-        label="Password"
-        rules={[
-          {
-            required: true,
-            message: "Please input your password!",
-          },
-        ]}
-        hasFeedback
-      >
-        <Input.Password />
-      </Form.Item>
-
-      <Form.Item
-        name="confirm"
-        label="Confirm Password"
-        dependencies={["password"]}
-        hasFeedback
-        rules={[
-          {
-            required: true,
-            message: "Please confirm your password!",
-          },
-          ({ getFieldValue }) => ({
-            validator(_, value) {
-              if (!value || getFieldValue("password") === value) {
-                return Promise.resolve();
-              }
-              return Promise.reject(
-                new Error("The new password that you entered do not match!")
-              );
+        <Form.Item
+          name="email"
+          label="E-mail"
+          rules={[
+            {
+              type: "email",
+              message: "The input is not valid E-mail!",
             },
-          }),
-        ]}
-      >
-        <Input.Password />
-      </Form.Item>
-
-      <Form.Item
-        name="nickname"
-        label="Nickname"
-        tooltip="What do you want others to call you?"
-        rules={[
-          {
-            required: true,
-            message: "Please input your nickname!",
-            whitespace: true,
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-
-      <Form.Item
-        name="residence"
-        label="Habitual Residence"
-        rules={[
-          {
-            type: "array",
-            required: true,
-            message: "Please select your habitual residence!",
-          },
-        ]}
-      >
-        <Cascader options={residences} />
-      </Form.Item>
-
-      <Form.Item
-        name="phone"
-        label="Phone Number"
-        rules={[{ required: true, message: "Please input your phone number!" }]}
-      >
-        <Input addonBefore={prefixSelector} style={{ width: "100%" }} />
-      </Form.Item>
-
-      <Form.Item
-        name="donation"
-        label="Donation"
-        rules={[{ required: true, message: "Please input donation amount!" }]}
-      >
-        <InputNumber addonAfter={suffixSelector} style={{ width: "100%" }} />
-      </Form.Item>
-
-      <Form.Item
-        name="website"
-        label="Website"
-        rules={[{ required: true, message: "Please input website!" }]}
-      >
-        <AutoComplete
-          options={websiteOptions}
-          onChange={onWebsiteChange}
-          placeholder="website"
+            {
+              required: true,
+              message: "Please input your E-mail!",
+            },
+          ]}
         >
           <Input />
-        </AutoComplete>
-      </Form.Item>
+        </Form.Item>
 
-      <Form.Item
-        name="intro"
-        label="Intro"
-        rules={[{ required: true, message: "Please input Intro" }]}
-      >
-        <Input.TextArea showCount maxLength={100} />
-      </Form.Item>
+        <Form.Item
+          name="password"
+          label="Password"
+          rules={[
+            {
+              required: true,
+              message: "Please input your password!",
+            },
+          ]}
+          hasFeedback
+        >
+          <Input.Password />
+        </Form.Item>
 
-      <Form.Item
-        name="gender"
-        label="Gender"
-        rules={[{ required: true, message: "Please select gender!" }]}
-      >
-        <Select placeholder="select your gender">
-          <Option value="male">Male</Option>
-          <Option value="female">Female</Option>
-          <Option value="other">Other</Option>
-        </Select>
-      </Form.Item>
+        <Form.Item
+          name="confirm"
+          label="Confirm Password"
+          dependencies={["password"]}
+          hasFeedback
+          rules={[
+            {
+              required: true,
+              message: "Please confirm your password!",
+            },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue("password") === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(
+                  new Error("The new password that you entered do not match!")
+                );
+              },
+            }),
+          ]}
+        >
+          <Input.Password />
+        </Form.Item>
 
-      <Form.Item
-        label="Captcha"
-        extra="We must make sure that your are a human."
-      >
-        <Row gutter={8}>
-          <Col span={12}>
-            <Form.Item
-              name="captcha"
-              noStyle
-              rules={[
-                {
-                  required: true,
-                  message: "Please input the captcha you got!",
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Button>Get captcha</Button>
-          </Col>
-        </Row>
-      </Form.Item>
+        <Form.Item
+          name="nickname"
+          label="Nickname"
+          tooltip="What do you want others to call you?"
+          rules={[
+            {
+              required: true,
+              message: "Please input your nickname!",
+              whitespace: true,
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
 
-      <Form.Item
-        name="birthDate"
-        label="Birth Date"
-        rules={[{ required: true, message: "Please select your birth date!" }]}
-      >
-        <DatePicker style={{ width: "100%" }} />
-      </Form.Item>
+        <Form.Item
+          name="residence"
+          label="Habitual Residence"
+          rules={[
+            {
+              type: "array",
+              required: true,
+              message: "Please select your habitual residence!",
+            },
+          ]}
+        >
+          <Cascader options={residences} />
+        </Form.Item>
 
-      <Form.Item
-        name="dateRange"
-        label="Date Range"
-        rules={[{ required: true, message: "Please select date range!" }]}
-      >
-        <RangePicker style={{ width: "100%" }} />
-      </Form.Item>
+        <Form.Item
+          name="phone"
+          label="Phone Number"
+          rules={[
+            { required: true, message: "Please input your phone number!" },
+          ]}
+        >
+          <Input addonBefore={prefixSelector} style={{ width: "100%" }} />
+        </Form.Item>
 
-      <Form.Item
-        name="notifications"
-        label="Email Notifications"
-        valuePropName="checked"
-      >
-        <Switch />
-      </Form.Item>
+        <Form.Item
+          name="donation"
+          label="Donation"
+          rules={[{ required: true, message: "Please input donation amount!" }]}
+        >
+          <InputNumber addonAfter={suffixSelector} style={{ width: "100%" }} />
+        </Form.Item>
 
-      <Form.Item
-        name="marketingEmails"
-        label="Marketing Emails"
-        valuePropName="checked"
-      >
-        <Switch checkedChildren="ON" unCheckedChildren="OFF" />
-      </Form.Item>
+        <Form.Item
+          name="website"
+          label="Website"
+          rules={[{ required: true, message: "Please input website!" }]}
+        >
+          <AutoComplete
+            options={websiteOptions}
+            onChange={onWebsiteChange}
+            placeholder="website"
+          >
+            <Input />
+          </AutoComplete>
+        </Form.Item>
 
-      <Form.Item
-        name="accountType"
-        label="Account Type"
-        rules={[{ required: true, message: "Please select account type!" }]}
-      >
-        <Radio.Group>
-          <Radio value="personal">Personal</Radio>
-          <Radio value="business">Business</Radio>
-          <Radio value="organization">Organization</Radio>
-        </Radio.Group>
-      </Form.Item>
+        <Form.Item
+          name="intro"
+          label="Intro"
+          rules={[{ required: true, message: "Please input Intro" }]}
+        >
+          <Input.TextArea showCount maxLength={100} />
+        </Form.Item>
 
-      <Form.Item
-        name="interests"
-        label="Interests"
-        rules={[{ required: true, message: "Please select your interests!" }]}
-      >
-        <Checkbox.Group>
-          <Row>
-            <Col span={8}>
-              <Checkbox value="technology">Technology</Checkbox>
+        <Form.Item
+          name="gender"
+          label="Gender"
+          rules={[{ required: true, message: "Please select gender!" }]}
+        >
+          <Select placeholder="select your gender">
+            <Option value="male">Male</Option>
+            <Option value="female">Female</Option>
+            <Option value="other">Other</Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item
+          label="Captcha"
+          extra="We must make sure that your are a human."
+        >
+          <Row gutter={8}>
+            <Col span={12}>
+              <Form.Item
+                name="captcha"
+                noStyle
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input the captcha you got!",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
             </Col>
-            <Col span={8}>
-              <Checkbox value="sports">Sports</Checkbox>
-            </Col>
-            <Col span={8}>
-              <Checkbox value="music">Music</Checkbox>
-            </Col>
-            <Col span={8}>
-              <Checkbox value="travel">Travel</Checkbox>
-            </Col>
-            <Col span={8}>
-              <Checkbox value="food">Food</Checkbox>
-            </Col>
-            <Col span={8}>
-              <Checkbox value="art">Art</Checkbox>
+            <Col span={12}>
+              <Button>Get captcha</Button>
             </Col>
           </Row>
-        </Checkbox.Group>
-      </Form.Item>
+        </Form.Item>
 
-      <Form.Item
-        name="profilePicture"
-        label="Profile Picture"
-        valuePropName="fileList"
-        getValueFromEvent={(e) => {
-          if (Array.isArray(e)) {
-            return e;
-          }
-          return e?.fileList;
-        }}
-      >
-        <Upload {...uploadProps} listType="picture">
-          <Button icon={<UploadOutlined />}>Upload Picture</Button>
-        </Upload>
-      </Form.Item>
+        <Form.Item
+          name="birthDate"
+          label="Birth Date"
+          rules={[
+            { required: true, message: "Please select your birth date!" },
+          ]}
+        >
+          <DatePicker style={{ width: "100%" }} />
+        </Form.Item>
 
-      <Form.Item
-        name="documents"
-        label="Documents"
-        valuePropName="fileList"
-        getValueFromEvent={(e) => {
-          if (Array.isArray(e)) {
-            return e;
-          }
-          return e?.fileList;
-        }}
-      >
-        <Upload.Dragger {...uploadProps}>
-          <p className="ant-upload-drag-icon">
-            <InboxOutlined />
-          </p>
-          <p className="ant-upload-text">
-            Click or drag file to this area to upload
-          </p>
-          <p className="ant-upload-hint">
-            Support for a single or bulk upload. Strictly prohibited from
-            uploading company data or other banned files.
-          </p>
-        </Upload.Dragger>
-      </Form.Item>
+        <Form.Item
+          name="dateRange"
+          label="Date Range"
+          rules={[{ required: true, message: "Please select date range!" }]}
+        >
+          <RangePicker style={{ width: "100%" }} />
+        </Form.Item>
 
-      <Form.Item
-        name="agreement"
-        valuePropName="checked"
-        rules={[
-          {
-            validator: (_, value) =>
-              value
-                ? Promise.resolve()
-                : Promise.reject(new Error("Should accept agreement")),
-          },
-        ]}
-        {...tailFormItemLayout}
-      >
-        <Checkbox>
-          I have read the <a href="">agreement</a>
-        </Checkbox>
-      </Form.Item>
-      <Form.Item {...tailFormItemLayout}>
-        <Button type="primary" htmlType="submit">
-          Register
-        </Button>
-      </Form.Item>
-    </Form>
+        <Form.Item
+          name="notifications"
+          label="Email Notifications"
+          valuePropName="checked"
+        >
+          <Switch />
+        </Form.Item>
+
+        <Form.Item
+          name="marketingEmails"
+          label="Marketing Emails"
+          valuePropName="checked"
+        >
+          <Switch checkedChildren="ON" unCheckedChildren="OFF" />
+        </Form.Item>
+
+        <Form.Item
+          name="accountType"
+          label="Account Type"
+          rules={[{ required: true, message: "Please select account type!" }]}
+        >
+          <Radio.Group>
+            <Radio value="personal">Personal</Radio>
+            <Radio value="business">Business</Radio>
+            <Radio value="organization">Organization</Radio>
+          </Radio.Group>
+        </Form.Item>
+
+        <Form.Item
+          name="interests"
+          label="Interests"
+          rules={[{ required: true, message: "Please select your interests!" }]}
+        >
+          <Checkbox.Group>
+            <Row>
+              <Col span={8}>
+                <Checkbox value="technology">Technology</Checkbox>
+              </Col>
+              <Col span={8}>
+                <Checkbox value="sports">Sports</Checkbox>
+              </Col>
+              <Col span={8}>
+                <Checkbox value="music">Music</Checkbox>
+              </Col>
+              <Col span={8}>
+                <Checkbox value="travel">Travel</Checkbox>
+              </Col>
+              <Col span={8}>
+                <Checkbox value="food">Food</Checkbox>
+              </Col>
+              <Col span={8}>
+                <Checkbox value="art">Art</Checkbox>
+              </Col>
+            </Row>
+          </Checkbox.Group>
+        </Form.Item>
+
+        <Form.Item
+          name="profilePicture"
+          label="Profile Picture"
+          valuePropName="fileList"
+          getValueFromEvent={(e) => {
+            if (Array.isArray(e)) {
+              return e;
+            }
+            return e?.fileList;
+          }}
+        >
+          <Upload {...uploadProps} listType="picture">
+            <Button icon={<UploadOutlined />}>Upload Picture</Button>
+          </Upload>
+        </Form.Item>
+
+        <Form.Item
+          name="documents"
+          label="Documents"
+          valuePropName="fileList"
+          getValueFromEvent={(e) => {
+            if (Array.isArray(e)) {
+              return e;
+            }
+            return e?.fileList;
+          }}
+        >
+          <Upload.Dragger {...uploadProps}>
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined />
+            </p>
+            <p className="ant-upload-text">
+              Click or drag file to this area to upload
+            </p>
+            <p className="ant-upload-hint">
+              Support for a single or bulk upload. Strictly prohibited from
+              uploading company data or other banned files.
+            </p>
+          </Upload.Dragger>
+        </Form.Item>
+
+        <Form.Item
+          name="agreement"
+          valuePropName="checked"
+          rules={[
+            {
+              validator: (_, value) =>
+                value
+                  ? Promise.resolve()
+                  : Promise.reject(new Error("Should accept agreement")),
+            },
+          ]}
+          {...tailFormItemLayout}
+        >
+          <Checkbox>
+            I have read the <a href="">agreement</a>
+          </Checkbox>
+        </Form.Item>
+        <Form.Item {...tailFormItemLayout}>
+          <Button type="primary" htmlType="submit">
+            Register
+          </Button>
+        </Form.Item>
+      </Form>
     </div>
   );
 };

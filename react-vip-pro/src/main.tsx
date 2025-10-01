@@ -7,7 +7,6 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "swiper/swiper-bundle.css";
 import App from "./App.tsx";
-import { ThemeProvider } from "./context/theme.context.tsx";
 import { ThemeAntDConfigProvider } from "./providers/theme-antd-config.provider.tsx";
 
 import axios from "axios";
@@ -35,13 +34,11 @@ createRoot(document.getElementById("root")!).render(
     <StrictMode>
       <Provider store={store}>
         <QueryClientProvider client={queryClient}>
-          <ThemeProvider>
-            <ThemeAntDConfigProvider>
-              <BrowserRouter>
-                <App />
-              </BrowserRouter>
-            </ThemeAntDConfigProvider>
-          </ThemeProvider>
+          <ThemeAntDConfigProvider>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </ThemeAntDConfigProvider>
         </QueryClientProvider>
       </Provider>
     </StrictMode>

@@ -1,10 +1,10 @@
-import { SidebarProvider, useSidebar } from "../context/sidebar.context";
 import { Outlet } from "react-router";
+import { useSidebar } from "../hooks/ui.hooks";
 import AppHeader from "./app-header.layout";
 import Backdrop from "./backdrop.component";
 import AppSidebar from "./app-sidebar.layout";
 
-const LayoutContent: React.FC = () => {
+const AppLayout: React.FC = () => {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
 
   return (
@@ -24,14 +24,6 @@ const LayoutContent: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
-
-const AppLayout: React.FC = () => {
-  return (
-    <SidebarProvider>
-      <LayoutContent />
-    </SidebarProvider>
   );
 };
 

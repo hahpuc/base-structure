@@ -1,5 +1,5 @@
 import { theme as antTheme } from "antd";
-import { useTheme } from "./use-theme.hook";
+import { useTheme } from "./ui.hooks";
 
 export const useAntdThemeConfig = () => {
   const { theme } = useTheme();
