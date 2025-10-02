@@ -1,6 +1,6 @@
 import type { GetProp, TablePaginationConfig } from "antd";
 import { message, Table, TableProps } from "antd";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 
 import { ListPaginate } from "../../../types/base";
@@ -28,14 +28,21 @@ function AppTable<T extends TableRowData>({
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<T[]>([]);
+
+  // Memoize showTotal function to prevent recreation
+  const showTotal = useCallback(
+    (total: number, range: number[]) =>
+      `${range[0]}-${range[1]} of ${total} items`,
+    []
+  );
+
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: option.pageSize || 10,
     total: 0,
     showSizeChanger: true,
     showQuickJumper: true,
-    showTotal: (total: number, range: number[]) =>
-      `${range[0]}-${range[1]} of ${total} items`,
+    showTotal,
     pageSizeOptions: option.pageSizeOptions || ["10", "20", "50", "100"],
   });
 
@@ -129,175 +136,226 @@ function AppTable<T extends TableRowData>({
   }, [fetchData]);
 
   // Handle table change (pagination, sorting, filtering)
-  const handleTableChange = (
-    paginationConfig: TablePaginationConfig,
-    _filters: Record<string, unknown>,
-    sorter: unknown
-  ) => {
-    const newParams: Partial<TableQueryParams> = {
-      page: paginationConfig.current,
-      limit: paginationConfig.pageSize,
-    };
+  const handleTableChange = useCallback(
+    (
+      paginationConfig: TablePaginationConfig,
+      _filters: Record<string, unknown>,
+      sorter: unknown
+    ) => {
+      const newParams: Partial<TableQueryParams> = {
+        page: paginationConfig.current,
+        limit: paginationConfig.pageSize,
+      };
 
-    // Handle sorting
-    if (sorter && !Array.isArray(sorter)) {
-      const sorterObj = sorter as Record<string, unknown>;
-      if (sorterObj.order) {
-        newParams.sorting = `${sorterObj.field} ${
-          sorterObj.order === "ascend" ? "asc" : "desc"
-        }`;
-      } else {
-        newParams.sorting = undefined;
+      // Handle sorting
+      if (sorter && !Array.isArray(sorter)) {
+        const sorterObj = sorter as Record<string, unknown>;
+        if (sorterObj.order) {
+          newParams.sorting = `${sorterObj.field} ${
+            sorterObj.order === "ascend" ? "asc" : "desc"
+          }`;
+        } else {
+          newParams.sorting = undefined;
+        }
       }
-    }
 
-    updateUrlParams(newParams);
-  };
+      updateUrlParams(newParams);
+    },
+    [updateUrlParams]
+  );
 
   // Handle search
-  const handleSearch = (searchText: string) => {
-    updateUrlParams({
-      filter: searchText || undefined,
-      page: 1, // Reset to first page when searching
-    });
-  };
+  const handleSearch = useCallback(
+    (searchText: string) => {
+      updateUrlParams({
+        filter: searchText || undefined,
+        page: 1, // Reset to first page when searching
+      });
+    },
+    [updateUrlParams]
+  );
 
   // Handle filter change
-  const handleFilterChange = (filterParams: Record<string, unknown>) => {
-    const systemParams: Record<string, unknown> = {};
+  const handleFilterChange = useCallback(
+    (filterParams: Record<string, unknown>) => {
+      const systemParams: Record<string, unknown> = {};
 
-    // Preserve sorting if it exists
-    const sortValue = searchParams.get("sorting");
-    if (sortValue) systemParams.sorting = sortValue;
+      // Preserve sorting if it exists
+      const sortValue = searchParams.get("sorting");
+      if (sortValue) systemParams.sorting = sortValue;
 
-    // Combine system params with new filter params and replace all
-    updateUrlParams(
-      {
-        ...systemParams,
-        ...filterParams,
-      },
-      true
-    );
-  };
+      // Combine system params with new filter params and replace all
+      updateUrlParams(
+        {
+          ...systemParams,
+          ...filterParams,
+        },
+        true
+      );
+    },
+    [searchParams, updateUrlParams]
+  );
 
   // Action column (if actions are provided)
-  let actionColumn: ColumnsType<T>[number] | null = null;
-  if (option.actions && option.actions.length > 0) {
-    actionColumn = {
-      title: "Actions",
-      key: "actions",
-      dataIndex: "actions",
-      width: Math.max(100, option.actions.length * 48),
-      fixed: "left",
-      align: "center",
-      render: (_: unknown, record: T) => (
-        <ActionColumn actions={option.actions} record={record} />
-      ),
-    };
-  }
+  const actionColumn = useMemo<ColumnsType<T>[number] | null>(() => {
+    if (option.actions && option.actions.length > 0) {
+      return {
+        title: "Actions",
+        key: "actions",
+        dataIndex: "actions",
+        width: Math.max(100, option.actions.length * 48),
+        fixed: "left",
+        align: "center",
+        render: (_: unknown, record: T) => (
+          <ActionColumn actions={option.actions} record={record} />
+        ),
+      };
+    }
+    return null;
+  }, [option.actions]);
 
   // Convert columns to Ant Design format
-  let antdColumns: ColumnsType<T> = option.columns.map((col) => {
-    const column: Record<string, unknown> = {
-      title: col.title,
-      dataIndex: col.name,
-      key: col.name,
-      width: col.width,
-      fixed: col.fixed,
-      align: col.align,
-      sorter: col.sortable,
-      ellipsis: true,
-      render: (value: unknown, record: T): React.ReactNode => {
-        if (col.customRender) {
-          return col.customRender(record);
-        }
+  const antdColumns = useMemo<ColumnsType<T>>(() => {
+    const columns: ColumnsType<T> = option.columns.map((col) => {
+      const column: Record<string, unknown> = {
+        title: col.title,
+        dataIndex: col.name,
+        key: col.name,
+        width: col.width,
+        fixed: col.fixed,
+        align: col.align,
+        sorter: col.sortable,
+        ellipsis: true,
+        render: (value: unknown, record: T): React.ReactNode => {
+          if (col.customRender) {
+            return col.customRender(record);
+          }
 
-        const fieldValue = getNestedValue(record, col.name);
+          const fieldValue = getNestedValue(record, col.name);
 
-        switch (col.type) {
-          case "date":
-            return fieldValue
-              ? new Date(fieldValue as string).toLocaleDateString()
-              : "";
-          case "datetime":
-            return fieldValue
-              ? new Date(fieldValue as string).toLocaleString()
-              : "";
-          case "boolean":
-            return fieldValue ? "Yes" : "No";
-          case "number":
-            return typeof fieldValue === "number"
-              ? fieldValue.toLocaleString()
-              : String(fieldValue || "");
-          case "image":
-            return (
-              <img
-                className="max-w-[150px]"
-                src={fieldValue as string}
-                alt="Thumbnail"
-              />
-            );
-          default:
-            return String(fieldValue || "");
-        }
-      },
-    };
+          switch (col.type) {
+            case "date":
+              return fieldValue
+                ? new Date(fieldValue as string).toLocaleDateString()
+                : "";
+            case "datetime":
+              return fieldValue
+                ? new Date(fieldValue as string).toLocaleString()
+                : "";
+            case "boolean":
+              return fieldValue ? "Yes" : "No";
+            case "number":
+              return typeof fieldValue === "number"
+                ? fieldValue.toLocaleString()
+                : String(fieldValue || "");
+            case "image":
+              return (
+                <img
+                  className="max-w-[150px]"
+                  src={fieldValue as string}
+                  alt="Thumbnail"
+                />
+              );
+            default:
+              return String(fieldValue || "");
+          }
+        },
+      };
 
-    // Handle sorting state from URL
-    if (col.sortable) {
-      const sortingParam = searchParams.get("sorting");
-      if (sortingParam) {
-        const [sortField, sortOrder] = sortingParam.split(" ");
-        if (sortField === col.name) {
-          column.sortOrder =
-            sortOrder === "asc"
-              ? "ascend"
-              : sortOrder === "desc"
-              ? "descend"
-              : null;
+      // Handle sorting state from URL
+      if (col.sortable) {
+        const sortingParam = searchParams.get("sorting");
+        if (sortingParam) {
+          const [sortField, sortOrder] = sortingParam.split(" ");
+          if (sortField === col.name) {
+            column.sortOrder =
+              sortOrder === "asc"
+                ? "ascend"
+                : sortOrder === "desc"
+                ? "descend"
+                : null;
+          }
         }
       }
+      return column;
+    }) as ColumnsType<T>;
+
+    // Insert action column at the left if present
+    if (actionColumn) {
+      return [actionColumn, ...columns];
     }
-    return column;
-  }) as ColumnsType<T>;
+    return columns;
+  }, [option.columns, searchParams, actionColumn]);
 
-  // Insert action column at the left if present
-  if (actionColumn) {
-    antdColumns = [actionColumn, ...antdColumns];
-  }
+  // Memoize rowSelection
+  const rowSelection = useMemo(
+    () =>
+      option.selectable
+        ? {
+            type: "checkbox" as const,
+            onChange: (_selectedRowKeys: React.Key[], _selectedRows: T[]) => {
+              // Handle selection change - implement as needed
+            },
+          }
+        : undefined,
+    [option.selectable]
+  );
 
-  const tableProps: TableProps<T> = {
-    columns: antdColumns,
-    dataSource: data,
-    loading: loading || option.loading,
-    pagination: {
-      ...pagination,
-      position: ["bottomRight"],
-    },
-    onChange: handleTableChange,
-    rowKey: "id",
-    bordered: true,
-    scroll: { x: "max-content", y: option.resizable ? 500 : undefined },
-    showHeader: true,
-    size: "middle",
-    rowSelection: option.selectable
-      ? {
-          type: "checkbox",
-          onChange: (_selectedRowKeys, _selectedRows) => {
-            // Handle selection change - implement as needed
-          },
-        }
-      : undefined,
-    expandable: option.selectable
-      ? {
-          expandedRowRender: (record) => (
-            <div style={{ margin: 0 }}>
-              <pre>{JSON.stringify(record, null, 2)}</pre>
-            </div>
-          ),
-        }
-      : undefined,
-  };
+  // Memoize expandable configuration
+  const expandable = useMemo(
+    () =>
+      option.selectable
+        ? {
+            expandedRowRender: (record: T) => (
+              <div style={{ margin: 0 }}>
+                <pre>{JSON.stringify(record, null, 2)}</pre>
+              </div>
+            ),
+          }
+        : undefined,
+    [option.selectable]
+  );
+
+  // Memoize scroll configuration
+  const scroll = useMemo(
+    () => ({
+      x: "max-content" as const,
+      y: option.resizable ? 500 : undefined,
+    }),
+    [option.resizable]
+  );
+
+  // Memoize table props
+  const tableProps: TableProps<T> = useMemo(
+    () => ({
+      columns: antdColumns,
+      dataSource: data,
+      loading: loading || option.loading,
+      pagination: {
+        ...pagination,
+        position: ["bottomRight"] as const,
+      },
+      onChange: handleTableChange,
+      rowKey: "id",
+      bordered: true,
+      scroll,
+      showHeader: true,
+      size: "middle" as const,
+      rowSelection,
+      expandable,
+    }),
+    [
+      antdColumns,
+      data,
+      loading,
+      option.loading,
+      pagination,
+      handleTableChange,
+      scroll,
+      rowSelection,
+      expandable,
+    ]
+  );
 
   return (
     <div
