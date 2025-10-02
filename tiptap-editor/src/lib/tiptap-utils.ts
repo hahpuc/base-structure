@@ -312,7 +312,7 @@ export const handleImageUpload = async (
     onProgress?.({ progress })
   }
 
-  return "/images/tiptap-ui-placeholder-image.jpg"
+  return "https://images.timesnownews.com/thumb/msid-151741375,thumbsize-33830,width-1280,height-720,resizemode-75/151741375.jpg"
 }
 
 type ProtocolOptions = {
