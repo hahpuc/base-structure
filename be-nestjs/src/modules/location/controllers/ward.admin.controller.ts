@@ -50,6 +50,14 @@ export class WardAdminController {
     return await this.service.getList(param);
   }
 
+  @Get('/all')
+  @HttpCode(HttpStatus.OK)
+  async getListByProvince(
+    @Query('provinceId') provinceId: number,
+  ): Promise<Ward[]> {
+    return await this.service.getAll(+provinceId);
+  }
+
   @Put()
   @Auth({ permissions: 'ward_manage_update' })
   @HttpCode(HttpStatus.NO_CONTENT)
