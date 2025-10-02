@@ -1,0 +1,17 @@
+.form-note {
+    .text-muted {
+        color: #6b7280;
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+    }
+}
+
+.filter-tag-remove:hover {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.clear-search-btn:hover {
+    background-color: #f3f4f6;
+    color: #4b5563;
+}

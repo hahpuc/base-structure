@@ -13904,7 +13904,7 @@
     }
 
     @media (width >=80rem) {
-      max-width: var(--breakpoint-xl);
+      max-width: var(--breakpoint-2xl);
     }
 
     @media (width >=80rem) {

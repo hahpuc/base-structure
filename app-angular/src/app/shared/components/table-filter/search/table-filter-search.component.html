@@ -1,0 +1,36 @@
+<div class="flex items-center gap-3 w-full lg:w-auto">
+  <div class="kt-input flex-1 lg:flex-none lg:w-[250px] relative">
+    <i class="ki-filled ki-magnifier"> </i>
+    <input placeholder="Search..." type="text" [ngModel]="searchText" (ngModelChange)="onInputChange($event)" />
+    <!-- Clear search icon -->
+    @if (searchText && searchText.trim()) {
+      <button
+        (click)="onClear()"
+        class="clear-search-btn absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer p-1 bg-transparent border-none rounded-full flex items-center justify-center"
+        type="button"
+      >
+        <i class="ki-filled ki-cross text-sm"></i>
+      </button>
+    }
+  </div>
+
+  <!--Filter Drawer Toggle Button Icon-->
+  <a
+    class="kt-btn kt-btn-outline relative flex-shrink-0"
+    [class.kt-btn-primary]="hasActiveFilters"
+    [class.bg-blue-600]="hasActiveFilters"
+    [class.border-blue-600]="hasActiveFilters"
+    [class.text-white]="hasActiveFilters"
+    (click)="onToggleDrawer()"
+  >
+    <i class="ki-filled ki-filter"></i>
+    <!-- Active filter indicator -->
+    @if (hasActiveFilters) {
+      <span
+        class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full text-xs min-w-[16px] h-4 flex items-center justify-content-center px-1 font-medium"
+      >
+        {{ activeFiltersCount }}
+      </span>
+    }
+  </a>
+</div>

@@ -1,0 +1,229 @@
+// Dark Theme Configuration for Ant Design
+// Import base variables first
+@import './antd-theme.less';
+
+// =============================================================================
+// DARK THEME COLOR OVERRIDES
+// =============================================================================
+
+// Primary theme colors (slightly brighter for dark theme)
+@primary-color: @primary-5;
+@primary-color-hover: @primary-4;
+@primary-color-active: @primary-6;
+@primary-color-outline: fade(@primary-5, 35%);
+
+// Success theme colors
+@success-color: @success-5;
+@success-color-hover: @success-4;
+@success-color-active: @success-6;
+@success-color-outline: fade(@success-5, 35%);
+@success-color-deprecated-bg: fade(@success-5, 15%);
+@success-color-deprecated-border: fade(@success-5, 40%);
+
+// Warning theme colors  
+@warning-color: @warning-5;
+@warning-color-hover: @warning-4;
+@warning-color-active: @warning-6;
+@warning-color-outline: fade(@warning-5, 35%);
+@warning-color-deprecated-bg: fade(@warning-5, 15%);
+@warning-color-deprecated-border: fade(@warning-5, 40%);
+
+// Error theme colors
+@error-color: @error-5;
+@error-color-hover: @error-4;
+@error-color-active: @error-6;
+@error-color-outline: fade(@error-5, 35%);
+@error-color-deprecated-bg: fade(@error-5, 15%);
+@error-color-deprecated-border: fade(@error-5, 40%);
+
+// =============================================================================
+// DARK THEME BACKGROUND & TEXT COLORS
+// =============================================================================
+
+// Background colors
+@body-background: @gray-12;
+@component-background: @gray-11;
+@popover-background: @gray-10;
+@background-color-light: @gray-11;
+@background-color-base: @gray-10;
+
+// Text colors
+@text-color: fade(@gray-1, 85%);
+@text-color-secondary: fade(@gray-1, 65%);
+@text-color-inverse: @gray-10;
+@text-color-dark: fade(@gray-1, 85%);
+@heading-color: fade(@gray-1, 95%);
+@heading-color-dark: fade(@gray-1, 100%);
+
+// Disabled colors
+@disabled-color: fade(@gray-1, 25%);
+@disabled-bg: fade(@gray-1, 4%);
+@disabled-color-dark: fade(@gray-1, 35%);
+
+// =============================================================================
+// DARK THEME BORDER & OUTLINE COLORS
+// =============================================================================
+
+@border-color-base: @gray-9;
+@border-color-split: @gray-10;
+@border-color-inverse: @gray-1;
+
+// =============================================================================
+// DARK THEME BUTTON COLORS
+// =============================================================================
+
+// Default button
+@btn-default-color: @text-color;
+@btn-default-bg: @gray-11;
+@btn-default-border: @border-color-base;
+
+// Primary button  
+@btn-primary-color: @gray-1;
+@btn-primary-bg: @primary-color;
+
+// Danger button
+@btn-danger-color: @error-color;
+@btn-danger-bg: @gray-11;
+@btn-danger-border: @error-color;
+
+// Link button
+@btn-link-color: @primary-color;
+@btn-link-hover-color: @primary-color-hover;
+
+// Text button
+@btn-text-color: @text-color;
+@btn-text-hover-color: @text-color;
+
+// Ghost button
+@btn-ghost-color: @text-color;
+@btn-ghost-bg: transparent;
+@btn-ghost-border: @border-color-base;
+
+// =============================================================================
+// DARK THEME FORM COLORS
+// =============================================================================
+
+// Input colors
+@input-bg: @gray-11;
+@input-color: @text-color;
+@input-border-color: @border-color-base;
+@input-hover-border-color: @primary-color-hover;
+@input-focus-border-color: @primary-color;
+@input-placeholder-color: @disabled-color;
+@input-icon-color: @disabled-color;
+@input-icon-hover-color: fade(@gray-1, 85%);
+
+// Select colors
+@select-background: @input-bg;
+@select-border-color: @border-color-base;
+@select-item-selected-color: @primary-color;
+@select-item-selected-bg: fade(@primary-color, 15%);
+@select-dropdown-bg: @popover-background;
+@select-item-selected-option-color: @gray-1;
+@select-item-active-bg: @gray-10;
+
+// =============================================================================
+// DARK THEME MODAL COLORS
+// =============================================================================
+
+@modal-content-bg: @component-background;
+@modal-header-bg: @component-background;
+@modal-footer-bg: transparent;
+@modal-mask-bg: rgba(0, 0, 0, 0.65);
+@modal-close-color: @text-color-secondary;
+
+// =============================================================================
+// DARK THEME DRAWER COLORS
+// =============================================================================
+
+@drawer-bg: @component-background;
+@drawer-header-close-bg: transparent;
+
+// =============================================================================
+// DARK THEME MESSAGE COLORS
+// =============================================================================
+
+@message-notice-content-bg: @popover-background;
+
+// =============================================================================
+// DARK THEME NOTIFICATION COLORS
+// =============================================================================
+
+@notification-bg: @popover-background;
+
+// =============================================================================
+// DARK THEME ALERT COLORS
+// =============================================================================
+
+// Info Alert
+@alert-info-bg-color: fade(@primary-color, 15%);
+@alert-info-border-color: fade(@primary-color, 30%);
+@alert-info-icon-color: @primary-color;
+
+// Success Alert
+@alert-success-bg-color: fade(@success-color, 15%);
+@alert-success-border-color: fade(@success-color, 30%);
+@alert-success-icon-color: @success-color;
+
+// Warning Alert
+@alert-warning-bg-color: fade(@warning-color, 15%);
+@alert-warning-border-color: fade(@warning-color, 30%);
+@alert-warning-icon-color: @warning-color;
+
+// Error Alert
+@alert-error-bg-color: fade(@error-color, 15%);
+@alert-error-border-color: fade(@error-color, 30%);
+@alert-error-icon-color: @error-color;
+
+// =============================================================================
+// DARK THEME SHADOWS
+// =============================================================================
+
+@shadow-1-up: 0 -6px 16px -8px rgba(0, 0, 0, 0.32), 0 -9px 28px 0 rgba(0, 0, 0, 0.20), 0 -12px 48px 16px rgba(0, 0, 0, 0.12);
+@shadow-1-down: 0 6px 16px -8px rgba(0, 0, 0, 0.32), 0 9px 28px 0 rgba(0, 0, 0, 0.20), 0 12px 48px 16px rgba(0, 0, 0, 0.12);
+@shadow-1-left: -6px 0 16px -8px rgba(0, 0, 0, 0.32), -9px 0 28px 0 rgba(0, 0, 0, 0.20), -12px 0 48px 16px rgba(0, 0, 0, 0.12);
+@shadow-1-right: 6px 0 16px -8px rgba(0, 0, 0, 0.32), 9px 0 28px 0 rgba(0, 0, 0, 0.20), 12px 0 48px 16px rgba(0, 0, 0, 0.12);
+
+@shadow-2: 0 3px 6px -4px rgba(0, 0, 0, 0.48), 0 6px 16px 0 rgba(0, 0, 0, 0.32), 0 9px 28px 8px rgba(0, 0, 0, 0.20);
+
+@box-shadow-base: @shadow-2;
+@box-shadow-popover-arrow: 2px 2px 5px rgba(0, 0, 0, 0.15);
+@box-shadow-card: 0 1px 2px -2px rgba(0, 0, 0, 0.64), 0 3px 6px 0 rgba(0, 0, 0, 0.48), 0 5px 12px 4px rgba(0, 0, 0, 0.36);
+
+// =============================================================================
+// DARK THEME SPECIFIC OVERRIDES
+// =============================================================================
+
+// Additional dark theme specific variables
+@layout-body-background: @body-background;
+@layout-header-background: @gray-10;
+@layout-footer-background: @layout-header-background;
+@layout-sider-background: @layout-header-background;
+@layout-trigger-background: @primary-color;
+@layout-trigger-color: @gray-1;
+
+// Menu dark theme
+@menu-dark-color: fade(@gray-1, 65%);
+@menu-dark-bg: @gray-11;
+@menu-dark-arrow-color: @menu-dark-color;
+@menu-dark-submenu-bg: @gray-10;
+@menu-dark-highlight-color: @primary-color;
+@menu-dark-item-active-bg: @primary-color;
+@menu-dark-selected-item-icon-color: @gray-1;
+@menu-dark-selected-item-text-color: @gray-1;
+@menu-dark-item-hover-bg: fade(@primary-color, 15%);
+
+// Table dark theme
+@table-header-bg: @gray-10;
+@table-header-color: @heading-color;
+@table-header-sort-bg: @gray-9;
+@table-body-sort-bg: fade(@gray-1, 1%);
+@table-row-hover-bg: fade(@primary-color, 8%);
+@table-selected-row-color: inherit;
+@table-selected-row-bg: fade(@primary-color, 10%);
+@table-body-selected-sort-bg: @table-selected-row-bg;
+@table-selected-row-hover-bg: fade(@primary-color, 15%);
+@table-expanded-row-bg: @gray-10;
+@table-filter-btns-bg: inherit;
+@table-filter-dropdown-bg: @popover-background;
+@table-expand-icon-bg: @component-background;

@@ -1,0 +1,93 @@
+.progress-bar-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+}
+
+.progress-bar-container.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.progress-bar {
+    height: 100%;
+    background-size: 200% 100%;
+    width: 0%;
+    animation: none;
+    transition: width 0.2s ease-out;
+}
+
+.progress-bar-container.active .progress-bar {
+    animation: loading 2s ease-in-out infinite,
+        shimmer 2s ease-in-out infinite;
+    width: 100%;
+}
+
+/* Theme colors */
+.theme-primary {
+    background: linear-gradient(90deg, #1890ff, #40a9ff, #69c0ff);
+}
+
+.theme-success {
+    background: linear-gradient(90deg, #52c41a, #73d13d, #95de64);
+}
+
+.theme-warning {
+    background: linear-gradient(90deg, #faad14, #ffc53d, #ffd666);
+}
+
+.theme-danger {
+    background: linear-gradient(90deg, #ff4d4f, #ff7875, #ffa39e);
+}
+
+.theme-info {
+    background: linear-gradient(90deg, #13c2c2, #36cfc9, #5cdbd3);
+}
+
+@keyframes loading {
+    0% {
+        width: 0%;
+        transform: translateX(-100%);
+    }
+
+    50% {
+        width: 100%;
+        transform: translateX(0%);
+    }
+
+    100% {
+        width: 100%;
+        transform: translateX(100%);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .progress-bar-container {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Responsive height adjustments */
+@media (max-width: 768px) {
+    .progress-bar-container {
+        height: 2px;
+    }
+}

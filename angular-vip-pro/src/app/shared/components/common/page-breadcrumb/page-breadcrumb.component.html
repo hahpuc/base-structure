@@ -1,0 +1,52 @@
+<!-- Desktop Layout -->
+<div class="hidden lg:flex items-center justify-between gap-3 mb-6">
+  <h2 class="text-xl font-semibold text-gray-800 dark:text-white/90">{{ title() }}</h2>
+
+  <!-- Desktop Action Buttons -->
+  <div class="flex items-center flex-wrap gap-2">
+    @for (action of actions(); track $index) {
+      @if (isButtonVisible(action)) {
+        <button
+          type="button"
+          class="inline-flex items-center justify-center gap-2 rounded-lg transition px-4 py-2"
+          [ngClass]="getButtonConfig(action).class"
+          [disabled]="isButtonDisabled(action)"
+          (click)="onButtonClick(action)"
+        >
+          <span class="flex items-center" [innerHTML]="getButtonConfig(action).icon | safeHtml"></span>
+          {{ getButtonConfig(action).title }}
+        </button>
+      }
+    }
+  </div>
+</div>
+
+<!-- Mobile Layout -->
+<div class="lg:hidden">
+  <div class="mb-4">
+    <h2 class="text-xl font-semibold text-gray-800 dark:text-white/90">{{ title() }}</h2>
+  </div>
+
+  @if (actions().length > 0) {
+    <div
+      class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4 z-50"
+    >
+      <div class="flex items-center justify-center gap-2 overflow-x-auto">
+        @for (action of actions(); track $index) {
+          @if (isButtonVisible(action)) {
+            <button
+              type="button"
+              class="inline-flex items-center justify-center gap-2 rounded-lg transition px-4 py-2"
+              [ngClass]="getButtonConfig(action).class"
+              [disabled]="isButtonDisabled(action)"
+              (click)="onButtonClick(action)"
+            >
+              <span class="flex items-center" [innerHTML]="getButtonConfig(action).icon | safeHtml"></span>
+              <!-- {{ getButtonConfig(action).title }} -->
+            </button>
+          }
+        }
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,32 @@
+/* Custom Menu Active State Override */
+.kt-menu-item.active {
+    .kt-menu-link {
+        background-color: oklch(27.4% .006 286.033) !important;
+
+        /* Primary color with opacity */
+        border-radius: 0.375rem !important;
+    }
+
+    .kt-menu-title {
+        color: white !important;
+        /* Primary color */
+        font-weight: 600 !important;
+    }
+
+    .kt-menu-icon {
+        color: white !important;
+        /* Primary color */
+    }
+}
+
+.kt-dropdown-menu-sub {
+    a {
+        color: white !important;
+
+        &:hover {
+            background-color: oklch(27.4% .006 286.033) !important;
+        }
+
+        font-weight: 600 !important;
+    }
+}

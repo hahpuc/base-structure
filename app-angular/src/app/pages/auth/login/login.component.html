@@ -1,0 +1,71 @@
+<div class="flex items-center justify-center grow bg-center bg-no-repeat page-bg min-h-screen w-full">
+  <div class="kt-card max-w-[370px] w-full px-5 py-10">
+    <div class="text-center mb-6">
+      <h1 class="font-medium text-mono leading-none mb-2.5 text-2xl">Login</h1>
+      <div class="flex items-center justify-center font-medium">
+        <span class="text-sm text-secondary-foreground me-1.5"> Enter your credentials to gain access. </span>
+      </div>
+    </div>
+    <form
+      nz-form
+      [formGroup]="validateForm"
+      autocomplete="off"
+      nzLayout="vertical"
+      class="login-form"
+      (ngSubmit)="login()"
+    >
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="userName">Username</nz-form-label>
+        <nz-form-control [nzErrorTip]="!validateForm.value.username ? nzErrorRequire : ''">
+          <nz-input-group [nzPrefix]="prefixUser">
+            <input type="text" nz-input formControlName="username" placeholder="Username" autocomplete="off" required />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item class="relative">
+        <nz-form-label nzRequired nzFor="password">Password</nz-form-label>
+        <nz-form-control [nzErrorTip]="!validateForm.value.password ? nzErrorRequire : ''">
+          <nz-input-group [nzPrefix]="prefixLock" [nzSuffix]="suffixVisible">
+            <input
+              [type]="isVisiblePassword ? 'text' : 'password'"
+              nz-input
+              formControlName="password"
+              placeholder="Password"
+              name="password"
+              required
+            />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-control>
+          <div class="flex items-center justify-between">
+            <label
+              class="text-[13px] text-muted"
+              nz-checkbox
+              [(ngModel)]="rememberMe"
+              [ngModelOptions]="{ standalone: true }"
+            >
+              Remember login information.
+            </label>
+            <button nz-button class="login-form-button" [nzType]="'primary'">Login</button>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+    <ng-template #prefixUser><i class="ki-filled ki-user"></i></ng-template>
+    <ng-template #prefixLock><i class="ki-filled ki-lock"></i></ng-template>
+    <ng-template #suffixVisible>
+      <i
+        tabindex="0"
+        nz-icon
+        [nzType]="isVisiblePassword ? 'eye-invisible' : 'eye'"
+        (click)="isVisiblePassword = !isVisiblePassword"
+      ></i>
+    </ng-template>
+    <div>
+      <a [routerLink]="['/forgot-password']">Forgot password?</a>
+    </div>
+  </div>
+</div>

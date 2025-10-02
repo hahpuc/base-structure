@@ -1,0 +1,13 @@
+import { NgModule } from '@angular/core';
+import { NzResultModule } from 'ng-zorro-antd/result';
+
+import { SharedModule } from '@shared/shared.module';
+
+import { ErrorRoutingModule } from './error-routing.module';
+import { ErrorComponent } from './error.component';
+
+@NgModule({
+  declarations: [ErrorComponent],
+  imports: [SharedModule, ErrorRoutingModule, NzResultModule],
+})
+export class ErrorModule {}

@@ -1,0 +1,191 @@
+// Light Theme Configuration for Ant Design
+// Import base variables first
+@import './antd-theme.less';
+
+// =============================================================================
+// LIGHT THEME COLOR OVERRIDES
+// =============================================================================
+
+// Primary theme colors
+@primary-color: @primary-6;
+@primary-color-hover: @primary-5;
+@primary-color-active: @primary-7;
+@primary-color-outline: fade(@primary-6, 20%);
+
+// Success theme colors
+@success-color: @success-6;
+@success-color-hover: @success-5;
+@success-color-active: @success-7;
+@success-color-outline: fade(@success-6, 20%);
+@success-color-deprecated-bg: fade(@success-6, 10%);
+@success-color-deprecated-border: fade(@success-6, 30%);
+
+// Warning theme colors  
+@warning-color: @warning-6;
+@warning-color-hover: @warning-5;
+@warning-color-active: @warning-7;
+@warning-color-outline: fade(@warning-6, 20%);
+@warning-color-deprecated-bg: fade(@warning-6, 10%);
+@warning-color-deprecated-border: fade(@warning-6, 30%);
+
+// Error theme colors
+@error-color: @error-6;
+@error-color-hover: @error-5;
+@error-color-active: @error-7;
+@error-color-outline: fade(@error-6, 20%);
+@error-color-deprecated-bg: fade(@error-6, 10%);
+@error-color-deprecated-border: fade(@error-6, 30%);
+
+// =============================================================================
+// LIGHT THEME BACKGROUND & TEXT COLORS
+// =============================================================================
+
+// Background colors
+@body-background: @gray-1;
+@component-background: @gray-1;
+@popover-background: @gray-1;
+@background-color-light: @gray-2;
+@background-color-base: @gray-3;
+
+// Text colors
+@text-color: @gray-9;
+@text-color-secondary: @gray-7;
+@text-color-inverse: @gray-1;
+@text-color-dark: fade(@gray-1, 85%);
+@heading-color: @gray-10;
+@heading-color-dark: fade(@gray-1, 100%);
+
+// Disabled colors
+@disabled-color: @gray-5;
+@disabled-bg: @gray-3;
+@disabled-color-dark: fade(@gray-1, 35%);
+
+// =============================================================================
+// LIGHT THEME BORDER & OUTLINE COLORS
+// =============================================================================
+
+@border-color-base: @gray-5;
+@border-color-split: @gray-4;
+@border-color-inverse: @gray-1;
+
+// =============================================================================
+// LIGHT THEME BUTTON COLORS
+// =============================================================================
+
+// Default button
+@btn-default-color: @text-color;
+@btn-default-bg: @gray-1;
+@btn-default-border: @border-color-base;
+
+// Primary button  
+@btn-primary-color: @gray-1;
+@btn-primary-bg: @primary-color;
+
+// Danger button
+@btn-danger-color: @error-color;
+@btn-danger-bg: @gray-1;
+@btn-danger-border: @error-color;
+
+// Link button
+@btn-link-color: @primary-color;
+@btn-link-hover-color: @primary-color-hover;
+
+// Text button
+@btn-text-color: @text-color;
+@btn-text-hover-color: @text-color;
+
+// Ghost button
+@btn-ghost-color: @component-background;
+@btn-ghost-bg: transparent;
+@btn-ghost-border: @component-background;
+
+// =============================================================================
+// LIGHT THEME FORM COLORS
+// =============================================================================
+
+// Input colors
+@input-bg: @gray-1;
+@input-color: @text-color;
+@input-border-color: @border-color-base;
+@input-hover-border-color: @primary-color-hover;
+@input-focus-border-color: @primary-color;
+@input-placeholder-color: @disabled-color;
+@input-icon-color: @disabled-color;
+@input-icon-hover-color: fade(@gray-10, 85%);
+
+// Select colors
+@select-background: @input-bg;
+@select-border-color: @border-color-base;
+@select-item-selected-color: @primary-color;
+@select-item-selected-bg: @primary-1;
+@select-dropdown-bg: @component-background;
+@select-item-selected-option-color: @gray-1;
+@select-item-active-bg: @gray-2;
+
+// =============================================================================
+// LIGHT THEME MODAL COLORS
+// =============================================================================
+
+@modal-content-bg: @component-background;
+@modal-header-bg: @component-background;
+@modal-footer-bg: transparent;
+@modal-mask-bg: rgba(0, 0, 0, 0.45);
+@modal-close-color: @text-color-secondary;
+
+// =============================================================================
+// LIGHT THEME DRAWER COLORS
+// =============================================================================
+
+@drawer-bg: @component-background;
+@drawer-header-close-bg: transparent;
+
+// =============================================================================
+// LIGHT THEME MESSAGE COLORS
+// =============================================================================
+
+@message-notice-content-bg: @component-background;
+
+// =============================================================================
+// LIGHT THEME NOTIFICATION COLORS
+// =============================================================================
+
+@notification-bg: @component-background;
+
+// =============================================================================
+// LIGHT THEME ALERT COLORS
+// =============================================================================
+
+// Info Alert
+@alert-info-bg-color: @primary-1;
+@alert-info-border-color: @primary-3;
+@alert-info-icon-color: @primary-color;
+
+// Success Alert
+@alert-success-bg-color: @success-1;
+@alert-success-border-color: @success-3;
+@alert-success-icon-color: @success-color;
+
+// Warning Alert
+@alert-warning-bg-color: @warning-1;
+@alert-warning-border-color: @warning-3;
+@alert-warning-icon-color: @warning-color;
+
+// Error Alert
+@alert-error-bg-color: @error-1;
+@alert-error-border-color: @error-3;
+@alert-error-icon-color: @error-color;
+
+// =============================================================================
+// LIGHT THEME SHADOWS
+// =============================================================================
+
+@shadow-1-up: 0 -6px 16px -8px rgba(0, 0, 0, 0.08), 0 -9px 28px 0 rgba(0, 0, 0, 0.05), 0 -12px 48px 16px rgba(0, 0, 0, 0.03);
+@shadow-1-down: 0 6px 16px -8px rgba(0, 0, 0, 0.08), 0 9px 28px 0 rgba(0, 0, 0, 0.05), 0 12px 48px 16px rgba(0, 0, 0, 0.03);
+@shadow-1-left: -6px 0 16px -8px rgba(0, 0, 0, 0.08), -9px 0 28px 0 rgba(0, 0, 0, 0.05), -12px 0 48px 16px rgba(0, 0, 0, 0.03);
+@shadow-1-right: 6px 0 16px -8px rgba(0, 0, 0, 0.08), 9px 0 28px 0 rgba(0, 0, 0, 0.05), 12px 0 48px 16px rgba(0, 0, 0, 0.03);
+
+@shadow-2: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+
+@box-shadow-base: @shadow-2;
+@box-shadow-popover-arrow: 2px 2px 5px rgba(0, 0, 0, 0.05);
+@box-shadow-card: 0 1px 2px -2px rgba(0, 0, 0, 0.16), 0 3px 6px 0 rgba(0, 0, 0, 0.12), 0 5px 12px 4px rgba(0, 0, 0, 0.09);

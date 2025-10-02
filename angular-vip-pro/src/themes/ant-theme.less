@@ -1,0 +1,746 @@
+// Import ng-zorro-antd with your custom variables
+@import 'ng-zorro-antd/ng-zorro-antd.less';
+@import './ant-design-overrides.less';
+@import './dark-theme.less';
+
+// Define your custom theme variables
+@primary-color: #1d4ed8; // Custom blue primary color
+@success-color: #52c41a;
+@warning-color: #faad14;
+@error-color: #ff4d4f;
+@info-color: #1d4ed8;
+
+// Border radius
+@border-radius-base: 8px;
+@border-radius-sm: 4px;
+
+// Font sizes
+@font-size-base: 14px;
+@font-size-lg: 16px;
+@font-size-sm: 12px;
+
+// Heights
+@height-base: 40px;
+@height-lg: 48px;
+@height-sm: 32px;
+
+// Light theme variables (default)
+:root,
+[data-theme='light'] {
+  --ant-primary-color: @primary-color;
+  --ant-success-color: @success-color;
+  --ant-warning-color: @warning-color;
+  --ant-error-color: @error-color;
+  --ant-info-color: @info-color;
+  --ant-border-radius-base: @border-radius-base;
+  --ant-border-radius-sm: @border-radius-sm;
+  --ant-font-size-base: @font-size-base;
+  --ant-height-base: @height-base;
+  --ant-height-lg: @height-lg;
+  --ant-height-sm: @height-sm;
+
+  // Background colors
+  --ant-background-color-base: #ffffff;
+  --ant-background-color-light: #fafafa;
+  --ant-component-background: #ffffff;
+  --ant-body-background: #ffffff;
+
+  // Error and focus background colors
+  --ant-error-background: rgba(255, 77, 79, 0.1);
+  --ant-primary-background: rgba(24, 144, 255, 0.1);
+  --ant-primary-focus-shadow: rgba(24, 144, 255, 0.2);
+
+  // Text colors
+  --ant-text-color: #000000d9;
+  --ant-text-color-secondary: #00000073;
+  --ant-text-color-inverse: #ffffff;
+  --ant-heading-color: #000000d9;
+
+  // Border colors
+  --ant-border-color-base: #d9d9d9;
+  --ant-border-color-split: #f0f0f0;
+
+  // Shadow
+  --ant-shadow-1-up:
+    0 -6px 16px 0 rgba(0, 0, 0, 0.08), 0 -3px 6px -4px rgba(0, 0, 0, 0.12),
+    0 -9px 28px 8px rgba(0, 0, 0, 0.05);
+  --ant-shadow-1-down:
+    0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12),
+    0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  --ant-shadow-1-left:
+    -6px 0 16px 0 rgba(0, 0, 0, 0.08), -3px 0 6px -4px rgba(0, 0, 0, 0.12),
+    -9px 0 28px 8px rgba(0, 0, 0, 0.05);
+  --ant-shadow-1-right:
+    6px 0 16px 0 rgba(0, 0, 0, 0.08), 3px 0 6px -4px rgba(0, 0, 0, 0.12),
+    9px 0 28px 8px rgba(0, 0, 0, 0.05);
+  --ant-shadow-2:
+    0 9px 28px 8px rgba(0, 0, 0, 0.05), 0 6px 16px 0 rgba(0, 0, 0, 0.08),
+    0 3px 6px -4px rgba(0, 0, 0, 0.12);
+}
+
+// Dark theme variables
+[data-theme='dark'],
+.dark {
+  --ant-primary-color: #1890ff;
+  --ant-success-color: #52c41a;
+  --ant-warning-color: #faad14;
+  --ant-error-color: #ff4d4f;
+  --ant-error-color-light: #ff7875;
+  --ant-info-color: #1890ff;
+
+  // Dark background colors
+  --ant-background-color-base: #141414;
+  --ant-background-color-light: #1f1f1f;
+  --ant-component-background: #1f1f1f;
+  --ant-body-background: #141414;
+
+  // Dark mode error and focus background colors
+  --ant-error-background: rgba(255, 120, 117, 0.15);
+  --ant-primary-background: rgba(24, 144, 255, 0.15);
+  --ant-primary-focus-shadow: rgba(24, 144, 255, 0.3);
+
+  // Dark text colors
+  --ant-text-color: #ffffffd9;
+  --ant-text-color-secondary: #ffffff73;
+  --ant-text-color-inverse: #000000d9;
+  --ant-heading-color: #ffffffd9;
+
+  // Dark border colors
+  --ant-border-color-base: #434343;
+  --ant-border-color-split: #303030;
+
+  // Dark shadows
+  --ant-shadow-1-up:
+    0 -6px 16px 0 rgba(0, 0, 0, 0.32), 0 -3px 6px -4px rgba(0, 0, 0, 0.48),
+    0 -9px 28px 8px rgba(0, 0, 0, 0.2);
+  --ant-shadow-1-down:
+    0 6px 16px 0 rgba(0, 0, 0, 0.32), 0 3px 6px -4px rgba(0, 0, 0, 0.48),
+    0 9px 28px 8px rgba(0, 0, 0, 0.2);
+  --ant-shadow-1-left:
+    -6px 0 16px 0 rgba(0, 0, 0, 0.32), -3px 0 6px -4px rgba(0, 0, 0, 0.48),
+    -9px 0 28px 8px rgba(0, 0, 0, 0.2);
+  --ant-shadow-1-right:
+    6px 0 16px 0 rgba(0, 0, 0, 0.32), 3px 0 6px -4px rgba(0, 0, 0, 0.48),
+    9px 0 28px 8px rgba(0, 0, 0, 0.2);
+  --ant-shadow-2:
+    0 9px 28px 8px rgba(0, 0, 0, 0.2), 0 6px 16px 0 rgba(0, 0, 0, 0.32),
+    0 3px 6px -4px rgba(0, 0, 0, 0.48);
+
+  // MARK: Dark mode specific input fixes
+  .ant-input,
+  .ant-input-affix-wrapper,
+  .ant-picker,
+  .ant-select-selector,
+  .ant-input-number {
+    background-color: var(--ant-component-background) !important;
+    border-color: var(--ant-border-color-base) !important;
+    color: var(--ant-text-color) !important;
+  }
+
+  // Dark mode error states with better visibility
+  .ant-form-item-has-error .ant-input,
+  .ant-form-item-has-error .ant-input-affix-wrapper,
+  .ant-form-item-has-error .ant-picker,
+  .ant-form-item-has-error .ant-select-selector,
+  .ant-form-item-has-error .ant-input-number {
+    border-color: var(--ant-error-color-light) !important;
+    background-color: var(--ant-error-background) !important;
+  }
+
+  // Fix for input-affix-wrapper to ensure full background coverage
+  .ant-form-item-has-error .ant-input-affix-wrapper {
+    background-color: var(--ant-error-background) !important;
+
+    .ant-input {
+      background-color: transparent !important;
+    }
+
+    .ant-input-prefix,
+    .ant-input-suffix {
+      background-color: transparent !important;
+    }
+  }
+
+  // Dark mode error text
+  .ant-form-item-explain-error {
+    color: var(--ant-error-color-light) !important;
+  }
+
+  // Dark mode input number specific fixes
+  .ant-input-number {
+    .ant-input-number-input {
+      color: var(--ant-text-color) !important;
+    }
+
+    .ant-input-number-handler-wrap {
+      background-color: var(--ant-component-background) !important;
+      border-left-color: var(--ant-border-color-base) !important;
+    }
+
+    .ant-input-number-handler {
+      color: var(--ant-text-color-secondary) !important;
+      border-color: var(--ant-border-color-base) !important;
+      background-color: var(--ant-component-background) !important;
+
+      &:hover {
+        color: var(--ant-primary-color) !important;
+        background-color: var(--ant-primary-background) !important;
+      }
+    }
+  }
+
+  // Date picker dark mode fixes
+  .ant-picker {
+    .ant-picker-input > input {
+      color: var(--ant-text-color) !important;
+      background-color: transparent !important;
+    }
+
+    .ant-picker-suffix {
+      color: var(--ant-text-color-secondary) !important;
+    }
+  }
+
+  // Select dark mode fixes
+  .ant-select {
+    .ant-select-selection-item {
+      color: var(--ant-text-color) !important;
+    }
+
+    .ant-select-arrow {
+      color: var(--ant-text-color-secondary) !important;
+    }
+  }
+}
+
+html,
+body {
+  font-family: 'Outfit', sans-serif;
+}
+
+.theme-transition,
+.theme-transition *,
+.theme-transition *:before,
+.theme-transition *:after {
+  transition: all 0ms ease-in-out !important;
+  transition-delay: 0 !important;
+}
+
+// MARK: Common Button
+.ant-btn {
+  border-radius: 0.5rem !important;
+  transition: all 0.3s ease !important;
+}
+
+.ant-btn-primary {
+  background-color: var(--ant-primary-color) !important;
+  border-color: var(--ant-primary-color) !important;
+  color: #fff !important;
+
+  &:hover,
+  &:focus {
+    background-color: var(--ant-primary-color) !important;
+    border-color: var(--ant-primary-color) !important;
+    opacity: 0.8;
+  }
+}
+
+.ant-btn-default {
+  border: 1px solid var(--ant-border-color-base) !important;
+  color: var(--ant-text-color) !important;
+  background-color: var(--ant-component-background) !important;
+
+  &:hover,
+  &:focus {
+    border-color: var(--ant-primary-color) !important;
+    color: var(--ant-primary-color) !important;
+  }
+}
+
+// MARK: Input styles
+.ant-input,
+.ant-input-affix-wrapper,
+.ant-picker,
+.ant-select-selector,
+.ant-input-number {
+  border-radius: 0.5rem !important;
+  background-color: var(--ant-component-background) !important;
+  border-color: var(--ant-border-color-base) !important;
+  color: var(--ant-text-color) !important;
+}
+
+.ant-input:hover,
+.ant-input-affix-wrapper:hover,
+.ant-picker:hover,
+.ant-select-selector:hover,
+.ant-input-number:hover {
+  border-color: var(--ant-primary-color) !important;
+}
+
+.ant-input:focus,
+.ant-input-affix-wrapper-focused,
+.ant-picker-focused,
+.ant-select-focused .ant-select-selector,
+.ant-input-number-focused {
+  border-color: var(--ant-primary-color) !important;
+  box-shadow: 0 0 0 2px var(--ant-primary-focus-shadow) !important;
+}
+
+// MARK: Input Error States
+.ant-form-item-has-error {
+  .ant-input,
+  .ant-input-affix-wrapper,
+  .ant-picker,
+  .ant-select-selector,
+  .ant-input-number {
+    border-color: var(--ant-error-color) !important;
+  }
+}
+
+// Fix for input-affix-wrapper error background
+.ant-form-item-has-error .ant-input-affix-wrapper {
+  .ant-input {
+    background-color: transparent !important;
+  }
+
+  .ant-input-prefix,
+  .ant-input-suffix {
+    background-color: transparent !important;
+  }
+}
+
+.ant-form-item-has-error {
+  .ant-input:hover,
+  .ant-input-affix-wrapper:hover,
+  .ant-picker:hover,
+  .ant-select-selector:hover,
+  .ant-input-number:hover {
+    border-color: var(--ant-error-color) !important;
+  }
+
+  .ant-input:focus,
+  .ant-input-affix-wrapper-focused,
+  .ant-picker-focused,
+  .ant-select-focused .ant-select-selector,
+  .ant-input-number-focused {
+    border-color: var(--ant-error-color) !important;
+    box-shadow: 0 0 0 2px var(--ant-error-background) !important;
+  }
+}
+
+// Fix focus state for input-affix-wrapper to prevent inner border
+.ant-form-item-has-error .ant-input-affix-wrapper-focused {
+  .ant-input:focus {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+}
+
+// MARK: Form Error Text
+.ant-form-item-explain-error {
+  color: var(--ant-error-color) !important;
+}
+
+// MARK: Input Number specific styling
+.ant-input-number {
+  .ant-input-number-input {
+    background-color: transparent !important;
+    color: var(--ant-text-color) !important;
+
+    &::placeholder {
+      color: var(--ant-text-color-secondary) !important;
+    }
+  }
+
+  .ant-input-number-handler-wrap {
+    background-color: var(--ant-component-background) !important;
+    border-left-color: var(--ant-border-color-base) !important;
+  }
+
+  .ant-input-number-handler {
+    color: var(--ant-text-color-secondary) !important;
+    border-color: var(--ant-border-color-base) !important;
+
+    &:hover {
+      color: var(--ant-primary-color) !important;
+    }
+  }
+}
+
+// MARK: Placeholder text
+.ant-input::placeholder,
+.ant-input-affix-wrapper input::placeholder {
+  color: var(--ant-text-color-secondary) !important;
+}
+
+// MARK: Form labels
+.ant-form-item-label > label {
+  color: var(--ant-text-color) !important;
+}
+
+// MARK: Select dropdown
+.ant-select-dropdown {
+  background-color: var(--ant-component-background) !important;
+  border: 1px solid var(--ant-border-color-base) !important;
+}
+
+.ant-select-item {
+  background-color: var(--ant-component-background) !important;
+  color: var(--ant-text-color) !important;
+}
+
+// .ant-select-item-option-selected {
+//   background-color: var(--ant-primary-color) !important;
+//   color: #ffffff !important;
+// }
+
+.ant-select-item:hover {
+  background-color: var(--ant-primary-color) !important;
+  color: #ffffff !important;
+}
+
+// MARK: Tables
+.ant-table {
+  background-color: var(--ant-component-background) !important;
+  color: var(--ant-text-color) !important;
+}
+
+.ant-table-thead {
+  > tr {
+    > th {
+      background-color: var(--ant-background-color-light) !important;
+      color: var(--ant-text-color) !important;
+      border-bottom: 1px solid var(--ant-border-color-split) !important;
+    }
+  }
+}
+
+.ant-table-tbody {
+  > tr {
+    > td {
+      border-bottom: 1px solid var(--ant-border-color-split) !important;
+      color: var(--ant-text-color) !important;
+    }
+    &:hover {
+      > td {
+        background-color: var(--ant-background-color-light) !important;
+      }
+    }
+  }
+}
+
+// MARK: Modal
+.ant-modal-content {
+  background-color: var(--ant-component-background) !important;
+}
+
+.ant-modal-header {
+  background-color: var(--ant-component-background) !important;
+  border-bottom: 1px solid var(--ant-border-color-split) !important;
+}
+
+.ant-modal-title {
+  color: var(--ant-heading-color) !important;
+}
+
+.ant-modal-body {
+  color: var(--ant-text-color) !important;
+}
+
+.ant-modal-footer {
+  background-color: var(--ant-component-background) !important;
+  border-top: 1px solid var(--ant-border-color-split) !important;
+}
+
+//MARK: Cards
+.ant-card {
+  background-color: var(--ant-component-background) !important;
+  border: 1px solid var(--ant-border-color-base) !important;
+}
+
+.ant-card-head {
+  background-color: var(--ant-component-background) !important;
+  border-bottom: 1px solid var(--ant-border-color-split) !important;
+}
+
+.ant-card-head-title {
+  color: var(--ant-heading-color) !important;
+}
+
+.ant-card-body {
+  color: var(--ant-text-color) !important;
+}
+
+// MARK: Drawers
+.ant-drawer-content {
+  background-color: var(--ant-component-background) !important;
+}
+
+// MARK: Dropdown
+.ant-dropdown {
+  background-color: var(--ant-component-background) !important;
+  border: 1px solid var(--ant-border-color-base) !important;
+  box-shadow: var(--ant-shadow-2) !important;
+}
+
+.ant-dropdown-menu {
+  background-color: var(--ant-component-background) !important;
+  border: none !important;
+}
+
+.ant-dropdown-menu-item {
+  color: var(--ant-text-color) !important;
+}
+
+.ant-dropdown-menu-item:hover {
+  background-color: var(--ant-background-color-light) !important;
+  color: var(--ant-text-color) !important;
+}
+
+.ant-dropdown-menu-item-selected {
+  background-color: var(--ant-primary-color) !important;
+  color: #ffffff !important;
+}
+
+// MARK: Buttons - Text type specifically
+.ant-btn-text {
+  color: var(--ant-text-color) !important;
+  background-color: transparent !important;
+  border: none !important;
+}
+
+.ant-btn-text:hover,
+.ant-btn-text:focus {
+  color: var(--ant-primary-color) !important;
+  background-color: var(--ant-background-color-light) !important;
+}
+
+// MARK: SVG Icons and currentColor
+svg {
+  color: var(--ant-text-color) !important;
+}
+
+.ant-btn svg,
+button svg {
+  color: inherit !important;
+}
+
+// MARK: Menu items in dropdown
+ul.ant-dropdown-menu li {
+  color: var(--ant-text-color) !important;
+}
+
+ul.ant-dropdown-menu li:hover {
+  background-color: var(--ant-background-color-light) !important;
+  color: var(--ant-text-color) !important;
+}
+
+// MARK: Table action buttons specifically
+.ant-table-tbody .ant-btn-text {
+  color: var(--ant-text-color-secondary) !important;
+}
+
+.ant-table-tbody .ant-btn-text:hover {
+  color: var(--ant-primary-color) !important;
+  background-color: var(--ant-background-color-light) !important;
+}
+
+// MARK: Icons
+.anticon {
+  color: var(--ant-text-color) !important;
+}
+
+// MARK: Checkbox
+.ant-checkbox-wrapper {
+  color: var(--ant-text-color) !important;
+}
+
+.ant-checkbox {
+  .ant-checkbox-inner {
+    background-color: var(--ant-component-background) !important;
+    border: 1px solid var(--ant-border-color-base) !important;
+    border-radius: 4px !important;
+    transition: all 0.3s ease !important;
+  }
+
+  &:hover .ant-checkbox-inner {
+    border-color: var(--ant-primary-color) !important;
+  }
+
+  &-checked .ant-checkbox-inner {
+    background-color: var(--ant-primary-color) !important;
+    border-color: var(--ant-primary-color) !important;
+
+    &::after {
+      border-color: #ffffff !important;
+    }
+  }
+
+  &-disabled .ant-checkbox-inner {
+    background-color: var(--ant-background-color-light) !important;
+    border-color: var(--ant-border-color-base) !important;
+    cursor: not-allowed !important;
+  }
+
+  &-disabled + span {
+    color: var(--ant-text-color-secondary) !important;
+    cursor: not-allowed !important;
+  }
+
+  &-indeterminate .ant-checkbox-inner {
+    &::after {
+      background-color: var(--ant-primary-color) !important;
+    }
+  }
+
+  .ant-checkbox-input:focus + .ant-checkbox-inner {
+    border-color: var(--ant-primary-color) !important;
+    box-shadow: 0 0 0 2px var(--ant-primary-focus-shadow) !important;
+  }
+}
+
+// Checkbox group
+.ant-checkbox-group {
+  color: var(--ant-text-color) !important;
+}
+
+.ant-checkbox-group-item {
+  color: var(--ant-text-color) !important;
+}
+
+// MARK: Pagination
+.ant-pagination {
+  color: var(--ant-text-color) !important;
+
+  li {
+    background-color: var(--ant-component-background) !important;
+
+    a {
+      color: var(--ant-text-color) !important;
+      background-color: transparent !important;
+    }
+
+    &:hover {
+      border-color: var(--ant-primary-color) !important;
+
+      a {
+        color: var(--ant-primary-color) !important;
+      }
+    }
+
+    &.ant-pagination-item-active {
+      background-color: var(--ant-primary-color) !important;
+      border-color: var(--ant-primary-color) !important;
+
+      a {
+        color: #ffffff !important;
+      }
+    }
+  }
+
+  .ant-pagination-prev,
+  .ant-pagination-next {
+    color: var(--ant-text-color) !important;
+    border: 1px solid var(--ant-border-color-base) !important;
+    background-color: var(--ant-component-background) !important;
+
+    .ant-pagination-item-link {
+      background-color: transparent !important;
+      border: none !important;
+      color: var(--ant-text-color) !important;
+    }
+
+    &:hover {
+      color: var(--ant-primary-color) !important;
+      border-color: var(--ant-primary-color) !important;
+
+      .ant-pagination-item-link {
+        color: var(--ant-primary-color) !important;
+      }
+    }
+
+    &.ant-pagination-disabled {
+      border-color: var(--ant-border-color-base) !important;
+      background-color: var(--ant-component-background) !important;
+
+      .ant-pagination-item-link {
+        color: var(--ant-text-color-secondary) !important;
+        cursor: not-allowed !important;
+      }
+
+      &:hover {
+        border-color: var(--ant-border-color-base) !important;
+
+        .ant-pagination-item-link {
+          color: var(--ant-text-color-secondary) !important;
+        }
+      }
+    }
+
+    .anticon,
+    .anticon svg {
+      color: inherit !important;
+      fill: currentColor !important;
+    }
+  }
+
+  .ant-pagination-disabled {
+    color: var(--ant-text-color-secondary) !important;
+    border-color: var(--ant-border-color-base) !important;
+
+    &:hover {
+      color: var(--ant-text-color-secondary) !important;
+      border-color: var(--ant-border-color-base) !important;
+    }
+  }
+
+  .ant-pagination-options {
+    color: var(--ant-text-color) !important;
+
+    .ant-select {
+      color: var(--ant-text-color) !important;
+
+      .ant-select-selector {
+        background-color: var(--ant-component-background) !important;
+        border-color: var(--ant-border-color-base) !important;
+        color: var(--ant-text-color) !important;
+      }
+    }
+  }
+
+  .ant-pagination-total-text {
+    color: var(--ant-text-color) !important;
+  }
+
+  .ant-pagination-simple {
+    .ant-pagination-simple-pager {
+      input {
+        background-color: var(--ant-component-background) !important;
+        border-color: var(--ant-border-color-base) !important;
+        color: var(--ant-text-color) !important;
+      }
+    }
+  }
+
+  .ant-pagination-jump-prev,
+  .ant-pagination-jump-next {
+    color: var(--ant-text-color-secondary) !important;
+
+    &:hover {
+      color: var(--ant-primary-color) !important;
+    }
+  }
+
+  button.ant-pagination-item-link {
+    background-color: transparent !important;
+    border: none !important;
+    color: inherit !important;
+    cursor: pointer !important;
+
+    &:disabled {
+      color: var(--ant-text-color-secondary) !important;
+      cursor: not-allowed !important;
+    }
+  }
+}

@@ -1,0 +1,522 @@
+// MARK: Side Bar Menu - Light Theme
+aside.app-sidebar {
+  // Ensure menu item text inherits color from parent
+  .menu-item-text {
+    color: inherit !important;
+  }
+
+  a[class*='menu-dropdown-item-inactive'] {
+    color: var(--color-gray-600) !important;
+    transition: color 0.3s ease !important;
+  }
+
+  a[class*='menu-item-inactive'] {
+    color: var(--color-gray-600) !important;
+    transition: color 0.3s ease !important;
+  }
+
+  button[class*='menu-item-inactive'] {
+    color: var(--color-gray-600) !important;
+    transition: color 0.3s ease !important;
+  }
+
+  button[class*='menu-item-active'] {
+    color: var(--color-brand-500) !important;
+    transition: color 0.3s ease !important;
+
+    .menu-item-text {
+      color: inherit !important;
+    }
+  }
+
+  a[class*='menu-dropdown-item-active'] {
+    color: var(--color-brand-500) !important;
+    transition: color 0.3s ease !important;
+  }
+}
+
+// MARK: Side Bar Menu - Dark Theme
+[data-theme='dark'],
+.dark {
+  aside.app-sidebar {
+    background-color: var(--color-gray-900) !important;
+    border-right: 1px solid var(--color-gray-800) !important;
+
+    // Ensure menu item text inherits color in dark mode
+    .menu-item-text {
+      color: inherit !important;
+    }
+
+    a[class*='menu-dropdown-item-inactive'] {
+      color: var(--color-gray-300) !important;
+    }
+
+    a[class*='menu-item-inactive'] {
+      color: var(--color-gray-300) !important;
+    }
+
+    button[class*='menu-item-inactive'] {
+      color: var(--color-gray-300) !important;
+    }
+
+    button[class*='menu-item-active'] {
+      color: var(--color-brand-400) !important;
+      background-color: rgba(99, 102, 241, 0.1) !important;
+
+      .menu-item-text {
+        color: inherit !important;
+      }
+    }
+
+    a[class*='menu-dropdown-item-active'] {
+      color: var(--color-brand-400) !important;
+    }
+  }
+}
+
+// MARK: Menu item hover effects
+aside.app-sidebar {
+  a[class*='menu-item'],
+  button[class*='menu-item'] {
+    &:hover {
+      background-color: var(--color-gray-100) !important;
+      color: var(--color-brand-600) !important;
+    }
+  }
+}
+
+[data-theme='dark'],
+.dark {
+  aside.app-sidebar {
+    a[class*='menu-item'],
+    button[class*='menu-item'] {
+      &:hover {
+        background-color: var(--color-gray-800) !important;
+        color: var(--color-brand-300) !important;
+      }
+    }
+  }
+}
+
+// MARK: Menu icons
+aside.app-sidebar {
+  [class*='menu-item-icon'] {
+    transition: color 0.3s ease !important;
+  }
+}
+
+[data-theme='dark'],
+.dark {
+  aside.app-sidebar {
+    [class*='menu-item-icon-inactive'] {
+      color: var(--color-gray-400) !important;
+    }
+
+    [class*='menu-item-icon-active'] {
+      color: var(--color-brand-400) !important;
+    }
+  }
+}
+
+// MARK: Dropdown menu styling
+aside.app-sidebar {
+  .submenu {
+    background-color: var(--color-gray-50) !important;
+  }
+}
+
+[data-theme='dark'],
+.dark {
+  aside.app-sidebar {
+    .submenu {
+      background-color: var(--color-gray-800) !important;
+    }
+  }
+}
+
+// MARK: Text and heading improvements for dark mode
+[data-theme='dark'],
+.dark {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--color-gray-100) !important;
+  }
+
+  p,
+  span,
+  div {
+    color: var(--color-gray-200) !important;
+  }
+}
+
+// MARK: Card and container backgrounds for dark theme
+[data-theme='dark'],
+.dark {
+  .bg-white {
+    background-color: var(--color-gray-900) !important;
+  }
+
+  .bg-gray-50 {
+    background-color: var(--color-gray-800) !important;
+  }
+
+  .bg-gray-100 {
+    background-color: var(--color-gray-700) !important;
+  }
+}
+
+// MARK: Border improvements
+[data-theme='dark'],
+.dark {
+  .border-gray-200 {
+    border-color: var(--color-gray-700) !important;
+  }
+
+  .border-gray-300 {
+    border-color: var(--color-gray-600) !important;
+  }
+}
+
+// MARK: Shadow adjustments for dark theme
+[data-theme='dark'],
+.dark {
+  .shadow,
+  .shadow-sm,
+  .shadow-md,
+  .shadow-lg {
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.3),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  }
+}
+
+// MARK: Table Actions Dark Mode Fix
+// Table action buttons and icons
+.ant-table {
+  td,
+  th {
+    .ant-btn-text {
+      color: var(--color-gray-600) !important;
+      transition: all 0.3s ease !important;
+
+      &:hover {
+        color: var(--color-brand-500) !important;
+        background-color: var(--color-gray-100) !important;
+      }
+    }
+  }
+}
+
+[data-theme='dark'],
+.dark {
+  .ant-table {
+    td,
+    th {
+      .ant-btn-text {
+        color: var(--color-gray-400) !important;
+
+        &:hover {
+          color: var(--color-brand-400) !important;
+          background-color: var(--color-gray-800) !important;
+        }
+      }
+    }
+  }
+}
+
+// SVG icons in table actions
+.ant-table {
+  svg {
+    color: currentColor !important;
+    transition: color 0.3s ease !important;
+  }
+
+  .ant-btn:hover svg {
+    color: inherit !important;
+  }
+}
+
+[data-theme='dark'],
+.dark {
+  .ant-table {
+    svg {
+      color: var(--color-gray-400) !important;
+    }
+
+    .ant-btn:hover svg {
+      color: var(--color-brand-400) !important;
+    }
+  }
+}
+
+// Dropdown menu in table actions
+[data-theme='dark'],
+.dark {
+  .ant-dropdown-menu {
+    background-color: var(--color-gray-800) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4) !important;
+
+    .ant-dropdown-menu-item {
+      color: var(--color-gray-200) !important;
+
+      &:hover {
+        background-color: var(--color-gray-700) !important;
+        color: var(--color-gray-100) !important;
+      }
+    }
+  }
+}
+
+// MARK: Tables
+.ant-table,
+nz-table {
+  td,
+  th {
+    svg {
+      color: var(--ant-text-color-secondary, currentColor) !important;
+      transition: color 0.3s ease !important;
+    }
+  }
+
+  .ant-btn-text:hover svg,
+  button:hover svg {
+    color: inherit !important;
+  }
+}
+
+/* Dark mode specific overrides for table actions */
+[data-theme='dark'],
+.dark {
+  .ant-table,
+  nz-table {
+    td,
+    th {
+      svg {
+        color: var(--color-gray-400) !important;
+      }
+    }
+
+    .ant-btn-text:hover svg,
+    button:hover svg {
+      color: var(--ant-primary-color) !important;
+    }
+  }
+}
+
+/* Dropdown menu dark mode */
+[data-theme='dark'],
+.dark {
+  .ant-dropdown {
+    background-color: var(--color-gray-800) !important;
+    border-color: var(--color-gray-700) !important;
+  }
+
+  .ant-dropdown-menu {
+    background-color: var(--color-gray-800) !important;
+
+    .ant-dropdown-menu-item {
+      color: var(--color-gray-200) !important;
+
+      &:hover {
+        background-color: var(--color-gray-700) !important;
+        color: var(--color-gray-100) !important;
+      }
+    }
+  }
+}
+
+/* Additional table dark mode improvements */
+[data-theme='dark'],
+.dark {
+  .ant-table {
+    background-color: var(--color-gray-900) !important;
+    color: var(--color-gray-200) !important;
+
+    &-thead > tr > th {
+      background-color: var(--color-gray-800) !important;
+      color: var(--color-gray-200) !important;
+      border-bottom-color: var(--color-gray-700) !important;
+    }
+
+    &-tbody {
+      > tr {
+        > td {
+          border-bottom-color: var(--color-gray-700) !important;
+          color: var(--color-gray-200) !important;
+        }
+
+        &:hover > td {
+          background-color: var(--color-gray-800) !important;
+        }
+      }
+    }
+  }
+}
+
+// MARK: Fixed/Sticky Table Columns Background Fix
+// Override the hardcoded white background for fixed columns
+.ant-table {
+  &-cell-fix-left,
+  &-cell-fix-right {
+    background: var(--ant-component-background, #fff) !important;
+    transition: background-color 0.3s ease !important;
+  }
+
+  &-tbody > tr:hover {
+    .ant-table-cell-fix-left,
+    .ant-table-cell-fix-right {
+      background: var(--ant-background-color-light, #fafafa) !important;
+    }
+  }
+
+  &-thead > tr > {
+    .ant-table-cell-fix-left,
+    .ant-table-cell-fix-right {
+      background: var(--ant-background-color-light, #fafafa) !important;
+    }
+  }
+}
+
+// Dark mode fix for sticky/fixed columns
+[data-theme='dark'],
+.dark {
+  .ant-table {
+    &-cell-fix-left,
+    &-cell-fix-right {
+      background: var(--color-gray-900) !important;
+    }
+
+    &-tbody > tr:hover {
+      .ant-table-cell-fix-left,
+      .ant-table-cell-fix-right {
+        background: var(--color-gray-800) !important;
+      }
+    }
+
+    &-thead > tr > {
+      .ant-table-cell-fix-left,
+      .ant-table-cell-fix-right {
+        background: var(--color-gray-800) !important;
+      }
+    }
+  }
+}
+
+// MARK: Table Expand/Collapse Buttons
+// Expand/collapse button styling
+.ant-table {
+  &-row-expand-icon {
+    background-color: var(--ant-component-background, #fff) !important;
+    border: 1px solid var(--ant-border-color-base, #d9d9d9) !important;
+    color: var(--ant-text-color, #000000d9) !important;
+    transition: all 0.3s ease !important;
+
+    &:hover {
+      background-color: var(--ant-background-color-light, #fafafa) !important;
+      border-color: var(--ant-primary-color) !important;
+      color: var(--ant-primary-color) !important;
+    }
+  }
+}
+
+// MARK: TB expand/collapse buttons
+[data-theme='dark'],
+.dark {
+  .ant-table {
+    &-row-expand-icon {
+      background-color: var(--color-gray-800) !important;
+      border-color: var(--color-gray-600) !important;
+      color: var(--color-gray-300) !important;
+
+      &:hover {
+        background-color: var(--color-gray-700) !important;
+        border-color: var(--color-brand-400) !important;
+        color: var(--color-brand-400) !important;
+      }
+    }
+  }
+}
+
+// MARK: TB: Row Content
+// Expanded row styling
+.ant-table {
+  &-expanded-row {
+    background-color: var(--ant-component-background, #fff) !important;
+
+    > td {
+      background-color: var(--ant-background-color-light, #fafafa) !important;
+      border-bottom: 1px solid var(--ant-border-color-split, #f0f0f0) !important;
+    }
+
+    &-fixed {
+      background-color: inherit !important;
+    }
+  }
+}
+
+// Dark mode expanded row
+[data-theme='dark'],
+.dark {
+  .ant-table {
+    &-expanded-row {
+      background-color: var(--color-gray-900) !important;
+
+      > td {
+        background-color: var(--color-gray-800) !important;
+        border-bottom-color: var(--color-gray-700) !important;
+        color: var(--color-gray-200) !important;
+      }
+
+      .p-4,
+      div,
+      span {
+        color: var(--color-gray-200) !important;
+      }
+
+      pre,
+      code {
+        background-color: var(--color-gray-900) !important;
+        color: var(--color-gray-100) !important;
+        border: 1px solid var(--color-gray-700) !important;
+      }
+    }
+  }
+}
+
+// MARK: Checkbox
+[data-theme='dark'],
+.dark {
+  .ant-checkbox {
+    .ant-checkbox-inner {
+      background-color: var(--color-gray-800) !important;
+      border-color: var(--color-gray-600) !important;
+    }
+
+    &:hover .ant-checkbox-inner {
+      border-color: var(--ant-primary-color) !important;
+    }
+
+    &-checked .ant-checkbox-inner {
+      background-color: var(--ant-primary-color) !important;
+      border-color: var(--ant-primary-color) !important;
+    }
+
+    &-disabled .ant-checkbox-inner {
+      background-color: var(--color-gray-900) !important;
+      border-color: var(--color-gray-700) !important;
+    }
+
+    &-disabled + span {
+      color: var(--color-gray-500) !important;
+    }
+
+    .ant-checkbox-input:focus + .ant-checkbox-inner {
+      border-color: var(--ant-primary-color) !important;
+      box-shadow: 0 0 0 2px var(--ant-primary-focus-shadow) !important;
+    }
+  }
+}

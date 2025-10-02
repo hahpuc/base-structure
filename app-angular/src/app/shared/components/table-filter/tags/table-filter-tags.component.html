@@ -1,0 +1,27 @@
+<div class="flex flex-wrap items-center gap-2 flex-1">
+  <span class="text-sm font-medium text-gray-600 hidden lg:inline">Active filters:</span>
+  <div class="flex flex-wrap items-center gap-2">
+    @for (activeFilter of activeFilters; track trackByFilter(activeFilter)) {
+      <div
+        class="inline-flex items-center gap-1 bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full border border-blue-200"
+      >
+        <span class="font-semibold">{{ activeFilter.filter.label }}:</span>
+        <span>{{ activeFilter.displayValue }}</span>
+        <button
+          (click)="remove.emit(activeFilter)"
+          class="filter-tag-remove ml-1 text-blue-600 cursor-pointer p-0 bg-transparent border-none rounded-full w-4 h-4 flex items-center justify-center"
+          type="button"
+        >
+          <i class="ki-filled ki-cross text-xs"></i>
+        </button>
+      </div>
+    }
+    <button
+      type="button"
+      (click)="clearAll.emit()"
+      class="kt-btn kt-btn-icon kt-btn-outline rounded-full w-[32px] h-[32px] flex items-center justify-center"
+    >
+      <i class="ki-outline ki-trash text-red-600"></i>
+    </button>
+  </div>
+</div>

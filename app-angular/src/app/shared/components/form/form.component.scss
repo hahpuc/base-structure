@@ -1,0 +1,85 @@
+.dynamic-form {
+    .ant-form-item {
+        margin-bottom: 16px;
+    }
+
+    .ant-form-item-label {
+        padding-bottom: 4px;
+    }
+
+    .ant-form-item-explain {
+        margin-top: 4px;
+    }
+
+    .w-full {
+        width: 100%;
+    }
+
+    .mb-2 {
+        margin-bottom: 8px;
+    }
+
+    // Form sections styling
+    .form-section {
+        margin-bottom: 24px;
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: rgba(0, 0, 0, 0.85);
+        }
+
+        .section-description {
+            color: rgba(0, 0, 0, 0.65);
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+    }
+
+    // Custom control spacing
+    .ant-checkbox-group {
+        .ant-checkbox-wrapper {
+            margin-bottom: 8px;
+            display: block;
+        }
+    }
+
+    .ant-radio-group {
+        .ant-radio-wrapper {
+            margin-right: 16px;
+            margin-bottom: 8px;
+        }
+    }
+
+    // File upload styling
+    .ant-upload {
+        .ant-btn {
+            margin-bottom: 8px;
+        }
+    }
+
+    // Actions styling
+    .ant-form-item:last-child {
+        margin-bottom: 0;
+    }
+
+    // Error message styling
+    .ant-form-item-explain-error {
+        color: #ff4d4f;
+        font-size: 12px;
+    }
+
+    // Loading state
+    &.loading {
+        pointer-events: none;
+        opacity: 0.6;
+    }
+
+    // Responsive adjustments
+    @media (max-width: 768px) {
+        .ant-col {
+            margin-bottom: 8px;
+        }
+    }
+}

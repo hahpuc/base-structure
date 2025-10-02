@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+
 import { APP_CONSTANTS, NOTIFICATION_TYPES } from '../constants/app.constants';
 
 export interface ToastMessage {
@@ -80,7 +82,7 @@ export class ToastService {
   }
 
   dismiss(id: string): void {
-    this.toasts = this.toasts.filter((toast) => toast.id !== id);
+    this.toasts = this.toasts.filter(toast => toast.id !== id);
     this.toastSubject.next([...this.toasts]);
   }
 
@@ -93,6 +95,3 @@ export class ToastService {
     return Math.random().toString(36).substr(2, 9);
   }
 }
-
-// Fix import
-import { BehaviorSubject } from 'rxjs';

@@ -1,0 +1,91 @@
+<div class="container-fluid">
+  <app-form #ftForm [option]="formOptions"></app-form>
+
+  <div class="card w-full px-5 py-10 mt-4 card border rounded-2xl p-4">
+    <label class="font-semibold text-lg">Permissions</label>
+
+    @if (!isLoading) {
+      <div class="mt-4">
+        <div class="grid grid-cols-2 gap-8">
+          <!-- Left Column -->
+          <div class="col-span-1">
+            @for (module of getLeftColumnModules(); track module.name) {
+              <div class="mb-8">
+                <!-- Module Header -->
+                <div class="mb-4">
+                  <label
+                    nz-checkbox
+                    [nzChecked]="isModuleChecked(module.name)"
+                    [nzIndeterminate]="isModuleIndeterminate(module.name)"
+                    (nzCheckedChange)="onModuleCheckChange(module.name, $event)"
+                    class="font-semibold text-lg"
+                  >
+                    {{ module.name }}
+                  </label>
+                </div>
+
+                <!-- Permission Items -->
+                <div class="ml-6 space-y-2">
+                  @for (permission of module.permissions; track permission.id) {
+                    <div>
+                      <label
+                        nz-checkbox
+                        [nzChecked]="isPermissionChecked(permission.id)"
+                        (nzCheckedChange)="onPermissionCheckChange(permission.id, $event)"
+                        class="text-sm"
+                      >
+                        {{ permission.name }}
+                      </label>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Right Column -->
+          <div class="col-span-1">
+            @for (module of getRightColumnModules(); track module.name) {
+              <div class="mb-8">
+                <!-- Module Header -->
+                <div class="mb-4">
+                  <label
+                    nz-checkbox
+                    [nzChecked]="isModuleChecked(module.name)"
+                    [nzIndeterminate]="isModuleIndeterminate(module.name)"
+                    (nzCheckedChange)="onModuleCheckChange(module.name, $event)"
+                    class="font-semibold text-lg"
+                  >
+                    {{ module.name }}
+                  </label>
+                </div>
+
+                <!-- Permission Items -->
+                <div class="ml-6 space-y-2">
+                  @for (permission of module.permissions; track permission.id) {
+                    <div>
+                      <label
+                        nz-checkbox
+                        [nzChecked]="isPermissionChecked(permission.id)"
+                        (nzCheckedChange)="onPermissionCheckChange(permission.id, $event)"
+                        class="text-sm"
+                      >
+                        {{ permission.name }}
+                      </label>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (isLoading) {
+      <div class="text-center py-4">
+        <nz-spin nzSimple></nz-spin>
+      </div>
+    }
+  </div>
+</div>

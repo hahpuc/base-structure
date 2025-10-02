@@ -1,0 +1,11 @@
+{
+    "hello": "Hello",
+    "welcome": "Welcome",
+    "user": "User",
+    "management_user": "User Management",
+    "management_account": "Account Management",
+    "management_location": "Location Management",
+    "management_article": "Article Management",
+    "category": "Category",
+    "blog_post": "Blog Post"
+}

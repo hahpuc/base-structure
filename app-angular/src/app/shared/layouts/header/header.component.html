@@ -1,0 +1,25 @@
+<div class="pb-5">
+  <!-- Container -->
+  <div class="kt-container-fixed flex items-center justify-between flex-wrap gap-3">
+    <span class="text-2xl font-semibold">{{ title }}</span>
+    <div class="flex items-center flex-wrap gap-1.5 lg:gap-2.5">
+      @for (button of buttons; track button) {
+        @if (isButtonVisible(button)) {
+          <button
+            [class]="getButtonClasses(button)"
+            [disabled]="isButtonDisabled(button)"
+            [ngStyle]="getButtonStyles()"
+            (click)="onButtonClick(button)"
+            type="button"
+          >
+            @if (getButtonIcon(button)) {
+              <i [class]="getButtonIcon(button) + ' ' + getIconClasses(button) + ' md:mr-2'"></i>
+            }
+            <span [class]="getIconClasses(button) + ' hidden md:inline'">{{ getButtonTitle(button) }}</span>
+          </button>
+        }
+      }
+    </div>
+  </div>
+  <!-- End of Container -->
+</div>

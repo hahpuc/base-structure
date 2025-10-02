@@ -1,0 +1,22 @@
+<div
+  class="fixed top-0 left-0 right-0 z-99999 h-1 bg-transparent transition-opacity duration-300"
+  [class.opacity-100]="isLoading()"
+  [class.opacity-0]="!isLoading()"
+>
+  <!-- Progress bar background -->
+  <div class="h-full w-full bg-gray-200"></div>
+
+  <!-- Animated progress bar -->
+  <div
+    class="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-blue-600 shadow-lg transition-all duration-300 ease-out"
+    [style.width.%]="progressWidth()"
+    [style.opacity]="progressOpacity()"
+  ></div>
+
+  <!-- Shimmer effect -->
+  <div
+    class="absolute top-0 left-0 h-full w-full bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"
+    [class.opacity-100]="isLoading()"
+    [class.opacity-0]="!isLoading()"
+  ></div>
+</div>

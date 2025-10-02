@@ -1,3 +1,13 @@
+/* Import Tailwind first */
 @use "./tailwind";
 
 /* You can add global styles to this file, and also import other style files */
+
+/* Import ng-zorro-antd styles */
+@use "ng-zorro-antd/ng-zorro-antd.css";
+
+/* Import custom Ant Design overrides */
+@use "./themes/ant-design-overrides.scss";
+
+/* Import Metronic overrides */
+@use "./themes/metronic-overrides.scss";

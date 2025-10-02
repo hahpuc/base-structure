@@ -1,0 +1,22 @@
+<div
+  class="progress-bar-container"
+  [class.active]="isLoading"
+  [attr.data-theme]="theme"
+  [style.height.px]="height"
+  [style.position]="'fixed'"
+  [style.top]="'0'"
+  [style.left]="'0'"
+  [style.right]="'0'"
+  [style.z-index]="'9999'"
+  [style.background-color]="'rgba(0, 0, 0, 0.1)'"
+  [style.opacity]="isLoading ? '1' : '0'"
+  [style.visibility]="isLoading ? 'visible' : 'hidden'"
+  [style.transition]="'opacity 0.2s ease-in-out, visibility 0.2s ease-in-out'"
+>
+  <div
+    [class]="'progress-bar theme-' + theme"
+    [style.height]="'100%'"
+    [style.width]="isLoading ? '100%' : '0%'"
+    [style.transition]="'width 0.2s ease-out'"
+  ></div>
+</div>

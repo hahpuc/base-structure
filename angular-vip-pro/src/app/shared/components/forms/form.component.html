@@ -1,0 +1,309 @@
+<div class="card w-full px-5 border rounded-2xl p-4">
+  <form
+    nz-form
+    [formGroup]="form"
+    [nzLayout]="option.layout || 'vertical'"
+    class="dynamic-form"
+    [class.loading]="isLoading"
+  >
+    <div nz-row [nzGutter]="option.gutter || 16">
+      @for (control of option.controls; track trackByControlName($index, control)) {
+        @if (isControlVisible(control)) {
+          <div nz-col [nzSpan]="getColSpan(control)" [nzOffset]="getColOffset(control)" class="mb-4">
+            <nz-form-item>
+              <!-- Label -->
+              @if (control.label && control.type !== 'hidden') {
+                <nz-form-label [nzRequired]="control.required" [nzFor]="control.name">
+                  {{ control.label }}
+                </nz-form-label>
+              }
+
+              <!-- Control Wrapper -->
+              <nz-form-control [nzErrorTip]="getErrorMessage(control)">
+                <!-- Text-based inputs -->
+                @if (control.type === 'text' || control.type === 'email' || control.type === 'password') {
+                  <nz-input-group [nzSize]="option.size || 'default'">
+                    <input
+                      nz-input
+                      [type]="control.type"
+                      [formControlName]="control.name"
+                      [placeholder]="control.placeholder || ''"
+                      [readonly]="control.readonly"
+                      [maxlength]="control.maxLength || null"
+                      [minlength]="control.minLength || null"
+                    />
+                  </nz-input-group>
+                }
+
+                <!-- Number Input -->
+                @if (control.type === 'number') {
+                  <nz-input-number
+                    [formControlName]="control.name"
+                    [nzPlaceHolder]="control.placeholder || ''"
+                    [nzMin]="control.min"
+                    [nzMax]="control.max"
+                    [nzStep]="control.step || 1"
+                    [nzPrecision]="control.precision || null"
+                    [nzSize]="option.size || 'default'"
+                    [nzDisabled]="control.disabled"
+                    class="w-full"
+                  ></nz-input-number>
+                }
+
+                <!-- Textarea -->
+                @if (control.type === 'textarea') {
+                  <textarea
+                    nz-input
+                    [formControlName]="control.name"
+                    [placeholder]="control.placeholder || ''"
+                    [readonly]="control.readonly"
+                    [rows]="control.rows || 4"
+                    [nzAutosize]="control.autoSize || false"
+                    [maxlength]="control.maxLength || null"
+                  ></textarea>
+                }
+
+                <!-- Select -->
+                @if (control.type === 'select') {
+                  <nz-select
+                    [formControlName]="control.name"
+                    [nzPlaceHolder]="control.placeholder || 'Please select'"
+                    [nzAllowClear]="control.allowClear"
+                    [nzShowSearch]="control.showSearch || control.searchable || isPaginatedControl(control.name)"
+                    [nzServerSearch]="isPaginatedControl(control.name)"
+                    [nzLoading]="isPaginatedLoading(control.name)"
+                    [nzMode]="control.multiple ? 'multiple' : control.mode || 'default'"
+                    [nzSize]="option.size || 'default'"
+                    [nzDisabled]="control.disabled"
+                    class="w-full"
+                    (nzOnSearch)="isPaginatedControl(control.name) ? onSelectSearch(control.name, $event) : null"
+                    (nzScrollToBottom)="isPaginatedControl(control.name) ? onSelectScrollToBottom(control.name) : null"
+                  >
+                    @for (opt of getSelectOptions(control); track trackByOptionValue($index, opt)) {
+                      <nz-option [nzValue]="opt.value" [nzLabel]="opt.label" [nzDisabled]="opt.disabled"></nz-option>
+                    }
+                    <!-- Loading more indicator -->
+                    @if (isPaginatedControl(control.name) && isPaginatedLoading(control.name)) {
+                      <nz-option nzDisabled nzCustomContent>
+                        <div class="flex items-center justify-center py-2">
+                          <nz-spin nzSimple [nzSize]="'small'"></nz-spin>
+                          <span class="ml-2 text-gray-500">Loading more...</span>
+                        </div>
+                      </nz-option>
+                    }
+                  </nz-select>
+                }
+
+                <!-- Radio Group -->
+                @if (control.type === 'radio') {
+                  <nz-radio-group
+                    [formControlName]="control.name"
+                    [nzSize]="option.size || 'default'"
+                    [nzDisabled]="control.disabled"
+                  >
+                    @for (opt of getRadioOptions(control); track trackByOptionValue($index, opt)) {
+                      <label nz-radio [nzValue]="opt.value" [nzDisabled]="opt.disabled">
+                        {{ opt.label }}
+                      </label>
+                    }
+                  </nz-radio-group>
+                }
+
+                <!-- Single Checkbox -->
+                @if (control.type === 'checkbox') {
+                  <label nz-checkbox [formControlName]="control.name" [nzDisabled]="control.disabled">
+                    {{ control.placeholder || control.label }}
+                  </label>
+                }
+
+                <!-- Multiple Choice -->
+                @if (control.type === 'multipleChoice') {
+                  <nz-checkbox-group [formControlName]="control.name" [nzDisabled]="control.disabled">
+                    <div nz-row>
+                      @for (opt of getCheckboxOptions(control); track trackByOptionValue($index, opt)) {
+                        <div nz-col [nzSpan]="24" class="mb-2">
+                          <label
+                            nz-checkbox
+                            [nzValue]="opt.value"
+                            [nzDisabled]="opt.disabled"
+                            [nzChecked]="opt.checked"
+                          >
+                            {{ opt.label }}
+                          </label>
+                        </div>
+                      }
+                    </div>
+                  </nz-checkbox-group>
+                }
+
+                <!-- Switch -->
+                @if (control.type === 'switch') {
+                  <nz-switch
+                    [formControlName]="control.name"
+                    [nzSize]="'default'"
+                    [nzDisabled]="control.disabled"
+                  ></nz-switch>
+                }
+
+                <!-- Date/DateTime/Time Pickers -->
+                @if (control.type === 'date') {
+                  <nz-date-picker
+                    [formControlName]="control.name"
+                    [nzPlaceHolder]="control.placeholder || 'Select date'"
+                    [nzFormat]="control.format || 'yyyy-MM-dd'"
+                    [nzShowTime]="control.showTime"
+                    [nzDisabledDate]="control.disabledDate"
+                    [nzSize]="(option.size === 'large' ? 'default' : option.size) || 'default'"
+                    [nzDisabled]="control.disabled"
+                    class="w-full"
+                  ></nz-date-picker>
+                }
+
+                @if (control.type === 'datetime') {
+                  <nz-date-picker
+                    [formControlName]="control.name"
+                    [nzPlaceHolder]="control.placeholder || 'Select date and time'"
+                    [nzFormat]="control.format || 'yyyy-MM-dd HH:mm:ss'"
+                    [nzShowTime]="true"
+                    [nzDisabledDate]="control.disabledDate"
+                    [nzSize]="(option.size === 'large' ? 'default' : option.size) || 'default'"
+                    [nzDisabled]="control.disabled"
+                    class="w-full"
+                  ></nz-date-picker>
+                }
+
+                @if (control.type === 'time') {
+                  <nz-time-picker
+                    [formControlName]="control.name"
+                    [nzPlaceHolder]="control.placeholder || 'Select time'"
+                    [nzFormat]="control.format || 'HH:mm:ss'"
+                    [nzSize]="(option.size === 'large' ? 'default' : option.size) || 'default'"
+                    [nzDisabled]="control.disabled"
+                    class="w-full"
+                  ></nz-time-picker>
+                }
+
+                <!-- Other input types -->
+                @if (control.type === 'file') {
+                  <nz-upload [nzMultiple]="control.multiple" [nzShowUploadList]="true" [nzDisabled]="control.disabled">
+                    <button nz-button [nzSize]="option.size || 'default'">
+                      <i class="ki-outline ki-file-up"></i>
+                      {{ control.placeholder }}
+                    </button>
+                  </nz-upload>
+                }
+
+                @if (control.type === 'rate') {
+                  <nz-rate
+                    [formControlName]="control.name"
+                    [nzDisabled]="control.disabled"
+                    [nzAllowHalf]="true"
+                  ></nz-rate>
+                }
+
+                @if (control.type === 'tag') {
+                  <nz-select
+                    [formControlName]="control.name"
+                    [nzPlaceHolder]="control.placeholder || 'Add tags'"
+                    [nzMode]="'tags'"
+                    [nzSize]="option.size || 'default'"
+                    [nzDisabled]="control.disabled"
+                    class="w-full"
+                  >
+                  </nz-select>
+                }
+
+                @if (control.type === 'range') {
+                  <nz-slider
+                    [formControlName]="control.name"
+                    [nzMin]="control.min || 0"
+                    [nzMax]="control.max || 100"
+                    [nzStep]="control.step || 1"
+                    [nzDisabled]="control.disabled"
+                  ></nz-slider>
+                }
+
+                @if (control.type === 'color') {
+                  <nz-color-picker
+                    [formControlName]="control.name"
+                    [nzSize]="option.size || 'default'"
+                    [nzDisabled]="control.disabled"
+                  ></nz-color-picker>
+                }
+
+                @if (control.type === 'autocomplete') {
+                  <nz-input-group [nzSize]="option.size || 'default'">
+                    <input
+                      nz-input
+                      [formControlName]="control.name"
+                      [placeholder]="control.placeholder || ''"
+                      [readonly]="control.readonly"
+                    />
+                  </nz-input-group>
+                }
+
+                @if (control.type === 'richtext') {
+                  <app-rich-text
+                    [formControlName]="control.name"
+                    [required]="control.required ?? false"
+                  ></app-rich-text>
+                }
+
+                <!-- Hidden Input -->
+                @if (control.type === 'hidden') {
+                  <input type="hidden" [formControlName]="control.name" />
+                }
+
+                <!-- Custom Template -->
+                @if (control.template) {
+                  <ng-container
+                    [ngTemplateOutlet]="control.template"
+                    [ngTemplateOutletContext]="{
+                      $implicit: getControl(control.name)?.value,
+                      control: getControl(control.name),
+                    }"
+                  ></ng-container>
+                }
+
+                <!-- Description -->
+                @if (control.description) {
+                  <div class="ant-form-item-explain ant-form-item-explain-connected">
+                    <div class="ant-form-item-explain-error">{{ control.description }}</div>
+                  </div>
+                }
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Form Actions -->
+    @if (allActions.length > 0) {
+      <div class="mt-5"></div>
+      <nz-form-item>
+        <nz-form-control>
+          <nz-space>
+            @for (action of allActions; track trackByActionType($index, action)) {
+              <button
+                nz-button
+                [nzType]="action.color === 'primary' ? 'primary' : 'default'"
+                [nzDanger]="action.color === 'danger'"
+                [nzSize]="option.size || 'default'"
+                [nzLoading]="action.loading || isLoading"
+                [disabled]="action.disabled"
+                (click)="onAction(action)"
+                type="button"
+              >
+                @if (action.icon) {
+                  <i [class]="action.icon + ' me-2'"></i>
+                }
+                {{ action.label }}
+              </button>
+            }
+          </nz-space>
+        </nz-form-control>
+      </nz-form-item>
+    }
+  </form>
+</div>

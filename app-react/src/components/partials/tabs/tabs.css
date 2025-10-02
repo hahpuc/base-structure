@@ -1,0 +1,52 @@
+/* Custom scrollbar hiding for tab headers */
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    /* Internet Explorer 10+ */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+    /* Safari and Chrome */
+}
+
+/* Smooth scrolling behavior */
+.scrollbar-hide {
+    scroll-behavior: smooth;
+}
+
+/* Custom tab styles for better mobile experience */
+@media (max-width: 640px) {
+    .tab-content {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+}
+
+/* Add touch scrolling for iOS */
+.scrollbar-hide {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Custom styling for Ant Design dropdown in tabs */
+.custom-tab-dropdown {
+    min-width: 200px;
+}
+
+.custom-tab-dropdown .ant-dropdown-menu {
+    border-radius: 8px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.custom-tab-dropdown .ant-dropdown-menu-item {
+    padding: 8px 16px;
+}
+
+.custom-tab-dropdown .ant-dropdown-menu-item:hover {
+    background-color: #f9fafb;
+}
+
+.custom-tab-dropdown .ant-dropdown-menu-submenu-title:hover {
+    background-color: #f9fafb;
+}
