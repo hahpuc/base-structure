@@ -98,7 +98,7 @@ const CreateEditWardPage: React.FunctionComponent = () => {
 
     if (resultApi.isSuccess) {
       message.success(isEdit ? "Updated successfully" : "Created successfully");
-      navigate("/province");
+      navigate("/ward");
       return { success: true };
     } else {
       message.error(
