@@ -1,5 +1,5 @@
 import {
-  ArrowRightIcon,
+  ArrowLeftIcon,
   ExportIcon,
   ImportIcon,
   PencilIcon,
@@ -14,5 +14,5 @@ export const iconMap: Record<IconName, React.ReactNode> = {
   import: <ImportIcon />,
   export: <ExportIcon />,
   delete: <TrashBinIcon />,
-  back: <ArrowRightIcon />,
+  back: <ArrowLeftIcon />,
 };

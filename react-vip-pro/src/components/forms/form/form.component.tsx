@@ -64,6 +64,14 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
     >({});
     const [loading, setLoading] = useState(false);
 
+    // Options Value for child filters - depends on parent value (ex: province -> district -> ward)
+    const [childFilterOptions, setChildFilterOptions] = useState<
+      Record<string, SelectOption[]>
+    >({});
+    const [loadingChildFilters, setLoadingChildFilters] = useState<
+      Record<string, boolean>
+    >({});
+
     // Expose methods through ref
     useImperativeHandle(ref, () => ({
       validateForm: async () => {
@@ -121,12 +129,65 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
 
     // Initialize form data
     useEffect(() => {
-      if (formOptions.initialData) {
-        const processedData = processInitialData(formOptions.initialData);
+      // Get Default Values from controls
+      const defaultValues: Record<string, unknown> = {};
+      formOptions.controls.forEach((control) => {
+        if (control.defaultValue !== undefined) {
+          defaultValues[control.name] = control.defaultValue;
+        }
+      });
+
+      // Merge initialData with defaultValues
+      const mergedData = {
+        ...defaultValues,
+        ...(formOptions.initialData || {}),
+      };
+
+      if (Object.keys(mergedData).length > 0) {
+        const processedData = processInitialData(mergedData);
         form.setFieldsValue(processedData);
         setFormValues(processedData);
       }
-    }, [formOptions.initialData, form, processInitialData]);
+    }, [
+      formOptions.initialData,
+      formOptions.controls,
+      form,
+      processInitialData,
+    ]);
+
+    // Load select options for child filters (with parent value)
+    const loadChildFilterOptions = async (
+      control: FtFormControl,
+      parentValue?: string | number
+    ) => {
+      if (!control.options || Array.isArray(control.options)) return;
+
+      const filterKey = control.parent
+        ? `${control.name}_${parentValue}`
+        : control.name;
+
+      setLoadingChildFilters((prev) => ({ ...prev, [filterKey]: true }));
+
+      try {
+        if (typeof control.options === "function") {
+          const result =
+            control.parent && parentValue !== undefined
+              ? await (
+                  control.options as (
+                    parentValue: string | number
+                  ) => Promise<SelectOption[]>
+                )(parentValue)
+              : await (control.options as () => Promise<SelectOption[]>)();
+
+          setChildFilterOptions((prev) => ({ ...prev, [filterKey]: result }));
+        }
+      } catch (error) {
+        console.error(`Failed to load options for ${control.name}:`, error);
+        setChildFilterOptions((prev) => ({ ...prev, [filterKey]: [] }));
+      } finally {
+        setLoadingChildFilters((prev) => ({ ...prev, [filterKey]: false }));
+      }
+    };
 
     // Load select options
     const loadSelectOptions = async (
@@ -210,11 +271,43 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
 
     // Initialize select options
     useEffect(() => {
-      formOptions.controls.forEach((control) => {
-        if (control.type === "select" || control.type === "autocomplete") {
-          loadSelectOptions(control);
+      const initializeOptions = async () => {
+        for (const control of formOptions.controls) {
+          if (control.type === "select" || control.type === "autocomplete") {
+            if (!control.parent) {
+              // Load parent/independent filters immediately
+              if (
+                control.usePagination ||
+                !control.options ||
+                Array.isArray(control.options)
+              ) {
+                loadSelectOptions(control);
+              } else {
+                // For non-paginated dynamic options without parent
+                await loadChildFilterOptions(control);
+              }
+            } else {
+              // For child filters, load if parent value exists in initial data
+              const parentValue =
+                formOptions.initialData?.[control.parent.filterName];
+              if (
+                parentValue !== undefined &&
+                parentValue !== null &&
+                parentValue !== ""
+              ) {
+                const normalizedValue =
+                  typeof parentValue === "string" ||
+                  typeof parentValue === "number"
+                    ? parentValue
+                    : String(parentValue);
+                await loadChildFilterOptions(control, normalizedValue);
+              }
+            }
+          }
         }
-      });
+      };
+
+      initializeOptions();
     }, [formOptions.controls]);
 
     // Handle form value changes
@@ -224,11 +317,35 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
     ) => {
       setFormValues(allValues);
 
-      // Handle control-specific onChange events
+      // Handle control-specific onChange events and parent-child relationships
       Object.keys(changedValues).forEach((fieldName) => {
         const control = formOptions.controls.find((c) => c.name === fieldName);
         if (control?.onChange) {
           control.onChange(changedValues[fieldName], allValues);
+        }
+
+        // If this is a parent control, handle child controls
+        const childControls = formOptions.controls.filter(
+          (c) => c.parent?.filterName === fieldName
+        );
+        if (childControls.length > 0) {
+          const parentValue = changedValues[fieldName];
+          childControls.forEach((childControl) => {
+            // Clear child field value
+            form.setFieldValue(childControl.name, undefined);
+
+            // Load options for child if parent has value
+            if (
+              parentValue !== undefined &&
+              parentValue !== null &&
+              parentValue !== ""
+            ) {
+              loadChildFilterOptions(
+                childControl,
+                parentValue as string | number
+              );
+            }
+          });
         }
       });
     };
@@ -307,21 +424,78 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
         case "autocomplete": {
           const selectState = selectOptionsState[control.name];
           const mode = control.mode === "default" ? undefined : control.mode;
+          let optionsToRender: SelectOption[] = [];
+          let isLoadingOptions = false;
+          let isDisabledDueToParent = false;
+
+          // Handle child filters with parent dependency
+          if (control.parent) {
+            const parentValue = formValues[control.parent.filterName];
+            if (
+              parentValue !== undefined &&
+              parentValue !== null &&
+              parentValue !== ""
+            ) {
+              const filterKey = `${control.name}_${parentValue}`;
+              optionsToRender = childFilterOptions[filterKey] || [];
+              isLoadingOptions = loadingChildFilters[filterKey] || false;
+            } else {
+              isDisabledDueToParent = true;
+            }
+          } else {
+            // Parent or independent filters
+            if (selectState) {
+              optionsToRender = selectState.options || [];
+              isLoadingOptions = selectState.loading || false;
+            } else if (
+              !control.usePagination &&
+              !Array.isArray(control.options)
+            ) {
+              // For non-paginated dynamic options, use childFilterOptions
+              optionsToRender = childFilterOptions[control.name] || [];
+              isLoadingOptions = loadingChildFilters[control.name] || false;
+            }
+          }
 
           return (
             <Select
               {...commonProps}
               mode={mode}
+              placeholder={
+                isDisabledDueToParent
+                  ? `Select ${control.parent?.filterName} first`
+                  : control.placeholder
+              }
               allowClear={control.allowClear}
               showSearch={control.showSearch || control.searchable}
-              loading={selectState?.loading}
+              disabled={isDisabled || isDisabledDueToParent}
+              loading={isLoadingOptions}
+              optionFilterProp="label"
               onSearch={
-                control.searchable
-                  ? (value) => loadSelectOptions(control, value)
+                control.usePagination && control.searchable
+                  ? (value) => loadSelectOptions(control, value, 1)
+                  : undefined
+              }
+              onPopupScroll={
+                control.usePagination
+                  ? (e) => {
+                      const target = e.target as HTMLElement;
+                      if (
+                        target.scrollTop + target.offsetHeight ===
+                          target.scrollHeight &&
+                        selectState?.hasMore
+                      ) {
+                        loadSelectOptions(
+                          control,
+                          selectState.searchText,
+                          selectState.currentPage + 1
+                        );
+                      }
+                    }
                   : undefined
               }
             >
-              {selectState?.options?.map((option) => (
+              {optionsToRender.map((option) => (
                 <Option
                   key={String(option.value)}
                   value={option.value}

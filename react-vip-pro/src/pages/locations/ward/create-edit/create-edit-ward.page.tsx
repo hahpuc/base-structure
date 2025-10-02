@@ -113,7 +113,7 @@ const CreateEditWardPage: React.FunctionComponent = () => {
   };
 
   const formOptions: FormOption = {
-    layout: "horizontal",
+    layout: "vertical",
     size: "large",
     gutter: 16,
     initialData,
@@ -139,7 +139,6 @@ const CreateEditWardPage: React.FunctionComponent = () => {
         placeholder: "Select province",
         rules: [createValidationRules.required()],
         showWhen: (form) => {
-          console.log("Form value changed:", form);
           return form.name ? true : false;
         },
         enableWhen: (form) => {
