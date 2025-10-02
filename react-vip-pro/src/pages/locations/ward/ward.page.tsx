@@ -7,15 +7,20 @@ import { wardService } from "@/services/ward.service";
 import { ListPaginate } from "@/types/base";
 import { QueryWard, WardDto } from "@/types/ward";
 import { message } from "antd";
+import { useNavigate } from "react-router";
 
 const WardPage: React.FunctionComponent = () => {
+  const navigate = useNavigate();
+
   useHeader("Ward Management", [
     {
       id: "create-ward",
       title: "Create",
       icon: "plus",
       type: "primary",
-      handler: () => {},
+      handler: () => {
+        navigate("/ward/create");
+      },
     },
     {
       id: "export-ward",
@@ -55,8 +60,8 @@ const WardPage: React.FunctionComponent = () => {
         label: "edit",
         icon: <PencilIcon />,
         color: "danger",
-        handler: () => {
-          message.info("Edit action clicked");
+        handler: (row) => {
+          navigate(`/ward/edit/${row.id}`);
         },
       },
       {

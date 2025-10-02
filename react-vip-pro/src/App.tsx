@@ -13,7 +13,9 @@ import Home from "./pages/dashboard/Home";
 import DialogAntPage from "./pages/dialog-antd/dialog-ant.page";
 import FormsAntDPage from "./pages/forms-antd/forms-antd.page";
 import FormElements from "./pages/forms/FormElements";
+import CreateEditProvincePage from "./pages/locations/province/create-edit/create-edit-province.page";
 import ProvincePage from "./pages/locations/province/province.page";
+import CreateEditWardPage from "./pages/locations/ward/create-edit/create-edit-ward.page";
 import WardPage from "./pages/locations/ward/ward.page";
 import TableAntDPage from "./pages/table-antd/table-antd.page";
 import Alerts from "./pages/ui-elements/Alerts";
@@ -83,7 +85,12 @@ export default function App() {
 
         {/* Location */}
         <Route path="province" element={<ProvincePage />} />
+        <Route path="province/create" element={<CreateEditProvincePage />} />
+        <Route path="province/edit/:id" element={<CreateEditProvincePage />} />
+
         <Route path="ward" element={<WardPage />} />
+        <Route path="ward/create" element={<CreateEditWardPage />} />
+        <Route path="ward/edit/:id" element={<CreateEditWardPage />} />
 
         <Route path="" element={<Navigate to="/home" replace />} />
       </Route>

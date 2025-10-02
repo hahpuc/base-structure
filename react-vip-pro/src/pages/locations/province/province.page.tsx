@@ -6,15 +6,20 @@ import { provinceService } from "@/services/province.service";
 import { ListPaginate } from "@/types/base";
 import { ProvinceDto, QueryProvince } from "@/types/province";
 import { message } from "antd";
+import { useNavigate } from "react-router";
 
 const ProvincePage: React.FunctionComponent = () => {
+  const navigate = useNavigate();
+
   useHeader("Province Management", [
     {
       id: "create-province",
       title: "Create",
       icon: "plus",
       type: "primary",
-      handler: () => {},
+      handler: () => {
+        navigate("/province/create");
+      },
     },
     {
       id: "export-province",
@@ -54,8 +59,8 @@ const ProvincePage: React.FunctionComponent = () => {
         label: "edit",
         icon: <PencilIcon />,
         color: "danger",
-        handler: () => {
-          message.info("Edit action clicked");
+        handler: (row) => {
+          navigate(`/province/edit/${row.id}`);
         },
       },
       {
