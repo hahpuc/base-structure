@@ -2,14 +2,12 @@ import { UploadOutlined } from "@ant-design/icons";
 import {
   Button,
   Checkbox,
-  Col,
   DatePicker,
   Form,
   FormInstance,
   Input,
   InputNumber,
   Radio,
-  Row,
   Select,
   Switch,
   TimePicker,
@@ -661,7 +659,7 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
       const allActions = [...defaultActions, ...(formOptions.actions || [])];
 
       return (
-        <div className="flex gap-2 pt-4">
+        <div className="flex flex-wrap gap-2 pt-4">
           {allActions.map((action, index) => {
             if (action.visible === false) return null;
 
@@ -682,6 +680,7 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
                 disabled={action.disabled}
                 onClick={handleClick}
                 icon={action.icon}
+                className="min-w-[100px]"
               >
                 {action.label}
               </Button>
@@ -690,6 +689,11 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
         </div>
       );
     };
+
+    // Generate grid classes
+    const gridClasses =
+      formOptions.gridCols || "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
+    const gapClasses = formOptions.gridGap || "gap-4";
 
     return (
       <Container>
@@ -705,7 +709,7 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
             onFinish={handleSubmit}
             validateTrigger={formOptions.validateTrigger || "onChange"}
           >
-            <Row gutter={formOptions.gutter || 16}>
+            <div className={`grid ${gridClasses} ${gapClasses}`}>
               {formOptions.controls.map((control) => {
                 if (
                   control.hidden ||
@@ -714,12 +718,11 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
                   return null;
                 }
 
+                // Generate responsive classes for the control
+                const controlClasses = control.className || "col-span-1";
+
                 return (
-                  <Col
-                    key={control.name}
-                    span={control.span || 24}
-                    offset={control.offset || 0}
-                  >
+                  <div key={control.name} className={controlClasses}>
                     <Form.Item
                       name={control.name}
                       label={control.label}
@@ -732,10 +735,10 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
                     >
                       {renderFormControl(control)}
                     </Form.Item>
-                  </Col>
+                  </div>
                 );
               })}
-            </Row>
+            </div>
 
             {renderActions()}
           </Form>

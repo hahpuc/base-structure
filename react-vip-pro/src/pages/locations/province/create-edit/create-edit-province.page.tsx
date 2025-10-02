@@ -113,8 +113,7 @@ const CreateEditProvincePage: React.FunctionComponent = () => {
 
   const formOptions: FormOption = {
     layout: "horizontal",
-    size: "large",
-    gutter: 16,
+    gutter: 16, // This for Ant Design Grid => deprecated
     initialData,
     loading,
     onSubmit: handleSubmit,
@@ -128,7 +127,6 @@ const CreateEditProvincePage: React.FunctionComponent = () => {
         placeholder: "Enter province name",
         rules: [createValidationRules.required()],
         defaultValue: "test defaut value",
-        span: 12,
       },
 
       {
@@ -136,7 +134,6 @@ const CreateEditProvincePage: React.FunctionComponent = () => {
         label: "Status",
         type: "switch",
         required: true,
-        span: 24,
         defaultValue: true,
       },
     ],

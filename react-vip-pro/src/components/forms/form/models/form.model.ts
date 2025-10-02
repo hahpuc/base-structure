@@ -108,8 +108,14 @@ export type FtFormControl = {
   disabled?: boolean;
   readonly?: boolean;
   hidden?: boolean;
-  span?: number; // Grid span (1-24)
-  offset?: number; // Grid offset
+
+  // Tailwind CSS responsive grid classes
+  // Example: "col-span-12 md:col-span-6 lg:col-span-4"
+  className?: string;
+
+  // Legacy Ant Design grid support (deprecated, use className instead)
+  span?: number; // Grid span (1-24) - for backward compatibility
+  offset?: number; // Grid offset - for backward compatibility
 
   // Type-specific properties
   options?:
@@ -197,7 +203,16 @@ export type FormOption<T = Record<string, unknown>> = {
   // Layout
   labelCol?: { span?: number; offset?: number };
   wrapperCol?: { span?: number; offset?: number };
-  gutter?: number; // Grid gutter
+
+  // Grid configuration
+  gridCols?: string; // Tailwind grid-cols class (e.g., "grid-cols-1 md:grid-cols-2 lg:grid-cols-3")
+  gridGap?: string; // Tailwind gap class (e.g., "gap-4 md:gap-6")
+
+  /**
+   * @deprecated use gridCols and gridGap instead.
+   * This from Grid, Row & Col from Ant Design grid support (deprecated)
+   */
+  gutter?: number; // Grid gutter - for backward compatibility
 
   // Data handling
   initialData?: Partial<T>;

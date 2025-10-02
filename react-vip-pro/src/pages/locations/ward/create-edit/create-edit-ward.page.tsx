@@ -114,8 +114,11 @@ const CreateEditWardPage: React.FunctionComponent = () => {
 
   const formOptions: FormOption = {
     layout: "vertical",
-    size: "large",
-    gutter: 16,
+
+    // Tailwind CSS responsive grid configuration
+    gridCols: "grid-cols-1 md:grid-cols-2",
+    gridGap: "gap-x-6",
+
     initialData,
     loading,
     onSubmit: handleSubmit,
@@ -129,7 +132,7 @@ const CreateEditWardPage: React.FunctionComponent = () => {
         placeholder: "Enter province name",
         rules: [createValidationRules.required()],
         defaultValue: "test defaut value",
-        span: 12,
+        className: "col-span-1", // Half width on tablet and desktop
       },
       {
         name: "province_id",
@@ -139,12 +142,13 @@ const CreateEditWardPage: React.FunctionComponent = () => {
         placeholder: "Select province",
         rules: [createValidationRules.required()],
         showWhen: (form) => {
+          console.log("Form value changed:", form);
           return form.name ? true : false;
         },
         enableWhen: (form) => {
           return form.status ? true : false;
         },
-        span: 12,
+        className: "col-span-1", // Half width on tablet and desktop
         options: async () => {
           const result = await provinceService.getAll();
           if (result.isSuccess && result.data) {
@@ -163,7 +167,7 @@ const CreateEditWardPage: React.FunctionComponent = () => {
         required: true,
         placeholder: "Select ward",
         rules: [createValidationRules.required()],
-        span: 12,
+        className: "col-span-1 md:col-span-2", // Full width on mobile, full width on tablet/desktop
         enableWhen: (form) => {
           return form.province_id ? true : false;
         },
@@ -189,7 +193,7 @@ const CreateEditWardPage: React.FunctionComponent = () => {
         label: "Status",
         type: "switch",
         required: true,
-        span: 24,
+        className: "col-span-1 md:col-span-2", // Full width
         defaultValue: true,
       },
     ],
