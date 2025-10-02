@@ -1,8 +1,9 @@
 import { useAppSelector } from "@/hooks/redux.hooks";
-import HeaderButtons, { buttonHandlers } from "./header-buttons.component";
+import HeaderButtons from "./header-buttons.component";
 import { RootState } from "@/store";
 import { useCallback } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { buttonHandlers } from "./top-buttons.utils";
 
 const PageTopActions: React.FC = () => {
   const { headerTitle, buttons } = useAppSelector(

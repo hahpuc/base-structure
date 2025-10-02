@@ -1,11 +1,11 @@
 import {
-  HeaderButton,
   registerButtonHandler,
   unregisterButtonHandler,
-} from "@/components/top-actions/header-buttons.component";
+} from "@/components/top-actions/top-buttons.utils";
 import { useAppDispatch } from "./redux.hooks";
 import { setButtons, setHeaderTitle } from "@/store/slices/ui.slice";
 import { useEffect } from "react";
+import { HeaderButton } from "@/components/top-actions/types/top-button.type";
 
 export interface HeaderButtonWithHandler extends Omit<HeaderButton, "id"> {
   id: string;

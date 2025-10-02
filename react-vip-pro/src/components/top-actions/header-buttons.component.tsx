@@ -1,68 +1,10 @@
-import {
-  ArrowRightIcon,
-  ExportIcon,
-  ImportIcon,
-  PencilIcon,
-  PlusIcon,
-  TrashBinIcon,
-} from "@/icons";
 import { Button } from "antd";
-import { ButtonColorType, ButtonType, ButtonVariantType } from "antd/es/button";
 import React from "react";
+import { resolve } from "./top-buttons.utils";
+import { iconMap } from "./top-buttons.icon";
+import { HeaderButton } from "./types/top-button.type";
 
-export const iconNames = [
-  "edit",
-  "plus",
-  "import",
-  "export",
-  "delete",
-  "back",
-] as const;
-export type IconName = (typeof iconNames)[number];
-
-export type HeaderButton = {
-  id: string;
-  title: string | (() => string);
-  icon?: IconName | (() => IconName);
-  type?: ButtonType | (() => ButtonType);
-  color?: ButtonColorType | (() => ButtonColorType);
-  variant?: ButtonVariantType | (() => ButtonVariantType);
-  visible?: boolean | (() => boolean);
-  disable?: boolean | (() => boolean);
-  permission?: string;
-};
-
-export type HeaderButtonHandler = {
-  id: string;
-  handler: () => Promise<void> | void;
-};
-
-// Icon mapping
-const iconMap: Record<IconName, React.ReactNode> = {
-  edit: <PencilIcon />,
-  plus: <PlusIcon />,
-  import: <ImportIcon />,
-  export: <ExportIcon />,
-  delete: <TrashBinIcon />,
-  back: <ArrowRightIcon />,
-};
-
-// Button handler registry
-const buttonHandlers = new Map<string, () => Promise<void> | void>();
-export const registerButtonHandler = (
-  id: string,
-  handler: () => Promise<void> | void
-) => buttonHandlers.set(id, handler);
-export const unregisterButtonHandler = (id: string) =>
-  buttonHandlers.delete(id);
-
-// Utility to resolve value or function
-function resolve<T>(value: T | (() => T)): T {
-  return typeof value === "function" ? (value as () => T)() : value;
-}
-
-// Header action buttons component
-interface HeaderButtonsProps {
+export interface HeaderButtonsProps {
   buttons: HeaderButton[];
   onButtonClick: (id: string) => void;
   isMobile?: boolean;
@@ -121,5 +63,4 @@ const HeaderButtons: React.FC<HeaderButtonsProps> = React.memo(
   }
 );
 
-export { buttonHandlers };
 export default HeaderButtons;
