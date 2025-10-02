@@ -49,6 +49,59 @@ export const TableFilter: React.FC<TableFilterProps> = ({
     {}
   );
 
+  // Initialize: Load all parent filters and child filters if URL has parent values
+  useEffect(() => {
+    const initFilters = async () => {
+      // Load parent filters
+      for (const filter of filters) {
+        if (
+          filter.options &&
+          !Array.isArray(filter.options) &&
+          !filter.parent
+        ) {
+          await loadFilterOptions(filter);
+        }
+      }
+
+      // Load child filters if parent values exist in URL
+      const currentValues = getCurrentFilterValues();
+
+      for (const filter of filters) {
+        if (filter.parent) {
+          const parentValue = currentValues[filter.parent.filterName];
+          if (
+            parentValue !== undefined &&
+            parentValue !== null &&
+            parentValue !== ""
+          ) {
+            // Ensure parentValue is string or number
+            const normalizedValue =
+              typeof parentValue === "string" || typeof parentValue === "number"
+                ? parentValue
+                : String(parentValue);
+            await loadFilterOptions(filter, normalizedValue);
+          }
+        }
+      }
+    };
+
+    initFilters();
+  }, []); // Only run once on mount
+
+  // Sync URL values to form when drawer opens
+  useEffect(() => {
+    if (drawerVisible) {
+      const currentValues = getCurrentFilterValues();
+      form.setFieldsValue(currentValues);
+    }
+  }, [drawerVisible]);
+
+  // Sync search value
+  useEffect(() => {
+    const urlSearchValue = searchParams.get("filter") || "";
+    setSearchValue(urlSearchValue);
+  }, [searchParams]);
+
   // Get current filter values from URL
   const getCurrentFilterValues = (): FilterValues => {
     const values: FilterValues = {};
@@ -107,60 +160,6 @@ export const TableFilter: React.FC<TableFilterProps> = ({
       setLoadingFilters((prev) => ({ ...prev, [filterKey]: false }));
     }
   };
-
-  // Initialize: Load all parent filters and child filters if URL has parent values
-  useEffect(() => {
-    const initFilters = async () => {
-      // Load parent filters
-      for (const filter of filters) {
-        if (
-          filter.options &&
-          !Array.isArray(filter.options) &&
-          !filter.parent
-        ) {
-          await loadFilterOptions(filter);
-        }
-      }
-
-      // Load child filters if parent values exist in URL
-      const currentValues = getCurrentFilterValues();
-      for (const filter of filters) {
-        if (filter.parent) {
-          const parentValue = currentValues[filter.parent.filterName];
-          if (
-            parentValue !== undefined &&
-            parentValue !== null &&
-            parentValue !== ""
-          ) {
-            // Ensure parentValue is string or number
-            const normalizedValue =
-              typeof parentValue === "string" || typeof parentValue === "number"
-                ? parentValue
-                : String(parentValue);
-            await loadFilterOptions(filter, normalizedValue);
-          }
-        }
-      }
-    };
-
-    initFilters();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only run once on mount
-
-  // Sync URL values to form when drawer opens
-  useEffect(() => {
-    if (drawerVisible) {
-      const currentValues = getCurrentFilterValues();
-      form.setFieldsValue(currentValues);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [drawerVisible]);
-
-  // Sync search value
-  useEffect(() => {
-    const urlSearchValue = searchParams.get("filter") || "";
-    setSearchValue(urlSearchValue);
-  }, [searchParams]);
 
   const handleSearch = (value: string) => {
     setSearchValue(value);

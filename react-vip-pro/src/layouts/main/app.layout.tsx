@@ -1,8 +1,9 @@
+import PageTopActions from "@/components/top-actions/top-actions.component";
 import { Outlet } from "react-router";
 import { useSidebar } from "../../hooks/ui.hooks";
 import AppHeader from "./components/app-header.layout";
-import Backdrop from "./components/backdrop.component";
 import AppSidebar from "./components/app-sidebar.layout";
+import Backdrop from "./components/backdrop.component";
 
 const AppLayout: React.FC = () => {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
@@ -20,6 +21,8 @@ const AppLayout: React.FC = () => {
       >
         <AppHeader />
         <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
+          <PageTopActions />
+
           <Outlet />
         </div>
       </div>

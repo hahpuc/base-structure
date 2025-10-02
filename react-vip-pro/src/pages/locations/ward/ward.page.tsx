@@ -1,5 +1,6 @@
-import { AppTable, TableOption } from "@/components/partials/table";
+import { AppTable, TableOption } from "@/components/forms/table";
 import { EStatus } from "@/constants/enum";
+import useHeader from "@/hooks/use-header.hook";
 import { PencilIcon, TrashBinIcon } from "@/icons";
 import { provinceService } from "@/services/province.service";
 import { wardService } from "@/services/ward.service";
@@ -8,6 +9,30 @@ import { QueryWard, WardDto } from "@/types/ward";
 import { message } from "antd";
 
 const WardPage: React.FunctionComponent = () => {
+  useHeader("Ward Management", [
+    {
+      id: "create-ward",
+      title: "Create",
+      icon: "plus",
+      type: "primary",
+      handler: () => {},
+    },
+    {
+      id: "export-ward",
+      title: "Export",
+      icon: "export",
+      type: "default",
+      handler: () => {},
+    },
+    {
+      id: "import-ward",
+      title: "Import",
+      icon: "import",
+      type: "default",
+      handler: () => {},
+    },
+  ]);
+
   const fetchWards = async (
     params: QueryWard
   ): Promise<ListPaginate<WardDto>> => {

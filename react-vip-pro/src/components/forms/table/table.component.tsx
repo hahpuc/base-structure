@@ -300,7 +300,9 @@ function AppTable<T extends TableRowData>({
   };
 
   return (
-    <div className={className}>
+    <div
+      className={`rounded-2xl p-6 bg-white dark:bg-white/[0.03] ` + className}
+    >
       {/* Title */}
       {/* {option.title && (
         <div style={{ marginBottom: 16 }}>

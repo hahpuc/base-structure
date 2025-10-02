@@ -1,5 +1,6 @@
-import { AppTable, TableOption } from "@/components/partials/table";
+import { AppTable, TableOption } from "@/components/forms/table";
 import { EStatus } from "@/constants/enum";
+import useHeader from "@/hooks/use-header.hook";
 import { EyeIcon, PencilIcon, TrashBinIcon } from "@/icons";
 import { provinceService } from "@/services/province.service";
 import { ListPaginate } from "@/types/base";
@@ -7,6 +8,30 @@ import { ProvinceDto, QueryProvince } from "@/types/province";
 import { message } from "antd";
 
 const ProvincePage: React.FunctionComponent = () => {
+  useHeader("Province Management", [
+    {
+      id: "create-province",
+      title: "Create",
+      icon: "plus",
+      type: "primary",
+      handler: () => {},
+    },
+    {
+      id: "export-province",
+      title: "Export",
+      icon: "export",
+      type: "default",
+      handler: () => {},
+    },
+    {
+      id: "import-province",
+      title: "Import",
+      icon: "import",
+      type: "default",
+      handler: () => {},
+    },
+  ]);
+
   const fetchProvinces = async (
     params: QueryProvince
   ): Promise<ListPaginate<ProvinceDto>> => {
