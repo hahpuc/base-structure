@@ -45,6 +45,7 @@ export interface FormComponentRef {
   setFormValue: (values: Record<string, unknown>) => void;
   resetForm: () => void;
   submitForm: () => void;
+  getErrorField: () => Record<string, string[]>;
   form: FormInstance;
 }
 
@@ -92,6 +93,16 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
         setFormValues({});
       },
       submitForm: () => form.submit(),
+      getErrorField: () => {
+        const fieldsError = form.getFieldsError();
+        const errors: Record<string, string[]> = {};
+        fieldsError.forEach((field) => {
+          if (field.errors && field.errors.length > 0) {
+            errors[field.name[0] as string] = field.errors;
+          }
+        });
+        return errors;
+      },
       form,
     }));
 
@@ -469,6 +480,7 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
       [formOptions]
     );
 
+    // MARK: Render Form Inputs
     // Render form control based on type
     const renderFormControl = useCallback(
       (control: FtFormControl) => {
@@ -484,6 +496,7 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
 
         const commonProps = {
           placeholder: control.placeholder,
+          readOnly: control.readonly,
           disabled: isDisabled,
         };
 
@@ -738,7 +751,7 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
           }
 
           case "hidden": {
-            return <Input type="hidden" />;
+            return <></>;
           }
 
           default: {
