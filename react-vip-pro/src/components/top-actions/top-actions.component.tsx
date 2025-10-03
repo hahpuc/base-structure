@@ -12,9 +12,9 @@ const PageTopActions: React.FC = () => {
 
   const isMobile = useIsMobile();
 
-  const handleButtonClick = useCallback((buttonId: string) => {
+  const handleButtonClick = useCallback(async (buttonId: string) => {
     const handler = buttonHandlers.get(buttonId);
-    if (handler) handler();
+    if (handler) await handler();
   }, []);
 
   return (

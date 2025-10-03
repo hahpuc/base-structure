@@ -420,7 +420,7 @@ const DynamicFormPage: React.FunctionComponent = () => {
         label: "City (Autocomplete)",
         type: "autocomplete",
         placeholder: "Search city",
-        className: "col-span-1",
+        className: "col-span-1 md:col-span-2 lg:col-span-3",
         showSearch: true,
         options: [
           { label: "New York", value: "new_york" },
@@ -434,18 +434,24 @@ const DynamicFormPage: React.FunctionComponent = () => {
 
       // ========== FILE UPLOAD ==========
       {
-        name: "avatar",
-        label: "Avatar (File Upload)",
+        name: "Image",
+        label: "Image (File Upload)",
         type: "file",
-        className: "col-span-1",
+        className: "col-span-3 md:col-span-2 lg:col-span-1",
         required: true,
         rules: [createValidationRules.required()],
       },
       {
         name: "documents",
-        label: "Documents",
+        label: "Documents (Exels, PDF, Word, PPTX,...)",
         type: "file",
-        className: "col-span-1",
+        className: "col-span-3 md:col-span-2 lg:col-span-1",
+      },
+      {
+        name: "video",
+        label: "Video (File Upload)",
+        type: "file",
+        className: "col-span-3 md:col-span-2 lg:col-span-1",
       },
 
       // ========== RICH TEXT ==========

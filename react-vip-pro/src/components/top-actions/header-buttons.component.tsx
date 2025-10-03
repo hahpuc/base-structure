@@ -1,5 +1,5 @@
 import { Button } from "antd";
-import React from "react";
+import React, { useRef } from "react";
 import { resolve } from "./top-buttons.utils";
 import { iconMap } from "./top-buttons.icon";
 import { HeaderButton } from "./types/top-button.type";
@@ -7,13 +7,29 @@ import { usePermission } from "@/hooks/use-permission.hook";
 
 export interface HeaderButtonsProps {
   buttons: HeaderButton[];
-  onButtonClick: (id: string) => void;
+  onButtonClick: (id: string) => Promise<void> | void;
   isMobile?: boolean;
 }
 
 const HeaderButtons: React.FC<HeaderButtonsProps> = React.memo(
   ({ buttons, onButtonClick, isMobile = false }) => {
     const { hasPermission } = usePermission();
+
+    // Prevent spam clicks
+    const lockedRef = useRef<Record<string, boolean>>({});
+
+    const handleClick = async (id: string) => {
+      if (lockedRef.current[id]) return;
+
+      lockedRef.current[id] = true;
+
+      try {
+        await onButtonClick(id);
+      } finally {
+        // release after done
+        lockedRef.current[id] = false;
+      }
+    };
 
     const visibleButtons = buttons.filter((button) => {
       if (!button.permission) return true;
@@ -36,8 +52,10 @@ const HeaderButtons: React.FC<HeaderButtonsProps> = React.memo(
                   icon={iconName ? iconMap[iconName] : undefined}
                   color={resolve(button.color)}
                   variant={resolve(button.variant)}
-                  onClick={() => onButtonClick(button.id)}
-                  disabled={resolve(button.disable)}
+                  onClick={() => handleClick(button.id)}
+                  disabled={
+                    resolve(button.disable) || lockedRef.current[button.id]
+                  }
                   size="large"
                 ></Button>
               );
@@ -60,8 +78,8 @@ const HeaderButtons: React.FC<HeaderButtonsProps> = React.memo(
               icon={iconName ? iconMap[iconName] : undefined}
               color={resolve(button.color)}
               variant={resolve(button.variant)}
-              onClick={() => onButtonClick(button.id)}
-              disabled={resolve(button.disable)}
+              onClick={() => handleClick(button.id)}
+              disabled={resolve(button.disable) || lockedRef.current[button.id]}
             >
               {isMobile ? "" : title}
             </Button>
