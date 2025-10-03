@@ -49,6 +49,7 @@ export const TableFilter: React.FC<TableFilterProps> = ({
     {}
   );
 
+  // MARK: Filters Values
   // Get current filter values from URL - MEMOIZED to prevent recalculation
   const getCurrentFilterValues = useCallback((): FilterValues => {
     const values: FilterValues = {};
@@ -108,6 +109,7 @@ export const TableFilter: React.FC<TableFilterProps> = ({
     []
   );
 
+  // MARK: UseEffects
   // Initialize: Load all parent filters and child filters if URL has parent values
   useEffect(() => {
     const initFilters = async () => {
@@ -162,6 +164,7 @@ export const TableFilter: React.FC<TableFilterProps> = ({
     setSearchValue(urlSearchValue);
   }, [searchParams]);
 
+  // MARK: Handle Actions
   const handleSearch = useCallback(
     (value: string) => {
       setSearchValue(value);
@@ -232,6 +235,7 @@ export const TableFilter: React.FC<TableFilterProps> = ({
     onFilterChange({});
   }, [form, onSearch, onFilterChange]);
 
+  // MARK: Filter Tags Display
   // Get display value for a filter - MEMOIZED
   const getFilterDisplayValue = useCallback(
     (filter: TableFilterType, value: unknown): string => {
@@ -306,6 +310,7 @@ export const TableFilter: React.FC<TableFilterProps> = ({
     [getActiveFilters]
   );
 
+  // MARK: Dynamic Form
   const renderFilterInput = useCallback(
     (filter: TableFilterType) => {
       switch (filter.type) {

@@ -4,6 +4,8 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 
 import { ListPaginate } from "../../../types/base";
+import { useAppSelector } from "@/hooks/redux.hooks";
+import { permissionService } from "@/services/permissions.service";
 
 import ActionColumn from "./action-column";
 import {
@@ -29,6 +31,19 @@ function AppTable<T extends TableRowData>({
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<T[]>([]);
 
+  // MARK: Permissions
+  // Get user permissions from Redux store
+  const userPermissions = useAppSelector(
+    (state) => state.permissions.permissions
+  );
+
+  // Update permission service when permissions change
+  useEffect(() => {
+    if (userPermissions && userPermissions.length > 0) {
+      permissionService.setPermissions(userPermissions);
+    }
+  }, [userPermissions]);
+
   // Memoize showTotal function to prevent recreation
   const showTotal = useCallback(
     (total: number, range: number[]) =>
@@ -46,6 +61,7 @@ function AppTable<T extends TableRowData>({
     pageSizeOptions: option.pageSizeOptions || ["10", "20", "50", "100"],
   });
 
+  // MARK: Query & Fetch data
   // Parse URL params to query params - now handles all URL parameters dynamically
   const getQueryParamsFromUrl = useCallback((): TableQueryParams => {
     const params: TableQueryParams = {
@@ -135,6 +151,7 @@ function AppTable<T extends TableRowData>({
     fetchData();
   }, [fetchData]);
 
+  // MARK: Table Handlers
   // Handle table change (pagination, sorting, filtering)
   const handleTableChange = useCallback(
     (
@@ -196,27 +213,50 @@ function AppTable<T extends TableRowData>({
     [searchParams, updateUrlParams]
   );
 
+  // MARK: Memo Col, Act,...
+  // Filter actions based on permissions
+  const filteredActions = useMemo(() => {
+    if (!option.actions || option.actions.length === 0) return [];
+
+    return option.actions.filter((action) => {
+      // If no permission specified, show the action
+      if (!action.permission) return true;
+
+      // Check if user has the required permission
+      return userPermissions.includes(action.permission);
+    });
+  }, [option.actions, userPermissions]);
+
   // Action column (if actions are provided)
   const actionColumn = useMemo<ColumnsType<T>[number] | null>(() => {
-    if (option.actions && option.actions.length > 0) {
+    if (filteredActions && filteredActions.length > 0) {
       return {
         title: "Actions",
         key: "actions",
         dataIndex: "actions",
-        width: Math.max(100, option.actions.length * 48),
+        width: Math.max(100, filteredActions.length * 48),
         fixed: "left",
         align: "center",
         render: (_: unknown, record: T) => (
-          <ActionColumn actions={option.actions} record={record} />
+          <ActionColumn actions={filteredActions} record={record} />
         ),
       };
     }
     return null;
-  }, [option.actions]);
+  }, [filteredActions]);
 
   // Convert columns to Ant Design format
   const antdColumns = useMemo<ColumnsType<T>>(() => {
-    const columns: ColumnsType<T> = option.columns.map((col) => {
+    // Filter columns based on permissions
+    const filteredColumns = option.columns.filter((col) => {
+      // If no permission specified, show the column
+      if (!col.permission) return true;
+
+      // Check if user has the required permission
+      return userPermissions.includes(col.permission);
+    });
+
+    const columns: ColumnsType<T> = filteredColumns.map((col) => {
       const column: Record<string, unknown> = {
         title: col.title,
         dataIndex: col.name,
@@ -226,7 +266,7 @@ function AppTable<T extends TableRowData>({
         align: col.align,
         sorter: col.sortable,
         ellipsis: true,
-        render: (value: unknown, record: T): React.ReactNode => {
+        render: (_value: unknown, record: T): React.ReactNode => {
           if (col.customRender) {
             return col.customRender(record);
           }
@@ -285,7 +325,7 @@ function AppTable<T extends TableRowData>({
       return [actionColumn, ...columns];
     }
     return columns;
-  }, [option.columns, searchParams, actionColumn]);
+  }, [option.columns, searchParams, actionColumn, userPermissions]);
 
   // Memoize rowSelection
   const rowSelection = useMemo(
@@ -357,6 +397,7 @@ function AppTable<T extends TableRowData>({
     ]
   );
 
+  // MARK: Render
   return (
     <div
       className={`rounded-2xl p-6 bg-white dark:bg-white/[0.03] ` + className}

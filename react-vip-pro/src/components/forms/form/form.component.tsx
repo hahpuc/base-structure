@@ -71,6 +71,7 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
       Record<string, boolean>
     >({});
 
+    //MARK: Expose Ref
     // Expose methods through ref
     useImperativeHandle(ref, () => ({
       validateForm: async () => {
@@ -94,6 +95,7 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
       form,
     }));
 
+    // MARK: Init Form
     // Process initial data for special field types
     const processInitialData = useCallback(
       (data: Record<string, unknown>): Record<string, unknown> => {
@@ -321,6 +323,7 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
       loadChildFilterOptions,
     ]);
 
+    // MARK: Handle Actions
     // Handle form value changes
     const handleValuesChange = useCallback(
       (
@@ -722,6 +725,7 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
       );
     }, [formOptions, loading, form]);
 
+    // MARK: Styles
     // Generate grid classes
     const gridClasses = useMemo(
       () => formOptions.gridCols || "grid-cols-1 md:grid-cols-2 lg:grid-cols-3",

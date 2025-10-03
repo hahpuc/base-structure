@@ -28,6 +28,8 @@ import UserProfiles from "./pages/user-profile.page";
 import AuthProvider from "./providers/auth.provider";
 import { RootState } from "./store";
 import { fetchPermissions } from "./store/slices/permissions.slice";
+import RolePage from "./pages/role/role.page";
+import CreateEditRolePage from "./pages/role/create-edit/create-edit-role.page";
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -82,6 +84,11 @@ export default function App() {
         {/* Charts */}
         <Route path="line-chart" element={<LineChart />} />
         <Route path="bar-chart" element={<BarChart />} />
+
+        {/* User Management */}
+        <Route path="role" element={<RolePage />} />
+        <Route path="role/create" element={<CreateEditRolePage />} />
+        <Route path="role/edit/:id" element={<CreateEditRolePage />} />
 
         {/* Location */}
         <Route path="province" element={<ProvincePage />} />

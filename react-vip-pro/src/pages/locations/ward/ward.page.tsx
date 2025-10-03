@@ -18,6 +18,7 @@ const WardPage: React.FunctionComponent = () => {
       title: "Create",
       icon: "plus",
       type: "primary",
+      permission: "ward_manage_create",
       handler: () => {
         navigate("/ward/create");
       },
@@ -60,6 +61,7 @@ const WardPage: React.FunctionComponent = () => {
         label: "edit",
         icon: <PencilIcon />,
         color: "danger",
+        permission: "ward_manage_update",
         handler: (row) => {
           navigate(`/ward/edit/${row.id}`);
         },
@@ -68,6 +70,7 @@ const WardPage: React.FunctionComponent = () => {
         label: "Delete",
         icon: <TrashBinIcon />,
         color: "danger",
+        permission: "ward_manage_delete",
         handler: (row) => {
           message.info(`Delete ward: ${row.name}`);
         },
@@ -98,12 +101,14 @@ const WardPage: React.FunctionComponent = () => {
         name: "created_at",
         type: "datetime",
         sortable: false,
+        permission: "ward_manage_read",
       },
       {
         title: "Updated At",
         name: "updated_at",
         type: "datetime",
         sortable: false,
+        permission: "ward_manage_read",
       },
       {
         title: "Status",
