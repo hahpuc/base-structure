@@ -1,3 +1,5 @@
+import { ApiResult } from "@/services/client/api-result";
+import { BaseQuery, ListPaginate } from "@/types/base";
 import { Rule } from "antd/es/form";
 import { ReactNode, ReactElement } from "react";
 
@@ -73,21 +75,6 @@ export type FormAction = {
   handler?: (formValue: Record<string, unknown>) => void | Promise<void>;
 };
 
-export type BaseQuery = {
-  page?: number;
-  size?: number;
-  search?: string;
-  [key: string]: unknown;
-};
-
-export type ListPaginate<T> = {
-  data: T[];
-  total: number;
-  page: number;
-  size: number;
-  hasMore: boolean;
-};
-
 export type FtFormControl = {
   name: string;
   label: string;
@@ -124,7 +111,11 @@ export type FtFormControl = {
     | CheckboxOption[] // Static checkbox options
     | Promise<SelectOption[]> // Promise-based API
     | (() => Promise<SelectOption[]>) // getAll() API - no parameters
-    | ((input: BaseQuery) => Promise<ListPaginate<unknown>>) // getByPaged() API - with pagination
+    | ((input: BaseQuery) => Promise<ApiResult<ListPaginate<unknown>>>) // getByPaged() API - with pagination
+    | ((
+        input: BaseQuery,
+        parentValue: string | number | (string | number)[]
+      ) => Promise<ApiResult<ListPaginate<unknown>>>) // getByPaged() API - with pagination and parent dependency
     | ((input?: BaseQuery) => Promise<SelectOption[]>) // Promise-based API with optional params
     | ((input?: BaseQuery) => SelectOption[]) // Synchronous function
     | ((parentValue: string | number) => Promise<SelectOption[]>) // Load options based on parent value (for child filters)

@@ -30,6 +30,7 @@ import { RootState } from "./store";
 import { fetchPermissions } from "./store/slices/permissions.slice";
 import RolePage from "./pages/role/role.page";
 import CreateEditRolePage from "./pages/role/create-edit/create-edit-role.page";
+import DynamicFormPage from "./pages/forms-antd/dynamic-forms.page";
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -72,6 +73,7 @@ export default function App() {
         <Route path="table-antd" element={<TableAntDPage />} />
         <Route path="buttons-antd" element={<ButtonAntDPage />} />
         <Route path="dialogs-antd" element={<DialogAntPage />} />
+        <Route path="dynamic-form" element={<DynamicFormPage />} />
 
         {/* Ui Elements */}
         <Route path="alerts" element={<Alerts />} />

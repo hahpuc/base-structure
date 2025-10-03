@@ -25,16 +25,16 @@ import React, {
 } from "react";
 
 import {
-  BaseQuery,
   CheckboxOption,
   FormOption,
   FtFormControl,
-  ListPaginate,
   PaginatedFormSelectOptions,
   RadioOption,
   SelectOption,
 } from "./models/form.model";
 import { Container } from "@/components/common/container-box";
+import { BaseQuery, ListPaginate } from "@/types/base";
+import { ApiResult } from "@/services/client/api-result";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -198,10 +198,20 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
 
     // Load select options
     const loadSelectOptions = useCallback(
-      async (control: FtFormControl, searchText = "", page = 1) => {
+      async (
+        control: FtFormControl,
+        searchText = "",
+        page = 1,
+        parentValue?: string | number
+      ) => {
         if (!control.options) return;
 
-        const key = control.name;
+        // Use different key for child filters with parent value
+        const key =
+          control.parent && parentValue !== undefined
+            ? `${control.name}_${parentValue}`
+            : control.name;
+
         setSelectOptionsState((prev) => ({
           ...prev,
           [key]: { ...prev[key], loading: true },
@@ -221,25 +231,58 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
               // Paginated API
               const query: BaseQuery = {
                 page,
-                size: control.pageSize || 20,
-                search: searchText,
+                limit: control.pageSize || 20,
+                filter: searchText,
               };
-              const result = await (
-                control.options as (
-                  input: BaseQuery
-                ) => Promise<ListPaginate<unknown>>
-              )(query);
-              options = result.data.map((item: unknown) => {
-                const typedItem = item as Record<string, unknown>;
-                return {
-                  label: (typedItem.name ||
-                    typedItem.label ||
-                    typedItem.title) as string,
-                  value: typedItem.id || typedItem.value,
-                };
-              });
-              hasMore = result.hasMore;
-              total = result.total;
+
+              // Check if this is a child filter with parent dependency
+              if (control.parent && parentValue !== undefined) {
+                const result = await (
+                  control.options as (
+                    input: BaseQuery,
+                    parentValue: string | number
+                  ) => Promise<ApiResult<ListPaginate<unknown>>>
+                )(query, parentValue);
+
+                options = (result.data?.data ?? []).map((item: unknown) => {
+                  const typedItem = item as Record<string, unknown>;
+                  return {
+                    label: (typedItem.name ||
+                      typedItem.label ||
+                      typedItem.title) as string,
+                    value: typedItem.id || typedItem.value,
+                  };
+                });
+                const totalPages = result.data?.total_pages ?? 0;
+                const totalRecords = result.data?.total_records ?? 0;
+                hasMore =
+                  totalPages > page ||
+                  totalRecords > page * (control.pageSize || 20);
+                total = totalRecords;
+              } else {
+                // Parent or independent filter
+                const result = await (
+                  control.options as (
+                    input: BaseQuery
+                  ) => Promise<ApiResult<ListPaginate<unknown>>>
+                )(query);
+
+                options = (result.data?.data ?? []).map((item: unknown) => {
+                  const typedItem = item as Record<string, unknown>;
+                  return {
+                    label: (typedItem.name ||
+                      typedItem.label ||
+                      typedItem.title) as string,
+                    value: typedItem.id || typedItem.value,
+                  };
+                });
+                const totalPages = result.data?.total_pages ?? 0;
+                const totalRecords = result.data?.total_records ?? 0;
+                hasMore =
+                  totalPages > page ||
+                  totalRecords > page * (control.pageSize || 20);
+                total = totalRecords;
+              }
             } else {
               // Non-paginated API
               const result = await (
@@ -357,16 +400,56 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
                 parentValue !== null &&
                 parentValue !== ""
               ) {
-                loadChildFilterOptions(
-                  childControl,
-                  parentValue as string | number
-                );
+                // Check if child uses pagination
+                if (childControl.usePagination) {
+                  // Load paginated options with parent value
+                  loadSelectOptions(
+                    childControl,
+                    "",
+                    1,
+                    parentValue as string | number
+                  );
+                } else {
+                  // Load non-paginated options
+                  loadChildFilterOptions(
+                    childControl,
+                    parentValue as string | number
+                  );
+                }
+              } else {
+                // Clear child filter options when parent is cleared
+                const filterKey = `${childControl.name}_${parentValue}`;
+                if (childControl.usePagination) {
+                  setSelectOptionsState((prev) => ({
+                    ...prev,
+                    [filterKey]: {
+                      options: [],
+                      hasMore: false,
+                      currentPage: 1,
+                      pageSize: childControl.pageSize || 20,
+                      total: 0,
+                      loading: false,
+                      searchText: "",
+                    },
+                  }));
+                } else {
+                  setChildFilterOptions((prev) => ({
+                    ...prev,
+                    [filterKey]: [],
+                  }));
+                }
               }
             });
           }
         });
       },
-      [formOptions.controls, form, loadChildFilterOptions]
+      [
+        formOptions.controls,
+        form,
+        loadChildFilterOptions,
+        loadSelectOptions,
+        setSelectOptionsState,
+      ]
     );
 
     // Handle form submission
@@ -445,28 +528,41 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
 
           case "select":
           case "autocomplete": {
-            const selectState = selectOptionsState[control.name];
             const mode = control.mode === "default" ? undefined : control.mode;
             let optionsToRender: SelectOption[] = [];
             let isLoadingOptions = false;
             let isDisabledDueToParent = false;
+            let selectState: PaginatedFormSelectOptions | undefined;
+            let currentParentValue: string | number | undefined;
 
             // Handle child filters with parent dependency
             if (control.parent) {
               const parentValue = formValues[control.parent.filterName];
+              currentParentValue = parentValue as string | number;
+
               if (
                 parentValue !== undefined &&
                 parentValue !== null &&
                 parentValue !== ""
               ) {
                 const filterKey = `${control.name}_${parentValue}`;
-                optionsToRender = childFilterOptions[filterKey] || [];
-                isLoadingOptions = loadingChildFilters[filterKey] || false;
+
+                if (control.usePagination) {
+                  // Paginated child filter
+                  selectState = selectOptionsState[filterKey];
+                  optionsToRender = selectState?.options || [];
+                  isLoadingOptions = selectState?.loading || false;
+                } else {
+                  // Non-paginated child filter
+                  optionsToRender = childFilterOptions[filterKey] || [];
+                  isLoadingOptions = loadingChildFilters[filterKey] || false;
+                }
               } else {
                 isDisabledDueToParent = true;
               }
             } else {
               // Parent or independent filters
+              selectState = selectOptionsState[control.name];
               if (selectState) {
                 optionsToRender = selectState.options || [];
                 isLoadingOptions = selectState.loading || false;
@@ -494,9 +590,12 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
                 disabled={isDisabled || isDisabledDueToParent}
                 loading={isLoadingOptions}
                 optionFilterProp="label"
+                filterOption={!control.usePagination}
                 onSearch={
-                  control.usePagination && control.searchable
-                    ? (value) => loadSelectOptions(control, value, 1)
+                  control.usePagination &&
+                  (control.showSearch || control.searchable)
+                    ? (value) =>
+                        loadSelectOptions(control, value, 1, currentParentValue)
                     : undefined
                 }
                 onPopupScroll={
@@ -511,7 +610,8 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
                           loadSelectOptions(
                             control,
                             selectState.searchText,
-                            selectState.currentPage + 1
+                            selectState.currentPage + 1,
+                            currentParentValue
                           );
                         }
                       }

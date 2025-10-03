@@ -86,6 +86,11 @@ const otherItems: MenuItem[] = [
         path: "/dialogs-antd",
         pro: true,
       },
+      {
+        name: "Dynamic Form",
+        path: "/dynamic-form",
+        new: true,
+      },
     ],
   },
   {
