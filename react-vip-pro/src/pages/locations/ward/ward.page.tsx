@@ -60,6 +60,7 @@ const WardPage: React.FunctionComponent = () => {
         label: "edit",
         icon: <PencilIcon />,
         color: "danger",
+        permission: "ward_manage_update",
         handler: (row) => {
           navigate(`/ward/edit/${row.id}`);
         },
@@ -68,6 +69,7 @@ const WardPage: React.FunctionComponent = () => {
         label: "Delete",
         icon: <TrashBinIcon />,
         color: "danger",
+        permission: "ward_manage_delete",
         handler: (row) => {
           message.info(`Delete ward: ${row.name}`);
         },
