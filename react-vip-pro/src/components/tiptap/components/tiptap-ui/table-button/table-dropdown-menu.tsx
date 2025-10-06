@@ -1,11 +1,13 @@
+"use client";
+
 import * as React from "react";
 import { type Editor } from "@tiptap/react";
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/components/tiptap/hooks/use-tiptap-editor";
+import { useTiptapEditor } from "@/tiptap/hooks/use-tiptap-editor";
 
 // --- Icons ---
-import { ChevronDownIcon } from "@/components/tiptap/components/tiptap-icons/chevron-down-icon";
+import { ChevronDownIcon } from "@/tiptap/components/tiptap-icons/chevron-down-icon";
 
 // --- Tiptap UI ---
 import { TableButton } from "./table-button";
@@ -13,21 +15,18 @@ import type { TableAction } from "./use-table";
 import { useTableDropdownMenu } from "./use-table-dropdown-menu";
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/components/tiptap/components/tiptap-ui-primitive/button";
+import type { ButtonProps } from "@/tiptap/components/tiptap-ui-primitive/button";
 import {
   Button,
   ButtonGroup,
-} from "@/components/tiptap/components/tiptap-ui-primitive/button";
+} from "@/tiptap/components/tiptap-ui-primitive/button";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from "@/components/tiptap/components/tiptap-ui-primitive/dropdown-menu";
-import {
-  Card,
-  CardBody,
-} from "@/components/tiptap/components/tiptap-ui-primitive/card";
+} from "@/tiptap/components/tiptap-ui-primitive/dropdown-menu";
+import { Card, CardBody } from "@/tiptap/components/tiptap-ui-primitive/card";
 
 export interface TableDropdownMenuProps extends Omit<ButtonProps, "type"> {
   /**

@@ -5,12 +5,12 @@ import { type Editor } from "@tiptap/react";
 import { NodeSelection, TextSelection } from "@tiptap/pm/state";
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/components/tiptap/hooks/use-tiptap-editor";
+import { useTiptapEditor } from "@/tiptap/hooks/use-tiptap-editor";
 
 // --- Icons ---
-import { ListIcon } from "@/components/tiptap/components/tiptap-icons/list-icon";
-import { ListOrderedIcon } from "@/components/tiptap/components/tiptap-icons/list-ordered-icon";
-import { ListTodoIcon } from "@/components/tiptap/components/tiptap-icons/list-todo-icon";
+import { ListIcon } from "@/tiptap/components/tiptap-icons/list-icon";
+import { ListOrderedIcon } from "@/tiptap/components/tiptap-icons/list-ordered-icon";
+import { ListTodoIcon } from "@/tiptap/components/tiptap-icons/list-todo-icon";
 
 // --- Lib ---
 import {
@@ -18,7 +18,7 @@ import {
   isNodeInSchema,
   isNodeTypeSelected,
   isValidPosition,
-} from "@/components/tiptap/lib/tiptap-utils";
+} from "@/tiptap/lib/tiptap-utils";
 
 export type ListType = "bulletList" | "orderedList" | "taskList";
 

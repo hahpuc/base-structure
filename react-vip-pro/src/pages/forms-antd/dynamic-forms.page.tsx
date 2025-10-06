@@ -53,6 +53,9 @@ const DynamicFormPage: React.FunctionComponent = () => {
   const formOptions: FormOption = {
     layout: "vertical",
 
+    labelCol: { span: 24 },
+    wrapperCol: { span: 24 },
+
     // Tailwind CSS responsive grid configuration
     gridCols: "grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
     gridGap: "gap-x-6",
@@ -432,12 +435,12 @@ const DynamicFormPage: React.FunctionComponent = () => {
         ],
       },
 
-      // ========== FILE UPLOAD ==========
+      // // ========== FILE UPLOAD ==========
       {
         name: "Image",
         label: "Image (File Upload)",
         type: "file",
-        className: "col-span-3 md:col-span-2 lg:col-span-1",
+        className: "col-span-1 md:col-span-2 lg:col-span-3",
         required: true,
         rules: [createValidationRules.required()],
       },
@@ -445,13 +448,13 @@ const DynamicFormPage: React.FunctionComponent = () => {
         name: "documents",
         label: "Documents (Exels, PDF, Word, PPTX,...)",
         type: "file",
-        className: "col-span-3 md:col-span-2 lg:col-span-1",
+        className: "col-span-1 md:col-span-2 lg:col-span-3",
       },
       {
         name: "video",
         label: "Video (File Upload)",
         type: "file",
-        className: "col-span-3 md:col-span-2 lg:col-span-1",
+        className: "col-span-1 md:col-span-2 lg:col-span-3",
       },
 
       // ========== RICH TEXT ==========
@@ -460,34 +463,43 @@ const DynamicFormPage: React.FunctionComponent = () => {
         label: "Content (Rich Text Editor)",
         type: "richtext",
         placeholder: "Enter content here...",
+        required: true,
         className: "col-span-1 md:col-span-2 lg:col-span-3 content",
+        validateTrigger: "onSubmit",
+        rules: [
+          {
+            required: true,
+            message: "Content is required",
+          },
+          {
+            validator: async (_, value) => {
+              // Check if content is empty or only contains empty HTML tags
+              if (!value || value.trim() === "") {
+                return Promise.reject(new Error("Content is required"));
+              }
+
+              // Remove all HTML tags and check if there's actual text content
+              const textOnly = value.replace(/<[^>]*>/g, "").trim();
+
+              if (textOnly.length === 0) {
+                return Promise.reject(new Error("Content cannot be empty"));
+              }
+
+              return Promise.resolve();
+            },
+          },
+        ],
         rows: 8,
       },
       // ========== CUSTOM RENDER ==========
       {
-        name: "rating",
-        label: "Rating (Custom Component)",
+        name: "render",
+        label: "Custom Render",
         type: "custom",
-        className: "col-span-1",
+        className: "col-span-1 md:col-span-2 lg:col-span-3",
         render: (value, onChange) => (
-          <div className="flex gap-2">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <button
-                key={star}
-                type="button"
-                onClick={() => onChange(star)}
-                className={`text-2xl ${
-                  (value as number) >= star
-                    ? "text-yellow-500"
-                    : "text-gray-300"
-                }`}
-              >
-                ★
-              </button>
-            ))}
-            <span className="ml-2 text-gray-600">
-              {value ? `${value}/5` : "No rating"}
-            </span>
+          <div className="flex gap-2 text-pink-600 bg-amber-100 p-4 rounded-xl">
+            <span>Custom content view </span>
           </div>
         ),
       },
@@ -534,11 +546,7 @@ const DynamicFormPage: React.FunctionComponent = () => {
     ],
   };
 
-  return (
-    <div>
-      <FormComponent ref={formRef} formOptions={formOptions} />;
-    </div>
-  );
+  return <FormComponent ref={formRef} formOptions={formOptions} />;
 };
 
 export default DynamicFormPage;

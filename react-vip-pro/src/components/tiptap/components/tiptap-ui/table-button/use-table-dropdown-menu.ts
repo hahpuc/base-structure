@@ -2,13 +2,13 @@ import * as React from "react";
 import type { Editor } from "@tiptap/react";
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/components/tiptap/hooks/use-tiptap-editor";
+import { useTiptapEditor } from "@/tiptap/hooks/use-tiptap-editor";
 
 // --- Icons ---
-import { AddTableIcon } from "@/components/tiptap/components/tiptap-icons/add-table-icon";
+import { AddTableIcon } from "@/tiptap/components/tiptap-icons/add-table-icon";
 
 // --- Lib ---
-import { isExtensionAvailable } from "@/components/tiptap/lib/tiptap-utils";
+import { isExtensionAvailable } from "@/tiptap/lib/tiptap-utils";
 
 // --- Tiptap UI ---
 import {

@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+// @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 body {
   --tt-toolbar-height: 44px;
@@ -10,7 +10,7 @@ body {
 }
 
 body {
-  font-family: "Inter", sans-serif;
+  // font-family: "Inter", sans-serif;
   color: var(--tt-theme-text);
   font-optical-sizing: auto;
   font-weight: 400;
@@ -51,16 +51,28 @@ body,
 }
 
 .tiptap.ProseMirror {
-  font-family: "DM Sans", sans-serif;
+  // font-family: "DM Sans", sans-serif;
 }
 
 .simple-editor-wrapper {
   width: 100%;
   overflow: auto;
+  border-radius: 8px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+
+  &.simple-editor-error {
+    border: 1px solid #ff4d4f;
+    box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.1);
+
+    .dark & {
+      border-color: #ff7875;
+      box-shadow: 0 0 0 2px rgba(255, 120, 117, 0.1);
+    }
+  }
 }
 
 .simple-editor-content {
-  max-width: 648px;
+  max-width: 800px;
   width: 100%;
   margin: 0 auto;
   height: 100%;

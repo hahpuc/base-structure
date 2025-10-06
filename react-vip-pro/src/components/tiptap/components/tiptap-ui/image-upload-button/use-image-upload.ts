@@ -5,17 +5,17 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { type Editor } from "@tiptap/react";
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/components/tiptap/hooks/use-tiptap-editor";
-import { useIsMobile } from "@/components/tiptap/hooks/use-mobile";
+import { useTiptapEditor } from "@/tiptap/hooks/use-tiptap-editor";
+import { useIsMobile } from "@/tiptap/hooks/use-mobile";
 
 // --- Lib ---
 import {
   isExtensionAvailable,
   isNodeTypeSelected,
-} from "@/components/tiptap/lib/tiptap-utils";
+} from "@/tiptap/lib/tiptap-utils";
 
 // --- Icons ---
-import { ImagePlusIcon } from "@/components/tiptap/components/tiptap-icons/image-plus-icon";
+import { ImagePlusIcon } from "@/tiptap/components/tiptap-icons/image-plus-icon";
 
 export const IMAGE_UPLOAD_SHORTCUT_KEY = "mod+shift+i";
 

@@ -1,25 +1,27 @@
+"use client";
+
 import * as React from "react";
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/components/tiptap/lib/tiptap-utils";
+import { parseShortcutKeys } from "@/tiptap/lib/tiptap-utils";
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/components/tiptap/hooks/use-tiptap-editor";
+import { useTiptapEditor } from "@/tiptap/hooks/use-tiptap-editor";
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/components/tiptap/components/tiptap-ui-primitive/button";
-import { Button } from "@/components/tiptap/components/tiptap-ui-primitive/button";
-import { Badge } from "@/components/tiptap/components/tiptap-ui-primitive/badge";
+import type { ButtonProps } from "@/tiptap/components/tiptap-ui-primitive/button";
+import { Button } from "@/tiptap/components/tiptap-ui-primitive/button";
+import { Badge } from "@/tiptap/components/tiptap-ui-primitive/badge";
 
 // --- Tiptap UI ---
 import type {
   ListType,
   UseListConfig,
-} from "@/components/tiptap/components/tiptap-ui/list-button";
+} from "@/tiptap/components/tiptap-ui/list-button";
 import {
   LIST_SHORTCUT_KEYS,
   useList,
-} from "@/components/tiptap/components/tiptap-ui/list-button";
+} from "@/tiptap/components/tiptap-ui/list-button";
 
 export interface ListButtonProps
   extends Omit<ButtonProps, "type">,

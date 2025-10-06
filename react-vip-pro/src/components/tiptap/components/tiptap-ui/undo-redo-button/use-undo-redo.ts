@@ -2,14 +2,14 @@ import * as React from "react";
 import { type Editor } from "@tiptap/react";
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/components/tiptap/hooks/use-tiptap-editor";
+import { useTiptapEditor } from "@/tiptap/hooks/use-tiptap-editor";
 
 // --- Lib ---
-import { isNodeTypeSelected } from "@/components/tiptap/lib/tiptap-utils";
+import { isNodeTypeSelected } from "@/tiptap/lib/tiptap-utils";
 
 // --- Icons ---
-import { Redo2Icon } from "@/components/tiptap/components/tiptap-icons/redo2-icon";
-import { Undo2Icon } from "@/components/tiptap/components/tiptap-icons/undo2-icon";
+import { Redo2Icon } from "@/tiptap/components/tiptap-icons/redo2-icon";
+import { Undo2Icon } from "@/tiptap/components/tiptap-icons/undo2-icon";
 
 export type UndoRedoAction = "undo" | "redo";
 

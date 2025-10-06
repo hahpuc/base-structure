@@ -1,7 +1,9 @@
+"use client";
+
 import * as React from "react";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
-import { cn } from "@/components/tiptap/lib/tiptap-utils";
-import "@/components/tiptap/components/tiptap-ui-primitive/dropdown-menu/dropdown-menu.less";
+import { cn } from "@/tiptap/lib/tiptap-utils";
+import "@/tiptap/components/tiptap-ui-primitive/dropdown-menu/dropdown-menu.less";
 
 function DropdownMenu({
   ...props

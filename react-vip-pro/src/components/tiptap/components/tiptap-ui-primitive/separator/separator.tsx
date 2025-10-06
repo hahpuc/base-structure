@@ -1,6 +1,8 @@
+"use client";
+
 import * as React from "react";
-import "@/components/tiptap/components/tiptap-ui-primitive/separator/separator.less";
-import { cn } from "@/components/tiptap/lib/tiptap-utils";
+import "@/tiptap/components/tiptap-ui-primitive/separator/separator.less";
+import { cn } from "@/tiptap/lib/tiptap-utils";
 
 export type Orientation = "horizontal" | "vertical";
 

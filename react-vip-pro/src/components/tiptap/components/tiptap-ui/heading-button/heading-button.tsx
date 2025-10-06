@@ -1,23 +1,25 @@
+"use client";
+
 import * as React from "react";
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/components/tiptap/lib/tiptap-utils";
+import { parseShortcutKeys } from "@/tiptap/lib/tiptap-utils";
 
 // --- Tiptap UI ---
 import type {
   Level,
   UseHeadingConfig,
-} from "@/components/tiptap/components/tiptap-ui/heading-button";
+} from "@/tiptap/components/tiptap-ui/heading-button";
 import {
   HEADING_SHORTCUT_KEYS,
   useHeading,
-} from "@/components/tiptap/components/tiptap-ui/heading-button";
+} from "@/tiptap/components/tiptap-ui/heading-button";
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/components/tiptap/components/tiptap-ui-primitive/button";
-import { Button } from "@/components/tiptap/components/tiptap-ui-primitive/button";
-import { Badge } from "@/components/tiptap/components/tiptap-ui-primitive/badge";
-import { useTiptapEditor } from "@/components/tiptap/hooks/use-tiptap-editor";
+import type { ButtonProps } from "@/tiptap/components/tiptap-ui-primitive/button";
+import { Button } from "@/tiptap/components/tiptap-ui-primitive/button";
+import { Badge } from "@/tiptap/components/tiptap-ui-primitive/badge";
+import { useTiptapEditor } from "@/tiptap/hooks/use-tiptap-editor";
 
 export interface HeadingButtonProps
   extends Omit<ButtonProps, "type">,

@@ -1,9 +1,11 @@
+"use client";
+
 import * as React from "react";
-import { Separator } from "@/components/tiptap/components/tiptap-ui-primitive/separator";
-import "@/components/tiptap/components/tiptap-ui-primitive/toolbar/toolbar.less";
-import { cn } from "@/components/tiptap/lib/tiptap-utils";
-import { useMenuNavigation } from "@/components/tiptap/hooks/use-menu-navigation";
-import { useComposedRef } from "@/components/tiptap/hooks/use-composed-ref";
+import { Separator } from "@/tiptap/components/tiptap-ui-primitive/separator";
+import "@/tiptap/components/tiptap-ui-primitive/toolbar/toolbar.less";
+import { cn } from "@/tiptap/lib/tiptap-utils";
+import { useMenuNavigation } from "@/tiptap/hooks/use-menu-navigation";
+import { useComposedRef } from "@/tiptap/hooks/use-composed-ref";
 
 type BaseProps = React.HTMLAttributes<HTMLDivElement>;
 

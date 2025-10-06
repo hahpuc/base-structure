@@ -3,10 +3,10 @@ import type { Editor } from "@tiptap/react";
 import { NodeSelection, TextSelection } from "@tiptap/pm/state";
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/components/tiptap/hooks/use-tiptap-editor";
+import { useTiptapEditor } from "@/tiptap/hooks/use-tiptap-editor";
 
 // --- Icons ---
-import { BlockquoteIcon } from "@/components/tiptap/components/tiptap-icons/blockquote-icon";
+import { BlockquoteIcon } from "@/tiptap/components/tiptap-icons/blockquote-icon";
 
 // --- UI Utils ---
 import {
@@ -14,7 +14,7 @@ import {
   isNodeInSchema,
   isNodeTypeSelected,
   isValidPosition,
-} from "@/components/tiptap/lib/tiptap-utils";
+} from "@/tiptap/lib/tiptap-utils";
 
 export const BLOCKQUOTE_SHORTCUT_KEY = "mod+shift+b";
 

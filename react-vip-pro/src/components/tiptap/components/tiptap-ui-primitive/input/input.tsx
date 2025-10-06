@@ -1,6 +1,8 @@
+"use client";
+
 import * as React from "react";
-import { cn } from "@/components/tiptap/lib/tiptap-utils";
-import "@/components/tiptap/components/tiptap-ui-primitive/input/input.less";
+import { cn } from "@/tiptap/lib/tiptap-utils";
+import "@/tiptap/components/tiptap-ui-primitive/input/input.less";
 
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (

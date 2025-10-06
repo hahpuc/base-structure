@@ -2,16 +2,13 @@ import * as React from "react";
 import type { Editor } from "@tiptap/react";
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/components/tiptap/hooks/use-tiptap-editor";
+import { useTiptapEditor } from "@/tiptap/hooks/use-tiptap-editor";
 
 // --- Icons ---
-import { LinkIcon } from "@/components/tiptap/components/tiptap-icons/link-icon";
+import { LinkIcon } from "@/tiptap/components/tiptap-icons/link-icon";
 
 // --- Lib ---
-import {
-  isMarkInSchema,
-  sanitizeUrl,
-} from "@/components/tiptap/lib/tiptap-utils";
+import { isMarkInSchema, sanitizeUrl } from "@/tiptap/lib/tiptap-utils";
 
 /**
  * Configuration for the link popover functionality

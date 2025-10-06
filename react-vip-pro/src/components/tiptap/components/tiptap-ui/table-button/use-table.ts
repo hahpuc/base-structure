@@ -3,24 +3,24 @@ import type { ChainedCommands } from "@tiptap/react";
 import { type Editor } from "@tiptap/react";
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/components/tiptap/hooks/use-tiptap-editor";
+import { useTiptapEditor } from "@/tiptap/hooks/use-tiptap-editor";
 
 // --- Lib ---
-import { isExtensionAvailable } from "@/components/tiptap/lib/tiptap-utils";
+import { isExtensionAvailable } from "@/tiptap/lib/tiptap-utils";
 
 // --- Icons ---
-import { AddTableIcon } from "@/components/tiptap/components/tiptap-icons/add-table-icon";
-import { InsertRowTopIcon } from "@/components/tiptap/components/tiptap-icons/insert-row-top-icon";
-import { InsertRowBottomIcon } from "@/components/tiptap/components/tiptap-icons/insert-row-bottom-icon";
-import { InsertColumnLeft } from "@/components/tiptap/components/tiptap-icons/insert-column-left-icon";
-import { InsertColumnRight } from "@/components/tiptap/components/tiptap-icons/insert-column-right-icon";
-import { MergeCellHorizontalIcon } from "@/components/tiptap/components/tiptap-icons/merge-cell-horizontal-icon";
-import { MergeCellVerticalIcon } from "@/components/tiptap/components/tiptap-icons/merge-cell-vertical-icon";
-import { SplitCellHorizontalIcon } from "@/components/tiptap/components/tiptap-icons/split-cell-horizontal-icon";
-import { SplitCellVerticalIcon } from "@/components/tiptap/components/tiptap-icons/split-cell-vertical-icon";
-import { DeleteRowIcon } from "@/components/tiptap/components/tiptap-icons/delete-row-icon";
-import { DeleteColumnIcon } from "@/components/tiptap/components/tiptap-icons/delete-column-icon";
-import { TrashIcon } from "@/components/tiptap/components/tiptap-icons/trash-icon";
+import { AddTableIcon } from "@/tiptap/components/tiptap-icons/add-table-icon";
+import { InsertRowTopIcon } from "@/tiptap/components/tiptap-icons/insert-row-top-icon";
+import { InsertRowBottomIcon } from "@/tiptap/components/tiptap-icons/insert-row-bottom-icon";
+import { InsertColumnLeft } from "@/tiptap/components/tiptap-icons/insert-column-left-icon";
+import { InsertColumnRight } from "@/tiptap/components/tiptap-icons/insert-column-right-icon";
+import { MergeCellHorizontalIcon } from "@/tiptap/components/tiptap-icons/merge-cell-horizontal-icon";
+import { MergeCellVerticalIcon } from "@/tiptap/components/tiptap-icons/merge-cell-vertical-icon";
+import { SplitCellHorizontalIcon } from "@/tiptap/components/tiptap-icons/split-cell-horizontal-icon";
+import { SplitCellVerticalIcon } from "@/tiptap/components/tiptap-icons/split-cell-vertical-icon";
+import { DeleteRowIcon } from "@/tiptap/components/tiptap-icons/delete-row-icon";
+import { DeleteColumnIcon } from "@/tiptap/components/tiptap-icons/delete-column-icon";
+import { TrashIcon } from "@/tiptap/components/tiptap-icons/trash-icon";
 
 export type TableAction =
   | "addTable"

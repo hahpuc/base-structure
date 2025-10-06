@@ -1,17 +1,19 @@
+"use client";
+
 import React from "react";
 // --- Tiptap UI Primitive ---
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/tiptap/components/tiptap-ui-primitive/tooltip";
+} from "@/tiptap/components/tiptap-ui-primitive/tooltip";
 
 // --- Lib ---
 
-import "@/components/tiptap/components/tiptap-ui-primitive/button/button-colors.less";
-import "@/components/tiptap/components/tiptap-ui-primitive/button/button-group.less";
-import "@/components/tiptap/components/tiptap-ui-primitive/button/button.less";
-import { cn, parseShortcutKeys } from "@/components/tiptap/lib/tiptap-utils";
+import "@/tiptap/components/tiptap-ui-primitive/button/button-colors.less";
+import "@/tiptap/components/tiptap-ui-primitive/button/button-group.less";
+import "@/tiptap/components/tiptap-ui-primitive/button/button.less";
+import { cn, parseShortcutKeys } from "@/tiptap/lib/tiptap-utils";
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {

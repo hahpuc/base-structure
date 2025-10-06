@@ -36,7 +36,7 @@ import { Container } from "@/components/common/container-box";
 import { BaseQuery, ListPaginate } from "@/types/base";
 import { ApiResult } from "@/services/client/api-result";
 
-import { SimpleEditor } from "@/components/tiptap/components/tiptap-templates/simple/simple-editor";
+import { SimpleEditor } from "@/tiptap/components/tiptap-templates/simple/simple-editor";
 
 import "@/styles/tiptap.less";
 
@@ -485,6 +485,11 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
       [formOptions]
     );
 
+    // Handle validation errors
+    const handleSubmitFailed = useCallback((errorInfo: unknown) => {
+      console.log("Validation failed:", errorInfo);
+    }, []);
+
     // MARK: Render Form Inputs
     // Render form control based on type
     const renderFormControl = useCallback(
@@ -736,8 +741,13 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
           case "richtext": {
             return (
               <SimpleEditor
-                {...commonProps}
-                className="my-6 bg-white dark:bg-white/[0.03] rounded-lg border dark:border-gray-700"
+                placeholder={control.placeholder}
+                disabled={isDisabled}
+                readOnly={control.readonly}
+                onChange={(value) => {
+                  form.setFieldValue(control.name, value);
+                }}
+                className="my-2 bg-white dark:bg-white/[0.03] rounded-lg border dark:border-gray-700"
               />
             );
           }
@@ -865,6 +875,7 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
             wrapperCol={formOptions.wrapperCol}
             onValuesChange={handleValuesChange}
             onFinish={handleSubmit}
+            onFinishFailed={handleSubmitFailed}
             validateTrigger={formOptions.validateTrigger || "onChange"}
           >
             <div className={`grid ${gridClasses} ${gapClasses}`}>
@@ -890,6 +901,7 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
                       wrapperCol={control.wrapperCol}
                       required={control.required}
                       hidden={control.hidden}
+                      validateTrigger={control.validateTrigger}
                     >
                       {renderFormControl(control)}
                     </Form.Item>

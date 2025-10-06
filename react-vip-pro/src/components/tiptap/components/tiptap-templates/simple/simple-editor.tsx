@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { EditorContent, EditorContext, useEditor } from "@tiptap/react";
+import { Form } from "antd";
 
 // --- Tiptap Core Extensions ---
 import { StarterKit } from "@tiptap/starter-kit";
@@ -19,69 +20,66 @@ import { TableHeader } from "@tiptap/extension-table-header";
 import { TableCell } from "@tiptap/extension-table-cell";
 
 // --- UI Primitives ---
-import { Button } from "@/components/tiptap/components/tiptap-ui-primitive/button";
-import { Spacer } from "@/components/tiptap/components/tiptap-ui-primitive/spacer";
+import { Button } from "@/tiptap/components/tiptap-ui-primitive/button";
+import { Spacer } from "@/tiptap/components/tiptap-ui-primitive/spacer";
 import {
   Toolbar,
   ToolbarGroup,
   ToolbarSeparator,
-} from "@/components/tiptap/components/tiptap-ui-primitive/toolbar";
+} from "@/tiptap/components/tiptap-ui-primitive/toolbar";
 
 // --- Tiptap Node ---
-import { ImageUploadNode } from "@/components/tiptap/components/tiptap-node/image-upload-node/image-upload-node-extension";
-import { HorizontalRule } from "@/components/tiptap/components/tiptap-node/horizontal-rule-node/horizontal-rule-node-extension";
+import { ImageUploadNode } from "@/tiptap/components/tiptap-node/image-upload-node/image-upload-node-extension";
+import { HorizontalRule } from "@/tiptap/components/tiptap-node/horizontal-rule-node/horizontal-rule-node-extension";
 
-import "@/components/tiptap/components/tiptap-node/blockquote-node/blockquote-node.less";
-import "@/components/tiptap/components/tiptap-node/blockquote-node/blockquote-node.less";
-import "@/components/tiptap/components/tiptap-node/code-block-node/code-block-node.less";
-import "@/components/tiptap/components/tiptap-node/horizontal-rule-node/horizontal-rule-node.less";
-import "@/components/tiptap/components/tiptap-node/list-node/list-node.less";
-import "@/components/tiptap/components/tiptap-node/image-node/image-node.less";
-import "@/components/tiptap/components/tiptap-node/heading-node/heading-node.less";
-import "@/components/tiptap/components/tiptap-node/paragraph-node/paragraph-node.less";
-import "@/components/tiptap/components/tiptap-node/table-node/table-node.less";
+import "@/tiptap/components/tiptap-node/blockquote-node/blockquote-node.less";
+import "@/tiptap/components/tiptap-node/blockquote-node/blockquote-node.less";
+import "@/tiptap/components/tiptap-node/code-block-node/code-block-node.less";
+import "@/tiptap/components/tiptap-node/horizontal-rule-node/horizontal-rule-node.less";
+import "@/tiptap/components/tiptap-node/list-node/list-node.less";
+import "@/tiptap/components/tiptap-node/image-node/image-node.less";
+import "@/tiptap/components/tiptap-node/heading-node/heading-node.less";
+import "@/tiptap/components/tiptap-node/paragraph-node/paragraph-node.less";
+import "@/tiptap/components/tiptap-node/table-node/table-node.less";
 
 // --- Tiptap UI ---
-import { HeadingDropdownMenu } from "@/components/tiptap/components/tiptap-ui/heading-dropdown-menu";
-import { ImageUploadButton } from "@/components/tiptap/components/tiptap-ui/image-upload-button";
-import { ListDropdownMenu } from "@/components/tiptap/components/tiptap-ui/list-dropdown-menu";
-import { BlockquoteButton } from "@/components/tiptap/components/tiptap-ui/blockquote-button";
-import { CodeBlockButton } from "@/components/tiptap/components/tiptap-ui/code-block-button";
+import { HeadingDropdownMenu } from "@/tiptap/components/tiptap-ui/heading-dropdown-menu";
+import { ImageUploadButton } from "@/tiptap/components/tiptap-ui/image-upload-button";
+import { ListDropdownMenu } from "@/tiptap/components/tiptap-ui/list-dropdown-menu";
+import { BlockquoteButton } from "@/tiptap/components/tiptap-ui/blockquote-button";
+import { CodeBlockButton } from "@/tiptap/components/tiptap-ui/code-block-button";
 import {
   ColorHighlightPopover,
   ColorHighlightPopoverContent,
   ColorHighlightPopoverButton,
-} from "@/components/tiptap/components/tiptap-ui/color-highlight-popover";
+} from "@/tiptap/components/tiptap-ui/color-highlight-popover";
 import {
   LinkPopover,
   LinkContent,
   LinkButton,
-} from "@/components/tiptap/components/tiptap-ui/link-popover";
-import { MarkButton } from "@/components/tiptap/components/tiptap-ui/mark-button";
-import { TextAlignButton } from "@/components/tiptap/components/tiptap-ui/text-align-button";
-import { UndoRedoButton } from "@/components/tiptap/components/tiptap-ui/undo-redo-button";
-import { TableDropdownMenu } from "@/components/tiptap/components/tiptap-ui/table-button";
+} from "@/tiptap/components/tiptap-ui/link-popover";
+import { MarkButton } from "@/tiptap/components/tiptap-ui/mark-button";
+import { TextAlignButton } from "@/tiptap/components/tiptap-ui/text-align-button";
+import { UndoRedoButton } from "@/tiptap/components/tiptap-ui/undo-redo-button";
+import { TableDropdownMenu } from "@/tiptap/components/tiptap-ui/table-button";
 
 // --- Icons ---
-import { ArrowLeftIcon } from "@/components/tiptap/components/tiptap-icons/arrow-left-icon";
-import { HighlighterIcon } from "@/components/tiptap/components/tiptap-icons/highlighter-icon";
-import { LinkIcon } from "@/components/tiptap/components/tiptap-icons/link-icon";
+import { ArrowLeftIcon } from "@/tiptap/components/tiptap-icons/arrow-left-icon";
+import { HighlighterIcon } from "@/tiptap/components/tiptap-icons/highlighter-icon";
+import { LinkIcon } from "@/tiptap/components/tiptap-icons/link-icon";
 
 // --- Hooks ---
-import { useIsMobile } from "@/components/tiptap/hooks/use-mobile";
-import { useWindowSize } from "@/components/tiptap/hooks/use-window-size";
-import { useCursorVisibility } from "@/components/tiptap/hooks/use-cursor-visibility";
+import { useIsMobile } from "@/tiptap/hooks/use-mobile";
+import { useWindowSize } from "@/tiptap/hooks/use-window-size";
+import { useCursorVisibility } from "@/tiptap/hooks/use-cursor-visibility";
 
 // --- Components ---
 
 // --- Lib ---
-import {
-  handleImageUpload,
-  MAX_FILE_SIZE,
-} from "@/components/tiptap/lib/tiptap-utils";
+import { handleImageUpload, MAX_FILE_SIZE } from "@/tiptap/lib/tiptap-utils";
 
 // --- Styles ---
-import "@/components/tiptap/components/tiptap-templates/simple/simple-editor.less";
+import "@/tiptap/components/tiptap-templates/simple/simple-editor.less";
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -201,9 +199,21 @@ const MobileToolbarContent = ({
 
 interface SimpleEditorProps {
   className?: string;
+  value?: string;
+  onChange?: (value: string) => void;
+  placeholder?: string;
+  disabled?: boolean;
+  readOnly?: boolean;
 }
 
-export function SimpleEditor({ className }: SimpleEditorProps) {
+export function SimpleEditor({
+  className,
+  value,
+  onChange,
+  placeholder,
+  disabled = false,
+  readOnly = false,
+}: SimpleEditorProps) {
   const isMobile = useIsMobile();
   const { height } = useWindowSize();
   const [mobileView, setMobileView] = React.useState<
@@ -219,7 +229,8 @@ export function SimpleEditor({ className }: SimpleEditorProps) {
         autocomplete: "off",
         autocorrect: "off",
         autocapitalize: "off",
-        "aria-label": "Main content area, start typing to enter text.",
+        "aria-label":
+          placeholder || "Main content area, start typing to enter text.",
         class: "simple-editor",
       },
     },
@@ -255,8 +266,33 @@ export function SimpleEditor({ className }: SimpleEditorProps) {
         onError: (error) => console.error("Upload failed:", error),
       }),
     ],
-    content: "",
+    content: value || "",
+    editable: !disabled && !readOnly,
+    onUpdate: ({ editor }) => {
+      const html = editor.getHTML();
+      // Only trigger onChange if the content actually changed
+      if (onChange && html !== value) {
+        onChange(html);
+      }
+    },
   });
+
+  // Update editor content when value prop changes externally
+  React.useEffect(() => {
+    if (editor && value !== undefined) {
+      const currentContent = editor.getHTML();
+      if (currentContent !== value) {
+        editor.commands.setContent(value, { emitUpdate: false });
+      }
+    }
+  }, [editor, value]);
+
+  // Update editable state when disabled/readOnly props change
+  React.useEffect(() => {
+    if (editor) {
+      editor.setEditable(!disabled && !readOnly);
+    }
+  }, [editor, disabled, readOnly]);
 
   const rect = useCursorVisibility({
     editor,
@@ -269,8 +305,16 @@ export function SimpleEditor({ className }: SimpleEditorProps) {
     }
   }, [isMobile, mobileView]);
 
+  // Get validation status from Form.Item if within a form context
+  const formItemStatus = Form.Item?.useStatus?.();
+  const hasError = formItemStatus?.status === "error";
+
   return (
-    <div className={`simple-editor-wrapper ${className}`}>
+    <div
+      className={`simple-editor-wrapper ${className} ${
+        hasError ? "simple-editor-error" : ""
+      }`}
+    >
       <EditorContext.Provider value={{ editor }}>
         <Toolbar
           ref={toolbarRef}

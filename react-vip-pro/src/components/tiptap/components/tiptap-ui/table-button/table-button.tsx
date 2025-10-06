@@ -3,19 +3,19 @@
 import * as React from "react";
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/components/tiptap/lib/tiptap-utils";
+import { parseShortcutKeys } from "@/tiptap/lib/tiptap-utils";
 
 // --- Hooks ---
-import { useTiptapEditor } from "@/components/tiptap/hooks/use-tiptap-editor";
+import { useTiptapEditor } from "@/tiptap/hooks/use-tiptap-editor";
 
 // --- Tiptap UI ---
 import type { TableAction, UseTableConfig } from "./use-table";
 import { useTable } from "./use-table";
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/components/tiptap/components/tiptap-ui-primitive/button";
-import { Button } from "@/components/tiptap/components/tiptap-ui-primitive/button";
-import { Badge } from "@/components/tiptap/components/tiptap-ui-primitive/badge";
+import type { ButtonProps } from "@/tiptap/components/tiptap-ui-primitive/button";
+import { Button } from "@/tiptap/components/tiptap-ui-primitive/button";
+import { Badge } from "@/tiptap/components/tiptap-ui-primitive/badge";
 
 type IconProps = React.SVGProps<SVGSVGElement>;
 type IconComponent = ({ className, ...props }: IconProps) => React.ReactElement;

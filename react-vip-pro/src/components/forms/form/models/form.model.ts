@@ -89,6 +89,7 @@ export type FtFormControl = {
   required?: boolean;
   rules?: Rule[];
   errorMessages?: { [key: string]: string };
+  validateTrigger?: string | string[]; // When to trigger validation: 'onChange', 'onBlur', 'onSubmit', etc.
 
   // Display properties
   placeholder?: string;

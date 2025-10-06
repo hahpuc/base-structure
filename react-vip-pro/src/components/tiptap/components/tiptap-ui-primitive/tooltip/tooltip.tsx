@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import {
   useFloating,
@@ -18,7 +20,7 @@ import {
   FloatingDelayGroup,
 } from "@floating-ui/react";
 
-import "@/components/tiptap/components/tiptap-ui-primitive/tooltip/tooltip.less";
+import "@/tiptap/components/tiptap-ui-primitive/tooltip/tooltip.less";
 
 interface TooltipProviderProps {
   children: React.ReactNode;
