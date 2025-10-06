@@ -85,11 +85,16 @@ const MainToolbarContent = ({
   onHighlighterClick,
   onLinkClick,
   isMobile,
+  forcePortal = false,
 }: {
   onHighlighterClick: () => void;
   onLinkClick: () => void;
   isMobile: boolean;
+  forcePortal?: boolean;
 }) => {
+  // Use portal for dropdowns when: mobile, or explicitly forced (for bottom toolbar)
+  const usePortal = isMobile || forcePortal;
+
   return (
     <>
       <Spacer />
@@ -102,10 +107,10 @@ const MainToolbarContent = ({
       <ToolbarSeparator />
 
       <ToolbarGroup>
-        <HeadingDropdownMenu levels={[1, 2, 3, 4]} portal={isMobile} />
+        <HeadingDropdownMenu levels={[1, 2, 3, 4]} portal={usePortal} />
         <ListDropdownMenu
           types={["bulletList", "orderedList", "taskList"]}
-          portal={isMobile}
+          portal={usePortal}
         />
         <BlockquoteButton />
         <CodeBlockButton />
@@ -156,7 +161,7 @@ const MainToolbarContent = ({
       <ToolbarSeparator />
 
       <ToolbarGroup>
-        <TableDropdownMenu portal={isMobile} />
+        <TableDropdownMenu portal={usePortal} />
       </ToolbarGroup>
 
       <Spacer />
@@ -219,6 +224,8 @@ export function SimpleEditor({
   const [mobileView, setMobileView] = React.useState<
     "main" | "highlighter" | "link"
   >("main");
+  const [showBottomToolbar, setShowBottomToolbar] = React.useState(false);
+  const editorWrapperRef = React.useRef<HTMLDivElement>(null);
   const toolbarRef = React.useRef<HTMLDivElement>(null);
 
   const editor = useEditor({
@@ -305,17 +312,44 @@ export function SimpleEditor({
     }
   }, [isMobile, mobileView]);
 
+  // Scroll detection for dual toolbar
+  React.useEffect(() => {
+    if (isMobile) return;
+
+    const handleScroll = () => {
+      const wrapper = editorWrapperRef.current;
+      if (!wrapper) return;
+
+      const rect = wrapper.getBoundingClientRect();
+      const toolbarHeight =
+        toolbarRef.current?.getBoundingClientRect().height ?? 0;
+
+      // Show bottom toolbar if top toolbar is out of view or user scrolled down significantly
+      const topToolbarHidden = rect.top + toolbarHeight < 0;
+      const scrolledPastThreshold = window.scrollY > 200;
+
+      setShowBottomToolbar(topToolbarHidden && scrolledPastThreshold);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll(); // Check initial state
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isMobile]);
+
   // Get validation status from Form.Item if within a form context
   const formItemStatus = Form.Item?.useStatus?.();
   const hasError = formItemStatus?.status === "error";
 
   return (
     <div
+      ref={editorWrapperRef}
       className={`simple-editor-wrapper ${className} ${
         hasError ? "simple-editor-error" : ""
       }`}
     >
       <EditorContext.Provider value={{ editor }}>
+        {/* Top Toolbar */}
         <Toolbar
           ref={toolbarRef}
           style={{
@@ -339,6 +373,30 @@ export function SimpleEditor({
             />
           )}
         </Toolbar>
+
+        {/* Bottom Floating Toolbar (Desktop only) */}
+        {!isMobile && showBottomToolbar && (
+          <Toolbar
+            className="bottom-floating-toolbar"
+            style={{
+              position: "fixed",
+              top: "80px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              zIndex: 50,
+              maxWidth: "90vw",
+              boxShadow: "0 8px 24px rgba(0, 0, 0, 0.15)",
+            }}
+            data-variant="floating"
+          >
+            <MainToolbarContent
+              onHighlighterClick={() => setMobileView("highlighter")}
+              onLinkClick={() => setMobileView("link")}
+              isMobile={false}
+              forcePortal={true}
+            />
+          </Toolbar>
+        )}
 
         <EditorContent
           editor={editor}

@@ -69,6 +69,22 @@ body,
       box-shadow: 0 0 0 2px rgba(255, 120, 117, 0.1);
     }
   }
+
+  // Bottom floating toolbar animation
+  .bottom-floating-toolbar {
+    animation: slideUpFade 0.3s ease-out;
+  }
+
+  @keyframes slideUpFade {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
 }
 
 .simple-editor-content {
