@@ -87,6 +87,11 @@ const otherItems: MenuItem[] = [
         pro: true,
       },
       {
+        name: "Dynamic Form",
+        path: "/dynamic-form",
+        new: true,
+      },
+      {
         name: "Editor",
         path: "/editors",
       },

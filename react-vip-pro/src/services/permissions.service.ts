@@ -1,9 +1,10 @@
-import { ApiResult } from './client/api-result';
-import { ApiClient } from './client/axios-client';
+import { ListPermissionDto } from "@/types/permission";
+import { ApiResult } from "./client/api-result";
+import { ApiClient } from "./client/axios-client";
 
 class PermissionsService {
   private currentPermissions: string[] = [];
-  private readonly apiUrl: string = '/admin/permissions'; // Adjust base URL as needed
+  private readonly apiUrl: string = "/admin/permissions"; // Adjust base URL as needed
 
   clearPermissions() {
     this.currentPermissions = [];
@@ -13,8 +14,8 @@ class PermissionsService {
     return await ApiClient.get<string[]>(`${this.apiUrl}/my-permission`);
   }
 
-  async getList(): Promise<ApiResult<string[]>> {
-    return await ApiClient.get<string[]>(`${this.apiUrl}`);
+  async getList(): Promise<ApiResult<ListPermissionDto>> {
+    return await ApiClient.get<ListPermissionDto>(`${this.apiUrl}`);
   }
 
   checkPermissions(permissions: string[]): boolean {
@@ -23,7 +24,7 @@ class PermissionsService {
     }
 
     if (!permissions.length) return true;
-    return permissions.every(p => this.currentPermissions.includes(p));
+    return permissions.every((p) => this.currentPermissions.includes(p));
   }
 
   checkAnyPermissions(permissions: string[]): boolean {
@@ -32,7 +33,7 @@ class PermissionsService {
     }
 
     if (!permissions.length) return true;
-    return permissions.some(p => this.currentPermissions.includes(p));
+    return permissions.some((p) => this.currentPermissions.includes(p));
   }
 
   setPermissions(perms: string[]) {

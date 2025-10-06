@@ -1,3 +1,4 @@
+import { HeaderButton } from "@/components/top-actions/header-buttons.component";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type Theme = "light" | "dark";
@@ -14,6 +15,10 @@ interface UiState {
   activeItem: string | null;
   openSubmenu: string | null;
   isMobile: boolean;
+
+  // Top Actions:
+  headerTitle: string;
+  buttons: HeaderButton[];
 }
 
 const initialState: UiState = {
@@ -28,6 +33,10 @@ const initialState: UiState = {
   activeItem: null,
   openSubmenu: null,
   isMobile: false,
+
+  // Top Actions initial state
+  headerTitle: "Admin",
+  buttons: [],
 };
 
 const uiSlice = createSlice({
@@ -135,6 +144,14 @@ const uiSlice = createSlice({
         state.isMobileOpen = false;
       }
     },
+
+    // Top Actions reducers
+    setHeaderTitle: (state, action: PayloadAction<string>) => {
+      state.headerTitle = action.payload;
+    },
+    setButtons: (state, action: PayloadAction<HeaderButton[]>) => {
+      state.buttons = action.payload;
+    },
   },
 });
 
@@ -151,6 +168,10 @@ export const {
   setActiveItem,
   toggleSubmenu,
   setIsMobile,
+
+  // Top Actions actions
+  setHeaderTitle,
+  setButtons,
 } = uiSlice.actions;
 
 export default uiSlice.reducer;

@@ -15,6 +15,7 @@ import { ReactComponent as GridIcon } from "./grid.svg?react";
 import { ReactComponent as FileIcon } from "./file.svg?react";
 import { ReactComponent as DownloadIcon } from "./download.svg?react";
 import { ReactComponent as ArrowRightIcon } from "./arrow-right.svg?react";
+import { ReactComponent as ArrowLeftIcon } from "./arrow-left.svg?react";
 import { ReactComponent as GroupIcon } from "./group.svg?react";
 import { ReactComponent as BoxIconLine } from "./box-line.svg?react";
 import { ReactComponent as ShootingStarIcon } from "./shooting-star.svg?react";
@@ -75,6 +76,8 @@ import { ReactComponent as EditorTable } from "./editor-table.svg?react";
 import { ReactComponent as EditorTableHeader } from "./editor-table-header.svg?react";
 import { ReactComponent as EditorTableMergeColumn } from "./editor-table-merge-column.svg?react";
 import { ReactComponent as EditorTableMergeRow } from "./editor-table-merge-row.svg?react";
+import { ReactComponent as ImportIcon } from "./import.svg?react";
+import { ReactComponent as ExportIcon } from "./export.svg?react";
 
 export {
   ErrorHexaIcon,
@@ -154,4 +157,7 @@ export {
   ChatIcon,
   AngleLeftIcon,
   AngleRightIcon,
+  ImportIcon,
+  ExportIcon,
+  ArrowLeftIcon,
 };

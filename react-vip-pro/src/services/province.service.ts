@@ -1,9 +1,15 @@
-import { CreateProvince, EditProvince, ProvinceDto, QueryProvince } from '@/types/province';
+import {
+  CreateProvince,
+  EditProvince,
+  ProvinceDto,
+  QueryProvince,
+} from "@/types/province";
 
-import { BaseService } from './base.service';
-import { ApiClient } from './client/axios-client';
+import { BaseService } from "./base.service";
+import { ApiClient } from "./client/axios-client";
+import { ApiResult } from "./client/api-result";
 
-const API_PREFIX = '/admin';
+const API_PREFIX = "/admin";
 
 class ProvinceService extends BaseService<
   number,
@@ -13,10 +19,10 @@ class ProvinceService extends BaseService<
   QueryProvince
 > {
   constructor() {
-    super(API_PREFIX, 'provinces');
+    super(API_PREFIX, "provinces");
   }
 
-  getAll() {
+  getAll(): Promise<ApiResult<ProvinceDto[]>> {
     return ApiClient.get(`${this.apiUrl}/all`);
   }
 }
