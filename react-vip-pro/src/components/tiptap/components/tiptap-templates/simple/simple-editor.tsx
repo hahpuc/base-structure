@@ -13,6 +13,10 @@ import { Highlight } from "@tiptap/extension-highlight";
 import { Subscript } from "@tiptap/extension-subscript";
 import { Superscript } from "@tiptap/extension-superscript";
 import { Selection } from "@tiptap/extensions";
+import { Table } from "@tiptap/extension-table";
+import { TableRow } from "@tiptap/extension-table-row";
+import { TableHeader } from "@tiptap/extension-table-header";
+import { TableCell } from "@tiptap/extension-table-cell";
 
 // --- UI Primitives ---
 import { Button } from "@/components/tiptap/components/tiptap-ui-primitive/button";
@@ -35,6 +39,7 @@ import "@/components/tiptap/components/tiptap-node/list-node/list-node.less";
 import "@/components/tiptap/components/tiptap-node/image-node/image-node.less";
 import "@/components/tiptap/components/tiptap-node/heading-node/heading-node.less";
 import "@/components/tiptap/components/tiptap-node/paragraph-node/paragraph-node.less";
+import "@/components/tiptap/components/tiptap-node/table-node/table-node.less";
 
 // --- Tiptap UI ---
 import { HeadingDropdownMenu } from "@/components/tiptap/components/tiptap-ui/heading-dropdown-menu";
@@ -55,6 +60,7 @@ import {
 import { MarkButton } from "@/components/tiptap/components/tiptap-ui/mark-button";
 import { TextAlignButton } from "@/components/tiptap/components/tiptap-ui/text-align-button";
 import { UndoRedoButton } from "@/components/tiptap/components/tiptap-ui/undo-redo-button";
+import { TableDropdownMenu } from "@/components/tiptap/components/tiptap-ui/table-button";
 
 // --- Icons ---
 import { ArrowLeftIcon } from "@/components/tiptap/components/tiptap-icons/arrow-left-icon";
@@ -67,7 +73,6 @@ import { useWindowSize } from "@/components/tiptap/hooks/use-window-size";
 import { useCursorVisibility } from "@/components/tiptap/hooks/use-cursor-visibility";
 
 // --- Components ---
-import { ThemeToggle } from "@/components/tiptap/components/tiptap-templates/simple/theme-toggle";
 
 // --- Lib ---
 import {
@@ -77,8 +82,6 @@ import {
 
 // --- Styles ---
 import "@/components/tiptap/components/tiptap-templates/simple/simple-editor.less";
-
-import content from "@/components/tiptap/components/tiptap-templates/simple/data/content.json";
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -150,6 +153,12 @@ const MainToolbarContent = ({
 
       <ToolbarGroup>
         <ImageUploadButton text="Add" />
+      </ToolbarGroup>
+
+      <ToolbarSeparator />
+
+      <ToolbarGroup>
+        <TableDropdownMenu portal={isMobile} />
       </ToolbarGroup>
 
       <Spacer />
@@ -232,6 +241,12 @@ export function SimpleEditor({ className }: SimpleEditorProps) {
       Superscript,
       Subscript,
       Selection,
+      Table.configure({
+        resizable: true,
+      }),
+      TableRow,
+      TableHeader,
+      TableCell,
       ImageUploadNode.configure({
         accept: "image/*",
         maxSize: MAX_FILE_SIZE,
@@ -240,7 +255,7 @@ export function SimpleEditor({ className }: SimpleEditorProps) {
         onError: (error) => console.error("Upload failed:", error),
       }),
     ],
-    content,
+    content: "",
   });
 
   const rect = useCursorVisibility({

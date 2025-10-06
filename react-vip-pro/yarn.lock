@@ -471,7 +471,7 @@
 
 "@floating-ui/react@^0.27.16":
   version "0.27.16"
-  resolved "https://registry.yarnpkg.com/@floating-ui/react/-/react-0.27.16.tgz#6e485b5270b7a3296fdc4d0faf2ac9abf955a2f7"
+  resolved "https://registry.npmjs.org/@floating-ui/react/-/react-0.27.16.tgz"
   integrity sha512-9O8N4SeG2z++TSM8QA/KTeKFBVCNEz/AGS7gWPJf6KFRzmRWixFRnCnkPHRDwSVZW6QPDO6uT0P2SpWNKCc9/g==
   dependencies:
     "@floating-ui/react-dom" "^2.1.6"
@@ -1440,22 +1440,22 @@
   resolved "https://registry.npmjs.org/@tiptap/extension-superscript/-/extension-superscript-3.6.5.tgz"
   integrity sha512-DB4xQ7C4XmHDaYhBoX5mLR+2UVKUtg7KlMGSkCkpoA0nj+GNgyXkB9RJNFn9Bhex2DdJm1cbnGS02jQpz8mYoA==
 
-"@tiptap/extension-table-cell@^3.6.2":
+"@tiptap/extension-table-cell@^3.6.5":
   version "3.6.5"
   resolved "https://registry.npmjs.org/@tiptap/extension-table-cell/-/extension-table-cell-3.6.5.tgz"
   integrity sha512-bNW8byDPK8zZ1z6ZuCN1yQynvX7QpxE1l/3dIC9fwZ7dY8aR4yrs3b0Lkb499SctSu7Qd/RuxOesB7KTvFXGSg==
 
-"@tiptap/extension-table-header@^3.6.2":
+"@tiptap/extension-table-header@^3.6.5":
   version "3.6.5"
   resolved "https://registry.npmjs.org/@tiptap/extension-table-header/-/extension-table-header-3.6.5.tgz"
   integrity sha512-3yyR4tkM6LS5NQeSEN25JS5ZY1NpfrfZafKc8ASnak2Gf0pkj0afGtNQlqAcje+Pso7RfhWDlAym5FI+ObwUkw==
 
-"@tiptap/extension-table-row@^3.6.2":
+"@tiptap/extension-table-row@^3.6.5":
   version "3.6.5"
   resolved "https://registry.npmjs.org/@tiptap/extension-table-row/-/extension-table-row-3.6.5.tgz"
   integrity sha512-2LDf+tYp5BQMYwzzAmYW32h6myyLEH14uVj+t6CrrswrunYkIydj1aVtb+Es/17Nffx+1hPXCxV9Or3zbBiGVg==
 
-"@tiptap/extension-table@^3.6.2":
+"@tiptap/extension-table@^3.6.5":
   version "3.6.5"
   resolved "https://registry.npmjs.org/@tiptap/extension-table/-/extension-table-3.6.5.tgz"
   integrity sha512-JOHxFAQY7gzTShResxjEg4T4O7Zs5uKbNwOv8aNTp4s+EsJYLQq+kyxM0iLYfoaR1fAZjJQx9iCTSZbkxu3NDg==
@@ -1616,7 +1616,7 @@
 
 "@types/lodash.throttle@^4.1.9":
   version "4.1.9"
-  resolved "https://registry.yarnpkg.com/@types/lodash.throttle/-/lodash.throttle-4.1.9.tgz#f17a6ae084f7c0117bd7df145b379537bc9615c5"
+  resolved "https://registry.npmjs.org/@types/lodash.throttle/-/lodash.throttle-4.1.9.tgz"
   integrity sha512-PCPVfpfueguWZQB7pJQK890F2scYKoDUL3iM522AptHWn7d5NQmeS/LTEHIcLr5PaTzl3dK2Z0xSUHHTHwaL5g==
   dependencies:
     "@types/lodash" "*"
@@ -3899,7 +3899,7 @@ swiper@^11.2.3:
 
 tabbable@^6.0.0:
   version "6.2.0"
-  resolved "https://registry.yarnpkg.com/tabbable/-/tabbable-6.2.0.tgz#732fb62bc0175cfcec257330be187dcfba1f3b97"
+  resolved "https://registry.npmjs.org/tabbable/-/tabbable-6.2.0.tgz"
   integrity sha512-Cat63mxsVJlzYvN51JmVXIgNoUokrIaT2zLclCXjRd8boZ0004U4KCs/sToJ75C6sdlByWxpYnb5Boif1VSFew==
 
 tailwind-merge@^3.0.1:
