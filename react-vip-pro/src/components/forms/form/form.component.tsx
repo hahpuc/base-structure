@@ -36,6 +36,10 @@ import { Container } from "@/components/common/container-box";
 import { BaseQuery, ListPaginate } from "@/types/base";
 import { ApiResult } from "@/services/client/api-result";
 
+import { SimpleEditor } from "@/components/tiptap/components/tiptap-templates/simple/simple-editor";
+
+import "@/styles/tiptap.less";
+
 const { TextArea } = Input;
 const { Option } = Select;
 
@@ -730,12 +734,10 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
           }
 
           case "richtext": {
-            // This would typically use a rich text editor like React Quill
             return (
-              <TextArea
+              <SimpleEditor
                 {...commonProps}
-                rows={control.rows || 8}
-                placeholder="Rich text editor would be implemented here"
+                className="my-6 bg-white dark:bg-white/[0.03] rounded-lg border dark:border-gray-700"
               />
             );
           }

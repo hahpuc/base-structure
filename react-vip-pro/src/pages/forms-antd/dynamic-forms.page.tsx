@@ -534,7 +534,11 @@ const DynamicFormPage: React.FunctionComponent = () => {
     ],
   };
 
-  return <FormComponent ref={formRef} formOptions={formOptions} />;
+  return (
+    <div>
+      <FormComponent ref={formRef} formOptions={formOptions} />;
+    </div>
+  );
 };
 
 export default DynamicFormPage;
