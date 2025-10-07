@@ -51,6 +51,8 @@ import {
   UploadProgressDialog,
   FileUploadProgress,
 } from "./components/upload-progress-dialog";
+import { getMediaUrl } from "@/utils/media.util";
+import { env } from "@/services/env.service";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -134,6 +136,21 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
     }));
 
     // MARK: Init Form
+    // Helper function to convert S3 key to UploadFile object
+    const convertS3KeyToUploadFile = useCallback(
+      (key: string, index: number = 0): UploadFile => {
+        const fileName = key.split("/").pop() || key;
+        return {
+          uid: `${Date.now()}-${index}`,
+          name: fileName,
+          status: "done",
+          url: getMediaUrl(key),
+          thumbUrl: getMediaUrl(key),
+        };
+      },
+      []
+    );
+
     // Process initial data for special field types
     const processInitialData = useCallback(
       (data: Record<string, unknown>): Record<string, unknown> => {
@@ -157,13 +174,37 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
                   );
                 }
                 break;
+              case "file":
+                // Convert S3 key(s) to UploadFile objects for preview
+                if (typeof value === "string") {
+                  // Single file
+                  const uploadFile = convertS3KeyToUploadFile(value, 0);
+                  setFileListState((prev) => ({
+                    ...prev,
+                    [control.name]: [uploadFile],
+                  }));
+                  // Keep the S3 key in form value
+                  processed[control.name] = value;
+                } else if (Array.isArray(value)) {
+                  // Multiple files
+                  const uploadFiles = value
+                    .filter((v): v is string => typeof v === "string")
+                    .map((key, index) => convertS3KeyToUploadFile(key, index));
+                  setFileListState((prev) => ({
+                    ...prev,
+                    [control.name]: uploadFiles,
+                  }));
+                  // Keep the S3 keys in form value
+                  processed[control.name] = value;
+                }
+                break;
             }
           }
         });
 
         return processed;
       },
-      [formOptions.controls]
+      [formOptions.controls, convertS3KeyToUploadFile]
     );
 
     // Initialize form data
@@ -510,6 +551,9 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
               file: File;
             }> = [];
 
+            // Keep track of existing S3 keys for each control
+            const existingKeys: Record<string, string | string[]> = {};
+
             for (const control of fileControls) {
               const fieldValue = processedValues[control.name];
 
@@ -519,13 +563,23 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
               if (!uploadToS3) continue;
 
               if (Array.isArray(fieldValue)) {
-                fieldValue.forEach((file) => {
-                  if (file instanceof File) {
-                    filesToUpload.push({ control, file });
+                // Separate existing S3 keys from new files
+                const existingS3Keys: string[] = [];
+                fieldValue.forEach((item) => {
+                  if (item instanceof File) {
+                    filesToUpload.push({ control, file: item });
+                  } else if (typeof item === "string") {
+                    existingS3Keys.push(item);
                   }
                 });
+                if (existingS3Keys.length > 0) {
+                  existingKeys[control.name] = existingS3Keys;
+                }
               } else if (fieldValue instanceof File) {
                 filesToUpload.push({ control, file: fieldValue });
+              } else if (typeof fieldValue === "string") {
+                // Existing S3 key
+                existingKeys[control.name] = fieldValue;
               }
             }
 
@@ -622,9 +676,33 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
                 }
               }
 
-              // Replace file values with S3 keys
+              // Replace file values with S3 keys (merge with existing keys)
               Object.keys(uploadResults).forEach((controlName) => {
-                processedValues[controlName] = uploadResults[controlName];
+                const control = fileControls.find(
+                  (c) => c.name === controlName
+                );
+                const newKeys = uploadResults[controlName];
+                const existing = existingKeys[controlName];
+
+                if (control?.multiple) {
+                  // For multiple files, combine existing and new keys
+                  const existingArray = Array.isArray(existing) ? existing : [];
+                  const newArray = Array.isArray(newKeys) ? newKeys : [newKeys];
+                  processedValues[controlName] = [
+                    ...existingArray,
+                    ...newArray,
+                  ];
+                } else {
+                  // For single file, use the new key (replacing old one)
+                  processedValues[controlName] = newKeys;
+                }
+              });
+
+              // For controls with only existing keys (no new uploads), preserve them
+              Object.keys(existingKeys).forEach((controlName) => {
+                if (!uploadResults[controlName]) {
+                  processedValues[controlName] = existingKeys[controlName];
+                }
               });
 
               // Keep dialog open for a moment to show completion
@@ -939,14 +1017,30 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
                   [control.name]: fileList,
                 }));
 
-                // Store file objects in form value (will be replaced with S3 keys on submit)
-                const files = fileList
-                  .map((f) => f.originFileObj)
-                  .filter((f): f is RcFile => f !== undefined);
+                // Handle both new files (File objects) and existing files (S3 URLs)
+                const values = fileList
+                  .map((f) => {
+                    // New file being uploaded
+                    if (f.originFileObj) {
+                      return f.originFileObj;
+                    }
+                    // Existing file from S3 (has url but no originFileObj)
+                    if (f.url) {
+                      // Extract S3 key from URL
+                      const url = f.url;
+                      if (url.includes(env.s3.publicUrl)) {
+                        // Remove the public URL prefix to get the S3 key
+                        return url.replace(env.s3.publicUrl + "/", "");
+                      }
+                      return url;
+                    }
+                    return null;
+                  })
+                  .filter((v): v is RcFile | string => v !== null);
 
                 form.setFieldValue(
                   control.name,
-                  control.multiple ? files : files[0]
+                  control.multiple ? values : values[0]
                 );
               },
               onRemove: (file) => {
@@ -959,14 +1053,28 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
                   [control.name]: newFileList,
                 }));
 
-                // Update form value
-                const files = newFileList
-                  .map((f) => f.originFileObj)
-                  .filter((f): f is RcFile => f !== undefined);
+                // Update form value - handle both new files and existing S3 files
+                const values = newFileList
+                  .map((f) => {
+                    // New file being uploaded
+                    if (f.originFileObj) {
+                      return f.originFileObj;
+                    }
+                    // Existing file from S3
+                    if (f.url) {
+                      const url = f.url;
+                      if (url.includes(env.s3.publicUrl)) {
+                        return url.replace(env.s3.publicUrl + "/", "");
+                      }
+                      return url;
+                    }
+                    return null;
+                  })
+                  .filter((v): v is RcFile | string => v !== null);
 
                 form.setFieldValue(
                   control.name,
-                  control.multiple ? files : files[0] || null
+                  control.multiple ? values : values[0] || null
                 );
               },
             };

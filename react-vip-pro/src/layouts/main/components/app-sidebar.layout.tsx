@@ -63,6 +63,24 @@ const menuItems: MenuItem[] = [
       },
     ],
   },
+  {
+    name: "Article Management",
+    icon: <ListIcon />,
+    permissions: ["category_manage_read", "blog_post_manage_read"],
+    permissionMode: "all",
+    children: [
+      {
+        name: "Category",
+        path: "/category",
+        permissions: ["category_manage_read"],
+      },
+      {
+        name: "Blog Post",
+        path: "/blog-post",
+        permissions: ["blog_post_manage_read"],
+      },
+    ],
+  },
 ];
 
 const otherItems: MenuItem[] = [

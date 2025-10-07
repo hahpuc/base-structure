@@ -3,6 +3,9 @@ import { Navigate, Route, Routes } from "react-router";
 import { useAppDispatch, useAppSelector } from "./hooks/redux.hooks";
 import { AuthLayout } from "./layouts/auth/auth-page.layout";
 import AppLayout from "./layouts/main/app.layout";
+import BlogPostPage from "./pages/articles/blog-post/blog-post.page";
+import CreateEditBlogPostPage from "./pages/articles/blog-post/create-edit/create-edit-blog-post.page";
+import CategoryPage from "./pages/articles/category/category.page";
 import { LoginInPage } from "./pages/auth/login-in.page";
 import { RegisterPage } from "./pages/auth/sign-up.page";
 import Blank from "./pages/blank.page";
@@ -102,6 +105,13 @@ export default function App() {
         <Route path="ward" element={<WardPage />} />
         <Route path="ward/create" element={<CreateEditWardPage />} />
         <Route path="ward/edit/:id" element={<CreateEditWardPage />} />
+
+        {/* Article */}
+        <Route path="category" element={<CategoryPage />} />
+
+        <Route path="blog-post" element={<BlogPostPage />} />
+        <Route path="blog-post/create" element={<CreateEditBlogPostPage />} />
+        <Route path="blog-post/edit/:id" element={<CreateEditBlogPostPage />} />
 
         <Route path="" element={<Navigate to="/home" replace />} />
       </Route>

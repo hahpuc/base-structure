@@ -15,6 +15,7 @@ import {
 } from "./models/table.model";
 import { TableFilter } from "./table-filter.component";
 import { getNestedValue } from "./utils/table-utils";
+import { getMediaUrl } from "@/utils/media.util";
 
 type ColumnsType<T extends object> = GetProp<TableProps<T>, "columns">;
 
@@ -292,7 +293,7 @@ function AppTable<T extends TableRowData>({
               return (
                 <img
                   className="max-w-[150px]"
-                  src={fieldValue as string}
+                  src={getMediaUrl(fieldValue as string)}
                   alt="Thumbnail"
                 />
               );
