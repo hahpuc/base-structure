@@ -73,7 +73,7 @@ export const ALL_FILES_ACCEPT = {
 export const FILE_MAX_SIZE = {
   IMAGE: 5 * 1024 * 1024, // 5MB
   DOCUMENT: 10 * 1024 * 1024, // 10MB
-  VIDEO: 100 * 1024 * 1024, // 500MB
+  VIDEO: 500 * 1024 * 1024, // 500MB
   AUDIO: 10 * 1024 * 1024, // 10MB
   DEFAULT: 5 * 1024 * 1024, // 5MB
 };

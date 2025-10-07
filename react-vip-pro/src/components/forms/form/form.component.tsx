@@ -47,6 +47,10 @@ import {
   formatFileSize,
 } from "./consts/file.const";
 import { S3Service } from "@/services/s3/s3.service";
+import {
+  UploadProgressDialog,
+  FileUploadProgress,
+} from "./components/upload-progress-dialog";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -80,6 +84,12 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
     const [fileListState, setFileListState] = useState<
       Record<string, UploadFile[]>
     >({});
+
+    // Upload progress dialog state
+    const [uploadProgressVisible, setUploadProgressVisible] = useState(false);
+    const [uploadProgressFiles, setUploadProgressFiles] = useState<
+      FileUploadProgress[]
+    >([]);
 
     // Options Value for child filters - depends on parent value (ex: province -> district -> ward)
     const [childFilterOptions, setChildFilterOptions] = useState<
@@ -494,71 +504,131 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
               (control) => control.type === "file"
             );
 
+            // Collect all files that need to be uploaded
+            const filesToUpload: Array<{
+              control: FtFormControl;
+              file: File;
+            }> = [];
+
             for (const control of fileControls) {
               const fieldValue = processedValues[control.name];
 
-              // Skip if no file to upload
               if (!fieldValue) continue;
 
-              // Check if we should upload to S3 (default: true)
               const uploadToS3 = control.uploadToS3 !== false;
+              if (!uploadToS3) continue;
 
-              if (uploadToS3) {
-                const isPublic = control.isPublicFile !== false; // default: true
+              if (Array.isArray(fieldValue)) {
+                fieldValue.forEach((file) => {
+                  if (file instanceof File) {
+                    filesToUpload.push({ control, file });
+                  }
+                });
+              } else if (fieldValue instanceof File) {
+                filesToUpload.push({ control, file: fieldValue });
+              }
+            }
+
+            // If there are files to upload, show progress dialog
+            if (filesToUpload.length > 0) {
+              // Initialize progress state
+              const initialProgress: FileUploadProgress[] = filesToUpload.map(
+                ({ file }) => ({
+                  fileName: file.name,
+                  progress: 0,
+                  status: "pending" as const,
+                })
+              );
+
+              setUploadProgressFiles(initialProgress);
+              setUploadProgressVisible(true);
+
+              // Upload files with progress tracking
+              const uploadResults: Record<string, string | string[]> = {};
+
+              for (let i = 0; i < filesToUpload.length; i++) {
+                const { control, file } = filesToUpload[i];
+                const isPublic = control.isPublicFile !== false;
+
+                // Update status to uploading
+                setUploadProgressFiles((prev) =>
+                  prev.map((item, index) =>
+                    index === i
+                      ? { ...item, status: "uploading" as const }
+                      : item
+                  )
+                );
 
                 try {
-                  // Handle multiple files
-                  if (Array.isArray(fieldValue)) {
-                    const keys: string[] = [];
-                    for (const file of fieldValue) {
-                      if (file instanceof File) {
-                        message.loading({
-                          content: `Uploading ${file.name}...`,
-                          key: file.name,
-                        });
-                        const key = await S3Service.uploadFileSync(
-                          file,
-                          isPublic
-                        );
-                        keys.push(key);
-                        message.success({
-                          content: `${file.name} uploaded successfully`,
-                          key: file.name,
-                        });
-                      }
+                  const key = await S3Service.uploadFileSync(
+                    file,
+                    isPublic,
+                    (progress) => {
+                      // Update progress
+                      setUploadProgressFiles((prev) =>
+                        prev.map((item, index) =>
+                          index === i ? { ...item, progress } : item
+                        )
+                      );
                     }
-                    processedValues[control.name] = keys;
+                  );
+
+                  // Update status to success
+                  setUploadProgressFiles((prev) =>
+                    prev.map((item, index) =>
+                      index === i
+                        ? { ...item, status: "success" as const, progress: 100 }
+                        : item
+                    )
+                  );
+
+                  // Store the result
+                  if (!uploadResults[control.name]) {
+                    uploadResults[control.name] = control.multiple ? [] : "";
                   }
-                  // Handle single file
-                  else if (fieldValue instanceof File) {
-                    message.loading({
-                      content: `Uploading ${fieldValue.name}...`,
-                      key: fieldValue.name,
-                    });
-                    const key = await S3Service.uploadFileSync(
-                      fieldValue,
-                      isPublic
-                    );
-                    processedValues[control.name] = key;
-                    message.success({
-                      content: `${fieldValue.name} uploaded successfully`,
-                      key: fieldValue.name,
-                    });
+
+                  if (control.multiple) {
+                    (uploadResults[control.name] as string[]).push(key);
+                  } else {
+                    uploadResults[control.name] = key;
                   }
                 } catch (error) {
-                  console.error(
-                    `Failed to upload file for ${control.name}:`,
-                    error
+                  // Update status to error
+                  setUploadProgressFiles((prev) =>
+                    prev.map((item, index) =>
+                      index === i
+                        ? {
+                            ...item,
+                            status: "error" as const,
+                            error:
+                              error instanceof Error
+                                ? error.message
+                                : "Upload failed",
+                          }
+                        : item
+                    )
                   );
+
+                  console.error(`Failed to upload file ${file.name}:`, error);
                   message.error(
-                    `Failed to upload file: ${
+                    `Failed to upload ${file.name}: ${
                       error instanceof Error ? error.message : "Unknown error"
                     }`
                   );
+
+                  // Don't close dialog on error, let user see what failed
                   setLoading(false);
-                  return; // Stop submission if upload fails
+                  return;
                 }
               }
+
+              // Replace file values with S3 keys
+              Object.keys(uploadResults).forEach((controlName) => {
+                processedValues[controlName] = uploadResults[controlName];
+              });
+
+              // Keep dialog open for a moment to show completion
+              await new Promise((resolve) => setTimeout(resolve, 1000));
             }
 
             // Step 2: Log the processed form values with S3 keys
@@ -568,6 +638,14 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
 
             // Step 3: Call the original onSubmit handler
             await formOptions.onSubmit(processedValues);
+
+            // Close progress dialog after successful submission
+            // if (filesToUpload.length > 0) {
+            //   setTimeout(() => {
+            //     setUploadProgressVisible(false);
+            //     setUploadProgressFiles([]);
+            //   }, 1500);
+            // }
           } catch (error) {
             console.error("Form submission error:", error);
             message.error("Form submission failed");
@@ -911,7 +989,6 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
                 onChange={(value) => {
                   form.setFieldValue(control.name, value);
                 }}
-                className="my-2 bg-white dark:bg-white/[0.03] rounded-lg border dark:border-gray-700"
               />
             );
           }
@@ -1079,6 +1156,16 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
             {renderActions()}
           </Form>
         </div>
+
+        {/* Upload Progress Dialog */}
+        <UploadProgressDialog
+          visible={uploadProgressVisible}
+          files={uploadProgressFiles}
+          onClose={() => {
+            setUploadProgressVisible(false);
+            setUploadProgressFiles([]);
+          }}
+        />
       </Container>
     );
   }

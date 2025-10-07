@@ -53,22 +53,31 @@ export const S3Service = {
    *
    * @param file - The File object to upload
    * @param isPublic - Whether the file should be publicly accessible (default: true)
+   * @param onProgress - Optional callback for upload progress (0-100)
    * @returns Promise<string> - The S3 key (path) of the uploaded file
    * @throws Error if upload fails
    *
    * @example
    * const file = document.getElementById('fileInput').files[0];
-   * const key = await S3Service.uploadFileSync(file, true);
+   * const key = await S3Service.uploadFileSync(file, true, (progress) => {
+   *   console.log(`Upload progress: ${progress}%`);
+   * });
    * const url = S3Service.getFileUrl(key);
    */
-  async uploadFileSync(file: File, isPublic = true): Promise<string> {
+  async uploadFileSync(
+    file: File,
+    isPublic = true,
+    onProgress?: (progress: number) => void
+  ): Promise<string> {
     let uploadId: string | undefined;
     const key = this._getFileKey(file);
 
     try {
       // Use simple upload for small files (under chunk size)
       if (file.size <= this.chunkSize) {
+        onProgress?.(0);
         await this._uploadFile(file, key, isPublic);
+        onProgress?.(100);
       } else {
         // Use multipart upload for large files
         const params: CreateMultipartUploadRequest = {
@@ -87,9 +96,11 @@ export const S3Service = {
           key,
           file,
           uploadId,
-          this.chunkSize
+          this.chunkSize,
+          onProgress
         );
         await this.completeMultipartUpload(key, uploadId, parts);
+        onProgress?.(100);
       }
 
       return key;
@@ -185,6 +196,7 @@ export const S3Service = {
    * @param file - The File object to upload
    * @param uploadId - The Upload ID from createMultipartUpload
    * @param chunkSize - Size of each chunk in bytes (5MB)
+   * @param onProgress - Optional callback for upload progress (0-100)
    * @returns Promise<CompletedPart[]> - Array of completed parts with ETags and part numbers
    *
    * Note: For better performance, consider implementing parallel uploads
@@ -194,11 +206,13 @@ export const S3Service = {
     key: string,
     file: File,
     uploadId: string,
-    chunkSize: number
+    chunkSize: number,
+    onProgress?: (progress: number) => void
   ): Promise<CompletedPart[]> {
     const parts: CompletedPart[] = [];
     let startPosition = 0;
     let partNumber = 1;
+    const totalChunks = Math.ceil(file.size / chunkSize);
 
     while (startPosition < file.size) {
       // Slice file into chunks using the Blob.slice() method
@@ -213,6 +227,15 @@ export const S3Service = {
       parts.push(part);
       startPosition += chunkSize;
       partNumber++;
+
+      // Calculate and report progress
+      if (onProgress) {
+        const progress = Math.min(
+          Math.round((parts.length / totalChunks) * 95), // Reserve 5% for completion
+          95
+        );
+        onProgress(progress);
+      }
     }
 
     return parts;

@@ -68,7 +68,7 @@ const DynamicFormPage: React.FunctionComponent = () => {
     loading,
     onSubmit: (values) => {
       console.log("Form submitted:", values);
-      message.success("Form submitted successfully!");
+      message.success("Form submitted successfully!", 5);
     },
     showDefaultActions: false,
     controls: [
@@ -446,19 +446,18 @@ const DynamicFormPage: React.FunctionComponent = () => {
         name: "image_upload",
         label: "Image (File Upload)",
         type: "file",
-        className: "col-span-1 md:col-span-2 lg:col-span-3",
         required: true,
         rules: [createValidationRules.required()],
         accept: IMAGE_ACCEPT,
         maxFileSize: FILE_MAX_SIZE.IMAGE,
         listType: "picture",
-        maxCount: 1,
+        multiple: true,
+        maxCount: 5,
       },
       {
         name: "documents_upload",
         label: "Documents (Excel, PDF, Word, PPTX,...)",
         type: "file",
-        className: "col-span-1 md:col-span-2 lg:col-span-3",
         accept: DOCUMENT_ACCEPT,
         maxFileSize: FILE_MAX_SIZE.DOCUMENT,
         multiple: true,
@@ -469,11 +468,11 @@ const DynamicFormPage: React.FunctionComponent = () => {
         name: "video_upload",
         label: "Video (File Upload)",
         type: "file",
-        className: "col-span-1 md:col-span-2 lg:col-span-3",
         accept: VIDEO_ACCEPT,
         maxFileSize: FILE_MAX_SIZE.VIDEO,
         listType: "picture",
-        maxCount: 1,
+        multiple: true,
+        maxCount: 5,
       },
 
       // ========== RICH TEXT ==========

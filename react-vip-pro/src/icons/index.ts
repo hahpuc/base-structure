@@ -78,6 +78,7 @@ import { ReactComponent as EditorTableMergeColumn } from "./editor-table-merge-c
 import { ReactComponent as EditorTableMergeRow } from "./editor-table-merge-row.svg?react";
 import { ReactComponent as ImportIcon } from "./import.svg?react";
 import { ReactComponent as ExportIcon } from "./export.svg?react";
+import { ReactComponent as LoaderIcon } from "./loader.svg?react";
 
 export {
   ErrorHexaIcon,
@@ -160,4 +161,5 @@ export {
   ImportIcon,
   ExportIcon,
   ArrowLeftIcon,
+  LoaderIcon,
 };

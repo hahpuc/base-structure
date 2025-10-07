@@ -1,64 +1,22 @@
-// @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+.simple-editor-wrapper {
+  width: 100%;
+  overflow: auto;
+  border-radius: 8px;
+  transition: border-color 0.3s, box-shadow 0.3s;
 
-body {
   --tt-toolbar-height: 44px;
   --tt-theme-text: var(--tt-gray-light-900);
 
   .dark & {
     --tt-theme-text: var(--tt-gray-dark-900);
   }
-}
 
-body {
-  // font-family: "Inter", sans-serif;
   color: var(--tt-theme-text);
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
   padding: 0;
   overscroll-behavior-y: none;
-}
-
-html,
-body {
-  overscroll-behavior-x: none;
-}
-
-html,
-body,
-#root,
-#app {
-  height: 100%;
-  background-color: var(--tt-bg-color);
-}
-
-::-webkit-scrollbar {
-  width: 0.25rem;
-}
-
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--tt-scrollbar-color) transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: var(--tt-scrollbar-color);
-  border-radius: 9999px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.tiptap.ProseMirror {
-  // font-family: "DM Sans", sans-serif;
-}
-
-.simple-editor-wrapper {
-  width: 100%;
-  overflow: auto;
-  border-radius: 8px;
-  transition: border-color 0.3s, box-shadow 0.3s;
 
   &.simple-editor-error {
     border: 1px solid #ff4d4f;
@@ -73,6 +31,14 @@ body,
   // Bottom floating toolbar animation
   .bottom-floating-toolbar {
     animation: slideUpFade 0.3s ease-out;
+
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    max-width: 90vw;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   }
 
   @keyframes slideUpFade {

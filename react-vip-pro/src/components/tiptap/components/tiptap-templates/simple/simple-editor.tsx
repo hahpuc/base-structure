@@ -345,9 +345,12 @@ export function SimpleEditor({
   return (
     <div
       ref={editorWrapperRef}
-      className={`simple-editor-wrapper ${className} ${
-        hasError ? "simple-editor-error" : ""
-      }`}
+      className={
+        `my-2 bg-white dark:bg-black/[0.2] rounded-lg border dark:border-gray-700 ` +
+        `simple-editor-wrapper ${className} ${
+          hasError ? "simple-editor-error" : ""
+        }`
+      }
     >
       <EditorContext.Provider value={{ editor }}>
         {/* Top Toolbar */}
@@ -377,19 +380,7 @@ export function SimpleEditor({
 
         {/* Bottom Floating Toolbar (Desktop only) */}
         {!isMobile && showBottomToolbar && (
-          <Toolbar
-            className="bottom-floating-toolbar"
-            style={{
-              position: "fixed",
-              top: "80px",
-              left: "50%",
-              transform: "translateX(-50%)",
-              zIndex: 50,
-              maxWidth: "90vw",
-              boxShadow: "0 8px 24px rgba(0, 0, 0, 0.15)",
-            }}
-            data-variant="floating"
-          >
+          <Toolbar className="bottom-floating-toolbar" data-variant="floating">
             <MainToolbarContent
               onHighlighterClick={() => setMobileView("highlighter")}
               onLinkClick={() => setMobileView("link")}

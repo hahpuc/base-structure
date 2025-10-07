@@ -14,9 +14,27 @@ The Form Component now supports **automatic file uploads to S3** with built-in v
 2. **File Size Validation** - Set maximum file size limits
 3. **Multiple File Upload** - Support single or multiple file selection
 4. **S3 Integration** - Automatic upload to S3 on form submission
-5. **Progress Feedback** - Loading messages during upload
+5. **Progress Tracking** - Visual progress dialog with real-time upload status
 6. **File Preview** - Visual preview with different list types (text, picture, picture-card)
 7. **Pre-configured Constants** - Ready-to-use file type definitions
+
+### 🎨 Progress Dialog Features
+
+When files are uploaded to S3, a professional progress dialog is displayed with:
+
+- **Real-time Progress Bars** - Shows upload progress (0-100%) for each file
+- **Status Icons** - Visual indicators for pending, uploading, success, and error states
+- **Individual File Tracking** - Each file's progress is tracked separately
+- **Error Handling** - Failed uploads are clearly marked with error messages
+- **Automatic Cleanup** - Dialog auto-closes after successful uploads
+- **Upload Prevention** - Cannot close dialog while uploads are in progress
+
+**Progress States:**
+
+- ⏳ **Pending** - File waiting to be uploaded (gray)
+- 🔄 **Uploading** - File currently uploading with progress bar (blue)
+- ✅ **Success** - File uploaded successfully (green)
+- ❌ **Error** - Upload failed with error message (red)
 
 ---
 
@@ -436,7 +454,113 @@ const formOptions: FormOption = {
 
 ---
 
-## 🐛 Troubleshooting
+## � Upload Progress Dialog
+
+### How It Works
+
+The upload progress dialog provides real-time visual feedback during file uploads to S3. It automatically appears when files are being uploaded and tracks each file's progress individually.
+
+### Features
+
+1. **Automatic Display**
+
+   - Dialog appears automatically when form is submitted with files
+   - Shows all files being uploaded in a single modal
+
+2. **Real-time Progress**
+
+   - Progress bars update in real-time (0-100%)
+   - Color-coded status indicators
+   - Individual tracking for each file
+
+3. **Status States**
+
+   ```typescript
+   // Pending - waiting to upload
+   status: "pending"; // Gray color
+
+   // Uploading - in progress
+   status: "uploading"; // Blue progress bar
+
+   // Success - upload complete
+   status: "success"; // Green checkmark
+
+   // Error - upload failed
+   status: "error"; // Red X with error message
+   ```
+
+4. **User Experience**
+   - Cannot close dialog during upload
+   - Dialog auto-closes 1.5s after all uploads complete
+   - Failed uploads remain visible for user review
+   - Shows summary: "X of Y files uploaded"
+
+### Technical Implementation
+
+```typescript
+// Progress callback from S3Service
+S3Service.uploadFileSync(file, isPublic, (progress: number) => {
+  // progress: 0-100
+  updateProgressBar(fileName, progress);
+});
+```
+
+**For small files (<5MB):**
+
+- Progress jumps from 0% → 100%
+- Upload happens in single request
+
+**For large files (>5MB):**
+
+- Multipart upload with chunks
+- Progress calculated based on chunks uploaded
+- 0-95%: Chunk uploads
+- 95-100%: Finalizing multipart upload
+
+### Component Structure
+
+```typescript
+<UploadProgressDialog
+  visible={uploadProgressVisible}
+  files={[
+    {
+      fileName: "document.pdf",
+      progress: 75,
+      status: "uploading",
+    },
+    {
+      fileName: "image.jpg",
+      progress: 100,
+      status: "success",
+    },
+    {
+      fileName: "video.mp4",
+      progress: 50,
+      status: "error",
+      error: "Network timeout",
+    },
+  ]}
+  onClose={() => {
+    // Only called when all uploads complete
+    setUploadProgressVisible(false);
+  }}
+/>
+```
+
+### Customization
+
+The progress dialog is fully styled with Tailwind CSS and Ant Design components. You can customize:
+
+- Modal width and styling
+- Progress bar colors
+- Icon styles
+- Animation effects
+
+**File location:** `/src/components/forms/form/components/upload-progress-dialog.tsx`
+
+---
+
+## �🐛 Troubleshooting
 
 ### Issue: Files not uploading
 
