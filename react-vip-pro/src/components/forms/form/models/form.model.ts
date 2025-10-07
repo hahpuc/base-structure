@@ -151,6 +151,14 @@ export type FtFormControl = {
   showTime?: boolean;
   disabledDate?: (current: Date) => boolean;
 
+  // File Upload
+  accept?: Record<string, string[]>; // MIME types and extensions (e.g., { "image/png": [".png"], "image/jpeg": [".jpg", ".jpeg"] })
+  maxFileSize?: number; // Maximum file size in bytes
+  maxCount?: number; // Maximum number of files that can be uploaded (for multiple mode)
+  listType?: "text" | "picture" | "picture-card" | "picture-circle"; // Upload list style
+  uploadToS3?: boolean; // Whether to upload files to S3 (default: true)
+  isPublicFile?: boolean; // Whether uploaded files should be public (default: true)
+
   // Custom template
   render?: (
     value: unknown,

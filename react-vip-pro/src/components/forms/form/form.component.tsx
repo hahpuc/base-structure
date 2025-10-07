@@ -12,8 +12,9 @@ import {
   Switch,
   TimePicker,
   Upload,
+  message,
 } from "antd";
-import type { RcFile, UploadProps } from "antd/es/upload";
+import type { RcFile, UploadFile, UploadProps } from "antd/es/upload";
 import dayjs from "dayjs";
 import React, {
   forwardRef,
@@ -39,6 +40,13 @@ import { ApiResult } from "@/services/client/api-result";
 import { SimpleEditor } from "@/tiptap/components/tiptap-templates/simple/simple-editor";
 
 import "@/styles/tiptap.less";
+import {
+  getAcceptString,
+  isValidFileSize,
+  isValidFileType,
+  formatFileSize,
+} from "./consts/file.const";
+import { S3Service } from "@/services/s3/s3.service";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -67,6 +75,11 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
       Record<string, PaginatedFormSelectOptions>
     >({});
     const [loading, setLoading] = useState(false);
+
+    // File uploads state - stores File objects before upload
+    const [fileListState, setFileListState] = useState<
+      Record<string, UploadFile[]>
+    >({});
 
     // Options Value for child filters - depends on parent value (ex: province -> district -> ward)
     const [childFilterOptions, setChildFilterOptions] = useState<
@@ -468,15 +481,96 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
       ]
     );
 
+    // MARK: Submit Form
     // Handle form submission
     const handleSubmit = useCallback(
       async (values: Record<string, unknown>) => {
         if (formOptions.onSubmit) {
           setLoading(true);
           try {
-            await formOptions.onSubmit(values);
-          } catch {
-            // Handle error silently or through onSubmit callback
+            // Step 1: Upload files to S3 and replace File objects with S3 keys
+            const processedValues = { ...values };
+            const fileControls = formOptions.controls.filter(
+              (control) => control.type === "file"
+            );
+
+            for (const control of fileControls) {
+              const fieldValue = processedValues[control.name];
+
+              // Skip if no file to upload
+              if (!fieldValue) continue;
+
+              // Check if we should upload to S3 (default: true)
+              const uploadToS3 = control.uploadToS3 !== false;
+
+              if (uploadToS3) {
+                const isPublic = control.isPublicFile !== false; // default: true
+
+                try {
+                  // Handle multiple files
+                  if (Array.isArray(fieldValue)) {
+                    const keys: string[] = [];
+                    for (const file of fieldValue) {
+                      if (file instanceof File) {
+                        message.loading({
+                          content: `Uploading ${file.name}...`,
+                          key: file.name,
+                        });
+                        const key = await S3Service.uploadFileSync(
+                          file,
+                          isPublic
+                        );
+                        keys.push(key);
+                        message.success({
+                          content: `${file.name} uploaded successfully`,
+                          key: file.name,
+                        });
+                      }
+                    }
+                    processedValues[control.name] = keys;
+                  }
+                  // Handle single file
+                  else if (fieldValue instanceof File) {
+                    message.loading({
+                      content: `Uploading ${fieldValue.name}...`,
+                      key: fieldValue.name,
+                    });
+                    const key = await S3Service.uploadFileSync(
+                      fieldValue,
+                      isPublic
+                    );
+                    processedValues[control.name] = key;
+                    message.success({
+                      content: `${fieldValue.name} uploaded successfully`,
+                      key: fieldValue.name,
+                    });
+                  }
+                } catch (error) {
+                  console.error(
+                    `Failed to upload file for ${control.name}:`,
+                    error
+                  );
+                  message.error(
+                    `Failed to upload file: ${
+                      error instanceof Error ? error.message : "Unknown error"
+                    }`
+                  );
+                  setLoading(false);
+                  return; // Stop submission if upload fails
+                }
+              }
+            }
+
+            // Step 2: Log the processed form values with S3 keys
+            console.log("=== FORM SUBMISSION ===");
+            console.log("Form values (validated):", processedValues);
+            console.log("======================");
+
+            // Step 3: Call the original onSubmit handler
+            await formOptions.onSubmit(processedValues);
+          } catch (error) {
+            console.error("Form submission error:", error);
+            message.error("Form submission failed");
           } finally {
             setLoading(false);
           }
@@ -724,16 +818,86 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
           }
 
           case "file": {
+            const maxCount = control.maxCount || (control.multiple ? 10 : 1);
+            const accept = control.accept
+              ? getAcceptString(control.accept)
+              : undefined;
+            const maxFileSize = control.maxFileSize;
+            const listType = control.listType || "text";
+
             const uploadProps: UploadProps = {
-              beforeUpload: (_file: RcFile) => {
-                // Handle file upload logic here
-                return false; // Prevent auto upload
+              accept,
+              listType,
+              maxCount,
+              multiple: control.multiple,
+              fileList: fileListState[control.name] || [],
+              beforeUpload: (file: RcFile) => {
+                // Validate file type
+                if (control.accept && !isValidFileType(file, control.accept)) {
+                  const acceptedTypes = Object.values(control.accept)
+                    .flat()
+                    .join(", ");
+                  message.error(
+                    `File type not accepted. Allowed types: ${acceptedTypes}`
+                  );
+                  return Upload.LIST_IGNORE;
+                }
+
+                // Validate file size
+                if (maxFileSize && !isValidFileSize(file, maxFileSize)) {
+                  message.error(
+                    `File size exceeds maximum ${formatFileSize(maxFileSize)}`
+                  );
+                  return Upload.LIST_IGNORE;
+                }
+
+                // Prevent auto upload - we'll handle it on form submit
+                return false;
+              },
+              onChange: ({ fileList }) => {
+                // Update file list state
+                setFileListState((prev) => ({
+                  ...prev,
+                  [control.name]: fileList,
+                }));
+
+                // Store file objects in form value (will be replaced with S3 keys on submit)
+                const files = fileList
+                  .map((f) => f.originFileObj)
+                  .filter((f): f is RcFile => f !== undefined);
+
+                form.setFieldValue(
+                  control.name,
+                  control.multiple ? files : files[0]
+                );
+              },
+              onRemove: (file) => {
+                // Remove file from list
+                const newFileList = (fileListState[control.name] || []).filter(
+                  (item) => item.uid !== file.uid
+                );
+                setFileListState((prev) => ({
+                  ...prev,
+                  [control.name]: newFileList,
+                }));
+
+                // Update form value
+                const files = newFileList
+                  .map((f) => f.originFileObj)
+                  .filter((f): f is RcFile => f !== undefined);
+
+                form.setFieldValue(
+                  control.name,
+                  control.multiple ? files : files[0] || null
+                );
               },
             };
 
             return (
               <Upload {...uploadProps}>
-                <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                <Button icon={<UploadOutlined />} disabled={isDisabled}>
+                  Click to Upload
+                </Button>
               </Upload>
             );
           }
@@ -780,6 +944,7 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
         loadingChildFilters,
         loadSelectOptions,
         form,
+        fileListState,
       ]
     );
 

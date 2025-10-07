@@ -4,6 +4,12 @@ import createValidationRules, {
   FormOption,
   ListPaginate,
 } from "@/components/forms/form";
+import {
+  IMAGE_ACCEPT,
+  DOCUMENT_ACCEPT,
+  VIDEO_ACCEPT,
+  FILE_MAX_SIZE,
+} from "@/components/forms/form/consts/file.const";
 import useHeader from "@/hooks/use-header.hook";
 import { categoryService } from "@/services/category.service";
 import { ApiResult } from "@/services/client/api-result";
@@ -435,26 +441,39 @@ const DynamicFormPage: React.FunctionComponent = () => {
         ],
       },
 
-      // // ========== FILE UPLOAD ==========
+      //       // ========== FILE UPLOAD ==========
       {
-        name: "Image",
+        name: "image_upload",
         label: "Image (File Upload)",
         type: "file",
         className: "col-span-1 md:col-span-2 lg:col-span-3",
         required: true,
         rules: [createValidationRules.required()],
+        accept: IMAGE_ACCEPT,
+        maxFileSize: FILE_MAX_SIZE.IMAGE,
+        listType: "picture",
+        maxCount: 1,
       },
       {
-        name: "documents",
-        label: "Documents (Exels, PDF, Word, PPTX,...)",
+        name: "documents_upload",
+        label: "Documents (Excel, PDF, Word, PPTX,...)",
         type: "file",
         className: "col-span-1 md:col-span-2 lg:col-span-3",
+        accept: DOCUMENT_ACCEPT,
+        maxFileSize: FILE_MAX_SIZE.DOCUMENT,
+        multiple: true,
+        maxCount: 5,
+        listType: "text",
       },
       {
-        name: "video",
+        name: "video_upload",
         label: "Video (File Upload)",
         type: "file",
         className: "col-span-1 md:col-span-2 lg:col-span-3",
+        accept: VIDEO_ACCEPT,
+        maxFileSize: FILE_MAX_SIZE.VIDEO,
+        listType: "picture",
+        maxCount: 1,
       },
 
       // ========== RICH TEXT ==========
