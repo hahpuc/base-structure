@@ -74,6 +74,7 @@ import { useWindowSize } from "@/tiptap/hooks/use-window-size";
 import { useCursorVisibility } from "@/tiptap/hooks/use-cursor-visibility";
 
 // --- Components ---
+import content from "./data/content.json";
 
 // --- Lib ---
 import { handleImageUpload, MAX_FILE_SIZE } from "@/tiptap/lib/tiptap-utils";
@@ -273,7 +274,7 @@ export function SimpleEditor({
         onError: (error) => console.error("Upload failed:", error),
       }),
     ],
-    content: value || "",
+    content: content || value || "", // TODO: Remove content and use value only
     editable: !disabled && !readOnly,
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
