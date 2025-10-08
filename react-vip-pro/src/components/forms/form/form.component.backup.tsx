@@ -73,7 +73,7 @@ export interface FormComponentProps<T = Record<string, unknown>> {
   style?: React.CSSProperties;
 }
 
-const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
+const FormComponentBackUp = forwardRef<FormComponentRef, FormComponentProps>(
   ({ formOptions, className, style }, ref) => {
     const [form] = Form.useForm();
     const [formValues, setFormValues] = useState<Record<string, unknown>>({});
@@ -1279,6 +1279,6 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
   }
 );
 
-FormComponent.displayName = "FormComponent";
+FormComponentBackUp.displayName = "FormComponentBackUp";
 
-export default FormComponent;
+export default FormComponentBackUp;

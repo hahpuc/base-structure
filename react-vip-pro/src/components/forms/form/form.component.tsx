@@ -12,15 +12,14 @@ import {
   useSelectOptions,
   useFileUpload,
   useUploadProgress,
-  useFormControlRenderer,
 } from "./hooks";
-import { useFormInitialization } from "./hooks/useFormInitialization";
-import { useSelectOptionsLoader } from "./hooks/useSelectOptionsLoader";
-import { useFormSubmit } from "./hooks/useFormSubmit";
-import { useFormValuesChange } from "./hooks/useFormValuesChange";
+import { useFormInitialization } from "./hooks/use-form-initialization";
+import { useSelectOptionsLoader } from "./hooks/use-select-options-loader";
+import { useFormSubmit } from "./hooks/use-form-submit";
+import { useFormValuesChange } from "./hooks/use-form-values-change";
 
 // Import renderer components
-import { FormActionsRenderer } from "./renderers/FormActionsRenderer";
+import { useFormControlRenderer, FormActionsRenderer } from "./components";
 
 export interface FormComponentRef {
   validateForm: () => Promise<boolean>;
@@ -42,7 +41,7 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
   ({ formOptions, className, style }, ref) => {
     const [form] = Form.useForm();
 
-    // Initialize all state using custom hooks
+    // MARK: Form State
     const { formValues, setFormValues, loading, setLoading } = useFormState();
 
     const {
@@ -63,7 +62,7 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
       setUploadProgressFiles,
     } = useUploadProgress();
 
-    // Initialize form data
+    // MARK: Initialize form data
     useFormInitialization({
       form,
       formOptions,
@@ -71,7 +70,7 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
       setFileListState,
     });
 
-    // Load select options
+    // MARK: Load select options
     const { loadSelectOptions, loadChildFilterOptions } =
       useSelectOptionsLoader({
         formOptions,
@@ -80,7 +79,7 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
         setLoadingChildFilters,
       });
 
-    // Handle form value changes
+    // MARK: Form changes
     const { handleValuesChange } = useFormValuesChange({
       form,
       formOptions,
@@ -91,7 +90,7 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
       loadChildFilterOptions,
     });
 
-    // Handle form submission
+    // MARK: Form submission
     const { handleSubmit, handleSubmitFailed } = useFormSubmit({
       formOptions,
       setLoading,
@@ -99,7 +98,7 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
       setUploadProgressFiles,
     });
 
-    // Render form controls
+    // MARK: Render forms
     const { renderFormControl } = useFormControlRenderer({
       formValues,
       formOptions,
@@ -112,7 +111,7 @@ const FormComponent = forwardRef<FormComponentRef, FormComponentProps>(
       loadSelectOptions,
     });
 
-    // Expose methods through ref
+    // MARK: Expose methods ref
     useImperativeHandle(ref, () => ({
       validateForm: async () => {
         try {
