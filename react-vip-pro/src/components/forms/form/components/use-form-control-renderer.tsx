@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import {
   Input,
   InputNumber,
@@ -67,6 +67,36 @@ export const useFormControlRenderer = ({
   setFileListState,
   loadSelectOptions,
 }: UseFormControlRendererProps): UseFormControlRendererReturn => {
+  // Debounce timer reference for search input
+  const searchDebounceTimers = useRef<
+    Record<string, ReturnType<typeof setTimeout>>
+  >({});
+
+  // Debounced search handler
+  const handleDebouncedSearch = useCallback(
+    (
+      control: FtFormControl,
+      searchValue: string,
+      parentValue?: string | number
+    ) => {
+      const key =
+        control.parent && parentValue !== undefined
+          ? `${control.name}_${parentValue}`
+          : control.name;
+
+      // Clear existing timer
+      if (searchDebounceTimers.current[key]) {
+        clearTimeout(searchDebounceTimers.current[key]);
+      }
+
+      // Set new timer
+      searchDebounceTimers.current[key] = setTimeout(() => {
+        loadSelectOptions(control, searchValue, 1, parentValue);
+      }, 500); // 500ms debounce delay
+    },
+    [loadSelectOptions]
+  );
+
   // Memoize file upload handlers to prevent recreation on every render
   const createFileUploadHandlers = useCallback(
     (control: FtFormControl) => {
@@ -260,7 +290,7 @@ export const useFormControlRenderer = ({
                 control.usePagination &&
                 (control.showSearch || control.searchable)
                   ? (value) =>
-                      loadSelectOptions(control, value, 1, currentParentValue)
+                      handleDebouncedSearch(control, value, currentParentValue)
                   : undefined
               }
               onPopupScroll={
@@ -411,17 +441,29 @@ export const useFormControlRenderer = ({
 
         case "custom": {
           if (control.render) {
-            return control.render(
-              form.getFieldValue(control.name),
-              (value) => form.setFieldValue(control.name, value),
-              formValues
+            return (
+              <div {...commonProps}>
+                {control.render(
+                  form.getFieldValue(control.name),
+                  (value) => form.setFieldValue(control.name, value),
+                  formValues
+                )}
+              </div>
             );
           }
-          return null;
+          return (
+            <div className="hidden">
+              <Input {...commonProps} type="hidden" />
+            </div>
+          );
         }
 
         case "hidden": {
-          return <></>;
+          return (
+            <div className="hidden">
+              <Input {...commonProps} type="hidden" />
+            </div>
+          );
         }
 
         default: {
@@ -439,6 +481,7 @@ export const useFormControlRenderer = ({
       form,
       fileListState,
       createFileUploadHandlers,
+      handleDebouncedSearch,
     ]
   );
 
