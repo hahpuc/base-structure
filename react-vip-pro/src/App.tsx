@@ -3,6 +3,9 @@ import { Navigate, Route, Routes } from "react-router";
 import { useAppDispatch, useAppSelector } from "./hooks/redux.hooks";
 import { AuthLayout } from "./layouts/auth/auth-page.layout";
 import AppLayout from "./layouts/main/app.layout";
+import BlogPostPage from "./pages/articles/blog-post/blog-post.page";
+import CreateEditBlogPostPage from "./pages/articles/blog-post/create-edit/create-edit-blog-post.page";
+import CategoryPage from "./pages/articles/category/category.page";
 import { LoginInPage } from "./pages/auth/login-in.page";
 import { RegisterPage } from "./pages/auth/sign-up.page";
 import Blank from "./pages/blank.page";
@@ -11,13 +14,17 @@ import BarChart from "./pages/charts/BarChart";
 import LineChart from "./pages/charts/LineChart";
 import Home from "./pages/dashboard/Home";
 import DialogAntPage from "./pages/dialog-antd/dialog-ant.page";
+import DynamicFormPage from "./pages/forms-antd/dynamic-forms.page";
 import FormsAntDPage from "./pages/forms-antd/forms-antd.page";
 import FormElements from "./pages/forms/FormElements";
 import CreateEditProvincePage from "./pages/locations/province/create-edit/create-edit-province.page";
 import ProvincePage from "./pages/locations/province/province.page";
 import CreateEditWardPage from "./pages/locations/ward/create-edit/create-edit-ward.page";
 import WardPage from "./pages/locations/ward/ward.page";
+import CreateEditRolePage from "./pages/role/create-edit/create-edit-role.page";
+import RolePage from "./pages/role/role.page";
 import TableAntDPage from "./pages/table-antd/table-antd.page";
+import { TipTapPage } from "./pages/tiptap/tiptap.page";
 import Alerts from "./pages/ui-elements/Alerts";
 import Avatars from "./pages/ui-elements/Avatars";
 import Badges from "./pages/ui-elements/Badges";
@@ -28,8 +35,6 @@ import UserProfiles from "./pages/user-profile.page";
 import AuthProvider from "./providers/auth.provider";
 import { RootState } from "./store";
 import { fetchPermissions } from "./store/slices/permissions.slice";
-import RolePage from "./pages/role/role.page";
-import CreateEditRolePage from "./pages/role/create-edit/create-edit-role.page";
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -67,11 +72,13 @@ export default function App() {
         {/* Forms */}
         <Route path="form-elements" element={<FormElements />} />
         <Route path="form-antd" element={<FormsAntDPage />} />
+        <Route path="editors" element={<TipTapPage />} />
 
         {/* Ant Design */}
         <Route path="table-antd" element={<TableAntDPage />} />
         <Route path="buttons-antd" element={<ButtonAntDPage />} />
         <Route path="dialogs-antd" element={<DialogAntPage />} />
+        <Route path="dynamic-form" element={<DynamicFormPage />} />
 
         {/* Ui Elements */}
         <Route path="alerts" element={<Alerts />} />
@@ -98,6 +105,13 @@ export default function App() {
         <Route path="ward" element={<WardPage />} />
         <Route path="ward/create" element={<CreateEditWardPage />} />
         <Route path="ward/edit/:id" element={<CreateEditWardPage />} />
+
+        {/* Article */}
+        <Route path="category" element={<CategoryPage />} />
+
+        <Route path="blog-post" element={<BlogPostPage />} />
+        <Route path="blog-post/create" element={<CreateEditBlogPostPage />} />
+        <Route path="blog-post/edit/:id" element={<CreateEditBlogPostPage />} />
 
         <Route path="" element={<Navigate to="/home" replace />} />
       </Route>

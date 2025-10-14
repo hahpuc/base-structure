@@ -28,14 +28,20 @@ const WardPage: React.FunctionComponent = () => {
       title: "Export",
       icon: "export",
       type: "default",
-      handler: () => {},
+      handler: async () => {
+        console.log("CLICK EXPORT");
+        message.info("Export wards");
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      },
     },
     {
       id: "import-ward",
       title: "Import",
       icon: "import",
       type: "default",
-      handler: () => {},
+      handler: () => {
+        message.info("Import wards");
+      },
     },
   ]);
 

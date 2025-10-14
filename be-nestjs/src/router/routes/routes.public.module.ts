@@ -1,3 +1,5 @@
+import { BlogPostModule } from '@modules/blog-post/blog-post.module';
+import { BlogPostPublicController } from '@modules/blog-post/controllers/blog-post.public.controller';
 import { CategoryModule } from '@modules/category/category.module';
 import { CategoryPublicController } from '@modules/category/controllers/category.public.controller';
 import { ProvincePublicController } from '@modules/location/controllers/province.public.controller';
@@ -20,6 +22,7 @@ import { HealthPublicController } from 'src/health/controllers/health.public.con
     ProvincePublicController,
     WardPublicController,
     CategoryPublicController,
+    BlogPostPublicController,
   ],
   providers: [],
   exports: [],
@@ -30,6 +33,7 @@ import { HealthPublicController } from 'src/health/controllers/health.public.con
     PermissionModule,
     LocationModule,
     CategoryModule,
+    BlogPostModule,
   ],
 })
 export class RoutesPublicModule {}

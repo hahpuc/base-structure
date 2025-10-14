@@ -36,6 +36,14 @@ interface EnvironmentConfig {
   // Development
   logLevel: "debug" | "info" | "warn" | "error";
   mockDelay: number;
+
+  // S3 Configuration
+  s3Region: string;
+  s3Endpoint: string;
+  s3AccessKeyId: string;
+  s3SecretAccessKey: string;
+  s3BucketName: string;
+  s3PublicUrl: string;
 }
 
 class EnvironmentService {
@@ -99,6 +107,14 @@ class EnvironmentService {
         | "warn"
         | "error",
       mockDelay: this.getEnvNumber("VITE_MOCK_DELAY", 0),
+
+      // S3 Configuration
+      s3Region: this.getEnv("VITE_S3_REGION", ""),
+      s3Endpoint: this.getEnv("VITE_S3_ENDPOINT", ""),
+      s3AccessKeyId: this.getEnv("VITE_S3_ACCESS_KEY_ID", ""),
+      s3SecretAccessKey: this.getEnv("VITE_S3_SECRET_ACCESS_KEY", ""),
+      s3BucketName: this.getEnv("VITE_S3_BUCKET_NAME", ""),
+      s3PublicUrl: this.getEnv("VITE_S3_PUBLIC_URL", ""),
     };
   }
 
@@ -177,6 +193,17 @@ class EnvironmentService {
     return {
       logLevel: this.config.logLevel,
       mockDelay: this.config.mockDelay,
+    };
+  }
+
+  get s3() {
+    return {
+      region: this.config.s3Region,
+      endpoint: this.config.s3Endpoint,
+      accessKeyId: this.config.s3AccessKeyId,
+      secretAccessKey: this.config.s3SecretAccessKey,
+      bucketName: this.config.s3BucketName,
+      publicUrl: this.config.s3PublicUrl,
     };
   }
 
