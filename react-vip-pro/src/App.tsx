@@ -17,6 +17,9 @@ import DialogAntPage from "./pages/dialog-antd/dialog-ant.page";
 import DynamicFormPage from "./pages/forms-antd/dynamic-forms.page";
 import FormsAntDPage from "./pages/forms-antd/forms-antd.page";
 import FormElements from "./pages/forms/FormElements";
+import LanguagePage from "./pages/languages/languages/languages.page";
+import NamespacePage from "./pages/languages/namespaces/namespaces.page";
+import TranslationPage from "./pages/languages/translations/translations.page";
 import CreateEditProvincePage from "./pages/locations/province/create-edit/create-edit-province.page";
 import ProvincePage from "./pages/locations/province/province.page";
 import CreateEditWardPage from "./pages/locations/ward/create-edit/create-edit-ward.page";
@@ -112,6 +115,13 @@ export default function App() {
         <Route path="blog-post" element={<BlogPostPage />} />
         <Route path="blog-post/create" element={<CreateEditBlogPostPage />} />
         <Route path="blog-post/edit/:id" element={<CreateEditBlogPostPage />} />
+
+        {/* Language */}
+        <Route path="language" element={<LanguagePage />} />
+
+        <Route path="namespace" element={<NamespacePage />} />
+
+        <Route path="translation" element={<TranslationPage />} />
 
         <Route path="" element={<Navigate to="/home" replace />} />
       </Route>

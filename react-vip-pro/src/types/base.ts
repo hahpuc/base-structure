@@ -1,3 +1,5 @@
+import { EStatus } from "@/constants/enum";
+
 export type BaseModel = {
   id: string | number;
   created_at?: Date | string;
@@ -23,7 +25,18 @@ export type Dictionary = {
   [key: string]: unknown;
 };
 
-export interface SelectOptionDto {
+export type BaseOption = {
   label: string;
-  value: string | number | boolean;
-}
+  value: number | string | boolean;
+  status?: EStatus;
+};
+
+export type ExportDto = {
+  key: string;
+};
+
+export type BaseImportDto = {
+  key: string;
+};
+
+export type BaseImportResponse = { error_key: string; message: string };

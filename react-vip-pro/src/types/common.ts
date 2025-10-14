@@ -27,12 +27,6 @@ export interface Dictionary<T = unknown> {
   [key: string]: T;
 }
 
-export interface SelectOption {
-  label: string;
-  value: string | number;
-  disabled?: boolean;
-}
-
 export interface TableColumn {
   key: string;
   title: string;

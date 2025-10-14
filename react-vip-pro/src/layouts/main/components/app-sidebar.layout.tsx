@@ -81,6 +81,25 @@ const menuItems: MenuItem[] = [
       },
     ],
   },
+  {
+    name: "Language Management",
+    icon: <PieChartIcon />,
+    permissions: ["language_manage_read"],
+    children: [
+      {
+        name: "Language",
+        path: "/language",
+      },
+      {
+        name: "Namespace",
+        path: "/namespace",
+      },
+      {
+        name: "Translation",
+        path: "/translation",
+      },
+    ],
+  },
 ];
 
 const otherItems: MenuItem[] = [
