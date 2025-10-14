@@ -62,6 +62,9 @@ const NamespacePage: React.FunctionComponent = () => {
         title: "Status",
         name: "status",
         type: "status",
+        click: (row) => {
+          translationNamespaceService.toggleStatus(+row.id);
+        },
       },
     ],
     filters: [],

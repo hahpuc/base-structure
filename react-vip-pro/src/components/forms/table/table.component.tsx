@@ -1,5 +1,5 @@
 import type { GetProp, TablePaginationConfig } from "antd";
-import { message, Table, TableProps } from "antd";
+import { message, Switch, Table, TableProps } from "antd";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 
@@ -16,6 +16,7 @@ import {
 import { TableFilter } from "./table-filter.component";
 import { getNestedValue } from "./utils/table-utils";
 import { getMediaUrl } from "@/utils/media.util";
+import { EStatus } from "@/constants/enum";
 
 type ColumnsType<T extends object> = GetProp<TableProps<T>, "columns">;
 
@@ -297,6 +298,18 @@ function AppTable<T extends TableRowData>({
                   alt="Thumbnail"
                 />
               );
+            case "status":
+              return (
+                <Switch
+                  defaultChecked={fieldValue === EStatus.active}
+                  onChange={() => {
+                    if (col.click) {
+                      col.click(record);
+                    }
+                  }}
+                />
+              );
+
             default:
               return String(fieldValue || "");
           }
