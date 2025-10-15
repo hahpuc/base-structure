@@ -13,7 +13,7 @@ import { FilterBlogPostDto } from '../dtos/filter-blog-post.dto';
 import { BlogPost } from '../repository/entities/blog-post.entity';
 import { BlogPostService } from '../services/blog-post.service';
 
-@Controller('blogposts')
+@Controller('blog-posts')
 @ApiTags('BlogPost')
 export class BlogPostPublicController {
   constructor(private readonly service: BlogPostService) {}

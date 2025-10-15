@@ -1,0 +1,90 @@
+{
+    "navigation": {
+        "home": "Home",
+        "about": "About",
+        "products": "Products",
+        "services": "Services",
+        "blog": "Blog",
+        "contact": "Contact"
+    },
+    "common": {
+        "search": "Search",
+        "language": "Language",
+        "theme": "Theme",
+        "dark": "Dark",
+        "light": "Light",
+        "loading": "Loading...",
+        "error": "Error",
+        "notFound": "Page not found",
+        "backToHome": "Back to Home",
+        "readMore": "Read More",
+        "viewAll": "View All",
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page",
+        "of": "of",
+        "results": "results",
+        "noResults": "No results found",
+        "category": "Category",
+        "categories": "Categories",
+        "tags": "Tags",
+        "author": "Author",
+        "publishedAt": "Published at",
+        "updatedAt": "Updated at"
+    },
+    "home": {
+        "title": "Welcome to VIP Pro",
+        "description": "Professional business solutions for your company",
+        "hero": {
+            "title": "Grow Your Business",
+            "subtitle": "With Professional Solutions",
+            "cta": "Get Started"
+        },
+        "features": {
+            "title": "Our Features",
+            "subtitle": "Why choose us for your business needs"
+        },
+        "latestBlog": {
+            "title": "Latest Blog Posts",
+            "subtitle": "Stay updated with our latest insights"
+        }
+    },
+    "blog": {
+        "title": "Blog",
+        "description": "Read our latest articles and insights",
+        "readTime": "min read",
+        "relatedPosts": "Related Posts",
+        "recentPosts": "Recent Posts",
+        "searchPlaceholder": "Search articles...",
+        "filterByCategory": "Filter by category",
+        "allCategories": "All Categories",
+        "noPostsFound": "No blog posts found",
+        "backToBlog": "Back to Blog"
+    },
+    "contact": {
+        "title": "Contact Us",
+        "description": "Get in touch with our team",
+        "form": {
+            "name": "Name",
+            "email": "Email",
+            "subject": "Subject",
+            "message": "Message",
+            "send": "Send Message",
+            "sending": "Sending...",
+            "success": "Message sent successfully!",
+            "error": "Failed to send message. Please try again."
+        },
+        "info": {
+            "address": "Address",
+            "phone": "Phone",
+            "email": "Email",
+            "hours": "Business Hours"
+        }
+    },
+    "seo": {
+        "defaultTitle": "VIP Pro - Professional Business Solutions",
+        "defaultDescription": "Leading provider of professional business solutions. Grow your business with our expert services and innovative products.",
+        "blogTitle": "Blog - VIP Pro",
+        "blogDescription": "Read our latest articles, insights, and expert advice on business growth and professional solutions."
+    }
+}

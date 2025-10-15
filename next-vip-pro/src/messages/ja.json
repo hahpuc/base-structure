@@ -1,0 +1,90 @@
+{
+    "navigation": {
+        "home": "ホーム",
+        "about": "会社概要",
+        "products": "製品",
+        "services": "サービス",
+        "blog": "ブログ",
+        "contact": "お問い合わせ"
+    },
+    "common": {
+        "search": "検索",
+        "language": "言語",
+        "theme": "テーマ",
+        "dark": "ダーク",
+        "light": "ライト",
+        "loading": "読み込み中...",
+        "error": "エラー",
+        "notFound": "ページが見つかりません",
+        "backToHome": "ホームに戻る",
+        "readMore": "続きを読む",
+        "viewAll": "すべて表示",
+        "previous": "前へ",
+        "next": "次へ",
+        "page": "ページ",
+        "of": "の",
+        "results": "件",
+        "noResults": "結果が見つかりません",
+        "category": "カテゴリ",
+        "categories": "カテゴリ",
+        "tags": "タグ",
+        "author": "著者",
+        "publishedAt": "公開日",
+        "updatedAt": "更新日"
+    },
+    "home": {
+        "title": "VIP Proへようこそ",
+        "description": "あなたの会社のためのプロフェッショナルなビジネスソリューション",
+        "hero": {
+            "title": "ビジネスを成長させる",
+            "subtitle": "プロフェッショナルなソリューションで",
+            "cta": "始める"
+        },
+        "features": {
+            "title": "私たちの特徴",
+            "subtitle": "あなたのビジネスニーズに私たちを選ぶ理由"
+        },
+        "latestBlog": {
+            "title": "最新のブログ記事",
+            "subtitle": "私たちの最新の洞察をお届けします"
+        }
+    },
+    "blog": {
+        "title": "ブログ",
+        "description": "私たちの最新記事と洞察をお読みください",
+        "readTime": "分で読める",
+        "relatedPosts": "関連記事",
+        "recentPosts": "最近の記事",
+        "searchPlaceholder": "記事を検索...",
+        "filterByCategory": "カテゴリで絞り込む",
+        "allCategories": "すべてのカテゴリ",
+        "noPostsFound": "ブログ記事が見つかりません",
+        "backToBlog": "ブログに戻る"
+    },
+    "contact": {
+        "title": "お問い合わせ",
+        "description": "私たちのチームにご連絡ください",
+        "form": {
+            "name": "お名前",
+            "email": "メールアドレス",
+            "subject": "件名",
+            "message": "メッセージ",
+            "send": "メッセージを送信",
+            "sending": "送信中...",
+            "success": "メッセージが正常に送信されました！",
+            "error": "メッセージの送信に失敗しました。もう一度お試しください。"
+        },
+        "info": {
+            "address": "住所",
+            "phone": "電話番号",
+            "email": "メールアドレス",
+            "hours": "営業時間"
+        }
+    },
+    "seo": {
+        "defaultTitle": "VIP Pro - プロフェッショナルなビジネスソリューション",
+        "defaultDescription": "プロフェッショナルなビジネスソリューションの主要プロバイダー。私たちの専門サービスと革新的な製品でビジネスを成長させましょう。",
+        "blogTitle": "ブログ - VIP Pro",
+        "blogDescription": "ビジネスの成長とプロフェッショナルなソリューションに関する最新の記事、洞察、専門家のアドバイスをお読みください。"
+    }
+}

@@ -1,0 +1,90 @@
+{
+    "navigation": {
+        "home": "Trang chủ",
+        "about": "Giới thiệu",
+        "products": "Sản phẩm",
+        "services": "Dịch vụ",
+        "blog": "Blog",
+        "contact": "Liên hệ"
+    },
+    "common": {
+        "search": "Tìm kiếm",
+        "language": "Ngôn ngữ",
+        "theme": "Giao diện",
+        "dark": "Tối",
+        "light": "Sáng",
+        "loading": "Đang tải...",
+        "error": "Lỗi",
+        "notFound": "Không tìm thấy trang",
+        "backToHome": "Về trang chủ",
+        "readMore": "Đọc thêm",
+        "viewAll": "Xem tất cả",
+        "previous": "Trước",
+        "next": "Tiếp",
+        "page": "Trang",
+        "of": "của",
+        "results": "kết quả",
+        "noResults": "Không tìm thấy kết quả",
+        "category": "Danh mục",
+        "categories": "Danh mục",
+        "tags": "Thẻ",
+        "author": "Tác giả",
+        "publishedAt": "Xuất bản lúc",
+        "updatedAt": "Cập nhật lúc"
+    },
+    "home": {
+        "title": "Chào mừng đến VIP Pro",
+        "description": "Giải pháp kinh doanh chuyên nghiệp cho công ty của bạn",
+        "hero": {
+            "title": "Phát triển doanh nghiệp",
+            "subtitle": "Với các giải pháp chuyên nghiệp",
+            "cta": "Bắt đầu"
+        },
+        "features": {
+            "title": "Tính năng của chúng tôi",
+            "subtitle": "Tại sao chọn chúng tôi cho nhu cầu kinh doanh của bạn"
+        },
+        "latestBlog": {
+            "title": "Bài viết mới nhất",
+            "subtitle": "Cập nhật những hiểu biết mới nhất của chúng tôi"
+        }
+    },
+    "blog": {
+        "title": "Blog",
+        "description": "Đọc các bài viết và hiểu biết mới nhất của chúng tôi",
+        "readTime": "phút đọc",
+        "relatedPosts": "Bài viết liên quan",
+        "recentPosts": "Bài viết gần đây",
+        "searchPlaceholder": "Tìm kiếm bài viết...",
+        "filterByCategory": "Lọc theo danh mục",
+        "allCategories": "Tất cả danh mục",
+        "noPostsFound": "Không tìm thấy bài viết",
+        "backToBlog": "Quay lại Blog"
+    },
+    "contact": {
+        "title": "Liên hệ",
+        "description": "Liên lạc với đội ngũ của chúng tôi",
+        "form": {
+            "name": "Tên",
+            "email": "Email",
+            "subject": "Chủ đề",
+            "message": "Tin nhắn",
+            "send": "Gửi tin nhắn",
+            "sending": "Đang gửi...",
+            "success": "Gửi tin nhắn thành công!",
+            "error": "Không thể gửi tin nhắn. Vui lòng thử lại."
+        },
+        "info": {
+            "address": "Địa chỉ",
+            "phone": "Điện thoại",
+            "email": "Email",
+            "hours": "Giờ làm việc"
+        }
+    },
+    "seo": {
+        "defaultTitle": "VIP Pro - Giải pháp kinh doanh chuyên nghiệp",
+        "defaultDescription": "Nhà cung cấp hàng đầu các giải pháp kinh doanh chuyên nghiệp. Phát triển doanh nghiệp của bạn với các dịch vụ chuyên gia và sản phẩm sáng tạo của chúng tôi.",
+        "blogTitle": "Blog - VIP Pro",
+        "blogDescription": "Đọc các bài viết mới nhất, hiểu biết sâu sắc và lời khuyên chuyên gia về phát triển doanh nghiệp và giải pháp chuyên nghiệp."
+    }
+}
