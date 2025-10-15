@@ -32,7 +32,7 @@ export const LoginInPage: React.FC = () => {
   // Redirect if already authenticated
   if (isAuthenticated) {
     const state = location.state as LocationState | null;
-    const from = state?.from?.pathname || "/dashboard";
+    const from = state?.from?.pathname || "/home";
     return <Navigate to={from} replace />;
   }
 
