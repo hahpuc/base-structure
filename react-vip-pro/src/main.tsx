@@ -15,6 +15,8 @@ import { BrowserRouter } from "react-router";
 import "./index.css";
 import { setUpAxios } from "./services/client/axios-setup.ts";
 import { store } from "./store";
+import { appInitializationService } from "./services/app-initialization.service";
+import { initializeLocaleData } from "./store/slices/locale.slice";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,6 +29,22 @@ const queryClient = new QueryClient({
 });
 
 setUpAxios(axios);
+
+// Initialize localization data on app startup
+// The Redux store will automatically load cached data from localStorage during initialization
+// This will also fetch fresh data from API if needed
+store.dispatch(initializeLocaleData());
+
+// Alternative: Initialize using the app initialization service directly
+// This approach provides more control over the initialization process
+appInitializationService
+  .initializeApp()
+  .then(() => {
+    console.log("App initialization completed");
+  })
+  .catch((error) => {
+    console.error("App initialization failed:", error);
+  });
 
 createRoot(document.getElementById("root")!).render(
   <StyleProvider layer>

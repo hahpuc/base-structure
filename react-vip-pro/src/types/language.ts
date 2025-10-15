@@ -1,6 +1,6 @@
-import { EStatus } from '../constants/enum';
+import { EStatus } from "../constants/enum";
 
-import { BaseModel, BaseQuery } from './base';
+import { BaseModel, BaseQuery } from "./base";
 
 export type LanguageDto = BaseModel & {
   code: string;
@@ -28,4 +28,16 @@ export type EditLanguage = Partial<CreateLanguage> & {
 
 export type QueryLanguage = BaseQuery & {
   status?: EStatus;
+};
+
+// Translation data structure for caching and usage
+export type TranslationData = {
+  [namespace: string]: {
+    [key: string]: string;
+  };
+};
+
+// Translation cache structure
+export type TranslationCache = {
+  [languageCode: string]: TranslationData;
 };

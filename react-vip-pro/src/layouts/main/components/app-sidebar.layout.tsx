@@ -98,6 +98,10 @@ const menuItems: MenuItem[] = [
         name: "Translation",
         path: "/translation",
       },
+      {
+        name: "Internationalization Test",
+        path: "/internationalization-test",
+      },
     ],
   },
 ];

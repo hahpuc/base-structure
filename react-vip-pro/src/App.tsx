@@ -41,6 +41,7 @@ import { fetchPermissions } from "./store/slices/permissions.slice";
 import CreateEditLanguagePage from "./pages/languages/languages/create-edit/create-edit-language.page";
 import CreateEditNamespacePage from "./pages/languages/namespaces/create-edit/create-edit-namespace.page";
 import CreateEditTranslationPage from "./pages/languages/translations/create-edit/create-edit-translation.page";
+import InternalizationComponent from "./pages/languages/internalization/internalization.component";
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -139,6 +140,12 @@ export default function App() {
         <Route
           path="translation/edit/:id"
           element={<CreateEditTranslationPage />}
+        />
+
+        {/* Internationalization Test Page */}
+        <Route
+          path="internationalization-test"
+          element={<InternalizationComponent />}
         />
 
         <Route path="" element={<Navigate to="/home" replace />} />

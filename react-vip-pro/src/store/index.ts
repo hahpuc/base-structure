@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 
 import authSlice from "./slices/auth.slice";
+import localeSlice from "./slices/locale.slice";
 import permissionsSlice from "./slices/permissions.slice";
 import uiSlice from "./slices/ui.slice";
 
@@ -9,6 +10,7 @@ export const store = configureStore({
     auth: authSlice,
     permissions: permissionsSlice,
     ui: uiSlice,
+    locale: localeSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

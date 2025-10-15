@@ -94,7 +94,7 @@ const CreateEditLanguagePage: React.FunctionComponent = () => {
       resultApi = await languageService.update(updateData);
     } else {
       const createData: CreateLanguage = { ...commonData };
-      resultApi = await languageService.ceateDefaultTranslations(createData);
+      resultApi = await languageService.createDefaultTranslations(createData);
     }
 
     setLoading(false);

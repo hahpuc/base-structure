@@ -2,9 +2,20 @@ import { useState } from "react";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { Link } from "react-router";
+import { useTranslate } from "../../hooks/use-translate";
+import { useAppDispatch } from "../../hooks/redux.hooks";
+import { setCurrentLanguage } from "../../store/slices/locale.slice";
+import { LanguageDto } from "../../types/language";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
+
+  const dispatch = useAppDispatch();
+  const { getAvailableLanguages, getCurrentLanguage } = useTranslate();
+
+  const languages = getAvailableLanguages();
+  const selectedLanguage = getCurrentLanguage();
 
   function toggleDropdown() {
     setIsOpen(!isOpen);
@@ -12,6 +23,16 @@ export default function UserDropdown() {
 
   function closeDropdown() {
     setIsOpen(false);
+    setIsLanguageDropdownOpen(false);
+  }
+
+  function toggleLanguageDropdown() {
+    setIsLanguageDropdownOpen(!isLanguageDropdownOpen);
+  }
+
+  function selectLanguage(language: LanguageDto) {
+    dispatch(setCurrentLanguage(language.code));
+    setIsLanguageDropdownOpen(false);
   }
   return (
     <div className="relative">
@@ -113,6 +134,89 @@ export default function UserDropdown() {
               </svg>
               Account settings
             </DropdownItem>
+          </li>
+          <li className="relative group">
+            <div
+              onClick={toggleLanguageDropdown}
+              className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300 cursor-pointer"
+            >
+              <svg
+                className="fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400 dark:group-hover:fill-gray-300"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M22 12C22 17.5228 17.5228 22 12 22M22 12C22 6.47715 17.5228 2 12 2M22 12C22 10.3431 17.5228 9 12 9C6.47715 9 2 10.3431 2 12M22 12C22 13.6569 17.5228 15 12 15C6.47715 15 2 13.6569 2 12M12 22C6.47715 22 2 17.5228 2 12M12 22C14.2091 22 16 17.5228 16 12C16 6.47715 14.2091 2 12 2M12 22C9.79086 22 8 17.5228 8 12C8 6.47715 9.79086 2 12 2M2 12C2 6.47715 6.47715 2 12 2"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  fill="none"
+                />
+              </svg>
+              <span>Language</span>
+
+              {selectedLanguage && (
+                <span className="flex items-center gap-2 ml-auto rounded px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-xs font-medium">
+                  <img
+                    className="w-4 h-3 rounded-sm object-cover"
+                    alt={`${selectedLanguage.name} Flag`}
+                    src={
+                      selectedLanguage.flag_icon ||
+                      `https://flagcdn.com/${selectedLanguage.flag_code?.toLowerCase()}.svg`
+                    }
+                  />
+                  {selectedLanguage.name}
+                </span>
+              )}
+            </div>
+
+            {/* Cascading Language Menu */}
+            <div
+              className={`absolute right-full top-0 mr-2 w-48 rounded-xl border border-gray-200 bg-white shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark transition-all duration-200 transform origin-right z-50 ${
+                isLanguageDropdownOpen
+                  ? "opacity-100 scale-100 pointer-events-auto"
+                  : "opacity-0 scale-95 pointer-events-none"
+              }`}
+            >
+              <div className="p-2 max-h-64 overflow-y-auto">
+                {languages.map((language) => (
+                  <div
+                    key={language.code}
+                    onClick={() => selectLanguage(language)}
+                    className={`flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300 cursor-pointer transition-colors duration-150 ${
+                      selectedLanguage?.code === language.code
+                        ? "bg-gray-100 dark:bg-white/5"
+                        : ""
+                    }`}
+                  >
+                    <img
+                      className="w-5 h-4 rounded-sm object-cover flex-shrink-0"
+                      alt={`${language.name} Flag`}
+                      src={
+                        language.flag_icon ||
+                        `https://flagcdn.com/${language.flag_code?.toLowerCase()}.svg`
+                      }
+                    />
+                    <span className="truncate">{language.name}</span>
+                    {selectedLanguage?.code === language.code && (
+                      <svg
+                        className="w-4 h-4 ml-auto text-blue-500 flex-shrink-0"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
           </li>
           <li>
             <DropdownItem

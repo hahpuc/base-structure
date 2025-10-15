@@ -11,10 +11,16 @@ const setUpAxios = (axios: AxiosStatic) => {
   // Request interceptor
   axios.interceptors.request.use(
     (config) => {
+      // Add authorization header
       const token = localStorage.getItem("access_token");
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
+
+      // Add locale header
+      const currentLanguage = localStorage.getItem("selected_language") || "en";
+      config.headers["Accept-Language"] = currentLanguage;
+
       return config;
     },
     (error) => Promise.reject(error)

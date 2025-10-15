@@ -8,7 +8,7 @@ import {
   QueryLanguage,
 } from "@/types/language";
 import { BaseOption } from "@/types/base";
-import { TranslationData } from "@/types/translation";
+import { TranslationData } from "@/types/language";
 
 const API_PREFIX = "/admin";
 
@@ -23,7 +23,7 @@ class LanguageService extends BaseService<
     super(API_PREFIX, "languages");
   }
 
-  ceateDefaultTranslations(body: CreateLanguage): Promise<ApiResult<unknown>> {
+  createDefaultTranslations(body: CreateLanguage): Promise<ApiResult<unknown>> {
     return ApiClient.post<unknown>(
       `${this.apiUrl}/create-default-translations`,
       body
