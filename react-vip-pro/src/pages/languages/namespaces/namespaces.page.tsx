@@ -12,7 +12,16 @@ import { useNavigate } from "react-router";
 const NamespacePage: React.FunctionComponent = () => {
   const navigate = useNavigate();
 
-  useHeader("Namespace Management", []);
+  useHeader("Namespace Management", [
+    {
+      id: "create-namespace",
+      title: "Create",
+      icon: "plus",
+      type: "primary",
+      permission: "language_manage_create",
+      handler: () => navigate("/namespace/create"),
+    },
+  ]);
 
   const fetchData = async (
     params: QueryTranslationNamespace

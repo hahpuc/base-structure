@@ -12,10 +12,11 @@ export enum ESystemType {
 }
 
 export enum EUploadType {
-  image = 'image/png, image/jpeg',
+  image = "image/png, image/jpeg",
+  document = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel",
 }
 
 export enum ELocale {
-  vi = 'vi',
-  en = 'en',
+  vi = "vi",
+  en = "en",
 }

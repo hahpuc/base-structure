@@ -7,10 +7,14 @@ import { translationNamespaceService } from "@/services/translation-namespace.se
 import { translationService } from "@/services/translation.service";
 import { ListPaginate } from "@/types/base";
 import { QueryTranslation, TranslationDto } from "@/types/translation";
+import { Modal } from "antd";
+import { useState } from "react";
 import { useNavigate } from "react-router";
+import TranslationsImportDialog from "./components/translations-import.dialog";
 
 const TranslationPage: React.FunctionComponent = () => {
   const navigate = useNavigate();
+  const [isImportModalVisible, setIsImportModalVisible] = useState(false);
 
   useHeader("Translation Management", [
     {
@@ -27,7 +31,7 @@ const TranslationPage: React.FunctionComponent = () => {
       icon: "import",
       type: "default",
       permission: "language_manage_create",
-      handler: () => {},
+      handler: () => setIsImportModalVisible(true),
     },
   ]);
 
@@ -146,7 +150,20 @@ const TranslationPage: React.FunctionComponent = () => {
     ],
   };
 
-  return <AppTable option={tableOption} />;
+  return (
+    <>
+      <AppTable option={tableOption} />
+      <Modal
+        title="Import/Export Translations"
+        open={isImportModalVisible}
+        onCancel={() => setIsImportModalVisible(false)}
+        footer={null}
+        width={600}
+      >
+        <TranslationsImportDialog />
+      </Modal>
+    </>
+  );
 };
 
 export default TranslationPage;

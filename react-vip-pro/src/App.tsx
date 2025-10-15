@@ -38,6 +38,9 @@ import UserProfiles from "./pages/user-profile.page";
 import AuthProvider from "./providers/auth.provider";
 import { RootState } from "./store";
 import { fetchPermissions } from "./store/slices/permissions.slice";
+import CreateEditLanguagePage from "./pages/languages/languages/create-edit/create-edit-language.page";
+import CreateEditNamespacePage from "./pages/languages/namespaces/create-edit/create-edit-namespace.page";
+import CreateEditTranslationPage from "./pages/languages/translations/create-edit/create-edit-translation.page";
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -118,10 +121,25 @@ export default function App() {
 
         {/* Language */}
         <Route path="language" element={<LanguagePage />} />
+        <Route path="language/create" element={<CreateEditLanguagePage />} />
+        <Route path="language/edit/:id" element={<CreateEditLanguagePage />} />
 
         <Route path="namespace" element={<NamespacePage />} />
+        <Route path="namespace/create" element={<CreateEditNamespacePage />} />
+        <Route
+          path="namespace/edit/:id"
+          element={<CreateEditNamespacePage />}
+        />
 
         <Route path="translation" element={<TranslationPage />} />
+        <Route
+          path="translation/create"
+          element={<CreateEditTranslationPage />}
+        />
+        <Route
+          path="translation/edit/:id"
+          element={<CreateEditTranslationPage />}
+        />
 
         <Route path="" element={<Navigate to="/home" replace />} />
       </Route>
