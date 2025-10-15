@@ -23,8 +23,11 @@ export type TableFilter = {
   type: TableColumnFilterType;
   name: string;
   label: string;
-  options?: FilterOptionsType;
   note?: string;
+
+  // Options
+  options?: FilterOptionsType;
+  multiple?: boolean; // For select type, default is false
 
   // For child filters that depend on a parent filter
   parent?: {

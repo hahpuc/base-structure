@@ -35,6 +35,7 @@ import UserProfiles from "./pages/user-profile.page";
 import AuthProvider from "./providers/auth.provider";
 import { RootState } from "./store";
 import { fetchPermissions } from "./store/slices/permissions.slice";
+import UsersPage from "./pages/users/users.component";
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -96,6 +97,8 @@ export default function App() {
         <Route path="role" element={<RolePage />} />
         <Route path="role/create" element={<CreateEditRolePage />} />
         <Route path="role/edit/:id" element={<CreateEditRolePage />} />
+
+        <Route path="user" element={<UsersPage />} />
 
         {/* Location */}
         <Route path="province" element={<ProvincePage />} />

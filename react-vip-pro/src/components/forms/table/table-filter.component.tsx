@@ -59,16 +59,31 @@ export const TableFilter: React.FC<TableFilterProps> = ({
     filters.forEach((filter) => {
       const value = searchParams.get(filter.name);
       if (value) {
-        // Convert to number if the filter has numeric options
-        if (filter.type === "select" && Array.isArray(filter.options)) {
-          const option = filter.options.find(
-            (opt) => String(opt.value) === value
-          );
-          values[filter.name] = option ? option.value : value;
+        // Handle multiple values for select filters
+        if (filter.type === "select" && filter.multiple) {
+          try {
+            // Parse JSON array for multiple values
+            const parsedArray = JSON.parse(value);
+            if (Array.isArray(parsedArray)) {
+              values[filter.name] = parsedArray;
+            } else {
+              // Fallback: split by comma if not valid JSON
+              values[filter.name] = value.split(",");
+            }
+          } catch {
+            // Fallback: split by comma if JSON parsing fails
+            values[filter.name] = value.split(",");
+          }
         } else {
-          // For dynamic options, try to parse as number if possible
-          const numValue = Number(value);
-          values[filter.name] = isNaN(numValue) ? value : numValue;
+          // Convert to number if the filter has numeric options
+          if (filter.type === "select" && Array.isArray(filter.options)) {
+            const numericOption = filter.options.find(
+              (opt) => typeof opt.value === "number"
+            );
+            values[filter.name] = numericOption ? Number(value) : value;
+          } else {
+            values[filter.name] = value;
+          }
         }
       }
     });
@@ -178,8 +193,23 @@ export const TableFilter: React.FC<TableFilterProps> = ({
       const cleanedValues = Object.entries(values).reduce(
         (acc, [key, value]) => {
           if (value !== undefined && value !== null && value !== "") {
-            acc[key] = value;
-            if (key === "filter") setSearchValue(String(value));
+            // Find the filter configuration
+            const filter = filters.find((f) => f.name === key);
+
+            // Handle multiple select values
+            if (
+              filter?.type === "select" &&
+              filter.multiple &&
+              Array.isArray(value)
+            ) {
+              if (value.length > 0) {
+                // Store as JSON string for URL compatibility
+                acc[key] = JSON.stringify(value);
+              }
+            } else {
+              acc[key] = value;
+              if (key === "filter") setSearchValue(String(value));
+            }
           }
           return acc;
         },
@@ -189,7 +219,7 @@ export const TableFilter: React.FC<TableFilterProps> = ({
       onFilterChange(cleanedValues);
       setDrawerVisible(false);
     },
-    [onFilterChange]
+    [onFilterChange, filters]
   );
 
   const handleFilterReset = useCallback(() => {
@@ -240,8 +270,37 @@ export const TableFilter: React.FC<TableFilterProps> = ({
   const getFilterDisplayValue = useCallback(
     (filter: TableFilterType, value: unknown): string => {
       if (filter.type === "select") {
+        // Handle multiple values
+        if (filter.multiple && Array.isArray(value)) {
+          if (Array.isArray(filter.options)) {
+            const labels = value.map((val) => {
+              const option = (filter.options as SelectOption[]).find(
+                (opt) => String(opt.value) === String(val)
+              );
+              return option ? option.label : String(val);
+            });
+            return labels.join(", ");
+          } else {
+            // Dynamic options
+            const currentValues = getCurrentFilterValues();
+            const filterKey = filter.parent
+              ? `${filter.name}_${currentValues[filter.parent.filterName]}`
+              : filter.name;
+
+            const options = filterOptions[filterKey] || [];
+            const labels = value.map((val) => {
+              const option = options.find(
+                (opt) => String(opt.value) === String(val)
+              );
+              return option ? option.label : String(val);
+            });
+            return labels.join(", ");
+          }
+        }
+
+        // Handle single values
         if (Array.isArray(filter.options)) {
-          const option = filter.options.find(
+          const option = (filter.options as SelectOption[]).find(
             (opt) => String(opt.value) === String(value)
           );
           return option ? option.label : String(value);
@@ -339,6 +398,7 @@ export const TableFilter: React.FC<TableFilterProps> = ({
                 showSearch
                 optionFilterProp="label"
                 options={filter.options}
+                mode={filter.multiple ? "multiple" : undefined}
               />
             );
           } else {
@@ -385,6 +445,7 @@ export const TableFilter: React.FC<TableFilterProps> = ({
                 disabled={isDisabled}
                 optionFilterProp="label"
                 options={options}
+                mode={filter.multiple ? "multiple" : undefined}
                 onChange={(value) => {
                   form.setFieldValue(filter.name, value);
 

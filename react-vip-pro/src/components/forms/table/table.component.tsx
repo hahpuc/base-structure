@@ -73,12 +73,29 @@ function AppTable<T extends TableRowData>({
     // Add all other parameters from URL dynamically
     searchParams.forEach((value, key) => {
       if (!["page", "limit"].includes(key) && value) {
-        params[key] = value;
+        // Check if this parameter corresponds to a multiple select filter
+        const filter = option.filters?.find((f) => f.name === key);
+        if (filter?.type === "select" && filter.multiple) {
+          try {
+            // Parse JSON array for multiple values
+            const parsedArray = JSON.parse(value);
+            if (Array.isArray(parsedArray)) {
+              params[key] = parsedArray;
+            } else {
+              params[key] = value;
+            }
+          } catch {
+            // If JSON parsing fails, treat as single value
+            params[key] = value;
+          }
+        } else {
+          params[key] = value;
+        }
       }
     });
 
     return params;
-  }, [searchParams, option.pageSize]);
+  }, [searchParams, option.pageSize, option.filters]);
 
   // Update URL params
   const updateUrlParams = useCallback(

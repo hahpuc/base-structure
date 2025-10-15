@@ -1,20 +1,27 @@
-import type { RoleDto, CreateRole, EditRole, QueryRole } from '@/types/role';
+import type { RoleDto, CreateRole, EditRole, QueryRole } from "@/types/role";
 
-import { BaseService } from './base.service';
-import { ApiClient } from './client/axios-client';
+import { BaseService } from "./base.service";
+import { ApiClient } from "./client/axios-client";
+import { ApiResult } from "./client/api-result";
 
-const API_PREFIX = '/admin';
+const API_PREFIX = "/admin";
 
-class RoleService extends BaseService<number, RoleDto, CreateRole, EditRole, QueryRole> {
+class RoleService extends BaseService<
+  number,
+  RoleDto,
+  CreateRole,
+  EditRole,
+  QueryRole
+> {
   constructor() {
-    super(API_PREFIX, 'roles');
+    super(API_PREFIX, "roles");
   }
 
-  export() {
-    return ApiClient.get(`${this.apiUrl}/export`, { responseType: 'blob' });
+  async export(): Promise<ApiResult<Blob>> {
+    return ApiClient.get(`${this.apiUrl}/export`, { responseType: "blob" });
   }
 
-  getAll() {
+  async getAll(): Promise<ApiResult<RoleDto[]>> {
     return ApiClient.get(`${this.apiUrl}/all`);
   }
 }
