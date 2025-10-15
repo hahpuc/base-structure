@@ -4,12 +4,13 @@ import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { ContactForm } from "@/components/forms/contact-form";
 
 interface ContactPageProps {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
 export async function generateMetadata({
-  params: { locale },
+  params,
 }: ContactPageProps): Promise<Metadata> {
+  const { locale } = await params;
   return generateSEOMetadata({
     title: "Contact Us",
     description:
@@ -50,7 +51,9 @@ const contactInfo = [
   },
 ];
 
-export default async function ContactPage() {
+export default async function ContactPage({ params }: ContactPageProps) {
+  const { locale } = await params;
+
   return (
     <div className="py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">

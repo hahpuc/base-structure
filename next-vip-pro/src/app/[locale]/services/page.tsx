@@ -1,21 +1,23 @@
-import { Metadata } from "next";
 import { generateSEOMetadata } from "@/lib/seo";
+import { Link } from "@/routing";
 import {
   Code,
-  Globe,
-  Smartphone,
   Database,
-  Shield,
+  Globe,
   Headphones,
+  Shield,
+  Smartphone,
 } from "lucide-react";
+import { Metadata } from "next";
 
 interface ServicesPageProps {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
 export async function generateMetadata({
-  params: { locale },
+  params,
 }: ServicesPageProps): Promise<Metadata> {
+  const { locale } = await params;
   return generateSEOMetadata({
     title: "Services",
     description:
@@ -127,7 +129,9 @@ const process = [
   },
 ];
 
-export default async function ServicesPage() {
+export default async function ServicesPage({ params }: ServicesPageProps) {
+  const { locale } = await params;
+
   return (
     <div className="py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -230,18 +234,18 @@ export default async function ServicesPage() {
             can help your business succeed.
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
-            <a
+            <Link
               href="/contact"
               className="rounded-md bg-primary px-3.5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               Contact Us
-            </a>
-            <a
+            </Link>
+            <Link
               href="/about"
               className="text-sm font-semibold leading-6 text-foreground hover:text-primary"
             >
               Learn more <span aria-hidden="true">→</span>
-            </a>
+            </Link>
           </div>
         </div>
       </div>

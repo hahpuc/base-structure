@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { blogPostService } from "@/services/blog-post.service";
 import { categoryService } from "@/services/category.service";
+import { env } from "@/services/env.service";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://vippro.com";
+const baseUrl = env.app.url;
 const locales = ["en", "vi", "ja"];
 
 async function generateSitemap() {

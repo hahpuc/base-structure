@@ -1,6 +1,7 @@
+import { env } from "@/services/env.service";
 import { NextResponse } from "next/server";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://vippro.com";
+const baseUrl = env.app.url;
 
 export async function GET() {
   const robots = `User-agent: *

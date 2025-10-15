@@ -1,9 +1,8 @@
+import { Features } from "@/components/sections/features";
+import { Hero } from "@/components/sections/hero";
+import { generateSEOMetadata } from "@/lib/seo";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { generateSEOMetadata } from "@/lib/seo";
-import { Hero } from "@/components/sections/hero";
-import { Features } from "@/components/sections/features";
-import { LatestBlog } from "@/components/sections/latest-blog";
 
 interface HomePageProps {
   params: Promise<{ locale: string }>;
@@ -30,7 +29,7 @@ export default async function HomePage({ params }: HomePageProps) {
     <div className="flex flex-col">
       <Hero />
       <Features />
-      <LatestBlog />
+      {/* <LatestBlog />∏ */}
     </div>
   );
 }

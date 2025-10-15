@@ -4,17 +4,18 @@ import { BlogList } from "@/components/blog/blog-list";
 import { BlogSidebar } from "@/components/blog/blog-sidebar";
 
 interface BlogPageProps {
-  params: { locale: string };
-  searchParams: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{
     page?: string;
     search?: string;
     category?: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({
-  params: { locale },
+  params,
 }: BlogPageProps): Promise<Metadata> {
+  const { locale } = await params;
   return generateSEOMetadata({
     title: "Blog",
     description:
@@ -25,12 +26,15 @@ export async function generateMetadata({
 }
 
 export default async function BlogPage({
-  params: { locale },
+  params,
   searchParams,
 }: BlogPageProps) {
-  const currentPage = parseInt(searchParams.page || "1");
-  const searchQuery = searchParams.search || "";
-  const categorySlug = searchParams.category || "";
+  const { locale } = await params;
+  const { page, search, category } = await searchParams;
+
+  const currentPage = parseInt(page || "1");
+  const searchQuery = search || "";
+  const categorySlug = category || "";
 
   return (
     <div className="py-24 sm:py-32">

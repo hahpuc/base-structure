@@ -1,13 +1,11 @@
-"use client";
-
+import { usePathname, useRouter } from "@/routing";
 import { Globe } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useRouter, usePathname } from "@/routing";
 import { useState } from "react";
 
 const languages = [
-  { code: "en", name: "English", flag: "🇺🇸" },
   { code: "vi", name: "Tiếng Việt", flag: "🇻🇳" },
+  { code: "en", name: "English", flag: "🇺🇸" },
   { code: "ja", name: "日本語", flag: "🇯🇵" },
 ];
 
@@ -21,16 +19,10 @@ export function LanguageSwitcher() {
   const currentLanguage = languages.find((lang) => lang.code === locale);
 
   const switchLanguage = (newLocale: string) => {
-    // Remove current locale from pathname if it exists
-    const pathWithoutLocale = pathname.replace(/^\/[a-z]{2}/, "") || "/";
+    console.log("path name: ", pathname);
 
-    // Add new locale to the path if it's not the default locale
-    const newPath =
-      newLocale === "en"
-        ? pathWithoutLocale
-        : `/${newLocale}${pathWithoutLocale}`;
-
-    router.push(newPath);
+    // Use the router.replace with the new locale
+    router.replace(pathname, { locale: newLocale });
     setIsOpen(false);
   };
 

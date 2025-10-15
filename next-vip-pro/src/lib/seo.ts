@@ -1,3 +1,4 @@
+import { env } from "@/services/env.service";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
@@ -30,7 +31,7 @@ export async function generateSEOMetadata({
 }: SEOProps): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: "seo" });
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://vippro.com";
+  const baseUrl = env.app.url;
   const defaultImage = `${baseUrl}/images/og-image.jpg`;
 
   const seoTitle = title ? `${title} - VIP Pro` : t("defaultTitle");
@@ -117,10 +118,8 @@ export function generateOrganizationSchema() {
   return generateStructuredData({
     "@type": "Organization",
     name: "VIP Pro",
-    url: process.env.NEXT_PUBLIC_BASE_URL || "https://vippro.com",
-    logo: `${
-      process.env.NEXT_PUBLIC_BASE_URL || "https://vippro.com"
-    }/images/logo.png`,
+    url: env.app.url,
+    logo: `${env.app.url}/images/logo.png`,
     description: "Leading provider of professional business solutions",
     address: {
       "@type": "PostalAddress",
@@ -159,7 +158,7 @@ export function generateArticleSchema({
   author: string;
   url: string;
 }) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://vippro.com";
+  const baseUrl = env.app.url;
 
   return generateStructuredData({
     "@type": "Article",

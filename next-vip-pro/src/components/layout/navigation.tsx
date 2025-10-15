@@ -1,8 +1,7 @@
 "use client";
 
-import { Link } from "@/routing";
+import { Link, usePathname } from "@/routing";
 import { useTranslations } from "next-intl";
-import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const navigationItems = [
@@ -18,8 +17,8 @@ export function Navigation() {
   const t = useTranslations("navigation");
   const pathname = usePathname();
 
-  // Remove locale from pathname for comparison
-  const currentPath = pathname.replace(/^\/[a-z]{2}/, "") || "/";
+  // Get the pathname without locale for comparison (next-intl's usePathname already removes locale)
+  const currentPath = pathname;
 
   return (
     <nav className="flex items-center space-x-6 text-sm font-medium">
